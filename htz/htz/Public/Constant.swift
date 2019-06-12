@@ -18,6 +18,7 @@ let IOS7 = Int(UIDevice.current.systemVersion)! >= 7 ? true : false;
 let IOS8 = Int(UIDevice.current.systemVersion)! >= 8 ? true : false;
 let IOS9 = Int(UIDevice.current.systemVersion)! >= 9 ? true : false;
 let IOS11 = Int(UIDevice.current.systemVersion)! >= 11 ? true : false;
+
 //UIColor
 let kTableVBackColor = UIColor.colorWithHexString("#eeeeee")
 let kCollectionVBackColor = UIColor.colorWithHexString("#eeeeee")
@@ -32,7 +33,7 @@ func printLog<T>(_ message : T, file : String = #file, funcName : String = #func
     
     let fileName = (file as NSString).lastPathComponent
     
-    print("\(fileName):(\(lineNum))-\(message)")
+    print("\(fileName):(\(lineNum)) \(message)")
     
     #endif
 }

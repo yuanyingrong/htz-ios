@@ -17,6 +17,21 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        let date:Date = Date.init()
+//        case locationBr = "pt_BR"
+//        case dateTimeBr = "dd/MM/yyyy HH:mm:ss"
+//        case dateTimeBrHyphen = "dd-MM-yyyy HH:mm:ss"
+//        case dateBr = "dd/MM/yyyy"
+//        case dateBrHyphen = "dd-MM-yyyy"
+//        case dateYMD = "yyyy-MM-dd"
+//        case dateYMDHMS = "yyyy-MM-dd HH:mm:ss"
+        printLog(date.toString(withFormat: .locationBr))
+        printLog(date.toString(withFormat: .dateTimeBr))
+        printLog(date.toString(withFormat: .dateTimeBrHyphen))
+        printLog(date.toString(withFormat: .dateBr))
+        printLog(date.toString(withFormat: .dateBrHyphen))
+        printLog(date.toString(withFormat: .dateYMD))
+        printLog(date.toString(withFormat: .dateYMDHMS))
         return true
     }
 
