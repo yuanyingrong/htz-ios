@@ -1,0 +1,39 @@
+{
+    "tabbar_items": [
+                     {
+                     "page": "HTZHomeViewController",
+                     "type": "home",
+                     "title": "首页",
+                     "normal_icon": "home_icon_normal",
+                     "normal_icon_select": "home_icon_select"
+                     },
+                     {
+                     "page": "HTZReadClassicsViewController",
+                     "type": "readClassics",
+                     "title": "读经典",
+                     "normal_icon": "read_classics_icon_normal",
+                     "normal_icon_select": "read_classics_icon_select"
+                     }
+                     {
+                     "page": "HTZPlayViewController",
+                     "type": "play",
+                     "title": "",
+                     "normal_icon": "play_icon_normal",
+                     "normal_icon_select": "play_icon_select"
+                     },
+                     {
+                     "page": "HTZLearnClassicsViewController",
+                     "type": "learnClassics",
+                     "title": "学经典",
+                     "normal_icon": "learn_classics_icon_normal",
+                     "normal_icon_select": "learn_classics_icon_select"
+                     },
+                     {
+                     "page": "HTZProfileViewController",
+                     "type": "profile",
+                     "title": "我",
+                     "normal_icon": "profile_icon_normal",
+                     "normal_icon_select": "profile_icon_select"
+                     }
+                     ]
+}
