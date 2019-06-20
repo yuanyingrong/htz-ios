@@ -13,7 +13,7 @@
                      "title": "读经典",
                      "normal_icon": "read_classics_icon_normal",
                      "normal_icon_select": "read_classics_icon_select"
-                     }
+                     },
                      {
                      "page": "HTZPlayViewController",
                      "type": "play",
@@ -37,3 +37,5 @@
                      }
                      ]
 }
+
+

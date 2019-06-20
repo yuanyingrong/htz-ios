@@ -59,7 +59,8 @@ class HTZTabbarViewController: UITabBarController {
         vc.tabBarItem.setTitleTextAttributes([NSAttributedString.Key.foregroundColor : UIColor.gray], for: UIControl.State.normal)
         vc.tabBarItem.setTitleTextAttributes([NSAttributedString.Key.foregroundColor : UIColor.blue], for: UIControl.State.selected)
         vc.tabBarItem.image = UIImage(named: imageName)
-        vc.tabBarItem.selectedImage = UIImage(named: "\(imageName)_select")?.withRenderingMode(UIImage.RenderingMode.alwaysOriginal)
+        let s = imageName.replacingOccurrences(of: "_normal", with: "")
+        vc.tabBarItem.selectedImage = UIImage(named: "\(s)_select")?.withRenderingMode(UIImage.RenderingMode.alwaysOriginal)
         
         let navVC = HTZNavigationController.init(rootViewController: vc)
         addChild(navVC)

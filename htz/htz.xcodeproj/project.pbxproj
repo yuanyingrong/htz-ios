@@ -20,10 +20,6 @@
 		195C195A22B24ABB002E8A04 /* HTZPlayViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 195C195922B24ABB002E8A04 /* HTZPlayViewController.swift */; };
 		195C195C22B24ACD002E8A04 /* HTZReadClassicsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 195C195B22B24ACD002E8A04 /* HTZReadClassicsViewController.swift */; };
 		195C195E22B24ADC002E8A04 /* HTZHomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 195C195D22B24ADC002E8A04 /* HTZHomeViewController.swift */; };
-		195C196422B25646002E8A04 /* profile_icon_select.png in Resources */ = {isa = PBXBuildFile; fileRef = 195C196022B25645002E8A04 /* profile_icon_select.png */; };
-		195C196522B25646002E8A04 /* home_icon_select.png in Resources */ = {isa = PBXBuildFile; fileRef = 195C196122B25645002E8A04 /* home_icon_select.png */; };
-		195C196622B25646002E8A04 /* home_icon_normal.png in Resources */ = {isa = PBXBuildFile; fileRef = 195C196222B25645002E8A04 /* home_icon_normal.png */; };
-		195C196722B25646002E8A04 /* profile_icon_normal.png in Resources */ = {isa = PBXBuildFile; fileRef = 195C196322B25646002E8A04 /* profile_icon_normal.png */; };
 		195C19C822B25BE5002E8A04 /* JsonHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 195C19C722B25BE5002E8A04 /* JsonHelper.swift */; };
 		195DDD2022AF944100C5F04C /* UIColor+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 195DDD1F22AF944100C5F04C /* UIColor+Extension.swift */; };
 		195DDD2222AF970D00C5F04C /* String+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 195DDD2122AF970D00C5F04C /* String+Extension.swift */; };
@@ -83,10 +79,6 @@
 		195C195922B24ABB002E8A04 /* HTZPlayViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZPlayViewController.swift; sourceTree = "<group>"; };
 		195C195B22B24ACD002E8A04 /* HTZReadClassicsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZReadClassicsViewController.swift; sourceTree = "<group>"; };
 		195C195D22B24ADC002E8A04 /* HTZHomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZHomeViewController.swift; sourceTree = "<group>"; };
-		195C196022B25645002E8A04 /* profile_icon_select.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = profile_icon_select.png; sourceTree = "<group>"; };
-		195C196122B25645002E8A04 /* home_icon_select.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = home_icon_select.png; sourceTree = "<group>"; };
-		195C196222B25645002E8A04 /* home_icon_normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = home_icon_normal.png; sourceTree = "<group>"; };
-		195C196322B25646002E8A04 /* profile_icon_normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = profile_icon_normal.png; sourceTree = "<group>"; };
 		195C19C722B25BE5002E8A04 /* JsonHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JsonHelper.swift; sourceTree = "<group>"; };
 		195DDD1F22AF944100C5F04C /* UIColor+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Extension.swift"; sourceTree = "<group>"; };
 		195DDD2122AF970D00C5F04C /* String+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Extension.swift"; sourceTree = "<group>"; };
@@ -226,20 +218,8 @@
 			isa = PBXGroup;
 			children = (
 				195C195322B249A6002E8A04 /* menu.json */,
-				195C195F22B253EB002E8A04 /* Images */,
 			);
 			path = TabBar;
-			sourceTree = "<group>";
-		};
-		195C195F22B253EB002E8A04 /* Images */ = {
-			isa = PBXGroup;
-			children = (
-				195C196222B25645002E8A04 /* home_icon_normal.png */,
-				195C196122B25645002E8A04 /* home_icon_select.png */,
-				195C196322B25646002E8A04 /* profile_icon_normal.png */,
-				195C196022B25645002E8A04 /* profile_icon_select.png */,
-			);
-			path = Images;
 			sourceTree = "<group>";
 		};
 		195DDD2B22AFB0A100C5F04C /* Helper */ = {
@@ -826,12 +806,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				19A957FC229BC717007B48ED /* LaunchScreen.storyboard in Resources */,
-				195C196622B25646002E8A04 /* home_icon_normal.png in Resources */,
-				195C196522B25646002E8A04 /* home_icon_select.png in Resources */,
-				195C196722B25646002E8A04 /* profile_icon_normal.png in Resources */,
 				19A957F9229BC717007B48ED /* Assets.xcassets in Resources */,
 				195C195422B249A6002E8A04 /* menu.json in Resources */,
-				195C196422B25646002E8A04 /* profile_icon_select.png in Resources */,
 				19A957F4229BC716007B48ED /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1073,6 +1049,7 @@
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
 		};
@@ -1127,6 +1104,7 @@
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
