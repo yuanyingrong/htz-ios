@@ -66,7 +66,7 @@ public extension UIView {
     }
     
     //    关联SB和XIB
-    @IBInspectable public var cornerRadius: CGFloat {
+    @IBInspectable var cornerRadius: CGFloat {
         get {
             return layer.cornerRadius
         }
@@ -76,7 +76,7 @@ public extension UIView {
         }
     }
     
-    @IBInspectable public var shadowRadius:CGFloat {
+    @IBInspectable var shadowRadius:CGFloat {
         get {
             return layer.shadowRadius
         }
@@ -85,7 +85,7 @@ public extension UIView {
         }
     }
     
-    @IBInspectable public var shadowOpacity:Float {
+    @IBInspectable var shadowOpacity:Float {
         get {
             return layer.shadowOpacity
         }
@@ -94,7 +94,7 @@ public extension UIView {
         }
     }
     
-    @IBInspectable public var shadowColor:UIColor? {
+    @IBInspectable var shadowColor:UIColor? {
         get {
             return layer.shadowColor != nil ? UIColor(cgColor:layer.shadowColor!) : nil
         }
@@ -103,7 +103,7 @@ public extension UIView {
         }
     }
     
-    @IBInspectable public var shadowOffset:CGSize {
+    @IBInspectable var shadowOffset:CGSize {
         get {
             return layer.shadowOffset
         }
@@ -113,7 +113,7 @@ public extension UIView {
         }
     }
     
-    @IBInspectable public var zPoition:CGFloat {
+    @IBInspectable var zPoition:CGFloat {
         get {
             return layer.zPosition
         }

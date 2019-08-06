@@ -7,6 +7,7 @@ target 'htz' do
 
   # Pods for htz
   pod 'SnapKit'
+  pod 'Kingfisher'
 
   target 'htzTests' do
     inherit! :search_paths
