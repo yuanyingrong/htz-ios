@@ -26,7 +26,7 @@ class BaseView: UIView {
     }
     
     func configSubviews() {
-        
+        backgroundColor = .white
     }
     
     func configViewData() {

@@ -52,7 +52,7 @@ class BaseCollectionViewCell: UICollectionViewCell {
         collectionView?.delegate = self
         collectionView?.isScrollEnabled = false
         collectionView?.backgroundColor = UIColor.clear
-        self .addSubview(collectionView!)
+        self.addSubview(collectionView!)
     }
     //配置约束
     func configConstraint() {
