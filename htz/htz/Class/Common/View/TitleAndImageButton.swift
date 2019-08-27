@@ -23,8 +23,8 @@ class TitleAndImageButton: UIButton {
     
     
     func setUpUI() {
-        setImage(UIImage(named: "home_icon_normal"), for: .normal)
-        setImage(UIImage(named: "home_icon_select"), for: .selected)
+        setImage(UIImage(named: "more"), for: .normal)
+        setImage(UIImage(named: "more"), for: .selected)
         adjustsImageWhenHighlighted = false
         sizeToFit()
     }

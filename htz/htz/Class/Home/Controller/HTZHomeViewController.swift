@@ -10,6 +10,8 @@ import UIKit
 
 class HTZHomeViewController: BaseViewController {
     
+    lazy var homeViewModel: HTZHomeViewModel = HTZHomeViewModel()
+    
     lazy var searchVew: HTZSearchView = HTZSearchView()
     
     
@@ -25,7 +27,7 @@ class HTZHomeViewController: BaseViewController {
 
     lazy var bottomView: HTZHomeTitleCollectionView = {
         let view = HTZHomeTitleCollectionView()
-        
+        view.delegate = self
         return view
     }()
     
@@ -42,7 +44,7 @@ class HTZHomeViewController: BaseViewController {
         searchVew.snp.makeConstraints { (make) in
             make.top.equalTo(view).offset(44)
             make.left.right.equalTo(view)
-            make.height.equalTo(44)
+//            make.height.equalTo(66)
         }
         // 滚动视图
         cycleView.pictures = pictures
@@ -66,15 +68,11 @@ class HTZHomeViewController: BaseViewController {
         self.navigationController?.navigationBar.isHidden = false
     }
 
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+    override func configData() {
+        super.configData()
+        bottomView.dataArr = homeViewModel.dataArr
+//        bottomView.
     }
-    */
 
 }
 
@@ -84,4 +82,16 @@ extension HTZHomeViewController: HTZCycleViewDelegate {
     func htzCycleView(cycleView: HTZCycleView, didSelectItemAt index: Int) {
         print(index)
     }
+}
+
+// MARK: - HTZHomeTitleCollectionViewDelegate
+extension HTZHomeViewController: HTZHomeTitleCollectionViewDelegate {
+    @objc func moreButtonClickAtion() {
+        print("更多")
+    }
+    
+    @objc func collectionViewdidSelectItemAt(_ indexPath: IndexPath) {
+        print(indexPath.row)
+    }
+    
 }

@@ -25,6 +25,7 @@ class BaseViewController: UIViewController {
         self.configSelf()
         self.configSubView()
         self.configConstraint()
+        self.configData()
     }
     
     

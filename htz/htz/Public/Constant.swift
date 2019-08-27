@@ -22,8 +22,8 @@ let IOS11 = Int(UIDevice.current.systemVersion)! >= 11 ? true : false;
 //UIColor
 let kTableVBackColor = UIColor.colorWithHexString("#eeeeee")
 let kCollectionVBackColor = UIColor.colorWithHexString("#eeeeee")
-let kScreenW = UIScreen.main.bounds.width
-let kScreenH = UIScreen.main.bounds.height
+let kScreenWidth = UIScreen.main.bounds.width
+let kScreenHeight = UIScreen.main.bounds.height
 
 
 // 自定义打印方法

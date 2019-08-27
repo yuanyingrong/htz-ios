@@ -27,7 +27,7 @@ class HTZHomeTitleCollectionViewCell: UICollectionViewCell {
     }
     
     private let imageView = UIImageView()
-    private let label = UILabel(text: "", font: 16, textColor: .red)
+    private let label = UILabel(text: "", font: 16, textColor: .darkText)
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -64,6 +64,7 @@ class HTZHomeTitleCollectionViewCell: UICollectionViewCell {
         label.snp.makeConstraints { (make) in
             make.top.equalTo(imageView.snp_bottom)
             make.centerX.equalTo(self.contentView)
+            make.height.equalTo(24)
             make.bottom.equalTo(self.contentView).offset(-8)
         }
     }

@@ -27,21 +27,19 @@ class HTZSearchView: UIView {
     private lazy var searchBar: UISearchBar = {
         let searchBar = UISearchBar()
         searchBar.delegate = self
-        searchBar.showsCancelButton = true
         searchBar.cornerRadius = 22
+        searchBar.layer.borderWidth = 2
+        searchBar.layer.borderColor = UIColor.groupTableViewBackground.cgColor
         searchBar.placeholder = "搜索"
-        
-//        for subview in searchBar.subviews {
-//            for grandSonView in subview.subviews {
-//                if (grandSonView is NSClassFromString("UISearchBarBackground")) {
-//                    grandSonView.alpha = 0.0
-//                } else if (grandSonView is NSClassFromString("UISearchBarTextField")) {
-//                    print("Keep textfiedld bkg color")
-//                } else {
-//                    grandSonView.alpha = 0.0
-//                }
-//            }
-//        }
+        for view in searchBar.subviews.last!.subviews {
+            if(type(of: view) == NSClassFromString("UISearchBarBackground")) {
+                view.alpha = 0.0
+            } else if(type(of: view) == NSClassFromString("UISearchBarTextField")) {
+                print("Keep textfiedld bkg color")
+            } else {
+                view.alpha = 0.0
+            }
+        }
         return searchBar
     }()
 
@@ -77,9 +75,11 @@ extension HTZSearchView {
         }
         
         searchBar.snp.makeConstraints { (make) in
+            make.top.equalTo(contentView).offset(4)
             make.left.equalTo(leftImageView.snp_rightMargin).offset(16)
-            make.right.equalTo(contentView)
-            make.centerY.equalTo(contentView)
+            make.right.equalTo(contentView).offset(-8)
+            make.height.equalTo(44)
+            make.bottom.equalTo(contentView).offset(-4)
         }
     }
 }

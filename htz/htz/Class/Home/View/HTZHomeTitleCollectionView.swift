@@ -8,7 +8,24 @@
 
 import UIKit
 
+protocol HTZHomeTitleCollectionViewDelegate: NSObjectProtocol {
+    
+    // 点击更多按钮
+    func moreButtonClickAtion()
+    
+    func collectionViewdidSelectItemAt(_ indexPath: IndexPath)
+    
+}
 class HTZHomeTitleCollectionView: BaseView {
+    
+    var dataArr: [HTZHomeImageTitle] = [] {
+        
+        didSet {
+            collectionView.reloadData()
+        }
+    }
+    
+    weak var delegate: HTZHomeTitleCollectionViewDelegate?
 
     private lazy var titleView: UIView = {
         let view = UIView()
@@ -30,6 +47,8 @@ class HTZHomeTitleCollectionView: BaseView {
         let button = TitleAndImageButton()
         button.addTarget(self, action: #selector(rightButtonClickAction), for: .touchUpInside)
         button.setTitle("更多", for: .normal)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 15)
+        button.setTitleColor(UIColor.darkGray, for: UIControl.State.normal)
         return button
     }()
     
@@ -91,22 +110,29 @@ class HTZHomeTitleCollectionView: BaseView {
 
 extension HTZHomeTitleCollectionView {
     @objc private func rightButtonClickAction() {
-        
+        if delegate != nil && (delegate?.responds(to: Selector(("moreButtonClickAtion"))))! {
+            delegate?.moreButtonClickAtion()
+        }
     }
 }
 
 // MARK: - UICollectionViewDataSource, UICollectionViewDelegate
 extension HTZHomeTitleCollectionView: UICollectionViewDataSource, UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 6
+        return dataArr.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "HTZHomeTitleCollectionViewCell", for: indexPath) as! HTZHomeTitleCollectionViewCell
-        cell.imageName = "https://goodreading.mobi/StudentApi/UserFiles/Banner/Student/Home/banner_tz.png"
-        cell.title = "标题"
+        cell.imageName = dataArr[indexPath.row].imageName
+        cell.title = dataArr[indexPath.row].title
         return cell
     }
     
-    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        
+        if delegate != nil && (delegate?.responds(to: Selector(("collectionViewdidSelectItemAt:"))))! {
+            delegate?.collectionViewdidSelectItemAt(indexPath)
+        }
+    }
 }
