@@ -9,17 +9,28 @@
 /* Begin PBXBuildFile section */
 		1935D54F2313CB3600FE2547 /* HTZProfileHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1935D54E2313CB3600FE2547 /* HTZProfileHeaderView.swift */; };
 		1935D5512313D34D00FE2547 /* HTZProfileTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1935D5502313D34D00FE2547 /* HTZProfileTableViewCell.swift */; };
+		193A8B902318C11A00B520B1 /* UIWindow+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193A8B8F2318C11A00B520B1 /* UIWindow+Extension.swift */; };
+		193A8B922318C62C00B520B1 /* UIViewController+Alert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193A8B912318C62C00B520B1 /* UIViewController+Alert.swift */; };
+		193A8B942318C82000B520B1 /* CurrentViewControllerUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193A8B932318C82000B520B1 /* CurrentViewControllerUtil.swift */; };
+		193A8B9623190ACB00B520B1 /* HTZSignUpViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193A8B9523190ACB00B520B1 /* HTZSignUpViewController.swift */; };
 		193C11072314C70E0038B8BD /* HTZLabelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193C11062314C70E0038B8BD /* HTZLabelView.swift */; };
 		193C11092314CB760038B8BD /* HTZProfileFunctionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193C11082314CB760038B8BD /* HTZProfileFunctionView.swift */; };
 		193C919E22FC099000E3AA4A /* HTZHomeTitleCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193C919D22FC099000E3AA4A /* HTZHomeTitleCollectionViewCell.swift */; };
 		193C91A022FC0B3600E3AA4A /* HTZHomeTitleModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193C919F22FC0B3600E3AA4A /* HTZHomeTitleModel.swift */; };
 		193C91A222FC0C6E00E3AA4A /* HTZHomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193C91A122FC0C6E00E3AA4A /* HTZHomeViewModel.swift */; };
+		193CB48423161CBE00A1B21F /* HTZLoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193CB48323161CBE00A1B21F /* HTZLoginViewController.swift */; };
+		193CB4872316329D00A1B21F /* HTZConstans.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193CB4862316329D00A1B21F /* HTZConstans.swift */; };
 		19444CFA22F92D0D0063EF38 /* HTZSearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19444CF922F92D0D0063EF38 /* HTZSearchView.swift */; };
 		19444CFC22F97B050063EF38 /* HTZCycleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19444CFB22F97B050063EF38 /* HTZCycleView.swift */; };
 		1947F4F822FA5A9500B57813 /* HTZHomeTitleCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1947F4F722FA5A9500B57813 /* HTZHomeTitleCollectionView.swift */; };
-		1947F4FA22FA5E9E00B57813 /* TitleAndImageButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1947F4F922FA5E9E00B57813 /* TitleAndImageButton.swift */; };
+		1947F4FA22FA5E9E00B57813 /* LeftTitleRightImageButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1947F4F922FA5E9E00B57813 /* LeftTitleRightImageButton.swift */; };
 		194E215E22B0E9F2000F96D4 /* PhotoManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 194E215D22B0E9F2000F96D4 /* PhotoManager.swift */; };
 		19510C7D22A798840067AA5D /* Constant.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19510C7C22A798840067AA5D /* Constant.swift */; };
+		19585DB123177B1C009536EE /* HTZNetWorkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19585DB023177B1C009536EE /* HTZNetWorkManager.swift */; };
+		19585DB323177C75009536EE /* API.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19585DB223177C75009536EE /* API.swift */; };
+		19585DB523177D13009536EE /* MoyaConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19585DB423177D13009536EE /* MoyaConfig.swift */; };
+		19585DBD2317B902009536EE /* AppDelegate+OAuth.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19585DBC2317B902009536EE /* AppDelegate+OAuth.swift */; };
+		19585DBF2317DC14009536EE /* HTZAccountThirdLoginUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19585DBE2317DC14009536EE /* HTZAccountThirdLoginUtil.swift */; };
 		195C194722B24397002E8A04 /* BaseTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 195C194622B24397002E8A04 /* BaseTabBarController.swift */; };
 		195C194922B243D1002E8A04 /* BaseTabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 195C194822B243D1002E8A04 /* BaseTabBar.swift */; };
 		195C194C22B245FA002E8A04 /* HTZNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 195C194B22B245FA002E8A04 /* HTZNavigationController.swift */; };
@@ -79,17 +90,29 @@
 		0FCE7CB6951C7E7FCDE953D1 /* Pods-htz.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-htz.debug.xcconfig"; path = "Pods/Target Support Files/Pods-htz/Pods-htz.debug.xcconfig"; sourceTree = "<group>"; };
 		1935D54E2313CB3600FE2547 /* HTZProfileHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZProfileHeaderView.swift; sourceTree = "<group>"; };
 		1935D5502313D34D00FE2547 /* HTZProfileTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZProfileTableViewCell.swift; sourceTree = "<group>"; };
+		193A8B8F2318C11A00B520B1 /* UIWindow+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIWindow+Extension.swift"; sourceTree = "<group>"; };
+		193A8B912318C62C00B520B1 /* UIViewController+Alert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Alert.swift"; sourceTree = "<group>"; };
+		193A8B932318C82000B520B1 /* CurrentViewControllerUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentViewControllerUtil.swift; sourceTree = "<group>"; };
+		193A8B9523190ACB00B520B1 /* HTZSignUpViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZSignUpViewController.swift; sourceTree = "<group>"; };
 		193C11062314C70E0038B8BD /* HTZLabelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZLabelView.swift; sourceTree = "<group>"; };
 		193C11082314CB760038B8BD /* HTZProfileFunctionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZProfileFunctionView.swift; sourceTree = "<group>"; };
 		193C919D22FC099000E3AA4A /* HTZHomeTitleCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZHomeTitleCollectionViewCell.swift; sourceTree = "<group>"; };
 		193C919F22FC0B3600E3AA4A /* HTZHomeTitleModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZHomeTitleModel.swift; sourceTree = "<group>"; };
 		193C91A122FC0C6E00E3AA4A /* HTZHomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZHomeViewModel.swift; sourceTree = "<group>"; };
+		193CB48323161CBE00A1B21F /* HTZLoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZLoginViewController.swift; sourceTree = "<group>"; };
+		193CB4862316329D00A1B21F /* HTZConstans.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZConstans.swift; sourceTree = "<group>"; };
 		19444CF922F92D0D0063EF38 /* HTZSearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZSearchView.swift; sourceTree = "<group>"; };
 		19444CFB22F97B050063EF38 /* HTZCycleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZCycleView.swift; sourceTree = "<group>"; };
 		1947F4F722FA5A9500B57813 /* HTZHomeTitleCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZHomeTitleCollectionView.swift; sourceTree = "<group>"; };
-		1947F4F922FA5E9E00B57813 /* TitleAndImageButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TitleAndImageButton.swift; sourceTree = "<group>"; };
+		1947F4F922FA5E9E00B57813 /* LeftTitleRightImageButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeftTitleRightImageButton.swift; sourceTree = "<group>"; };
 		194E215D22B0E9F2000F96D4 /* PhotoManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoManager.swift; sourceTree = "<group>"; };
 		19510C7C22A798840067AA5D /* Constant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constant.swift; sourceTree = "<group>"; };
+		19585DB023177B1C009536EE /* HTZNetWorkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZNetWorkManager.swift; sourceTree = "<group>"; };
+		19585DB223177C75009536EE /* API.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = API.swift; sourceTree = "<group>"; };
+		19585DB423177D13009536EE /* MoyaConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoyaConfig.swift; sourceTree = "<group>"; };
+		19585DB82317B550009536EE /* htz-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "htz-Bridging-Header.h"; sourceTree = "<group>"; };
+		19585DBC2317B902009536EE /* AppDelegate+OAuth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppDelegate+OAuth.swift"; sourceTree = "<group>"; };
+		19585DBE2317DC14009536EE /* HTZAccountThirdLoginUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZAccountThirdLoginUtil.swift; sourceTree = "<group>"; };
 		195C194622B24397002E8A04 /* BaseTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseTabBarController.swift; sourceTree = "<group>"; };
 		195C194822B243D1002E8A04 /* BaseTabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseTabBar.swift; sourceTree = "<group>"; };
 		195C194B22B245FA002E8A04 /* HTZNavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZNavigationController.swift; sourceTree = "<group>"; };
@@ -203,7 +226,7 @@
 			isa = PBXGroup;
 			children = (
 				19444CF922F92D0D0063EF38 /* HTZSearchView.swift */,
-				1947F4F922FA5E9E00B57813 /* TitleAndImageButton.swift */,
+				1947F4F922FA5E9E00B57813 /* LeftTitleRightImageButton.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -220,6 +243,8 @@
 			isa = PBXGroup;
 			children = (
 				19444CFD22F97B930063EF38 /* CycleScrollView */,
+				19585DBE2317DC14009536EE /* HTZAccountThirdLoginUtil.swift */,
+				193A8B932318C82000B520B1 /* CurrentViewControllerUtil.swift */,
 			);
 			path = Util;
 			sourceTree = "<group>";
@@ -266,6 +291,8 @@
 				195DDD2722AFAF9000C5F04C /* UIView+Extension.swift */,
 				195DDD2922AFAFC300C5F04C /* UIButton+Extension.swift */,
 				195C194D22B24745002E8A04 /* UIBarButtonItem+Extension.swift */,
+				193A8B8F2318C11A00B520B1 /* UIWindow+Extension.swift */,
+				193A8B912318C62C00B520B1 /* UIViewController+Alert.swift */,
 			);
 			path = Category;
 			sourceTree = "<group>";
@@ -273,6 +300,7 @@
 		19510C7F22A79BE70067AA5D /* Macros */ = {
 			isa = PBXGroup;
 			children = (
+				193CB4862316329D00A1B21F /* HTZConstans.swift */,
 			);
 			path = Macros;
 			sourceTree = "<group>";
@@ -329,6 +357,7 @@
 			isa = PBXGroup;
 			children = (
 				19A957EE229BC716007B48ED /* AppDelegate.swift */,
+				19585DBC2317B902009536EE /* AppDelegate+OAuth.swift */,
 				19A957F0229BC716007B48ED /* ViewController.swift */,
 				19A95825229BDB0D007B48ED /* Base */,
 				19A95823229BDAF5007B48ED /* Class */,
@@ -342,6 +371,7 @@
 				19A957FA229BC717007B48ED /* LaunchScreen.storyboard */,
 				19A957FD229BC717007B48ED /* Info.plist */,
 				19A957F5229BC716007B48ED /* htz.xcdatamodeld */,
+				19585DB82317B550009536EE /* htz-Bridging-Header.h */,
 			);
 			path = htz;
 			sourceTree = "<group>";
@@ -395,6 +425,9 @@
 			isa = PBXGroup;
 			children = (
 				19510C7F22A79BE70067AA5D /* Macros */,
+				19585DB023177B1C009536EE /* HTZNetWorkManager.swift */,
+				19585DB223177C75009536EE /* API.swift */,
+				19585DB423177D13009536EE /* MoyaConfig.swift */,
 			);
 			path = Support;
 			sourceTree = "<group>";
@@ -491,6 +524,8 @@
 		19A9582C229BDCFF007B48ED /* Controller */ = {
 			isa = PBXGroup;
 			children = (
+				193CB48323161CBE00A1B21F /* HTZLoginViewController.swift */,
+				193A8B9523190ACB00B520B1 /* HTZSignUpViewController.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -790,6 +825,7 @@
 				19A957E8229BC716007B48ED /* Frameworks */,
 				19A957E9229BC716007B48ED /* Resources */,
 				4B959508F389F2C358CB925C /* [CP] Embed Pods Frameworks */,
+				DF0187E8AA287AC9AAA03BE2 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -851,6 +887,7 @@
 				TargetAttributes = {
 					19A957EA229BC716007B48ED = {
 						CreatedOnToolsVersion = 10.2;
+						LastSwiftMigration = 1030;
 					};
 					19A95801229BC718007B48ED = {
 						CreatedOnToolsVersion = 10.2;
@@ -936,13 +973,21 @@
 			);
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-htz/Pods-htz-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/Alamofire/Alamofire.framework",
 				"${BUILT_PRODUCTS_DIR}/Kingfisher/Kingfisher.framework",
+				"${BUILT_PRODUCTS_DIR}/Moya/Moya.framework",
+				"${BUILT_PRODUCTS_DIR}/Result/Result.framework",
 				"${BUILT_PRODUCTS_DIR}/SnapKit/SnapKit.framework",
+				"${BUILT_PRODUCTS_DIR}/SwiftyJSON/SwiftyJSON.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Alamofire.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Kingfisher.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Moya.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Result.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SnapKit.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftyJSON.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -985,6 +1030,24 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
+		DF0187E8AA287AC9AAA03BE2 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${SRCROOT}/Pods/Target Support Files/Pods-htz/Pods-htz-resources.sh",
+				"${PODS_ROOT}/Weibo_SDK/libWeiboSDK/WeiboSDK.bundle",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/WeiboSDK.bundle",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-htz/Pods-htz-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -992,9 +1055,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				193CB48423161CBE00A1B21F /* HTZLoginViewController.swift in Sources */,
+				193CB4872316329D00A1B21F /* HTZConstans.swift in Sources */,
 				195DDD2622AFAF5B00C5F04C /* UILabel+Extension.swift in Sources */,
 				195DDD3122AFB21F00C5F04C /* BaseView.swift in Sources */,
 				195C194722B24397002E8A04 /* BaseTabBarController.swift in Sources */,
+				193A8B922318C62C00B520B1 /* UIViewController+Alert.swift in Sources */,
 				195DDD3922AFB30700C5F04C /* BaseViewModel.swift in Sources */,
 				19A957F1229BC716007B48ED /* ViewController.swift in Sources */,
 				19A957EF229BC716007B48ED /* AppDelegate.swift in Sources */,
@@ -1006,28 +1072,36 @@
 				195DDD3722AFB2E900C5F04C /* BaseModel.swift in Sources */,
 				195C19C822B25BE5002E8A04 /* JsonHelper.swift in Sources */,
 				195DDD2A22AFAFC300C5F04C /* UIButton+Extension.swift in Sources */,
+				193A8B902318C11A00B520B1 /* UIWindow+Extension.swift in Sources */,
 				193C11072314C70E0038B8BD /* HTZLabelView.swift in Sources */,
-				1947F4FA22FA5E9E00B57813 /* TitleAndImageButton.swift in Sources */,
+				19585DBD2317B902009536EE /* AppDelegate+OAuth.swift in Sources */,
+				1947F4FA22FA5E9E00B57813 /* LeftTitleRightImageButton.swift in Sources */,
 				19444CFA22F92D0D0063EF38 /* HTZSearchView.swift in Sources */,
 				195C194922B243D1002E8A04 /* BaseTabBar.swift in Sources */,
 				195C195A22B24ABB002E8A04 /* HTZPlayViewController.swift in Sources */,
+				19585DB123177B1C009536EE /* HTZNetWorkManager.swift in Sources */,
 				195DDD2822AFAF9000C5F04C /* UIView+Extension.swift in Sources */,
 				193C919E22FC099000E3AA4A /* HTZHomeTitleCollectionViewCell.swift in Sources */,
 				195DDD2F22AFB1D900C5F04C /* BaseViewController.swift in Sources */,
+				193A8B9623190ACB00B520B1 /* HTZSignUpViewController.swift in Sources */,
 				193C91A022FC0B3600E3AA4A /* HTZHomeTitleModel.swift in Sources */,
 				19A957F7229BC716007B48ED /* htz.xcdatamodeld in Sources */,
+				19585DB523177D13009536EE /* MoyaConfig.swift in Sources */,
 				194E215E22B0E9F2000F96D4 /* PhotoManager.swift in Sources */,
+				19585DBF2317DC14009536EE /* HTZAccountThirdLoginUtil.swift in Sources */,
 				195C195E22B24ADC002E8A04 /* HTZHomeViewController.swift in Sources */,
 				19510C7D22A798840067AA5D /* Constant.swift in Sources */,
 				193C91A222FC0C6E00E3AA4A /* HTZHomeViewModel.swift in Sources */,
 				195C194E22B24745002E8A04 /* UIBarButtonItem+Extension.swift in Sources */,
 				195DDD2422AF9E8500C5F04C /* Date+Extension.swift in Sources */,
 				195DDD2222AF970D00C5F04C /* String+Extension.swift in Sources */,
+				19585DB323177C75009536EE /* API.swift in Sources */,
 				195DDD2022AF944100C5F04C /* UIColor+Extension.swift in Sources */,
 				195C194C22B245FA002E8A04 /* HTZNavigationController.swift in Sources */,
 				195C195022B24847002E8A04 /* HTZTabbarViewController.swift in Sources */,
 				195DDD2D22AFB0B800C5F04C /* RegexHelper.swift in Sources */,
 				19444CFC22F97B050063EF38 /* HTZCycleView.swift in Sources */,
+				193A8B942318C82000B520B1 /* CurrentViewControllerUtil.swift in Sources */,
 				195C195622B24A6F002E8A04 /* HTZProfileViewController.swift in Sources */,
 				195C195822B24AA0002E8A04 /* HTZLearnClassicsViewController.swift in Sources */,
 				195C195C22B24ACD002E8A04 /* HTZReadClassicsViewController.swift in Sources */,
@@ -1209,14 +1283,19 @@
 			baseConfigurationReference = 0FCE7CB6951C7E7FCDE953D1 /* Pods-htz.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 5YDX4S4EQ5;
 				INFOPLIST_FILE = htz/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.yyr.ios.www.htz;
+				PRODUCT_BUNDLE_IDENTIFIER = com.yuanyingrong.ios.htz;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "htz/htz-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
@@ -1227,14 +1306,18 @@
 			baseConfigurationReference = F127EE42E8BDF736AC6D000E /* Pods-htz.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 5YDX4S4EQ5;
 				INFOPLIST_FILE = htz/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.yyr.ios.www.htz;
+				PRODUCT_BUNDLE_IDENTIFIER = com.yuanyingrong.ios.htz;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "htz/htz-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
 			};

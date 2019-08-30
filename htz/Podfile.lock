@@ -1,20 +1,58 @@
 PODS:
+  - Alamofire (4.8.2)
   - Kingfisher (5.7.0)
+  - Moya (13.0.1):
+    - Moya/Core (= 13.0.1)
+  - Moya/Core (13.0.1):
+    - Alamofire (~> 4.1)
+    - Result (~> 4.1)
+  - Result (4.1.0)
   - SnapKit (4.2.0)
+  - SwiftyJSON (5.0.0)
+  - TencentOpenAPI-Unofficial (3.3.3)
+  - WechatOpenSDK (1.8.4)
+  - Weibo_SDK (3.2.4)
 
 DEPENDENCIES:
   - Kingfisher
+  - Moya
   - SnapKit
+  - SwiftyJSON
+  - TencentOpenAPI-Unofficial
+  - WechatOpenSDK
+  - Weibo_SDK (from `https://github.com/sinaweibosdk/weibo_ios_sdk.git`)
 
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
+    - Alamofire
     - Kingfisher
+    - Moya
+    - Result
     - SnapKit
+    - SwiftyJSON
+    - TencentOpenAPI-Unofficial
+    - WechatOpenSDK
+
+EXTERNAL SOURCES:
+  Weibo_SDK:
+    :git: https://github.com/sinaweibosdk/weibo_ios_sdk.git
+
+CHECKOUT OPTIONS:
+  Weibo_SDK:
+    :commit: 83b1235d61530e5fdeeb86c75915c6bdb1dfcedb
+    :git: https://github.com/sinaweibosdk/weibo_ios_sdk.git
 
 SPEC CHECKSUMS:
+  Alamofire: ae5c501addb7afdbb13687d7f2f722c78734c2d3
   Kingfisher: c7d211b54f1f30d8060aadab177d52b4349c825b
+  Moya: f4a4b80ff2f8a4ffc208dfb31cd91636622fee6e
+  Result: bd966fac789cc6c1563440b348ab2598cc24d5c7
   SnapKit: fe8a619752f3f27075cc9a90244d75c6c3f27e2a
+  SwiftyJSON: 36413e04c44ee145039d332b4f4e2d3e8d6c4db7
+  TencentOpenAPI-Unofficial: 9647ceacd0e843094ffc94b2ddc0c1c060055dde
+  WechatOpenSDK: 9b721089507c895d05f997408c30bb6e6f5f9b60
+  Weibo_SDK: 977b5352ef6c5861e67c4fa1a81b916e47343713
 
-PODFILE CHECKSUM: 98bc8afd78f35edad9a2d8dd96384ded5c619dc2
+PODFILE CHECKSUM: 3cde52059130de099e8b36a6df36204b86c4203d
 
 COCOAPODS: 1.5.3

@@ -91,6 +91,9 @@ extension HTZHomeViewController: HTZHomeTitleCollectionViewDelegate {
     }
     
     @objc func collectionViewdidSelectItemAt(_ indexPath: IndexPath) {
+        let vc = BaseViewController()
+        vc.title = homeViewModel.dataArr[indexPath.row].title
+        navigationController?.pushViewController(vc, animated: true)
         print(indexPath.row)
     }
     

@@ -17,12 +17,12 @@ class HTZNavigationController: UINavigationController,UIGestureRecognizerDelegat
     
     override func pushViewController(_ viewController: UIViewController, animated: Bool) {
         var title: String?
-        
+        viewController.hidesBottomBarWhenPushed = children.count > 0
         if children.count > 0 {
             title = "返回"
-            if children.count == 1 {
-                title = children.first?.title
-            }
+//            if children.count == 1 {
+//                title = children.first?.title
+//            }
             viewController.navigationItem.leftBarButtonItem = UIBarButtonItem(setHighlightedImg:"navigationbar_back_withtext", title: title, target: self, action: #selector(popVC))
         }
         super.pushViewController(viewController, animated: animated)

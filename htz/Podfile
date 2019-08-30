@@ -8,6 +8,12 @@ target 'htz' do
   # Pods for htz
   pod 'SnapKit'
   pod 'Kingfisher'
+  pod 'Moya'
+  pod 'SwiftyJSON'
+  
+  pod 'Weibo_SDK', :git => 'https://github.com/sinaweibosdk/weibo_ios_sdk.git'
+  pod 'WechatOpenSDK'
+  pod 'TencentOpenAPI-Unofficial'
 
   target 'htzTests' do
     inherit! :search_paths

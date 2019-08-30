@@ -18,8 +18,8 @@
                      "page": "HTZPlayViewController",
                      "type": "play",
                      "title": "",
-                     "normal_icon": "play_icon_normal",
-                     "normal_icon_select": "play_icon_select"
+                     "normal_icon": "htz_round",
+                     "normal_icon_select": "htz_round"
                      },
                      {
                      "page": "HTZLearnClassicsViewController",

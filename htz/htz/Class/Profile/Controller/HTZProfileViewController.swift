@@ -93,6 +93,8 @@ extension HTZProfileViewController: HTZProfileHeaderViewDelegate {
     
     
     @objc func nameButtonClickAction() {
+        let vc = HTZLoginViewController()
+        navigationController?.pushViewController(vc, animated: true)
         print("点击登录")
     }
     

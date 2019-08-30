@@ -43,8 +43,8 @@ class HTZHomeTitleCollectionView: BaseView {
         return label
     }()
     
-    private lazy var rightButton: TitleAndImageButton = {
-        let button = TitleAndImageButton()
+    private lazy var rightButton: LeftTitleRightImageButton = {
+        let button = LeftTitleRightImageButton()
         button.addTarget(self, action: #selector(rightButtonClickAction), for: .touchUpInside)
         button.setTitle("更多", for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 15)
