@@ -10,10 +10,13 @@ target 'htz' do
   pod 'Kingfisher'
   pod 'Moya'
   pod 'SwiftyJSON'
+  pod 'HandyJSON'
   
   pod 'Weibo_SDK', :git => 'https://github.com/sinaweibosdk/weibo_ios_sdk.git'
   pod 'WechatOpenSDK'
   pod 'TencentOpenAPI-Unofficial'
+  
+  pod 'FreeStreamer'
 
   target 'htzTests' do
     inherit! :search_paths

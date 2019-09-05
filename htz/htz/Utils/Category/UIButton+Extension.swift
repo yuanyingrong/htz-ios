@@ -14,7 +14,7 @@ extension UIButton {
     
     @objc func set(image anImage: UIImage?, title: String,
                    titlePosition: UIView.ContentMode, additionalSpacing: CGFloat, state: UIControl.State){
-        self.imageView?.contentMode = .center
+//        self.imageView?.contentMode = .left
         self.setImage(anImage, for: state)
         
         positionLabelRespectToImage(title: title, position: titlePosition, spacing: additionalSpacing)
@@ -121,5 +121,34 @@ extension UIButton {
         
         self.sizeToFit()
         
+    }
+    
+    convenience init (title: String?, fontSize: CGFloat = 13, color: UIColor = UIColor.darkGray, image: String? = nil, bgImage: String? = nil, target: Any? = nil, selector: Selector? = nil, event: UIControl.Event = .touchUpInside) {
+        
+        self.init()
+        
+        //设置title
+        if let title = title {
+            self.setTitle(title, for: .normal)
+            self.setTitleColor(color, for: .normal)
+            self.titleLabel?.font = UIFont.systemFont(ofSize: fontSize)
+        }
+        
+        // 设置图片
+        if let image = image {
+            self.setImage(UIImage(named: image), for: .normal)
+            self.setImage(UIImage(named: "\(image)_highlighted"), for: .highlighted)
+        }
+        
+        // 设置背景图片
+        if let bgImage = bgImage {
+            self.setBackgroundImage(UIImage(named: bgImage), for: .normal)
+            self.setBackgroundImage(UIImage(named: "\(bgImage)_highlighted"), for: .highlighted)
+        }
+        
+        // 给button加点击事件
+        if let target = target, let selector = selector {
+            self.addTarget(target, action: selector, for: event)
+        }
     }
 }

@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		1935D54F2313CB3600FE2547 /* HTZProfileHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1935D54E2313CB3600FE2547 /* HTZProfileHeaderView.swift */; };
 		1935D5512313D34D00FE2547 /* HTZProfileTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1935D5502313D34D00FE2547 /* HTZProfileTableViewCell.swift */; };
+		1936CADF231FA6E5001218DD /* HTZAlbumModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1936CADE231FA6E5001218DD /* HTZAlbumModel.swift */; };
 		193A8B902318C11A00B520B1 /* UIWindow+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193A8B8F2318C11A00B520B1 /* UIWindow+Extension.swift */; };
 		193A8B922318C62C00B520B1 /* UIViewController+Alert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193A8B912318C62C00B520B1 /* UIViewController+Alert.swift */; };
 		193A8B942318C82000B520B1 /* CurrentViewControllerUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193A8B932318C82000B520B1 /* CurrentViewControllerUtil.swift */; };
@@ -20,8 +21,23 @@
 		193C91A222FC0C6E00E3AA4A /* HTZHomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193C91A122FC0C6E00E3AA4A /* HTZHomeViewModel.swift */; };
 		193CB48423161CBE00A1B21F /* HTZLoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193CB48323161CBE00A1B21F /* HTZLoginViewController.swift */; };
 		193CB4872316329D00A1B21F /* HTZConstans.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193CB4862316329D00A1B21F /* HTZConstans.swift */; };
+		193E5084231E635B000184EC /* HTZAlbumInfoModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193E5083231E635B000184EC /* HTZAlbumInfoModel.swift */; };
+		193E5086231E69BE000184EC /* HTZMusicPlayTool.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193E5085231E69BE000184EC /* HTZMusicPlayTool.swift */; };
+		193E5088231E7184000184EC /* HTZMusicOperationTool.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193E5087231E7184000184EC /* HTZMusicOperationTool.swift */; };
+		193F560523209AFD0037BC70 /* HTZHomeSearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193F560423209AFD0037BC70 /* HTZHomeSearchView.swift */; };
+		193F56072320AA680037BC70 /* HTZAlbumListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193F56062320AA680037BC70 /* HTZAlbumListViewModel.swift */; };
+		193F56092320AE500037BC70 /* HTZAlbumPartModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193F56082320AE500037BC70 /* HTZAlbumPartModel.swift */; };
+		193F560B2320F5450037BC70 /* HTZDownloadManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193F560A2320F5450037BC70 /* HTZDownloadManager.swift */; };
+		193F560D2320FD120037BC70 /* HTZDownloadModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193F560C2320FD120037BC70 /* HTZDownloadModel.swift */; };
 		19444CFA22F92D0D0063EF38 /* HTZSearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19444CF922F92D0D0063EF38 /* HTZSearchView.swift */; };
 		19444CFC22F97B050063EF38 /* HTZCycleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19444CFB22F97B050063EF38 /* HTZCycleView.swift */; };
+		1946C4A6231F4FAC00808F3C /* music.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 1946C4A4231F4FAC00808F3C /* music.mp3 */; };
+		1946C4A7231F4FAC00808F3C /* xfnxc_441.lrc in Resources */ = {isa = PBXBuildFile; fileRef = 1946C4A5231F4FAC00808F3C /* xfnxc_441.lrc */; };
+		1946C4AA231F508400808F3C /* HTZMusicModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1946C4A9231F508400808F3C /* HTZMusicModel.swift */; };
+		1946C4AC231F509900808F3C /* HTZMusicMessageModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1946C4AB231F509900808F3C /* HTZMusicMessageModel.swift */; };
+		1946C4AE231F61F500808F3C /* HTZLrcDataTool.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1946C4AD231F61F500808F3C /* HTZLrcDataTool.swift */; };
+		1946C4B0231F620500808F3C /* HTZLrcModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1946C4AF231F620500808F3C /* HTZLrcModel.swift */; };
+		1946C4B2231F6E9300808F3C /* UIImage+extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1946C4B1231F6E9300808F3C /* UIImage+extension.swift */; };
 		1947F4F822FA5A9500B57813 /* HTZHomeTitleCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1947F4F722FA5A9500B57813 /* HTZHomeTitleCollectionView.swift */; };
 		1947F4FA22FA5E9E00B57813 /* LeftTitleRightImageButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1947F4F922FA5E9E00B57813 /* LeftTitleRightImageButton.swift */; };
 		194E215E22B0E9F2000F96D4 /* PhotoManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 194E215D22B0E9F2000F96D4 /* PhotoManager.swift */; };
@@ -56,6 +72,10 @@
 		195DDD3522AFB29400C5F04C /* BaseCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 195DDD3422AFB29400C5F04C /* BaseCollectionViewCell.swift */; };
 		195DDD3722AFB2E900C5F04C /* BaseModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 195DDD3622AFB2E900C5F04C /* BaseModel.swift */; };
 		195DDD3922AFB30700C5F04C /* BaseViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 195DDD3822AFB30700C5F04C /* BaseViewModel.swift */; };
+		1971F391231CB5C0002FFF42 /* HTZAlbumListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1971F390231CB5C0002FFF42 /* HTZAlbumListViewController.swift */; };
+		1971F393231CB7CD002FFF42 /* Bundle+extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1971F392231CB7CD002FFF42 /* Bundle+extension.swift */; };
+		1971F395231CCA8C002FFF42 /* UIImageView+extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1971F394231CCA8C002FFF42 /* UIImageView+extension.swift */; };
+		1971F397231CFBBF002FFF42 /* HTZAlbumListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1971F396231CFBBF002FFF42 /* HTZAlbumListCell.swift */; };
 		19A957EF229BC716007B48ED /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19A957EE229BC716007B48ED /* AppDelegate.swift */; };
 		19A957F1229BC716007B48ED /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19A957F0229BC716007B48ED /* ViewController.swift */; };
 		19A957F4229BC716007B48ED /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 19A957F2229BC716007B48ED /* Main.storyboard */; };
@@ -90,6 +110,7 @@
 		0FCE7CB6951C7E7FCDE953D1 /* Pods-htz.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-htz.debug.xcconfig"; path = "Pods/Target Support Files/Pods-htz/Pods-htz.debug.xcconfig"; sourceTree = "<group>"; };
 		1935D54E2313CB3600FE2547 /* HTZProfileHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZProfileHeaderView.swift; sourceTree = "<group>"; };
 		1935D5502313D34D00FE2547 /* HTZProfileTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZProfileTableViewCell.swift; sourceTree = "<group>"; };
+		1936CADE231FA6E5001218DD /* HTZAlbumModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZAlbumModel.swift; sourceTree = "<group>"; };
 		193A8B8F2318C11A00B520B1 /* UIWindow+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIWindow+Extension.swift"; sourceTree = "<group>"; };
 		193A8B912318C62C00B520B1 /* UIViewController+Alert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Alert.swift"; sourceTree = "<group>"; };
 		193A8B932318C82000B520B1 /* CurrentViewControllerUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentViewControllerUtil.swift; sourceTree = "<group>"; };
@@ -101,8 +122,23 @@
 		193C91A122FC0C6E00E3AA4A /* HTZHomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZHomeViewModel.swift; sourceTree = "<group>"; };
 		193CB48323161CBE00A1B21F /* HTZLoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZLoginViewController.swift; sourceTree = "<group>"; };
 		193CB4862316329D00A1B21F /* HTZConstans.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZConstans.swift; sourceTree = "<group>"; };
+		193E5083231E635B000184EC /* HTZAlbumInfoModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZAlbumInfoModel.swift; sourceTree = "<group>"; };
+		193E5085231E69BE000184EC /* HTZMusicPlayTool.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZMusicPlayTool.swift; sourceTree = "<group>"; };
+		193E5087231E7184000184EC /* HTZMusicOperationTool.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZMusicOperationTool.swift; sourceTree = "<group>"; };
+		193F560423209AFD0037BC70 /* HTZHomeSearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZHomeSearchView.swift; sourceTree = "<group>"; };
+		193F56062320AA680037BC70 /* HTZAlbumListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZAlbumListViewModel.swift; sourceTree = "<group>"; };
+		193F56082320AE500037BC70 /* HTZAlbumPartModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZAlbumPartModel.swift; sourceTree = "<group>"; };
+		193F560A2320F5450037BC70 /* HTZDownloadManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZDownloadManager.swift; sourceTree = "<group>"; };
+		193F560C2320FD120037BC70 /* HTZDownloadModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZDownloadModel.swift; sourceTree = "<group>"; };
 		19444CF922F92D0D0063EF38 /* HTZSearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZSearchView.swift; sourceTree = "<group>"; };
 		19444CFB22F97B050063EF38 /* HTZCycleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZCycleView.swift; sourceTree = "<group>"; };
+		1946C4A4231F4FAC00808F3C /* music.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = music.mp3; sourceTree = "<group>"; };
+		1946C4A5231F4FAC00808F3C /* xfnxc_441.lrc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = xfnxc_441.lrc; sourceTree = "<group>"; };
+		1946C4A9231F508400808F3C /* HTZMusicModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZMusicModel.swift; sourceTree = "<group>"; };
+		1946C4AB231F509900808F3C /* HTZMusicMessageModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZMusicMessageModel.swift; sourceTree = "<group>"; };
+		1946C4AD231F61F500808F3C /* HTZLrcDataTool.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZLrcDataTool.swift; sourceTree = "<group>"; };
+		1946C4AF231F620500808F3C /* HTZLrcModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZLrcModel.swift; sourceTree = "<group>"; };
+		1946C4B1231F6E9300808F3C /* UIImage+extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+extension.swift"; sourceTree = "<group>"; };
 		1947F4F722FA5A9500B57813 /* HTZHomeTitleCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZHomeTitleCollectionView.swift; sourceTree = "<group>"; };
 		1947F4F922FA5E9E00B57813 /* LeftTitleRightImageButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeftTitleRightImageButton.swift; sourceTree = "<group>"; };
 		194E215D22B0E9F2000F96D4 /* PhotoManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoManager.swift; sourceTree = "<group>"; };
@@ -138,6 +174,10 @@
 		195DDD3422AFB29400C5F04C /* BaseCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseCollectionViewCell.swift; sourceTree = "<group>"; };
 		195DDD3622AFB2E900C5F04C /* BaseModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseModel.swift; sourceTree = "<group>"; };
 		195DDD3822AFB30700C5F04C /* BaseViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseViewModel.swift; sourceTree = "<group>"; };
+		1971F390231CB5C0002FFF42 /* HTZAlbumListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZAlbumListViewController.swift; sourceTree = "<group>"; };
+		1971F392231CB7CD002FFF42 /* Bundle+extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Bundle+extension.swift"; sourceTree = "<group>"; };
+		1971F394231CCA8C002FFF42 /* UIImageView+extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImageView+extension.swift"; sourceTree = "<group>"; };
+		1971F396231CFBBF002FFF42 /* HTZAlbumListCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZAlbumListCell.swift; sourceTree = "<group>"; };
 		19A957EB229BC716007B48ED /* htz.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = htz.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		19A957EE229BC716007B48ED /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		19A957F0229BC716007B48ED /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -197,6 +237,8 @@
 				19444CF622F92C290063EF38 /* Controller */,
 				19444CF722F92C290063EF38 /* Model */,
 				19444CF822F92C290063EF38 /* View */,
+				193F560A2320F5450037BC70 /* HTZDownloadManager.swift */,
+				193F560C2320FD120037BC70 /* HTZDownloadModel.swift */,
 			);
 			path = Common;
 			sourceTree = "<group>";
@@ -239,12 +281,26 @@
 			path = CycleScrollView;
 			sourceTree = "<group>";
 		};
+		1946C4A8231F503100808F3C /* MusicTool */ = {
+			isa = PBXGroup;
+			children = (
+				193E5085231E69BE000184EC /* HTZMusicPlayTool.swift */,
+				193E5087231E7184000184EC /* HTZMusicOperationTool.swift */,
+				1946C4AD231F61F500808F3C /* HTZLrcDataTool.swift */,
+				1946C4A9231F508400808F3C /* HTZMusicModel.swift */,
+				1946C4AB231F509900808F3C /* HTZMusicMessageModel.swift */,
+				1946C4AF231F620500808F3C /* HTZLrcModel.swift */,
+			);
+			path = MusicTool;
+			sourceTree = "<group>";
+		};
 		194E215822B0A6F7000F96D4 /* Util */ = {
 			isa = PBXGroup;
 			children = (
 				19444CFD22F97B930063EF38 /* CycleScrollView */,
 				19585DBE2317DC14009536EE /* HTZAccountThirdLoginUtil.swift */,
 				193A8B932318C82000B520B1 /* CurrentViewControllerUtil.swift */,
+				1946C4A8231F503100808F3C /* MusicTool */,
 			);
 			path = Util;
 			sourceTree = "<group>";
@@ -293,6 +349,9 @@
 				195C194D22B24745002E8A04 /* UIBarButtonItem+Extension.swift */,
 				193A8B8F2318C11A00B520B1 /* UIWindow+Extension.swift */,
 				193A8B912318C62C00B520B1 /* UIViewController+Alert.swift */,
+				1971F392231CB7CD002FFF42 /* Bundle+extension.swift */,
+				1971F394231CCA8C002FFF42 /* UIImageView+extension.swift */,
+				1946C4B1231F6E9300808F3C /* UIImage+extension.swift */,
 			);
 			path = Category;
 			sourceTree = "<group>";
@@ -397,6 +456,8 @@
 		19A9581F229BDAF5007B48ED /* Resource */ = {
 			isa = PBXGroup;
 			children = (
+				1946C4A4231F4FAC00808F3C /* music.mp3 */,
+				1946C4A5231F4FAC00808F3C /* xfnxc_441.lrc */,
 				195C195122B24973002E8A04 /* TabBar */,
 			);
 			path = Resource;
@@ -559,6 +620,7 @@
 			isa = PBXGroup;
 			children = (
 				193C91A122FC0C6E00E3AA4A /* HTZHomeViewModel.swift */,
+				193F56062320AA680037BC70 /* HTZAlbumListViewModel.swift */,
 			);
 			path = ViewModel;
 			sourceTree = "<group>";
@@ -567,6 +629,7 @@
 			isa = PBXGroup;
 			children = (
 				195C195D22B24ADC002E8A04 /* HTZHomeViewController.swift */,
+				1971F390231CB5C0002FFF42 /* HTZAlbumListViewController.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -575,6 +638,9 @@
 			isa = PBXGroup;
 			children = (
 				193C919F22FC0B3600E3AA4A /* HTZHomeTitleModel.swift */,
+				193E5083231E635B000184EC /* HTZAlbumInfoModel.swift */,
+				1936CADE231FA6E5001218DD /* HTZAlbumModel.swift */,
+				193F56082320AE500037BC70 /* HTZAlbumPartModel.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -584,6 +650,8 @@
 			children = (
 				1947F4F722FA5A9500B57813 /* HTZHomeTitleCollectionView.swift */,
 				193C919D22FC099000E3AA4A /* HTZHomeTitleCollectionViewCell.swift */,
+				1971F396231CFBBF002FFF42 /* HTZAlbumListCell.swift */,
+				193F560423209AFD0037BC70 /* HTZHomeSearchView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -924,10 +992,12 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1946C4A6231F4FAC00808F3C /* music.mp3 in Resources */,
 				19A957FC229BC717007B48ED /* LaunchScreen.storyboard in Resources */,
 				19A957F9229BC717007B48ED /* Assets.xcassets in Resources */,
 				195C195422B249A6002E8A04 /* menu.json in Resources */,
 				19A957F4229BC716007B48ED /* Main.storyboard in Resources */,
+				1946C4A7231F4FAC00808F3C /* xfnxc_441.lrc in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -974,8 +1044,11 @@
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-htz/Pods-htz-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/Alamofire/Alamofire.framework",
+				"${BUILT_PRODUCTS_DIR}/FreeStreamer/FreeStreamer.framework",
+				"${BUILT_PRODUCTS_DIR}/HandyJSON/HandyJSON.framework",
 				"${BUILT_PRODUCTS_DIR}/Kingfisher/Kingfisher.framework",
 				"${BUILT_PRODUCTS_DIR}/Moya/Moya.framework",
+				"${BUILT_PRODUCTS_DIR}/Reachability/Reachability.framework",
 				"${BUILT_PRODUCTS_DIR}/Result/Result.framework",
 				"${BUILT_PRODUCTS_DIR}/SnapKit/SnapKit.framework",
 				"${BUILT_PRODUCTS_DIR}/SwiftyJSON/SwiftyJSON.framework",
@@ -983,8 +1056,11 @@
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Alamofire.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FreeStreamer.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/HandyJSON.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Kingfisher.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Moya.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Reachability.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Result.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SnapKit.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftyJSON.framework",
@@ -1056,14 +1132,19 @@
 			buildActionMask = 2147483647;
 			files = (
 				193CB48423161CBE00A1B21F /* HTZLoginViewController.swift in Sources */,
+				193E5086231E69BE000184EC /* HTZMusicPlayTool.swift in Sources */,
 				193CB4872316329D00A1B21F /* HTZConstans.swift in Sources */,
+				1946C4AA231F508400808F3C /* HTZMusicModel.swift in Sources */,
 				195DDD2622AFAF5B00C5F04C /* UILabel+Extension.swift in Sources */,
 				195DDD3122AFB21F00C5F04C /* BaseView.swift in Sources */,
 				195C194722B24397002E8A04 /* BaseTabBarController.swift in Sources */,
 				193A8B922318C62C00B520B1 /* UIViewController+Alert.swift in Sources */,
 				195DDD3922AFB30700C5F04C /* BaseViewModel.swift in Sources */,
 				19A957F1229BC716007B48ED /* ViewController.swift in Sources */,
+				1946C4B0231F620500808F3C /* HTZLrcModel.swift in Sources */,
+				193F56072320AA680037BC70 /* HTZAlbumListViewModel.swift in Sources */,
 				19A957EF229BC716007B48ED /* AppDelegate.swift in Sources */,
+				193E5088231E7184000184EC /* HTZMusicOperationTool.swift in Sources */,
 				195DDD3322AFB24B00C5F04C /* BaseTableViewCell.swift in Sources */,
 				1935D54F2313CB3600FE2547 /* HTZProfileHeaderView.swift in Sources */,
 				1935D5512313D34D00FE2547 /* HTZProfileTableViewCell.swift in Sources */,
@@ -1077,32 +1158,45 @@
 				19585DBD2317B902009536EE /* AppDelegate+OAuth.swift in Sources */,
 				1947F4FA22FA5E9E00B57813 /* LeftTitleRightImageButton.swift in Sources */,
 				19444CFA22F92D0D0063EF38 /* HTZSearchView.swift in Sources */,
+				1936CADF231FA6E5001218DD /* HTZAlbumModel.swift in Sources */,
 				195C194922B243D1002E8A04 /* BaseTabBar.swift in Sources */,
+				1946C4AC231F509900808F3C /* HTZMusicMessageModel.swift in Sources */,
 				195C195A22B24ABB002E8A04 /* HTZPlayViewController.swift in Sources */,
 				19585DB123177B1C009536EE /* HTZNetWorkManager.swift in Sources */,
 				195DDD2822AFAF9000C5F04C /* UIView+Extension.swift in Sources */,
 				193C919E22FC099000E3AA4A /* HTZHomeTitleCollectionViewCell.swift in Sources */,
 				195DDD2F22AFB1D900C5F04C /* BaseViewController.swift in Sources */,
+				1946C4AE231F61F500808F3C /* HTZLrcDataTool.swift in Sources */,
 				193A8B9623190ACB00B520B1 /* HTZSignUpViewController.swift in Sources */,
 				193C91A022FC0B3600E3AA4A /* HTZHomeTitleModel.swift in Sources */,
 				19A957F7229BC716007B48ED /* htz.xcdatamodeld in Sources */,
 				19585DB523177D13009536EE /* MoyaConfig.swift in Sources */,
+				193F560B2320F5450037BC70 /* HTZDownloadManager.swift in Sources */,
 				194E215E22B0E9F2000F96D4 /* PhotoManager.swift in Sources */,
+				1946C4B2231F6E9300808F3C /* UIImage+extension.swift in Sources */,
 				19585DBF2317DC14009536EE /* HTZAccountThirdLoginUtil.swift in Sources */,
+				193F560D2320FD120037BC70 /* HTZDownloadModel.swift in Sources */,
+				193F56092320AE500037BC70 /* HTZAlbumPartModel.swift in Sources */,
 				195C195E22B24ADC002E8A04 /* HTZHomeViewController.swift in Sources */,
+				1971F397231CFBBF002FFF42 /* HTZAlbumListCell.swift in Sources */,
 				19510C7D22A798840067AA5D /* Constant.swift in Sources */,
 				193C91A222FC0C6E00E3AA4A /* HTZHomeViewModel.swift in Sources */,
+				193E5084231E635B000184EC /* HTZAlbumInfoModel.swift in Sources */,
 				195C194E22B24745002E8A04 /* UIBarButtonItem+Extension.swift in Sources */,
+				1971F391231CB5C0002FFF42 /* HTZAlbumListViewController.swift in Sources */,
+				1971F393231CB7CD002FFF42 /* Bundle+extension.swift in Sources */,
 				195DDD2422AF9E8500C5F04C /* Date+Extension.swift in Sources */,
 				195DDD2222AF970D00C5F04C /* String+Extension.swift in Sources */,
 				19585DB323177C75009536EE /* API.swift in Sources */,
 				195DDD2022AF944100C5F04C /* UIColor+Extension.swift in Sources */,
 				195C194C22B245FA002E8A04 /* HTZNavigationController.swift in Sources */,
 				195C195022B24847002E8A04 /* HTZTabbarViewController.swift in Sources */,
+				1971F395231CCA8C002FFF42 /* UIImageView+extension.swift in Sources */,
 				195DDD2D22AFB0B800C5F04C /* RegexHelper.swift in Sources */,
 				19444CFC22F97B050063EF38 /* HTZCycleView.swift in Sources */,
 				193A8B942318C82000B520B1 /* CurrentViewControllerUtil.swift in Sources */,
 				195C195622B24A6F002E8A04 /* HTZProfileViewController.swift in Sources */,
+				193F560523209AFD0037BC70 /* HTZHomeSearchView.swift in Sources */,
 				195C195822B24AA0002E8A04 /* HTZLearnClassicsViewController.swift in Sources */,
 				195C195C22B24ACD002E8A04 /* HTZReadClassicsViewController.swift in Sources */,
 				193C11092314CB760038B8BD /* HTZProfileFunctionView.swift in Sources */,

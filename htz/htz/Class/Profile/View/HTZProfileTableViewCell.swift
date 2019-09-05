@@ -13,7 +13,7 @@ class HTZProfileTableViewCell: BaseTableViewCell {
     var imageName: String? {
         didSet {
             if imageName!.hasPrefix("http") {
-                leftImageView.kf.setImage(with: URL(string: imageName!))
+                leftImageView.wb_setImageWith(urlStr: imageName!)
             } else {
                 leftImageView.image = UIImage(named: imageName ?? "")
             }

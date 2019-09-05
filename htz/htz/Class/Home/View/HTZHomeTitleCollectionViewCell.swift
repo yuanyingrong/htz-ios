@@ -13,7 +13,7 @@ class HTZHomeTitleCollectionViewCell: UICollectionViewCell {
     var imageName: String? {
         didSet {
             if imageName!.hasPrefix("http") {
-                imageView.kf.setImage(with: URL(string: imageName!))
+                imageView.wb_setImageWith(urlStr: imageName!)
             } else {
                 imageView.image = UIImage(named: imageName ?? "")
             }

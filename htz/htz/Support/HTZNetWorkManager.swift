@@ -14,7 +14,7 @@ import SwiftyJSON
 /// 超时时长
 private var requestTimeOut: Double = 30
 ///成功数据的回调
-typealias successCallback = ((String) -> (Void))
+typealias successCallback = ((JSON) -> (Void))
 ///失败的回调
 typealias failedCallback = ((String) -> (Void))
 ///网络错误的回调
@@ -182,7 +182,7 @@ func NetWorkRequest(_ target: API, completion: @escaping successCallback , faile
                 print(jsonData)
                 //               这里的completion和failed判断条件依据不同项目来做，为演示demo我把判断条件注释了，直接返回completion。
                 
-                completion(String(data: response.data, encoding: String.Encoding.utf8)!)
+                completion(jsonData)
                 
                 print("flag不为1000 HUD显示后台返回message"+"\(jsonData[RESULT_MESSAGE].stringValue)")
                 

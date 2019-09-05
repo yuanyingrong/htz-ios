@@ -32,4 +32,18 @@ extension Date {
         return formatter.string(from: self)
     }
     
+    static func getTimeInterval(formatTime: String) -> TimeInterval {
+        // 00:00.89  -> 多少秒
+        let minAndSec = formatTime .components(separatedBy: ":")
+        if minAndSec.count == 2 {
+            // 分钟
+            let min = TimeInterval(minAndSec[0])!
+            // 秒数
+            let sec = TimeInterval(minAndSec[1])!
+            
+            return min * 60 + sec
+        }
+        return 0
+    }
+    
 }

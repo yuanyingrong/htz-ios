@@ -10,6 +10,8 @@ import Foundation
 import Moya
 
 enum API {
+    case albums
+    case xingfuneixinchan
     case sinaOAuth(code: String)
     case register(email:String,password:String)
     //上传用户头像
@@ -29,6 +31,10 @@ extension API: TargetType {
     
     var path: String {
         switch self {
+        case .albums:
+         return "albums.json"
+        case .xingfuneixinchan:
+            return "xingfuneixinchan/xingfuneixinchan.json"
         case .sinaOAuth(_):
             return "OAuth2/authorize"
         case .easyRequset:
@@ -45,7 +51,7 @@ extension API: TargetType {
         case .easyRequset:
             return .get
         default:
-            return .post
+            return .get
         }
     }
     
@@ -59,6 +65,8 @@ extension API: TargetType {
     var task: Task {
         //        return .requestParameters(parameters: nil, encoding: JSONArrayEncoding.default)
         switch self {
+        case .albums, .xingfuneixinchan:
+            return .requestPlain
         case let .register(email, password):
             return .requestParameters(parameters: ["email": email, "password": password], encoding: JSONEncoding.default)
         case .easyRequset:

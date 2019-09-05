@@ -1,11 +1,15 @@
 PODS:
   - Alamofire (4.8.2)
+  - FreeStreamer (4.0.0):
+    - Reachability (~> 3.0)
+  - HandyJSON (5.0.0)
   - Kingfisher (5.7.0)
   - Moya (13.0.1):
     - Moya/Core (= 13.0.1)
   - Moya/Core (13.0.1):
     - Alamofire (~> 4.1)
     - Result (~> 4.1)
+  - Reachability (3.2)
   - Result (4.1.0)
   - SnapKit (4.2.0)
   - SwiftyJSON (5.0.0)
@@ -14,6 +18,8 @@ PODS:
   - Weibo_SDK (3.2.4)
 
 DEPENDENCIES:
+  - FreeStreamer
+  - HandyJSON
   - Kingfisher
   - Moya
   - SnapKit
@@ -25,8 +31,11 @@ DEPENDENCIES:
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
     - Alamofire
+    - FreeStreamer
+    - HandyJSON
     - Kingfisher
     - Moya
+    - Reachability
     - Result
     - SnapKit
     - SwiftyJSON
@@ -44,8 +53,11 @@ CHECKOUT OPTIONS:
 
 SPEC CHECKSUMS:
   Alamofire: ae5c501addb7afdbb13687d7f2f722c78734c2d3
+  FreeStreamer: 7e9c976045701ac2f7e9c14c17245203c37bf2ea
+  HandyJSON: 992f2d661716d6a91de82d0056927bc7813b5770
   Kingfisher: c7d211b54f1f30d8060aadab177d52b4349c825b
   Moya: f4a4b80ff2f8a4ffc208dfb31cd91636622fee6e
+  Reachability: 33e18b67625424e47b6cde6d202dce689ad7af96
   Result: bd966fac789cc6c1563440b348ab2598cc24d5c7
   SnapKit: fe8a619752f3f27075cc9a90244d75c6c3f27e2a
   SwiftyJSON: 36413e04c44ee145039d332b4f4e2d3e8d6c4db7
@@ -53,6 +65,6 @@ SPEC CHECKSUMS:
   WechatOpenSDK: 9b721089507c895d05f997408c30bb6e6f5f9b60
   Weibo_SDK: 977b5352ef6c5861e67c4fa1a81b916e47343713
 
-PODFILE CHECKSUM: 3cde52059130de099e8b36a6df36204b86c4203d
+PODFILE CHECKSUM: ed31a4925ae233a67cd1162df16a77b81d2be0a7
 
 COCOAPODS: 1.5.3

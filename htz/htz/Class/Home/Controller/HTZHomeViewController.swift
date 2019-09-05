@@ -10,22 +10,22 @@ import UIKit
 
 class HTZHomeViewController: BaseViewController {
     
-    lazy var homeViewModel: HTZHomeViewModel = HTZHomeViewModel()
+    private lazy var homeViewModel: HTZHomeViewModel = HTZHomeViewModel()
     
-    lazy var searchVew: HTZSearchView = HTZSearchView()
+    private lazy var searchVew: HTZHomeSearchView = HTZHomeSearchView()
     
     
     // 图片
-    let pictures = ["https://goodreading.mobi/StudentApi/UserFiles/Banner/Student/Home/banner_tz.png", "https://goodreading.mobi/StudentApi/UserFiles/Banner/Student/Home/banner_dzsyy.png", "https://goodreading.mobi/studentapi/userfiles/banner/student/home/studenttj.png"]
+    private let pictures = ["https://goodreading.mobi/StudentApi/UserFiles/Banner/Student/Home/banner_tz.png", "https://goodreading.mobi/StudentApi/UserFiles/Banner/Student/Home/banner_dzsyy.png", "https://goodreading.mobi/studentapi/userfiles/banner/student/home/studenttj.png"]
     
     // 默认滚动视图
-    lazy var cycleView: HTZCycleView = {
+    private lazy var cycleView: HTZCycleView = {
         let cycleView = HTZCycleView(frame: CGRect.zero)
         cycleView.delegate = self
         return cycleView
     }()
 
-    lazy var bottomView: HTZHomeTitleCollectionView = {
+    private lazy var bottomView: HTZHomeTitleCollectionView = {
         let view = HTZHomeTitleCollectionView()
         view.delegate = self
         return view
@@ -44,7 +44,7 @@ class HTZHomeViewController: BaseViewController {
         searchVew.snp.makeConstraints { (make) in
             make.top.equalTo(view).offset(44)
             make.left.right.equalTo(view)
-//            make.height.equalTo(66)
+            
         }
         // 滚动视图
         cycleView.pictures = pictures
@@ -58,6 +58,8 @@ class HTZHomeViewController: BaseViewController {
             make.top.equalTo(cycleView.snp_bottom)
             make.left.right.bottom.equalTo(view)
         }
+        
+        
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -70,8 +72,10 @@ class HTZHomeViewController: BaseViewController {
 
     override func configData() {
         super.configData()
-        bottomView.dataArr = homeViewModel.dataArr
-//        bottomView.
+        
+        homeViewModel.requestData(isPullDown: true) { (success) in
+            self.bottomView.dataArr = self.homeViewModel.dataArr
+        }
     }
 
 }
@@ -79,20 +83,21 @@ class HTZHomeViewController: BaseViewController {
 // MARK: - HTZCycleViewDelegate
 extension HTZHomeViewController: HTZCycleViewDelegate {
     
-    func htzCycleView(cycleView: HTZCycleView, didSelectItemAt index: Int) {
+    internal func htzCycleView(cycleView: HTZCycleView, didSelectItemAt index: Int) {
         print(index)
     }
 }
 
 // MARK: - HTZHomeTitleCollectionViewDelegate
 extension HTZHomeViewController: HTZHomeTitleCollectionViewDelegate {
-    @objc func moreButtonClickAtion() {
+    @objc internal func moreButtonClickAtion() {
         print("更多")
     }
     
-    @objc func collectionViewdidSelectItemAt(_ indexPath: IndexPath) {
-        let vc = BaseViewController()
-        vc.title = homeViewModel.dataArr[indexPath.row].title
+    @objc internal func collectionViewdidSelectItemAt(_ indexPath: IndexPath) {
+        let vc = HTZAlbumListViewController()
+        vc.title = homeViewModel.dataArr[indexPath.row]?.title
+        vc.albumModel = homeViewModel.dataArr[indexPath.row]
         navigationController?.pushViewController(vc, animated: true)
         print(indexPath.row)
     }

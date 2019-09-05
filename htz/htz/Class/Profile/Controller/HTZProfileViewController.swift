@@ -26,6 +26,7 @@ class HTZProfileViewController: BaseViewController {
         let tableView = UITableView(frame: self.view.bounds)
         tableView.delegate = self
         tableView.dataSource = self
+        tableView.separatorStyle = UITableViewCell.SeparatorStyle.none
         tableView.register(HTZProfileTableViewCell.self, forCellReuseIdentifier: "HTZProfileTableViewCellReuseID")
         return tableView
     }()

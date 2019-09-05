@@ -18,7 +18,7 @@ protocol HTZHomeTitleCollectionViewDelegate: NSObjectProtocol {
 }
 class HTZHomeTitleCollectionView: BaseView {
     
-    var dataArr: [HTZHomeImageTitle] = [] {
+    var dataArr: [HTZAlbumModel?] = [] {
         
         didSet {
             collectionView.reloadData()
@@ -124,8 +124,8 @@ extension HTZHomeTitleCollectionView: UICollectionViewDataSource, UICollectionVi
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "HTZHomeTitleCollectionViewCell", for: indexPath) as! HTZHomeTitleCollectionViewCell
-        cell.imageName = dataArr[indexPath.row].imageName
-        cell.title = dataArr[indexPath.row].title
+        cell.imageName = dataArr[indexPath.row]?.icon
+        cell.title = dataArr[indexPath.row]?.title
         return cell
     }
     
