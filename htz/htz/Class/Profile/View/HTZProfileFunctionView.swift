@@ -73,31 +73,31 @@ class HTZProfileFunctionView: BaseView {
     override func configConstraint() {
         super.configConstraint()
         
-        historyView.snp_makeConstraints { (make) in
+        historyView.snp.makeConstraints { (make) in
             make.left.top.bottom.equalTo(self)
             make.width.equalTo(kScreenWidth * 0.33)
         }
         
-        verticalLine1.snp_makeConstraints { (make) in
-            make.left.equalTo(historyView.snp_right)
+        verticalLine1.snp.makeConstraints { (make) in
+            make.left.equalTo(historyView.snp.right)
             make.top.equalTo(self).offset(16)
             make.bottom.equalTo(self).offset(-16)
             make.width.equalTo(1)
         }
         
-        subscribeView.snp_makeConstraints { (make) in
+        subscribeView.snp.makeConstraints { (make) in
             make.top.bottom.equalTo(self)
             make.centerX.equalTo(self)
             make.width.equalTo(kScreenWidth * 0.33)
         }
         
-        verticalLine2.snp_makeConstraints { (make) in
-            make.left.equalTo(subscribeView.snp_right)
+        verticalLine2.snp.makeConstraints { (make) in
+            make.left.equalTo(subscribeView.snp.right)
             make.top.bottom.width.equalTo(verticalLine1)
         }
         
-        collectView.snp_makeConstraints { (make) in
-            make.left.equalTo(verticalLine2.snp_right)
+        collectView.snp.makeConstraints { (make) in
+            make.left.equalTo(verticalLine2.snp.right)
             make.top.right.bottom.equalTo(self)
         }
     }

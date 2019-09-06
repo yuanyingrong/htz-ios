@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Alamofire
 
 class HTZAlbumListViewController: BaseViewController {
     
@@ -129,6 +130,7 @@ extension HTZAlbumListViewController: UITableViewDataSource, UITableViewDelegate
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+    
         let vc = HTZPlayViewController()
         let music = HTZMusicModel()
         music.fileName = self.albumListViewModel.dataArr[indexPath.row]?.audio
@@ -175,48 +177,48 @@ extension HTZAlbumListViewController {
         
         nameLabel.snp.makeConstraints { (make) in
             make.top.equalTo(albumImageView)
-            make.left.equalTo(albumImageView.snp_right).offset((kScreenWidth - 170)/2)
+            make.left.equalTo(albumImageView.snp.right).offset((kScreenWidth - 170)/2)
         }
         
         contentLabel.snp.makeConstraints { (make) in
-            make.top.equalTo((nameLabel.snp_bottom))
-            make.left.equalTo(albumImageView.snp_right).offset(kGlobelMargin * 0.5)
+            make.top.equalTo((nameLabel.snp.bottom))
+            make.left.equalTo(albumImageView.snp.right).offset(kGlobelMargin * 0.5)
             make.bottom.equalTo(albumImageView).offset(2 * kGlobelMargin)
             make.right.equalTo(view).offset(-2 * kGlobelMargin)
         }
         
         onlineListeningButton.snp.makeConstraints { (make) in
-            make.top.equalTo(albumImageView.snp_bottom).offset(3 * kGlobelMargin)
+            make.top.equalTo(albumImageView.snp.bottom).offset(3 * kGlobelMargin)
             make.left.equalTo(view).offset(3 * kGlobelMargin)
-            make.right.equalTo(view.snp_centerX).offset(-kGlobelMargin)
+            make.right.equalTo(view.snp.centerX).offset(-kGlobelMargin)
             make.height.equalTo(36)
         }
         
         cacheDownloadButton.snp.makeConstraints { (make) in
             make.top.height.equalTo(onlineListeningButton)
-            make.left.equalTo(view.snp_centerX).offset(kGlobelMargin)
+            make.left.equalTo(view.snp.centerX).offset(kGlobelMargin)
             make.right.equalTo(view).offset(-3 * kGlobelMargin)
         }
         
         middleLine.snp.makeConstraints { (make) in
-            make.top.equalTo(onlineListeningButton.snp_bottom).offset(2 * kGlobelMargin)
+            make.top.equalTo(onlineListeningButton.snp.bottom).offset(2 * kGlobelMargin)
             make.left.right.equalTo(view)
             make.height.equalTo(4)
         }
         
         countLabel.snp.makeConstraints { (make) in
-            make.top.equalTo(middleLine.snp_bottom).offset(2 * kGlobelMargin)
+            make.top.equalTo(middleLine.snp.bottom).offset(2 * kGlobelMargin)
             make.left.equalTo(view).offset(4 * kGlobelMargin)
         }
         
         middleSecondLine.snp.makeConstraints { (make) in
-            make.top.equalTo(countLabel.snp_bottom).offset(2 * kGlobelMargin)
+            make.top.equalTo(countLabel.snp.bottom).offset(2 * kGlobelMargin)
             make.left.right.equalTo(view)
             make.height.equalTo(1)
         }
         
         tableView.snp.makeConstraints { (make) in
-            make.top.equalTo(middleSecondLine.snp_bottom)
+            make.top.equalTo(middleSecondLine.snp.bottom)
             make.left.right.equalTo(view)
             if #available(iOS 11.0, *) {
                 make.bottom.equalTo(view.safeAreaLayoutGuide)

@@ -117,7 +117,7 @@ class HTZLoginViewController: BaseViewController {
     override func configConstraint() {
         super.configConstraint()
         
-        topImageView.snp_makeConstraints { (make) in
+        topImageView.snp.makeConstraints { (make) in
             if #available(iOS 11.0, *) {
                 make.top.equalTo(view.safeAreaLayoutGuide).offset(5.5 * kGlobelMargin)
             } else {
@@ -128,60 +128,60 @@ class HTZLoginViewController: BaseViewController {
         }
         
         userNameTextField.snp.makeConstraints { (make) in
-            make.top.equalTo(topImageView.snp_bottom).offset(8 * kGlobelMargin)
+            make.top.equalTo(topImageView.snp.bottom).offset(8 * kGlobelMargin)
             make.left.right.equalTo(view).inset(kGlobelMargin * kGlobelMargin)
             make.height.equalTo(5 * kGlobelMargin)
         }
         
         passwordTextField.snp.makeConstraints { (make) in
-            make.top.equalTo(userNameTextField.snp_bottom).offset(4 * kGlobelMargin)
+            make.top.equalTo(userNameTextField.snp.bottom).offset(4 * kGlobelMargin)
             make.left.right.height.equalTo(userNameTextField)
         }
         
         forgetPasswordButton.snp.makeConstraints { (make) in
-            make.top.equalTo(passwordTextField.snp_bottom).offset(0.5 * kGlobelMargin)
+            make.top.equalTo(passwordTextField.snp.bottom).offset(0.5 * kGlobelMargin)
             make.right.equalTo(passwordTextField)
         }
         
         leftLine.snp.makeConstraints { (make) in
             make.centerY.equalTo(middleLabel)
             make.left.equalTo(loginButton)
-            make.right.equalTo(middleLabel.snp_left).offset(-0.25 * kGlobelMargin)
+            make.right.equalTo(middleLabel.snp.left).offset(-0.25 * kGlobelMargin)
             make.height.equalTo(1)
         }
         
         middleLabel.snp.makeConstraints { (make) in
             make.centerX.equalTo(view)
-            make.top.equalTo(loginButton.snp_bottom).offset(11 * kGlobelMargin)
+            make.top.equalTo(loginButton.snp.bottom).offset(11 * kGlobelMargin)
         }
         
         rightLine.snp.makeConstraints { (make) in
             make.centerY.equalTo(middleLabel)
-            make.left.equalTo(middleLabel.snp_right).offset(0.25 * kGlobelMargin)
+            make.left.equalTo(middleLabel.snp.right).offset(0.25 * kGlobelMargin)
             make.right.equalTo(sinaButton)
             make.height.equalTo(1)
         }
         
         loginButton.snp.makeConstraints { (make) in
             make.centerX.equalTo(view)
-            make.top.equalTo(passwordTextField.snp_bottom).offset(8 * kGlobelMargin)
+            make.top.equalTo(passwordTextField.snp.bottom).offset(8 * kGlobelMargin)
             make.size.equalTo(CGSize(width: kScreenWidth * 0.6, height: CGFloat(5.5 * kGlobelMargin)))
         }
         
         wechatButton.snp.makeConstraints { (make) in
             make.top.size.equalTo(qqButton)
-            make.right.equalTo(qqButton.snp_left).offset(-24)
+            make.right.equalTo(qqButton.snp.left).offset(-24)
         }
         
         qqButton.snp.makeConstraints { (make) in
             make.centerX.equalTo(view)
-            make.top.equalTo(middleLabel.snp_bottom).offset(4 * kGlobelMargin)
+            make.top.equalTo(middleLabel.snp.bottom).offset(4 * kGlobelMargin)
             make.size.equalTo(CGSize(width: 66, height: 66))
         }
 
         sinaButton.snp.makeConstraints { (make) in
             make.top.size.equalTo(qqButton)
-            make.left.equalTo(qqButton.snp_right).offset(24)
+            make.left.equalTo(qqButton.snp.right).offset(24)
         }
         
     }

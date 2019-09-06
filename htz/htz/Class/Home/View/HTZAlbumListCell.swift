@@ -110,24 +110,24 @@ class HTZAlbumListCell: BaseTableViewCell {
         
         titleLabel.snp.makeConstraints { (make) in
             make.top.equalTo(albumImageView)
-            make.left.equalTo(albumImageView.snp_right).offset(2 * kGlobelMargin)
+            make.left.equalTo(albumImageView.snp.right).offset(2 * kGlobelMargin)
         }
         
         playCountButton.snp.makeConstraints { (make) in
             make.left.equalTo(titleLabel)
-            make.top.equalTo(titleLabel.snp_bottom)
+            make.top.equalTo(titleLabel.snp.bottom)
 //            make.size.equalTo(CGSize(width: 60, height: 28))
             make.bottom.equalTo(albumImageView)
         }
         
         timeButton.snp.makeConstraints { (make) in
             make.top.bottom.equalTo(playCountButton)
-            make.left.equalTo(playCountButton.snp_right).offset(3 * kGlobelMargin)
+            make.left.equalTo(playCountButton.snp.right).offset(3 * kGlobelMargin)
         }
         
         playTimeLabel.snp.makeConstraints { (make) in
             make.centerY.equalTo(timeButton)
-            make.left.equalTo(timeButton.snp_right).offset(3 * kGlobelMargin)
+            make.left.equalTo(timeButton.snp.right).offset(3 * kGlobelMargin)
         }
         
         downloadButton.snp.makeConstraints { (make) in
@@ -137,7 +137,7 @@ class HTZAlbumListCell: BaseTableViewCell {
         }
         
         bottomLine.snp.makeConstraints { (make) in
-            make.top.equalTo(albumImageView.snp_bottom).offset(0.5 * kGlobelMargin)
+            make.top.equalTo(albumImageView.snp.bottom).offset(0.5 * kGlobelMargin)
             make.left.bottom.right.equalTo(contentView)
             make.height.equalTo(1)
         }

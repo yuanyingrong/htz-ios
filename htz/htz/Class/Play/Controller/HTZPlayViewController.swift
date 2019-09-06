@@ -71,13 +71,13 @@ class HTZPlayViewController: BaseViewController {
         
         previousButton.snp.makeConstraints { (make) in
             make.centerY.equalTo(playButton)
-            make.right.equalTo(playButton.snp_left).offset(-4 * kGlobelMargin)
+            make.right.equalTo(playButton.snp.left).offset(-4 * kGlobelMargin)
             make.size.equalTo(CGSize(width: 40, height: 40))
         }
         
         nextButton.snp.makeConstraints { (make) in
             make.centerY.equalTo(playButton)
-            make.left.equalTo(playButton.snp_right).offset(4 * kGlobelMargin)
+            make.left.equalTo(playButton.snp.right).offset(4 * kGlobelMargin)
             make.size.equalTo(CGSize(width: 40, height: 40))
         }
     }

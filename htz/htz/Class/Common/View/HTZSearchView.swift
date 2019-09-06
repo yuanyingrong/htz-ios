@@ -76,7 +76,7 @@ extension HTZSearchView {
         
         searchBar.snp.makeConstraints { (make) in
             make.top.equalTo(contentView).offset(4)
-            make.left.equalTo(leftImageView.snp_rightMargin).offset(16)
+            make.left.equalTo(leftImageView.snp.rightMargin).offset(16)
             make.right.equalTo(contentView).offset(-8)
             make.height.equalTo(44)
             make.bottom.equalTo(contentView).offset(-4)

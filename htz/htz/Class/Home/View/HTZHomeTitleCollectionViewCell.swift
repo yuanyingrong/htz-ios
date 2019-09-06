@@ -62,7 +62,7 @@ class HTZHomeTitleCollectionViewCell: UICollectionViewCell {
         }
         
         label.snp.makeConstraints { (make) in
-            make.top.equalTo(imageView.snp_bottom)
+            make.top.equalTo(imageView.snp.bottom)
             make.centerX.equalTo(self.contentView)
             make.height.equalTo(24)
             make.bottom.equalTo(self.contentView).offset(-8)

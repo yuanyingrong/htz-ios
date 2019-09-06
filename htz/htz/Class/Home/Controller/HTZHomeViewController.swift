@@ -49,13 +49,13 @@ class HTZHomeViewController: BaseViewController {
         // 滚动视图
         cycleView.pictures = pictures
         cycleView.snp.makeConstraints { (make) in
-            make.top.equalTo(searchVew.snp_bottom).offset(16)
+            make.top.equalTo(searchVew.snp.bottom).offset(16)
             make.height.equalTo(180)
             make.left.right.equalTo(view)
         }
         
         bottomView.snp.makeConstraints { (make) in
-            make.top.equalTo(cycleView.snp_bottom)
+            make.top.equalTo(cycleView.snp.bottom)
             make.left.right.bottom.equalTo(view)
         }
         

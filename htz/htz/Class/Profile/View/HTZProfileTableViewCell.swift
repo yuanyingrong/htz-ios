@@ -61,24 +61,24 @@ class HTZProfileTableViewCell: BaseTableViewCell {
     override func configConstraint() {
         super.configConstraint()
         
-        leftImageView.snp_makeConstraints { (make) in
+        leftImageView.snp.makeConstraints { (make) in
             make.left.top.equalTo(contentView).offset(20)
             make.size.equalTo(CGSize(width: 44, height: 44))
             make.bottom.equalTo(contentView).offset(-16)
         }
         
-        label.snp_makeConstraints { (make) in
-            make.left.equalTo(leftImageView.snp_right).offset(16)
+        label.snp.makeConstraints { (make) in
+            make.left.equalTo(leftImageView.snp.right).offset(16)
             make.centerY.equalTo(leftImageView)
         }
         
-        arrowImageView.snp_makeConstraints { (make) in
+        arrowImageView.snp.makeConstraints { (make) in
             make.right.equalTo(contentView).offset(-16)
             make.size.equalTo(CGSize(width: 14, height: 14))
             make.centerY.equalTo(contentView)
         }
         
-        bottomLine.snp_makeConstraints { (make) in
+        bottomLine.snp.makeConstraints { (make) in
             make.left.bottom.right.equalTo(contentView)
             make.height.equalTo(1)
         }

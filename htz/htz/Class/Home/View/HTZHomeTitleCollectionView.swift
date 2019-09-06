@@ -81,28 +81,28 @@ class HTZHomeTitleCollectionView: BaseView {
     override func configConstraint() {
         super.configConstraint()
         
-        titleView.snp_makeConstraints { (make) in
+        titleView.snp.makeConstraints { (make) in
             make.left.top.right.equalTo(self)
             make.height.equalTo(44)
         }
         
-        leftImageView.snp_makeConstraints { (make) in
+        leftImageView.snp.makeConstraints { (make) in
             make.left.equalTo(titleView).offset(16)
             make.centerY.equalTo(titleView)
         }
         
-        leftLabel.snp_makeConstraints { (make) in
-            make.left.equalTo(leftImageView.snp_right).offset(4)
+        leftLabel.snp.makeConstraints { (make) in
+            make.left.equalTo(leftImageView.snp.right).offset(4)
             make.centerY.equalTo(titleView)
         }
         
-        rightButton.snp_makeConstraints { (make) in
+        rightButton.snp.makeConstraints { (make) in
             make.centerY.equalTo(titleView)
             make.right.equalTo(titleView).offset(-16)
         }
         
-        collectionView.snp_makeConstraints { (make) in
-            make.top.equalTo(titleView.snp_bottom)
+        collectionView.snp.makeConstraints { (make) in
+            make.top.equalTo(titleView.snp.bottom)
             make.left.right.bottom.equalTo(self)
         }
     }

@@ -210,7 +210,6 @@ func NetWorkRequest(_ target: API, completion: @escaping successCallback , faile
     }
 }
 
-
 /// 基于Alamofire,网络是否连接，，这个方法不建议放到这个类中,可以放在全局的工具类中判断网络链接情况
 /// 用get方法是因为这样才会在获取isNetworkConnect时实时判断网络链接请求，如有更好的方法可以fork
 var isNetworkConnect: Bool {

@@ -77,35 +77,35 @@ class HTZProfileHeaderView: BaseView {
     override func configConstraint() {
         super.configConstraint()
         
-        bgImageView.snp_makeConstraints { (make) in
+        bgImageView.snp.makeConstraints { (make) in
             make.left.top.right.equalTo(self)
             make.height.equalTo(200)
         }
         
-        iconImageView.snp_makeConstraints { (make) in
+        iconImageView.snp.makeConstraints { (make) in
             make.left.equalTo(bgImageView).offset(16)
             make.size.equalTo(CGSize(width: 44, height: 44))
             make.bottom.equalTo(bgImageView).offset(-16)
         }
         
-        nameButton.snp_makeConstraints { (make) in
+        nameButton.snp.makeConstraints { (make) in
             make.centerY.equalTo(iconImageView)
-            make.left.equalTo(iconImageView.snp_right).offset(32)
+            make.left.equalTo(iconImageView.snp.right).offset(32)
         }
         
-        arrowImageView.snp_makeConstraints { (make) in
+        arrowImageView.snp.makeConstraints { (make) in
             make.centerY.equalTo(iconImageView)
             make.size.equalTo(CGSize(width: 14, height: 14))
             make.right.equalTo(bgImageView).offset(-32)
         }
         
-        functionView.snp_makeConstraints { (make) in
+        functionView.snp.makeConstraints { (make) in
             make.left.right.equalTo(self)
-            make.top.equalTo(bgImageView.snp_bottom)
+            make.top.equalTo(bgImageView.snp.bottom)
             make.height.equalTo(66)
         }
         
-        iDownloadsButton.snp_makeConstraints { (make) in
+        iDownloadsButton.snp.makeConstraints { (make) in
             make.centerX.equalTo(self)
             make.size.equalTo(CGSize(width: 0.8 * kScreenWidth, height: 44))
             make.bottom.equalTo(self).offset(-16)

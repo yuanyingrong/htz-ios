@@ -99,7 +99,7 @@ class HTZSignUpViewController: BaseViewController {
     override func configConstraint() {
         super.configConstraint()
         
-        topImageView.snp_makeConstraints { (make) in
+        topImageView.snp.makeConstraints { (make) in
             if #available(iOS 11.0, *) {
                 make.top.equalTo(view.safeAreaLayoutGuide).offset(5.5 * kGlobelMargin)
             } else {
@@ -110,41 +110,41 @@ class HTZSignUpViewController: BaseViewController {
         }
         
         mobileTextField.snp.makeConstraints { (make) in
-            make.top.equalTo(topImageView.snp_bottom).offset(8 * kGlobelMargin)
+            make.top.equalTo(topImageView.snp.bottom).offset(8 * kGlobelMargin)
             make.left.right.equalTo(view).inset(kGlobelMargin * kGlobelMargin)
             make.height.equalTo(5 * kGlobelMargin)
         }
         
         codeTextField.snp.makeConstraints { (make) in
-            make.top.equalTo(mobileTextField.snp_bottom).offset(4 * kGlobelMargin)
+            make.top.equalTo(mobileTextField.snp.bottom).offset(4 * kGlobelMargin)
             make.left.height.equalTo(mobileTextField)
         }
 
         sendCodeButton.snp.makeConstraints { (make) in
-            make.left.equalTo(codeTextField.snp_right).offset(kGlobelMargin)
+            make.left.equalTo(codeTextField.snp.right).offset(kGlobelMargin)
             make.centerY.equalTo(codeTextField)
             make.right.equalTo(mobileTextField)
             make.width.equalTo(16 * kGlobelMargin)
         }
 
         userNameTextField.snp.makeConstraints { (make) in
-            make.top.equalTo(codeTextField.snp_bottom).offset(4 * kGlobelMargin)
+            make.top.equalTo(codeTextField.snp.bottom).offset(4 * kGlobelMargin)
             make.left.right.height.equalTo(mobileTextField)
         }
 
         passwordTextField.snp.makeConstraints { (make) in
-            make.top.equalTo(userNameTextField.snp_bottom).offset(4 * kGlobelMargin)
+            make.top.equalTo(userNameTextField.snp.bottom).offset(4 * kGlobelMargin)
             make.left.right.height.equalTo(userNameTextField)
         }
 
         protocolButton.snp.makeConstraints { (make) in
-            make.top.equalTo(passwordTextField.snp_bottom).offset(0.5 * kGlobelMargin)
+            make.top.equalTo(passwordTextField.snp.bottom).offset(0.5 * kGlobelMargin)
             make.centerX.equalTo(view)
         }
 
         signUpButton.snp.makeConstraints { (make) in
             make.centerX.equalTo(view)
-            make.top.equalTo(protocolButton.snp_bottom).offset(8 * kGlobelMargin)
+            make.top.equalTo(protocolButton.snp.bottom).offset(8 * kGlobelMargin)
             make.size.equalTo(CGSize(width: kScreenWidth * 0.6, height: CGFloat(5.5 * kGlobelMargin)))
         }
         
