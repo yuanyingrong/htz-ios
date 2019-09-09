@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1934795D232636D300138B36 /* HTZAudioPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1934795C232636D300138B36 /* HTZAudioPlayer.swift */; };
 		1935D54F2313CB3600FE2547 /* HTZProfileHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1935D54E2313CB3600FE2547 /* HTZProfileHeaderView.swift */; };
 		1935D5512313D34D00FE2547 /* HTZProfileTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1935D5502313D34D00FE2547 /* HTZProfileTableViewCell.swift */; };
 		1936CADF231FA6E5001218DD /* HTZAlbumModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1936CADE231FA6E5001218DD /* HTZAlbumModel.swift */; };
@@ -108,6 +109,7 @@
 
 /* Begin PBXFileReference section */
 		0FCE7CB6951C7E7FCDE953D1 /* Pods-htz.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-htz.debug.xcconfig"; path = "Pods/Target Support Files/Pods-htz/Pods-htz.debug.xcconfig"; sourceTree = "<group>"; };
+		1934795C232636D300138B36 /* HTZAudioPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZAudioPlayer.swift; sourceTree = "<group>"; };
 		1935D54E2313CB3600FE2547 /* HTZProfileHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZProfileHeaderView.swift; sourceTree = "<group>"; };
 		1935D5502313D34D00FE2547 /* HTZProfileTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZProfileTableViewCell.swift; sourceTree = "<group>"; };
 		1936CADE231FA6E5001218DD /* HTZAlbumModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZAlbumModel.swift; sourceTree = "<group>"; };
@@ -237,6 +239,7 @@
 				19444CF622F92C290063EF38 /* Controller */,
 				19444CF722F92C290063EF38 /* Model */,
 				19444CF822F92C290063EF38 /* View */,
+				1934795C232636D300138B36 /* HTZAudioPlayer.swift */,
 				193F560A2320F5450037BC70 /* HTZDownloadManager.swift */,
 				193F560C2320FD120037BC70 /* HTZDownloadModel.swift */,
 			);
@@ -1141,6 +1144,7 @@
 				193A8B922318C62C00B520B1 /* UIViewController+Alert.swift in Sources */,
 				195DDD3922AFB30700C5F04C /* BaseViewModel.swift in Sources */,
 				19A957F1229BC716007B48ED /* ViewController.swift in Sources */,
+				1934795D232636D300138B36 /* HTZAudioPlayer.swift in Sources */,
 				1946C4B0231F620500808F3C /* HTZLrcModel.swift in Sources */,
 				193F56072320AA680037BC70 /* HTZAlbumListViewModel.swift in Sources */,
 				19A957EF229BC716007B48ED /* AppDelegate.swift in Sources */,
@@ -1382,7 +1386,10 @@
 				DEVELOPMENT_TEAM = 5YDX4S4EQ5;
 				INFOPLIST_FILE = htz/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.yuanyingrong.ios.htz;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "htz/htz-Bridging-Header.h";
@@ -1402,7 +1409,10 @@
 				DEVELOPMENT_TEAM = 5YDX4S4EQ5;
 				INFOPLIST_FILE = htz/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.yuanyingrong.ios.htz;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "htz/htz-Bridging-Header.h";
@@ -1419,7 +1429,11 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				INFOPLIST_FILE = htzTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.yyr.ios.www.htzTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -1436,7 +1450,11 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				INFOPLIST_FILE = htzTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.yyr.ios.www.htzTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -1452,7 +1470,11 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				INFOPLIST_FILE = htzUITests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.yyr.ios.www.htzUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -1468,7 +1490,11 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				INFOPLIST_FILE = htzUITests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.yyr.ios.www.htzUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
