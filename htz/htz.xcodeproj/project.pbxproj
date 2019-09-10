@@ -22,6 +22,9 @@
 		193C91A222FC0C6E00E3AA4A /* HTZHomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193C91A122FC0C6E00E3AA4A /* HTZHomeViewModel.swift */; };
 		193CB48423161CBE00A1B21F /* HTZLoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193CB48323161CBE00A1B21F /* HTZLoginViewController.swift */; };
 		193CB4872316329D00A1B21F /* HTZConstans.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193CB4862316329D00A1B21F /* HTZConstans.swift */; };
+		193D7D8823273857001A5F21 /* HTZSliderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193D7D8723273857001A5F21 /* HTZSliderView.swift */; };
+		193D7D8A2327574E001A5F21 /* HTZMusicControlView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193D7D892327574E001A5F21 /* HTZMusicControlView.swift */; };
+		193D7D8C23277090001A5F21 /* HTZMusicTool.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193D7D8B23277090001A5F21 /* HTZMusicTool.swift */; };
 		193E5084231E635B000184EC /* HTZAlbumInfoModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193E5083231E635B000184EC /* HTZAlbumInfoModel.swift */; };
 		193E5086231E69BE000184EC /* HTZMusicPlayTool.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193E5085231E69BE000184EC /* HTZMusicPlayTool.swift */; };
 		193E5088231E7184000184EC /* HTZMusicOperationTool.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193E5087231E7184000184EC /* HTZMusicOperationTool.swift */; };
@@ -124,6 +127,9 @@
 		193C91A122FC0C6E00E3AA4A /* HTZHomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZHomeViewModel.swift; sourceTree = "<group>"; };
 		193CB48323161CBE00A1B21F /* HTZLoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZLoginViewController.swift; sourceTree = "<group>"; };
 		193CB4862316329D00A1B21F /* HTZConstans.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZConstans.swift; sourceTree = "<group>"; };
+		193D7D8723273857001A5F21 /* HTZSliderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZSliderView.swift; sourceTree = "<group>"; };
+		193D7D892327574E001A5F21 /* HTZMusicControlView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZMusicControlView.swift; sourceTree = "<group>"; };
+		193D7D8B23277090001A5F21 /* HTZMusicTool.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZMusicTool.swift; sourceTree = "<group>"; };
 		193E5083231E635B000184EC /* HTZAlbumInfoModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZAlbumInfoModel.swift; sourceTree = "<group>"; };
 		193E5085231E69BE000184EC /* HTZMusicPlayTool.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZMusicPlayTool.swift; sourceTree = "<group>"; };
 		193E5087231E7184000184EC /* HTZMusicOperationTool.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZMusicOperationTool.swift; sourceTree = "<group>"; };
@@ -242,6 +248,7 @@
 				1934795C232636D300138B36 /* HTZAudioPlayer.swift */,
 				193F560A2320F5450037BC70 /* HTZDownloadManager.swift */,
 				193F560C2320FD120037BC70 /* HTZDownloadModel.swift */,
+				193D7D8B23277090001A5F21 /* HTZMusicTool.swift */,
 			);
 			path = Common;
 			sourceTree = "<group>";
@@ -272,6 +279,7 @@
 			children = (
 				19444CF922F92D0D0063EF38 /* HTZSearchView.swift */,
 				1947F4F922FA5E9E00B57813 /* LeftTitleRightImageButton.swift */,
+				193D7D8723273857001A5F21 /* HTZSliderView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -695,6 +703,7 @@
 		19A95838229BDCFF007B48ED /* View */ = {
 			isa = PBXGroup;
 			children = (
+				193D7D892327574E001A5F21 /* HTZMusicControlView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -1155,9 +1164,11 @@
 				195DDD3522AFB29400C5F04C /* BaseCollectionViewCell.swift in Sources */,
 				1947F4F822FA5A9500B57813 /* HTZHomeTitleCollectionView.swift in Sources */,
 				195DDD3722AFB2E900C5F04C /* BaseModel.swift in Sources */,
+				193D7D8C23277090001A5F21 /* HTZMusicTool.swift in Sources */,
 				195C19C822B25BE5002E8A04 /* JsonHelper.swift in Sources */,
 				195DDD2A22AFAFC300C5F04C /* UIButton+Extension.swift in Sources */,
 				193A8B902318C11A00B520B1 /* UIWindow+Extension.swift in Sources */,
+				193D7D8823273857001A5F21 /* HTZSliderView.swift in Sources */,
 				193C11072314C70E0038B8BD /* HTZLabelView.swift in Sources */,
 				19585DBD2317B902009536EE /* AppDelegate+OAuth.swift in Sources */,
 				1947F4FA22FA5E9E00B57813 /* LeftTitleRightImageButton.swift in Sources */,
@@ -1172,6 +1183,7 @@
 				195DDD2F22AFB1D900C5F04C /* BaseViewController.swift in Sources */,
 				1946C4AE231F61F500808F3C /* HTZLrcDataTool.swift in Sources */,
 				193A8B9623190ACB00B520B1 /* HTZSignUpViewController.swift in Sources */,
+				193D7D8A2327574E001A5F21 /* HTZMusicControlView.swift in Sources */,
 				193C91A022FC0B3600E3AA4A /* HTZHomeTitleModel.swift in Sources */,
 				19A957F7229BC716007B48ED /* htz.xcdatamodeld in Sources */,
 				19585DB523177D13009536EE /* MoyaConfig.swift in Sources */,

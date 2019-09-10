@@ -21,6 +21,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         window?.backgroundColor = UIColor.white
         window?.rootViewController = HTZTabbarViewController()
         window?.makeKeyAndVisible()
+        
+        // 初始化播放器
+        HTZPlayViewController.sharedInstance.initialData()
 
         return true
     }

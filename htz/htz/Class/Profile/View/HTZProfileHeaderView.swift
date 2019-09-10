@@ -19,7 +19,7 @@ protocol HTZProfileHeaderViewDelegate: NSObjectProtocol {
 }
 class HTZProfileHeaderView: BaseView {
     
-    weak var delegate:HTZProfileHeaderViewDelegate?
+    weak var delegate: HTZProfileHeaderViewDelegate?
     
     private lazy var bgImageView: UIImageView = {
         let bgImageView = UIImageView(image: UIImage(named: "my_bk"))

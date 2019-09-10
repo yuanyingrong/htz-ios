@@ -28,6 +28,8 @@ enum HTZAudioBufferState {
     case finished
 }
 
+let kPlayer = HTZAudioPlayer.sharedInstance
+
 protocol HTZAudioPlayerDelegate: NSObjectProtocol {
     
     /// 播放器状态改变
@@ -54,51 +56,31 @@ class HTZAudioPlayer: NSObject {
     var bufferState: HTZAudioBufferState?
     
     /// 播放地址（网络或本地）
+    private var _playUrlStr: String?
     var playUrlStr: String? {
-        willSet {
+ 
+        get {
+            return _playUrlStr
+        }
+        set {
             if playUrlStr != newValue {
                 // 切换数据，清除缓存
                 self.removeCache()
 
-                playUrlStr = newValue
-            }
-        }
-        
-        didSet {
-            
-            if let playUrlStr = playUrlStr, playUrlStr.hasSuffix("http") {
-                DispatchQueue.main.async {
-                    self.audioStream.url = NSURL(string: playUrlStr)
-                }
-            } else {
-                DispatchQueue.main.async {
-                    if let playUrlStr = self.playUrlStr {
-                       self.audioStream.url = NSURL(fileURLWithPath: playUrlStr)
+                _playUrlStr = newValue
+
+                if _playUrlStr!.hasSuffix("http") {
+                    
+                    DispatchQueue.main.async {
+                        self.audioStream.url = NSURL(string: self._playUrlStr!)
+                    }
+                } else {
+                    DispatchQueue.main.async {
+                        self.audioStream.url = NSURL(fileURLWithPath: self._playUrlStr!)
                     }
                 }
             }
         }
-//        get {
-//            return playUrlStr
-//        }
-//        set {
-//            if playUrlStr != newValue {
-//                // 切换数据，清除缓存
-//                self.removeCache()
-//
-//                playUrlStr = newValue
-//
-//                if playUrlStr.hasSuffix("http") {
-//                    DispatchQueue.main.async {
-//                        self.audioStream.url = NSURL(string: playUrlStr)
-//                    }
-//                } else {
-//                    DispatchQueue.main.async {
-//                        self.audioStream.url = NSURL(fileURLWithPath: playUrlStr)
-//                    }
-//                }
-//            }
-//        }
         
     }
     

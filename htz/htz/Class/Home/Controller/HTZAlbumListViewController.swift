@@ -97,6 +97,9 @@ class HTZAlbumListViewController: BaseViewController {
                 self.tableView.reloadData()
             }
         }
+        albumListViewModel.requestSongData(isPullDown: true) { (sucess) in
+            
+        }
     }
 
 }
@@ -131,7 +134,7 @@ extension HTZAlbumListViewController: UITableViewDataSource, UITableViewDelegate
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
     
-        let vc = HTZPlayViewController()
+        let vc = HTZPlayViewController.sharedInstance
         let music = HTZMusicModel()
         music.fileName = self.albumListViewModel.dataArr[indexPath.row]?.audio
         music.lrcName = self.albumListViewModel.dataArr[indexPath.row]?.lyric
@@ -139,7 +142,8 @@ extension HTZAlbumListViewController: UITableViewDataSource, UITableViewDelegate
 //        music.icon = "chuan_xi_lu"
 //        music.singer = "dddd"
 //        music.singerIcon = "chuan_xi_lu"
-        HTZMusicOperationTool.sharedInstance.playMusic(music:music)
+        vc.setPlayerList(playList: self.albumListViewModel.dataSongArr as! [HTZMusicModel])
+        vc.playMusic(index: indexPath.row, isSetList: true)
         navigationController?.pushViewController(vc, animated: true)
         
     }

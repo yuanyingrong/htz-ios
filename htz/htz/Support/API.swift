@@ -12,6 +12,7 @@ import Moya
 enum API {
     case albums
     case xingfuneixinchan
+    case song
     case sinaOAuth(code: String)
     case register(email:String,password:String)
     //上传用户头像
@@ -24,6 +25,8 @@ extension API: TargetType {
         switch self {
         case .sinaOAuth:
             return URL.init(string:"https://api.weibo.com/")!
+        case .song:
+            return URL.init(string:"https://musicapi.qianqian.com/v1/restserver/ting?format=json&from=ios&channel=appstore&method=baidu.ting.billboard.billList&type=1&size=20&offset=0")!
         default:
             return URL.init(string:(Moya_baseURL))!
         }
@@ -65,7 +68,7 @@ extension API: TargetType {
     var task: Task {
         //        return .requestParameters(parameters: nil, encoding: JSONArrayEncoding.default)
         switch self {
-        case .albums, .xingfuneixinchan:
+        case .albums, .xingfuneixinchan, .song:
             return .requestPlain
         case let .register(email, password):
             return .requestParameters(parameters: ["email": email, "password": password], encoding: JSONEncoding.default)
