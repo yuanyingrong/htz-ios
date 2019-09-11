@@ -12,7 +12,8 @@ import Moya
 enum API {
     case albums
     case xingfuneixinchan
-    case song
+    case song(type: String, size: String, offset: String)
+    case songDetail(songId: String)
     case sinaOAuth(code: String)
     case register(email:String,password:String)
     //上传用户头像
@@ -25,8 +26,8 @@ extension API: TargetType {
         switch self {
         case .sinaOAuth:
             return URL.init(string:"https://api.weibo.com/")!
-        case .song:
-            return URL.init(string:"https://musicapi.qianqian.com/v1/restserver/ting?format=json&from=ios&channel=appstore&method=baidu.ting.billboard.billList&type=1&size=20&offset=0")!
+        case .song(_), .songDetail(_):
+            return URL.init(string:"https://musicapi.qianqian.com/v1/restserver/ting?format=json&from=ios&channel=appstore&method=")!
         default:
             return URL.init(string:(Moya_baseURL))!
         }
@@ -40,6 +41,10 @@ extension API: TargetType {
             return "xingfuneixinchan/xingfuneixinchan.json"
         case .sinaOAuth(_):
             return "OAuth2/authorize"
+        case let .song(type, size, offset):
+            return "baidu.ting.billboard.billList&type=\(type)&size=\(size)&offset=\(offset)"
+        case let .songDetail(songId):
+            return "baidu.ting.song.play&songid=\(songId)"
         case .easyRequset:
             return "4/news/latest"
         case .uploadHeadImage( _):
@@ -68,7 +73,8 @@ extension API: TargetType {
     var task: Task {
         //        return .requestParameters(parameters: nil, encoding: JSONArrayEncoding.default)
         switch self {
-        case .albums, .xingfuneixinchan, .song:
+        
+        case .albums, .xingfuneixinchan, .song(_), .songDetail(_):
             return .requestPlain
         case let .register(email, password):
             return .requestParameters(parameters: ["email": email, "password": password], encoding: JSONEncoding.default)

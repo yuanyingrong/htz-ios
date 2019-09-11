@@ -21,6 +21,7 @@ class HTZMusicTool: NSObject {
     ///
     /// - Parameter musicList: 当前正在播放的音乐列表
     static func save(musicList: [HTZMusicModel]) {
+        
         NSKeyedArchiver.archiveRootObject(musicList, toFile: kDataPath!)
     }
     
@@ -35,13 +36,15 @@ class HTZMusicTool: NSObject {
         return nil
     }
     
-    static func lovedMusicList() -> [HTZMusicModel] {
-        return NSKeyedUnarchiver.unarchiveObject(withFile: kLovedDataPath!) as! [HTZMusicModel]
+    static func lovedMusicList() -> [HTZMusicModel]? {
+        return NSKeyedUnarchiver.unarchiveObject(withFile: kLovedDataPath!) as? [HTZMusicModel]
     }
     
     static func love(music: HTZMusicModel) {
-        var arr = lovedMusicList()
-        
+        var arr = [HTZMusicModel]()
+        if let lovedMusicList = lovedMusicList() {
+            arr = lovedMusicList
+        }
         if music.isLove! {
             var exist = false
             for obj in arr {
@@ -81,7 +84,11 @@ class HTZMusicTool: NSObject {
     }
     
     static func save(model: HTZMusicModel) {
-        var musics = lovedMusicList()
+        
+        var musics = [HTZMusicModel]()
+        if let lovedMusicList = lovedMusicList() {
+            musics = lovedMusicList
+        }
         for (idx, obj) in musics.enumerated() {
             if obj.song_id == model.song_id {
                 musics[idx] = obj

@@ -150,7 +150,7 @@ extension HTZMusicOperationTool {
         }
         
         // 1.1 字典信息
-        let songName = musicMessageModel.musicModel?.name
+        let songName = musicMessageModel.musicModel?.song_name
         let singerName = musicMessageModel.musicModel?.singer
         let costTime = musicMessageModel.costTime
         let totalTime = musicMessageModel.totalTime

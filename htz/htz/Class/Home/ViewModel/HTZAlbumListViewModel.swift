@@ -27,7 +27,7 @@ class HTZAlbumListViewModel: NSObject {
     }
     
     func requestSongData(isPullDown: Bool, callBack: @escaping (Bool) -> ()) {
-        NetWorkRequest(API.song) { (response) -> (Void) in
+        NetWorkRequest(API.song(type: "1", size: "20", offset: "1")) { (response) -> (Void) in
             
             let arr = [HTZMusicModel].deserialize(from: response["song_list"].rawString())
             if let arr = arr {

@@ -10,7 +10,7 @@ import UIKit
 import FreeStreamer
 
 // 播放器播放状态
-enum HTZAudioPlayerState {
+@objc enum HTZAudioPlayerState: NSInteger {
     case loading          // 加载中
     case buffering        // 缓冲中
     case playing          // 播放
@@ -33,16 +33,16 @@ let kPlayer = HTZAudioPlayer.sharedInstance
 protocol HTZAudioPlayerDelegate: NSObjectProtocol {
     
     /// 播放器状态改变
-    func playerStatusChanged(player: HTZAudioPlayer, status: HTZAudioPlayerState)
+    func playerStatusChanged(_ player: HTZAudioPlayer, _ status: HTZAudioPlayerState)
     
     /// 播放时间（单位：毫秒)、总时间（单位：毫秒）、进度（播放时间 / 总时间）
-    func playerProgress(player: HTZAudioPlayer, currentTime: TimeInterval, totalTime: TimeInterval, progress: Float)
+    func playerProgress(_ player: HTZAudioPlayer, _ currentTime: TimeInterval, _ totalTime: TimeInterval, _ progress: Float)
     
     /// 总时间（单位：毫秒）
-    func playerTotalTime(player: HTZAudioPlayer, totalTime: TimeInterval)
+    func playerTotalTime(_ player: HTZAudioPlayer, _ totalTime: TimeInterval)
     
     /// 缓冲进度
-    func playerBufferProgress(player: HTZAudioPlayer, bufferProgress: Float)
+    func playerBufferProgress(_ player: HTZAudioPlayer, _ bufferProgress: Float)
 }
 
 class HTZAudioPlayer: NSObject {
@@ -69,7 +69,7 @@ class HTZAudioPlayer: NSObject {
 
                 _playUrlStr = newValue
 
-                if _playUrlStr!.hasSuffix("http") {
+                if _playUrlStr!.hasPrefix("http") {
                     
                     DispatchQueue.main.async {
                         self.audioStream.url = NSURL(string: self._playUrlStr!)
@@ -209,7 +209,7 @@ class HTZAudioPlayer: NSObject {
     func play() {
         if self.playerState == HTZAudioPlayerState.playing { return }
         
-        assert(self.playUrlStr == nil, "url不能为空")
+        assert(self.playUrlStr != nil, "url不能为空")
 
         
         DispatchQueue.main.async {
@@ -303,7 +303,7 @@ class HTZAudioPlayer: NSObject {
     
     private func setupPlayerState(state: HTZAudioPlayerState) {
         if let delegate = self.delegate, delegate.responds(to: Selector(("playerStatusChanged::"))) {
-            delegate.playerStatusChanged(player: self, status: state)
+            delegate.playerStatusChanged(self, state)
         }
     }
     
@@ -341,11 +341,11 @@ class HTZAudioPlayer: NSObject {
             let progress = cur.position
             
             if let delegate = self.delegate, delegate.responds(to: Selector(("playerProgress::::"))) {
-                delegate.playerProgress(player: self, currentTime: TimeInterval(currentTime), totalTime: TimeInterval(totalTime), progress: progress)
+                delegate.playerProgress(self, TimeInterval(currentTime), TimeInterval(totalTime), progress)
             }
             
             if let delegate = self.delegate, delegate.responds(to: Selector(("playerTotalTime::"))) {
-                delegate.playerTotalTime(player: self, totalTime: TimeInterval(totalTime))
+                delegate.playerTotalTime(self, TimeInterval(totalTime))
             }
         }
     }
@@ -375,7 +375,7 @@ class HTZAudioPlayer: NSObject {
             }
             
             if let delegate = self.delegate, delegate.responds(to: Selector(("playerBufferProgress::"))) {
-                delegate.playerBufferProgress(player: self, bufferProgress: bufferProgress)
+                delegate.playerBufferProgress(self, bufferProgress)
             }
         }
     }

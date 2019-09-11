@@ -135,10 +135,10 @@ extension HTZAlbumListViewController: UITableViewDataSource, UITableViewDelegate
         tableView.deselectRow(at: indexPath, animated: true)
     
         let vc = HTZPlayViewController.sharedInstance
-        let music = HTZMusicModel()
-        music.fileName = self.albumListViewModel.dataArr[indexPath.row]?.audio
-        music.lrcName = self.albumListViewModel.dataArr[indexPath.row]?.lyric
-        music.name = self.albumListViewModel.dataArr[indexPath.row]?.title
+//        let music = HTZMusicModel()
+//        music.fileName = self.albumListViewModel.dataArr[indexPath.row]?.audio
+//        music.lrcName = self.albumListViewModel.dataArr[indexPath.row]?.lyric
+//        music.name = self.albumListViewModel.dataArr[indexPath.row]?.title
 //        music.icon = "chuan_xi_lu"
 //        music.singer = "dddd"
 //        music.singerIcon = "chuan_xi_lu"

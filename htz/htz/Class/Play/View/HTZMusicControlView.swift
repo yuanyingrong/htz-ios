@@ -133,13 +133,13 @@ class HTZMusicControlView: BaseView {
     }
     
     func showLoadingAnim() {
-        if self.isLoading! { return }
+        if let isLoading = self.isLoading, isLoading { return }
         self.isLoading = true
         self.slider.showLoading()
     }
     
     func hideLoadingAnim() {
-        if !self.isLoading! { return }
+        guard let isLoading = self.isLoading, isLoading else { return }
         self.isLoading = false
         self.slider.hideLoading()
     }

@@ -45,6 +45,8 @@
 		1947F4F822FA5A9500B57813 /* HTZHomeTitleCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1947F4F722FA5A9500B57813 /* HTZHomeTitleCollectionView.swift */; };
 		1947F4FA22FA5E9E00B57813 /* LeftTitleRightImageButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1947F4F922FA5E9E00B57813 /* LeftTitleRightImageButton.swift */; };
 		194E215E22B0E9F2000F96D4 /* PhotoManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 194E215D22B0E9F2000F96D4 /* PhotoManager.swift */; };
+		19507C692328F156005FE7BD /* HTZMusicLyricView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19507C682328F156005FE7BD /* HTZMusicLyricView.swift */; };
+		19507C6B2328F794005FE7BD /* HTZLyricModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19507C6A2328F794005FE7BD /* HTZLyricModel.swift */; };
 		19510C7D22A798840067AA5D /* Constant.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19510C7C22A798840067AA5D /* Constant.swift */; };
 		19585DB123177B1C009536EE /* HTZNetWorkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19585DB023177B1C009536EE /* HTZNetWorkManager.swift */; };
 		19585DB323177C75009536EE /* API.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19585DB223177C75009536EE /* API.swift */; };
@@ -150,6 +152,8 @@
 		1947F4F722FA5A9500B57813 /* HTZHomeTitleCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZHomeTitleCollectionView.swift; sourceTree = "<group>"; };
 		1947F4F922FA5E9E00B57813 /* LeftTitleRightImageButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeftTitleRightImageButton.swift; sourceTree = "<group>"; };
 		194E215D22B0E9F2000F96D4 /* PhotoManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoManager.swift; sourceTree = "<group>"; };
+		19507C682328F156005FE7BD /* HTZMusicLyricView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZMusicLyricView.swift; sourceTree = "<group>"; };
+		19507C6A2328F794005FE7BD /* HTZLyricModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZLyricModel.swift; sourceTree = "<group>"; };
 		19510C7C22A798840067AA5D /* Constant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constant.swift; sourceTree = "<group>"; };
 		19585DB023177B1C009536EE /* HTZNetWorkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZNetWorkManager.swift; sourceTree = "<group>"; };
 		19585DB223177C75009536EE /* API.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = API.swift; sourceTree = "<group>"; };
@@ -696,6 +700,7 @@
 		19A95837229BDCFF007B48ED /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				19507C6A2328F794005FE7BD /* HTZLyricModel.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -704,6 +709,7 @@
 			isa = PBXGroup;
 			children = (
 				193D7D892327574E001A5F21 /* HTZMusicControlView.swift */,
+				19507C682328F156005FE7BD /* HTZMusicLyricView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -1160,6 +1166,7 @@
 				193E5088231E7184000184EC /* HTZMusicOperationTool.swift in Sources */,
 				195DDD3322AFB24B00C5F04C /* BaseTableViewCell.swift in Sources */,
 				1935D54F2313CB3600FE2547 /* HTZProfileHeaderView.swift in Sources */,
+				19507C692328F156005FE7BD /* HTZMusicLyricView.swift in Sources */,
 				1935D5512313D34D00FE2547 /* HTZProfileTableViewCell.swift in Sources */,
 				195DDD3522AFB29400C5F04C /* BaseCollectionViewCell.swift in Sources */,
 				1947F4F822FA5A9500B57813 /* HTZHomeTitleCollectionView.swift in Sources */,
@@ -1205,6 +1212,7 @@
 				195DDD2222AF970D00C5F04C /* String+Extension.swift in Sources */,
 				19585DB323177C75009536EE /* API.swift in Sources */,
 				195DDD2022AF944100C5F04C /* UIColor+Extension.swift in Sources */,
+				19507C6B2328F794005FE7BD /* HTZLyricModel.swift in Sources */,
 				195C194C22B245FA002E8A04 /* HTZNavigationController.swift in Sources */,
 				195C195022B24847002E8A04 /* HTZTabbarViewController.swift in Sources */,
 				1971F395231CCA8C002FFF42 /* UIImageView+extension.swift in Sources */,

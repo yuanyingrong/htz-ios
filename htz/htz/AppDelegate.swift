@@ -8,6 +8,7 @@
 
 import UIKit
 import CoreData
+import Alamofire
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -24,6 +25,30 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         // 初始化播放器
         HTZPlayViewController.sharedInstance.initialData()
+        
+        let manager = NetworkReachabilityManager()
+        manager?.listener = { status in
+            switch status {
+            case .unknown:
+                HTZMusicTool.setNetworkState(state: "none")
+                print("无网络")
+                break
+            case .notReachable:
+                HTZMusicTool.setNetworkState(state: "none")
+                print("无网络")
+                break
+            case .reachable(_):
+                if manager!.isReachableOnWWAN {
+                    HTZMusicTool.setNetworkState(state: "wwan")
+                    print("2G,3G,4G...")
+                } else if manager!.isReachableOnEthernetOrWiFi {
+                    HTZMusicTool.setNetworkState(state: "wifi")
+                    print("wifi")
+                }
+                break
+            }
+        }
+        manager?.startListening()
 
         return true
     }

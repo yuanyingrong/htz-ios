@@ -80,11 +80,16 @@ class HTZPlayViewController: BaseViewController {
         //   接收打断的通知
         NotificationCenter.default.addObserver(self, selector: #selector(audioSessionInterruptionNotification(noti:)), name: AVAudioSession.interruptionNotification, object: nil)
 
+        // 设置播放器的代理
+        kPlayer.delegate = self
     }
     
     override func configSubView() {
         super.configSubView()
         
+        // 获取播放方式，并设置
+        self.playStyle = HTZPlayerPlayStyle(rawValue: UserDefaults.Standard.integer(forKey: UserDefaults.keyPlayStyle))
+        self.controlView.style = self.playStyle
         
         self.view.addSubview(self.controlView)
     }
@@ -150,7 +155,9 @@ extension HTZPlayViewController {
         // 保存列表
         HTZMusicTool.save(musicList: playList)
         
-        switch self.playStyle! {
+        guard let playStyle = self.playStyle else { return }
+        
+        switch playStyle {
         case .loop:
             self.playList = playList
             self.setCoverList()
@@ -183,16 +190,17 @@ extension HTZPlayViewController {
             NotificationCenter.default.post(name: NSNotification.Name(playMusicChangeNotification), object: nil)
             self.model = model
             
-//            [self getMusicInfo];
+            getMusicInfo()
         } else {
             self.ifNowPlay = true
-            if self.isPlaying! {return}
+            if let isPlaying = self.isPlaying, isPlaying {return}
+            
             if let model = model {
                 self.model = model
                 // 已下载，直接用下载数据播放
                 if self.model!.isDownload {
                     
-//                    [self getMusicInfo]
+                    getMusicInfo()
                     return
                 }
                 // 播放
@@ -241,7 +249,7 @@ extension HTZPlayViewController {
         } else {
             if kPlayer.playUrlStr == nil { // 没有播放地址
                 // 需要重新请求
-//                [self getMusicInfo];
+                getMusicInfo()
             } else {
                 if kPlayer.playerState == HTZAudioPlayerState.stopped {
                     kPlayer.play()
@@ -408,15 +416,254 @@ extension HTZPlayViewController {
             self.model = model
             
             // TODO: - 获取歌词详细信息
-//            [self getMusicInfo];
+            getMusicInfo()
+        }
+    }
+    
+    /// 获取歌曲详细信息
+    private func getMusicInfo() {
+        
+        if let palying = self.isPlaying, palying || kPlayer.playerState == HTZAudioPlayerState.paused {
+             self.isPlaying = false
+            self.stopMusic()
+        }
+       
+        self.controlView.initialData()
+        
+        if let ifNowPlay = self.ifNowPlay, ifNowPlay {
+            self.controlView.showLoadingAnim()
+        }
+        
+        self.controlView.is_love = self.model?.isLike
+        self.controlView.is_download = self.model?.isDownload
+        
+        // TODO: - setupLockScreenMediaInfoNull
+        
+        if let model = self.model, model.isDownload {
+            
+//            setupTitleWithModel:self.model];
+            let duration = TimeInterval(model.file_duration!)
+//            // 总时间
+            self.controlView.totalTime = HTZMusicTool.timeStr(secTime: duration!)
+            
+            if let toSeekProgress = self.toSeekProgress, toSeekProgress > 0.0 {
+                self.controlView.currentTime = HTZMusicTool.timeStr(secTime: duration! * TimeInterval(toSeekProgress))
+                self.controlView.progress = toSeekProgress
+            }
+            // 设置播放地址
+            kPlayer.playUrlStr = model.song_localPath
+            
+            DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.5) {
+                if let ifNowPlay = self.ifNowPlay, ifNowPlay {
+                    kPlayer.play()
+                }
+            }
+            
+            // 解析歌词
+//            self.lyricView.lyrics = [GKLyricParser lyricParserWithUrl:self.model.song_lyricPath isDelBlank:YES];
+        } else {
+            if HTZMusicTool.networkState() == "none" {
+                alert(message: "网络连接失败")
+                return
+            }
+            
+            // 获取歌曲信息
+            
+            NetWorkRequest(API.songDetail(songId: self.model!.song_id!), completion: { (responseObject) -> (Void) in
+                self.model = HTZMusicModel.deserialize(from: responseObject["songinfo"].rawString())
+                let bitrate = responseObject["bitrate"]
+                self.model?.file_link = bitrate["file_link"].rawString()
+                self.model?.file_duration = bitrate["file_duration"].rawString()
+                self.model?.file_size = bitrate["file_size"].rawString()
+                self.model?.file_extension = bitrate["file_extension"].rawString()
+                
+                guard let model = self.model else {
+                    return
+                }
+                
+                let duration = TimeInterval(model.file_duration!)
+                //            // 总时间
+                self.controlView.totalTime = HTZMusicTool.timeStr(secTime: duration!)
+                
+                if let toSeekProgress = self.toSeekProgress, toSeekProgress > 0.0 {
+                    self.controlView.currentTime = HTZMusicTool.timeStr(secTime: duration! * TimeInterval(toSeekProgress))
+                    self.controlView.progress = toSeekProgress
+                }
+                // 设置播放地址
+                kPlayer.playUrlStr = model.file_link
+                
+                DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.5) {
+                    if let ifNowPlay = self.ifNowPlay, ifNowPlay {
+                        kPlayer.play()
+                    }
+                }
+                // 解析歌词
+//                self.lyricView.lyrics = [GKLyricParser lyricParserWithUrl:self.model.lrclink isDelBlank:YES];
+                
+            }) { (error) -> (Void) in
+                print("获取详情失败==\(error)")
+                self.alert(message: "数据请求失败，请检查网络后重试！")
+            }
         }
     }
 }
 
+// MARK: - HTZAudioPlayerDelegate
+extension HTZPlayViewController: HTZAudioPlayerDelegate {
+    
+
+    // 播放状态改变
+    @objc func playerStatusChanged(_ player: HTZAudioPlayer, _ status: HTZAudioPlayerState) {
+        switch status {
+        case .loading: // 加载中
+            DispatchQueue.main.async {
+                self.controlView.showLoadingAnim()
+                self.controlView.setupPauseButton()
+
+            }
+            self.isPlaying = false
+            break
+        case .buffering: // 缓冲中
+            DispatchQueue.main.async {
+                self.controlView.hideLoadingAnim()
+                self.controlView.setupPlayButton()
+                if let isAppear = self.isAppear, isAppear {
+                    DispatchQueue.main.asyncAfter(deadline: DispatchTime.now()+2, execute: {
+
+                    })
+                }
+            }
+            self.isPlaying = true
+            break
+        case .playing: // 播放中
+            DispatchQueue.main.async {
+                self.controlView.hideLoadingAnim()
+                self.controlView.setupPlayButton()
+            }
+            if let toSeekProgress = self.toSeekProgress, toSeekProgress > 0 {
+                kPlayer.setPlayerProgress(progress: Float(toSeekProgress))
+                self.toSeekProgress = 0
+            }
+            self.isPlaying = true
+            break
+        case .paused: // 暂停
+            DispatchQueue.main.async {
+                self.controlView.hideLoadingAnim()
+                self.controlView.setupPauseButton()
+                if let isChanged = self.isChanged, isChanged {
+                    self.isChanged = false
+                } else {
+//                    self.c
+                }
+            }
+            self.isPlaying = false
+            break
+        case .stoppedBy: // 主动停止
+            DispatchQueue.main.async {
+                self.controlView.hideLoadingAnim()
+                self.controlView.setupPauseButton()
+                if let isChanged = self.isChanged, isChanged {
+                    self.isChanged = false
+                } else {
+                    //                    self.c
+                    print("播放停止后暂停动画")
+                }
+            }
+            self.isPlaying = false
+            break
+        case .stopped: // 打断停止
+            DispatchQueue.main.async {
+                self.controlView.hideLoadingAnim()
+                self.controlView.setupPauseButton()
+                self.pauseMusic()
+            }
+            self.isPlaying = false
+            break
+        case .ended: // 播放结束
+            print("播放结束了")
+            if let isPlaying = self.isPlaying, isPlaying {
+                DispatchQueue.main.async {
+                    self.controlView.hideLoadingAnim()
+                    self.controlView.setupPauseButton()
+
+                    self.controlView.currentTime = self.controlView.totalTime
+                }
+                self.isPlaying = false
+                // 播放结束，自动播放下一首
+                DispatchQueue.main.asyncAfter(deadline: DispatchTime.now()+2, execute: {
+                    self.isAutoPlay = true
+                    self.playNextMusic()
+                })
+            } else {
+                DispatchQueue.main.async {
+                    self.controlView.hideLoadingAnim()
+                    self.controlView.setupPauseButton()
+
+                }
+                self.isPlaying = false
+            }
+
+            break
+        case .error: // 播放出错
+            DispatchQueue.main.async {
+                self.controlView.hideLoadingAnim()
+                self.controlView.setupPauseButton()
+                if let isAppear = self.isAppear, isAppear {
+                    DispatchQueue.main.asyncAfter(deadline: DispatchTime.now()+2, execute: {
+
+                    })
+                }
+            }
+            self.isPlaying = false
+            break
+        }
+        NotificationCenter.default.post(name: NSNotification.Name(playStateChangeNotification), object: nil)
+    }
+    
+    // 播放进度改变
+    @objc func playerProgress(_ player: HTZAudioPlayer, _ currentTime: TimeInterval, _ totalTime: TimeInterval, _ progress: Float) {
+        // 记录播放id和进度
+        let dict = ["play_id" : self.currentPlayId as Any, "play_progress" : progress] as [String : Any]
+        UserDefaults.Standard.set(dict, forKey: UserDefaults.keyPlayInfo)
+        
+        if let isDraging = self.isDraging, isDraging { return }
+        if let isSeeking = self.isSeeking, isSeeking { return }
+        
+        var progress = CGFloat(progress)
+        if let toSeekProgress = self.toSeekProgress, toSeekProgress > 0 {
+            progress = toSeekProgress
+        }
+        
+        self.controlView.currentTime = HTZMusicTool.timeStr(msTime: currentTime)
+        self.controlView.progress = progress
+        
+        // 更新锁屏信息
+//        [self setupLockScreenMediaInfo];
+        
+        // 歌词滚动
+        guard let isPlaying = self.isPlaying, isPlaying else { return }
+        
+//        [self.lyricView scrollLyricWithCurrentTime:currentTime totalTime:totalTime];
+    }
+    // 播放总时间
+    @objc func playerTotalTime(_ player: HTZAudioPlayer, _ totalTime: TimeInterval) {
+        self.controlView.totalTime = HTZMusicTool.timeStr(msTime: totalTime)
+        self.duration = totalTime
+    }
+    
+    // 缓冲进度改变
+    @objc func playerBufferProgress(_ player: HTZAudioPlayer, _ bufferProgress: Float) {
+        self.controlView.bufferProgress = CGFloat(bufferProgress)
+    }
+    
+    
+}
+
+// MARK: - HTZMusicControlViewDelegate
 extension HTZPlayViewController: HTZMusicControlViewDelegate {
     @objc func controlViewDidClickLove(_ controlView: HTZMusicControlView) {
         lovedCurrentMusic()
-        if let model = self.model, model.isLike {
+        if let model = self.model, model.isLike! {
             self.alert(message: "已添加到我喜欢的音乐")
         } else {
             self.alert(message: "已取消喜欢")
@@ -469,7 +716,8 @@ extension HTZPlayViewController: HTZMusicControlViewDelegate {
     }
     
     @objc func controlViewDidClickPlay(_ controlView: HTZMusicControlView) {
-        if self.isPlaying! {
+        
+        if let isPlaying = self.isPlaying, isPlaying {
             self.pauseMusic()
         } else {
             self.playMusic()
@@ -493,6 +741,11 @@ extension HTZPlayViewController: HTZMusicControlViewDelegate {
         self.isAutoPlay = false
         if self.isPlaying! {
             self.stopMusic()
+        }
+        
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now()) {
+            self.isChanged = true
+            self.playNextMusic()
         }
     }
     
