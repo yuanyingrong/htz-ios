@@ -52,11 +52,11 @@ class HTZTabbarViewController: UITabBarController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         let playButton = UIButton()
-        let count = self.children.count
+//        let count = self.children.count
         // 将按钮的内缩进的宽度减少
-        let w = self.tabBar.bounds.size.width / CGFloat(count) - 1
+//        let w = self.tabBar.bounds.size.width / CGFloat(count) - 1
         // CGRectInset 正数内向缩进,负数外向扩展
-        playButton.frame = self.tabBar.bounds
+        playButton.frame = self.tabBar.bounds.insetBy(dx: kScreenWidth/5 * 2 - 1, dy: 5)
         playButton.setImage(UIImage(named: "play_normal"), for: UIControl.State.normal)
         playButton.setImage(UIImage(named: "play_normal"), for: UIControl.State.highlighted)
         playButton.addTarget(self, action: #selector(playButtonClickAction), for: UIControl.Event.touchUpInside)
