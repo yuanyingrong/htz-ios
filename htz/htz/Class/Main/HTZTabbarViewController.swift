@@ -46,7 +46,27 @@ class HTZTabbarViewController: UITabBarController {
             }
             addChildViewController(vcName: vcName, title: title, imageName: imageName)
         }
-        
+ 
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        let playButton = UIButton()
+        let count = self.children.count
+        // 将按钮的内缩进的宽度减少
+        let w = self.tabBar.bounds.size.width / CGFloat(count) - 1
+        // CGRectInset 正数内向缩进,负数外向扩展
+        playButton.frame = self.tabBar.bounds
+        playButton.setImage(UIImage(named: "play_normal"), for: UIControl.State.normal)
+        playButton.setImage(UIImage(named: "play_normal"), for: UIControl.State.highlighted)
+        playButton.addTarget(self, action: #selector(playButtonClickAction), for: UIControl.Event.touchUpInside)
+        playButton.center = CGPoint(x: self.tabBar.centerX, y: self.tabBar.bounds.size.height * 0.5)
+        self.tabBar.addSubview(playButton)
+    }
+    
+    @objc func playButtonClickAction() {
+        let nav = UINavigationController(rootViewController: HTZPlayViewController.sharedInstance)
+        self.present(nav, animated: true, completion: nil)
     }
     
     func addChildViewController(vcName: String, title: String, imageName: String) {

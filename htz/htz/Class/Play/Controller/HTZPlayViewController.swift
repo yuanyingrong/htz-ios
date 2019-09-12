@@ -26,7 +26,16 @@ class HTZPlayViewController: BaseViewController {
     /// 是否正在播放
     var isPlaying: Bool?
     
+    
     static let sharedInstance = HTZPlayViewController()
+    
+    lazy var leftBarButtonItem: UIBarButtonItem = {
+        let button = UIButton(setImage: "enter", setBackgroundImage: "enter", target: self, action: #selector(back))
+        let buttonItem = UIBarButtonItem(customView: button)
+        button.frame = CGRect(x: 0, y: 0, width: 50, height: 30)
+        
+        return buttonItem
+    }()
     
     lazy var bgImageView: UIImageView = {
         let imageView = UIImageView(frame: self.view.bounds)
@@ -112,6 +121,12 @@ class HTZPlayViewController: BaseViewController {
         // 设置播放器的代理
         kPlayer.delegate = self
         
+
+    }
+    
+    @objc func back() {
+       self.navigationController?.popViewController(animated: true)
+        self.dismiss(animated: true, completion: nil)
     }
     
     override func configSubView() {
@@ -122,6 +137,7 @@ class HTZPlayViewController: BaseViewController {
         self.playStyle = HTZPlayerPlayStyle(rawValue: UserDefaults.Standard.integer(forKey: UserDefaults.keyPlayStyle))
         self.controlView.style = self.playStyle
         
+        navigationItem.leftBarButtonItem = leftBarButtonItem
         
         self.view.addSubview(bgImageView)
 //        // 添加毛玻璃效果

@@ -95,6 +95,10 @@ extension HTZHomeViewController: HTZHomeTitleCollectionViewDelegate {
     }
     
     @objc internal func collectionViewdidSelectItemAt(_ indexPath: IndexPath) {
+        if indexPath.row > 0 {
+             alert(message: "暂无数据")
+            return
+        }
         let vc = HTZAlbumListViewController()
         vc.title = homeViewModel.dataArr[indexPath.row]?.title
         vc.albumModel = homeViewModel.dataArr[indexPath.row]

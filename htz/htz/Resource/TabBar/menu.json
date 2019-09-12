@@ -15,11 +15,11 @@
                      "normal_icon_select": "read_classics_icon_select"
                      },
                      {
-                     "page": "HTZPlayViewController",
+                     "page": "BaseViewController",
                      "type": "play",
                      "title": "",
-                     "normal_icon": "htz_round",
-                     "normal_icon_select": "htz_round"
+                     "normal_icon": " ",
+                     "normal_icon_select": " "
                      },
                      {
                      "page": "HTZLearnClassicsViewController",

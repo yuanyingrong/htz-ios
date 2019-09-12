@@ -104,18 +104,19 @@ class HTZMusicControlView: BaseView {
     
     var is_love: Bool? {
         didSet {
-            if is_love! {
-                self.loveButton.setImage(UIImage(named: "avatar"), for: UIControl.State.normal)
-                self.loveButton.setImage(UIImage(named: "avatar"), for: UIControl.State.highlighted)
-            } else {
-                self.loveButton.setImage(UIImage(named: "favorite"), for: UIControl.State.normal)
-                self.loveButton.setImage(UIImage(named: "favorite"), for: UIControl.State.highlighted)
+            if let is_love = is_love, is_love {
+                    self.loveButton.setImage(UIImage(named: "avatar"), for: UIControl.State.normal)
+                    self.loveButton.setImage(UIImage(named: "avatar"), for: UIControl.State.highlighted)
+                } else {
+                    self.loveButton.setImage(UIImage(named: "favorite"), for: UIControl.State.normal)
+                    
             }
+            
         }
     }
     var is_download: Bool? {
         didSet {
-            if is_download! {
+            if let is_download = is_download, is_download {
                 self.downloadButton.setImage(UIImage(named: "item_list"), for: UIControl.State.normal)
                 self.downloadButton.setImage(UIImage(named: "item_list"), for: UIControl.State.highlighted)
             } else {
