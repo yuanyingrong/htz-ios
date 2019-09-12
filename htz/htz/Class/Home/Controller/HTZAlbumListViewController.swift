@@ -81,7 +81,7 @@ class HTZAlbumListViewController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        // Do any additional setup after loading the view.
+       self.view.backgroundColor = UIColor.white
     }
     
     override func configSubView() {
@@ -97,9 +97,9 @@ class HTZAlbumListViewController: BaseViewController {
                 self.tableView.reloadData()
             }
         }
-        albumListViewModel.requestSongData(isPullDown: true) { (sucess) in
-            
-        }
+//        albumListViewModel.requestSongData(isPullDown: true) { (sucess) in
+//            
+//        }
     }
 
 }
@@ -142,6 +142,7 @@ extension HTZAlbumListViewController: UITableViewDataSource, UITableViewDelegate
 //        music.icon = "chuan_xi_lu"
 //        music.singer = "dddd"
 //        music.singerIcon = "chuan_xi_lu"
+        vc.title = self.albumListViewModel.dataSongArr[indexPath.row]?.album_title
         vc.setPlayerList(playList: self.albumListViewModel.dataSongArr as! [HTZMusicModel])
         vc.playMusic(index: indexPath.row, isSetList: true)
         navigationController?.pushViewController(vc, animated: true)

@@ -10,13 +10,13 @@ import UIKit
 
 protocol HTZSliderViewDelegate: NSObjectProtocol {
     
-    func sliderTouchBegin(value: CGFloat)
+    func sliderTouchBegin(_ value: CGFloat)
     
-    func sliderValueChanged(value: CGFloat)
+    func sliderValueChanged(_ value: CGFloat)
     
-    func sliderTouchEnded(value: CGFloat)
+    func sliderTouchEnded(_ value: CGFloat)
     
-    func sliderTapped(value: CGFloat)
+    func sliderTapped(_ value: CGFloat)
 }
 
 class HTZSliderView: UIView {
@@ -199,13 +199,13 @@ extension HTZSliderView {
     
     @objc private func sliderBtnTouchBegin() {
         if let delegate = self.delegate, delegate.responds(to: Selector(("sliderTouchBegin:"))) {
-            delegate.sliderTouchBegin(value: self.value!)
+            delegate.sliderTouchBegin(self.value!)
         }
     }
     
     @objc private func sliderBtnTouchEnded() {
         if let delegate = self.delegate, delegate.responds(to: Selector(("sliderTouchEnded:"))) {
-            delegate.sliderTouchEnded(value: self.value!)
+            delegate.sliderTouchEnded(self.value!)
         }
     }
     
@@ -223,7 +223,7 @@ extension HTZSliderView {
         self.value = value
         
         if let delegate = self.delegate, delegate.responds(to: Selector(("sliderValueChanged:"))) {
-            delegate.sliderValueChanged(value: self.value!)
+            delegate.sliderValueChanged(self.value!)
         }
     }
     
@@ -237,7 +237,7 @@ extension HTZSliderView {
         self.value = value
         
         if let delegate = self.delegate, delegate.responds(to: Selector(("sliderTapped:"))) {
-            delegate.sliderTapped(value: self.value!)
+            delegate.sliderTapped(self.value!)
         }
     }
 }

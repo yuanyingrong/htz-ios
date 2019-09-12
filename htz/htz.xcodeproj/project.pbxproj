@@ -33,6 +33,7 @@
 		193F56092320AE500037BC70 /* HTZAlbumPartModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193F56082320AE500037BC70 /* HTZAlbumPartModel.swift */; };
 		193F560B2320F5450037BC70 /* HTZDownloadManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193F560A2320F5450037BC70 /* HTZDownloadManager.swift */; };
 		193F560D2320FD120037BC70 /* HTZDownloadModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193F560C2320FD120037BC70 /* HTZDownloadModel.swift */; };
+		1942E1692329D575007E7C36 /* HTZLyricParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1942E1682329D575007E7C36 /* HTZLyricParser.swift */; };
 		19444CFA22F92D0D0063EF38 /* HTZSearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19444CF922F92D0D0063EF38 /* HTZSearchView.swift */; };
 		19444CFC22F97B050063EF38 /* HTZCycleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19444CFB22F97B050063EF38 /* HTZCycleView.swift */; };
 		1946C4A6231F4FAC00808F3C /* music.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 1946C4A4231F4FAC00808F3C /* music.mp3 */; };
@@ -140,6 +141,7 @@
 		193F56082320AE500037BC70 /* HTZAlbumPartModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZAlbumPartModel.swift; sourceTree = "<group>"; };
 		193F560A2320F5450037BC70 /* HTZDownloadManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZDownloadManager.swift; sourceTree = "<group>"; };
 		193F560C2320FD120037BC70 /* HTZDownloadModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZDownloadModel.swift; sourceTree = "<group>"; };
+		1942E1682329D575007E7C36 /* HTZLyricParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZLyricParser.swift; sourceTree = "<group>"; };
 		19444CF922F92D0D0063EF38 /* HTZSearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZSearchView.swift; sourceTree = "<group>"; };
 		19444CFB22F97B050063EF38 /* HTZCycleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZCycleView.swift; sourceTree = "<group>"; };
 		1946C4A4231F4FAC00808F3C /* music.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = music.mp3; sourceTree = "<group>"; };
@@ -685,6 +687,7 @@
 		19A95835229BDCFF007B48ED /* ViewModel */ = {
 			isa = PBXGroup;
 			children = (
+				1942E1682329D575007E7C36 /* HTZLyricParser.swift */,
 			);
 			path = ViewModel;
 			sourceTree = "<group>";
@@ -1158,6 +1161,7 @@
 				195C194722B24397002E8A04 /* BaseTabBarController.swift in Sources */,
 				193A8B922318C62C00B520B1 /* UIViewController+Alert.swift in Sources */,
 				195DDD3922AFB30700C5F04C /* BaseViewModel.swift in Sources */,
+				1942E1692329D575007E7C36 /* HTZLyricParser.swift in Sources */,
 				19A957F1229BC716007B48ED /* ViewController.swift in Sources */,
 				1934795D232636D300138B36 /* HTZAudioPlayer.swift in Sources */,
 				1946C4B0231F620500808F3C /* HTZLrcModel.swift in Sources */,
@@ -1410,7 +1414,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.yuanyingrong.ios.htz;
+				PRODUCT_BUNDLE_IDENTIFIER = cn.net.szfdc.general.htz;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "htz/htz-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -1433,7 +1437,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.yuanyingrong.ios.htz;
+				PRODUCT_BUNDLE_IDENTIFIER = cn.net.szfdc.general.htz;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "htz/htz-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;

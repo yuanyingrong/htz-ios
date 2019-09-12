@@ -21,7 +21,7 @@ class HTZAlbumListCell: BaseTableViewCell {
 //                    albumImageView.image = UIImage(named: albumModel.icon ?? "")
 //                }
                 playCountButton.setTitle(albumPartModel.playcount!, for: UIControl.State.normal)
-                
+                playTimeLabel.text = ""
             }
             
             

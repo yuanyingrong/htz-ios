@@ -145,13 +145,13 @@ class HTZMusicControlView: BaseView {
     }
     
     func setupPlayButton() {
-        self.playButton.setImage(UIImage(named: "play"), for: UIControl.State.normal)
-        self.playButton.setImage(UIImage(named: "play"), for: UIControl.State.highlighted)
+        self.playButton.setImage(UIImage(named: "stop"), for: UIControl.State.normal)
+        self.playButton.setImage(UIImage(named: "stop"), for: UIControl.State.highlighted)
     }
     
     func setupPauseButton() {
-        self.playButton.setImage(UIImage(named: "pause"), for: UIControl.State.normal)
-        self.playButton.setImage(UIImage(named: "pause"), for: UIControl.State.highlighted)
+        self.playButton.setImage(UIImage(named: "play"), for: UIControl.State.normal)
+        self.playButton.setImage(UIImage(named: "play"), for: UIControl.State.highlighted)
     }
     
     private lazy var loveButton: UIButton = {
@@ -214,14 +214,14 @@ class HTZMusicControlView: BaseView {
     
     private lazy var currentLabel: UILabel = {
         let label = UILabel()
-        label.textColor = UIColor.white
+        label.textColor = UIColor.red
         label.font = UIFont.systemFont(ofSize: 16.0)
         return label
     }()
     
     private lazy var totalLabel: UILabel = {
         let label = UILabel()
-        label.textColor = UIColor.white
+        label.textColor = UIColor.red
         label.font = UIFont.systemFont(ofSize: 16.0)
         return label
     }()
@@ -230,6 +230,8 @@ class HTZMusicControlView: BaseView {
     
     override func configSubviews() {
         super.configSubviews()
+        
+        self.backgroundColor = UIColor.clear
         
         // 顶部
         self.addSubview(self.topView)
@@ -355,10 +357,8 @@ extension HTZMusicControlView {
     @objc private func playOrPauseMusic() {
         self.playButton.isSelected = !playButton.isSelected
         if self.playButton.isSelected {
-//            HTZMusicOperationTool.sharedInstance.playCurrentMusic()
             self.setupPlayButton()
         } else {
-//            HTZMusicOperationTool.sharedInstance.pauseCurrentMusic()
             self.setupPauseButton()
         }
         
@@ -372,9 +372,6 @@ extension HTZMusicControlView {
         if let delegate = self.delegate, delegate.responds(to: Selector(("controlViewDidClickPrev:"))) {
             delegate.controlViewDidClickPrev(self)
         }
-//        if HTZMusicOperationTool.sharedInstance.preMusic() {
-//
-//        }
     }
     
     // 下一曲按钮点击事件
@@ -382,9 +379,6 @@ extension HTZMusicControlView {
         if let delegate = self.delegate, delegate.responds(to: Selector(("controlViewDidClickNext:"))) {
             delegate.controlViewDidClickNext(self)
         }
-//        if HTZMusicOperationTool.sharedInstance.nextMusic() {
-//
-//        }
     }
     
     @objc private func listButtonClickAction() {
@@ -397,29 +391,29 @@ extension HTZMusicControlView {
 
 // MARK: - HTZSliderViewDelegate
 extension HTZMusicControlView: HTZSliderViewDelegate {
-    func sliderTouchBegin(value: CGFloat) {
-        if let delegate = self.delegate, delegate.responds(to: Selector(("controlView::"))) {
+    @objc internal func sliderTouchBegin(_ value: CGFloat) {
+        if let delegate = self.delegate, delegate.responds(to: Selector(("controlView:didSliderTouchBegan:"))) {
             delegate.controlView(self
                 , didSliderTouchBegan: value)
         }
     }
     
-    func sliderValueChanged(value: CGFloat) {
-        if let delegate = self.delegate, delegate.responds(to: Selector(("controlView::"))) {
+    @objc internal func sliderValueChanged(_ value: CGFloat) {
+        if let delegate = self.delegate, delegate.responds(to: Selector(("controlView:didSliderValueChange:"))) {
             delegate.controlView(self
                 , didSliderValueChange: value)
         }
     }
     
-    func sliderTouchEnded(value: CGFloat) {
-        if let delegate = self.delegate, delegate.responds(to: Selector(("controlView::"))) {
+    @objc internal func sliderTouchEnded(_ value: CGFloat) {
+        if let delegate = self.delegate, delegate.responds(to: Selector(("controlView:didSliderTouchEnded:"))) {
             delegate.controlView(self
                 , didSliderTouchEnded: value)
         }
     }
     
-    func sliderTapped(value: CGFloat) {
-        if let delegate = self.delegate, delegate.responds(to: Selector(("controlView::"))) {
+    @objc internal func sliderTapped(_ value: CGFloat) {
+        if let delegate = self.delegate, delegate.responds(to: Selector(("controlView:didSliderTapped:"))) {
             delegate.controlView(self
                 , didSliderTapped: value)
         }

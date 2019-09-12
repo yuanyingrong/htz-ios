@@ -20,6 +20,17 @@ class HTZAlbumListViewModel: NSObject {
             let arr = [HTZAlbumPartModel].deserialize(from: response["sutra_items"].rawString())
             if let arr = arr {
                 self.dataArr = arr
+                var arrM = [HTZMusicModel]()
+                for model in arr {
+                    let obj = HTZMusicModel()
+                    obj.album_title = model?.title
+                    obj.song_id = model?.hash
+                    obj.file_link = "http://htzshanghai.top/resources/audios/xingfuneixinchan/" + model!.audio!
+                    obj.lrclink = "http://htzshanghai.top/resources/lyrics/xingfuneixinchan/" + model!.lyric!
+                    obj.file_duration = model?.duration
+                    arrM.append(obj)
+                }
+                self.dataSongArr = arrM
                 callBack(true)
             }
             print(response["sutra_items"])
