@@ -116,8 +116,24 @@ class HTZMusicTool: NSObject {
     static func lastMusicInfo() -> [String : Any]? {
         return UserDefaults.Standard.object(forKey: UserDefaults.keyPlayInfo) as? [String : Any]
     }
+    
     static func playStyle() -> NSInteger {
         return UserDefaults.Standard.integer(forKey: UserDefaults.keyPlayStyle)
+    }
+    
+    static func visibleViewController() -> UIViewController? {
+        let rootVC = UIApplication.shared.keyWindow?.rootViewController
+        return rootVC?.visibleViewControllerIfExist()
+    }
+    
+    static func showPlayBtn() {
+        let delegate = UIApplication.shared.delegate as! AppDelegate
+        delegate.palyButton.isHidden = false
+    }
+    
+    static func hidePlayBtn() {
+        let delegate = UIApplication.shared.delegate as! AppDelegate
+        delegate.palyButton.isHidden = true
     }
     
     static func networkState() -> String {
@@ -149,7 +165,7 @@ class HTZMusicTool: NSObject {
     
     static func downloadMusic(songId: String) {
         
-        NetWorkRequest(.albums, completion: { (respose) -> (Void) in
+        NetWorkRequest(.xingfuneixinchan, completion: { (respose) -> (Void) in
             let dModel = HTZDownloadModel()
             
             kDownloadManager.addDownloadArr(downloadArr: [dModel])
@@ -158,7 +174,20 @@ class HTZMusicTool: NSObject {
             print("获取详情失败==\(error)")
             print("加入下载失败")
         }
+    }
+    
+    static func downloadMusic(musicModel: HTZMusicModel) {
         
+        let dModel = HTZDownloadModel()
+        dModel.fileID = musicModel.song_id
+        dModel.fileName = musicModel.song_name
+        dModel.fileUrl = musicModel.file_link
+        dModel.fileDuration = musicModel.file_duration
+        dModel.fileLyric = musicModel.lrclink
+        
+        dModel.fileFormat = musicModel.file_link?.components(separatedBy: ".").last
+        kDownloadManager.addDownloadArr(downloadArr: [dModel])
+        print("已加入到下载队列")
         
     }
 }

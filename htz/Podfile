@@ -18,6 +18,9 @@ target 'htz' do
   pod 'TencentOpenAPI-Unofficial'
   
   pod 'FreeStreamer'
+  
+  pod 'Pgyer'
+  pod 'PgyUpdate'
 
   target 'htzTests' do
     inherit! :search_paths

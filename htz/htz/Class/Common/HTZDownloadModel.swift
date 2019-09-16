@@ -8,7 +8,7 @@
 
 import UIKit
 
-enum HTZDownloadManagerState: NSInteger {
+@objc enum HTZDownloadManagerState: NSInteger {
     case none          = 0    // 未开始
     case waiting       = 1    // 等待下载
     case downloading   = 2    // 下载中
@@ -17,8 +17,8 @@ enum HTZDownloadManagerState: NSInteger {
     case finished      = 5    // 下载完成
 }
 
-class HTZDownloadModel: NSObject {
-
+class HTZDownloadModel: NSObject, NSCoding {
+    
     var fileID: String?
     var fileName: String?
     var fileArtistId: String?
@@ -33,13 +33,14 @@ class HTZDownloadModel: NSObject {
     var fileSize: String?
     var fileLyric: String?
     var fileLocalPath: String {
-        return kDownloadManager.downloadDataDir().appending("\(String(describing: fileID)).\(String(describing: fileFormat))")
+        
+        return kDownloadManager.downloadDataDir() + "/" + fileID! + "." + fileFormat!
     }
     var fileLyricPath: String {
-        return kDownloadManager.downloadDataDir().appending("\(String(describing: fileID)).lrc")
+        return kDownloadManager.downloadDataDir() + "/" + fileID! + ".lrc"
     }
     var fileImagePath: String {
-        return kDownloadManager.downloadDataDir().appending("\(String(describing: fileID)).jpg")
+        return kDownloadManager.downloadDataDir() + "/" + fileID! + ".jpg"
     }
     var file_size: String?
     var state: HTZDownloadManagerState?
@@ -48,4 +49,41 @@ class HTZDownloadModel: NSObject {
     /// 当前的下载长度
     var currentLength: NSInteger?
     
+    required override init() {
+        super.init()
+    }
+    
+    
+    func encode(with aCoder: NSCoder) {
+        aCoder.encode(fileID, forKey: "fileID")
+        aCoder.encode(fileName, forKey: "fileName")
+        aCoder.encode(fileUrl, forKey: "fileUrl")
+        aCoder.encode(state?.rawValue, forKey: "state")
+        aCoder.encode(fileDuration, forKey: "fileDuration")
+        aCoder.encode(fileFormat, forKey: "fileFormat")
+        aCoder.encode(fileArtistName, forKey: "fileArtistName")
+        aCoder.encode(fileSize, forKey: "fileSize")
+        aCoder.encode(file_size, forKey: "file_size")
+        aCoder.encode(fileLength, forKey: "fileLength")
+        aCoder.encode(currentLength, forKey: "currentLength")
+        
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fileID = aDecoder.decodeObject(forKey: "fileID") as? String
+        fileName = aDecoder.decodeObject(forKey: "fileName") as? String
+        fileUrl = aDecoder.decodeObject(forKey: "fileUrl") as? String
+        fileLyric = aDecoder.decodeObject(forKey: "fileLyric") as? String
+        fileDuration = aDecoder.decodeObject(forKey: "fileDuration") as? String
+        fileFormat = aDecoder.decodeObject(forKey: "fileFormat") as? String
+        fileArtistName = aDecoder.decodeObject(forKey: "fileArtistName") as? String
+        fileSize = aDecoder.decodeObject(forKey: "fileSize") as? String
+        file_size = aDecoder.decodeObject(forKey: "file_size") as? String
+        fileLength = aDecoder.decodeObject(forKey: "fileLength") as? NSInteger
+        currentLength = aDecoder.decodeObject(forKey: "currentLength") as? NSInteger
+        if let str = aDecoder.decodeObject(forKey: "state") {
+            state = HTZDownloadManagerState(rawValue: str as! NSInteger)
+        }
+        
+    }
 }

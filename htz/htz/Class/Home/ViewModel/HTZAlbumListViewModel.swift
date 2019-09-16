@@ -23,7 +23,7 @@ class HTZAlbumListViewModel: NSObject {
                 var arrM = [HTZMusicModel]()
                 for model in arr {
                     let obj = HTZMusicModel()
-                    obj.album_title = model?.title
+                    obj.song_name = model?.title
                     obj.song_id = model?.hash
                     obj.file_link = "http://htzshanghai.top/resources/audios/xingfuneixinchan/" + model!.audio!
                     obj.lrclink = "http://htzshanghai.top/resources/lyrics/xingfuneixinchan/" + model!.lyric!

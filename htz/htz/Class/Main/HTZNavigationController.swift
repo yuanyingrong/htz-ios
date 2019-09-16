@@ -30,6 +30,7 @@ class HTZNavigationController: UINavigationController,UIGestureRecognizerDelegat
     
     @objc fileprivate func popVC() {
         popViewController(animated: true)
+        dismiss(animated: true, completion: nil)
     }
     
     func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {

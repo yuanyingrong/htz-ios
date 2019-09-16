@@ -21,14 +21,14 @@ protocol HTZDownloadManagerDelegate: NSObjectProtocol {
     ///   - downloadManager: <#downloadManager description#>
     ///   - downloadModel: <#downloadModel description#>
     ///   - state: <#state description#>
-    func downloadChanged(downloadManager: HTZDownloadManager, downloadModel:HTZDownloadModel, state: HTZDownloadManagerState)
+    func downloadChanged(_ downloadManager: HTZDownloadManager, downloadModel:HTZDownloadModel, state: HTZDownloadManagerState)
     
     /// 删除下载
     ///
     /// - Parameters:
     ///   - downloadManager: <#downloadManager description#>
     ///   - downloadArr: <#downloadArr description#>
-    func removedDownloadArr(downloadManager: HTZDownloadManager, downloadArr: [HTZDownloadModel])
+    func removedDownloadArr(_ downloadManager: HTZDownloadManager, downloadArr: [HTZDownloadModel])
     
     /// 下载进度
     ///
@@ -38,7 +38,7 @@ protocol HTZDownloadManagerDelegate: NSObjectProtocol {
     ///   - totalSize: <#totalSize description#>
     ///   - downloadSize: <#downloadSize description#>
     ///   - progress: <#progress description#>
-    func downloadProgress(downloadManager: HTZDownloadManager, downloadModel:HTZDownloadModel, totalSize: NSInteger, downloadSize: NSInteger, progress: Float)
+    func downloadProgress(_ downloadManager: HTZDownloadManager, downloadModel:HTZDownloadModel, totalSize: NSInteger, downloadSize: NSInteger, progress: Float)
 }
 
 class HTZDownloadManager: NSObject {
@@ -106,8 +106,8 @@ class HTZDownloadManager: NSObject {
                 
                 updateDownloadModel(model: obj)
                
-                if let delegate = self.delegate, delegate.responds(to: Selector(("downloadChanged:::"))) {
-                     delegate.downloadChanged(downloadManager: self, downloadModel: obj, state: HTZDownloadManagerState.waiting)
+                if let delegate = self.delegate, delegate.responds(to: #selector(HTZPlayViewController.downloadChanged(_:downloadModel:state:))) {
+                    delegate.downloadChanged(self, downloadModel: obj, state: HTZDownloadManagerState.waiting)
                 }
             }
         }
@@ -140,8 +140,8 @@ class HTZDownloadManager: NSObject {
         // 删除下载的文件
         self.deleteDownloadModelArr(modelArr: downloadArr)
         
-        if let delegate = self.delegate, delegate.responds(to: Selector(("removedDownloadArr::"))) {
-            delegate.removedDownloadArr(downloadManager: self, downloadArr: downloadArr)
+        if let delegate = self.delegate, delegate.responds(to: #selector(HTZPlayViewController.removedDownloadArr(_:downloadArr:))) {
+            delegate.removedDownloadArr(self, downloadArr: downloadArr)
         }
         
         // 开启其他下载
@@ -177,8 +177,8 @@ class HTZDownloadManager: NSObject {
                     model.state = HTZDownloadManagerState.paused
                     updateDownloadModel(model: model)
                     
-                    if let delegate = self.delegate, delegate.responds(to: Selector(("downloadChanged:::"))) {
-                        delegate.downloadChanged(downloadManager: self, downloadModel: model, state: HTZDownloadManagerState.paused)
+                    if let delegate = self.delegate, delegate.responds(to: #selector(HTZPlayViewController.downloadChanged(_:downloadModel:state:))) {
+                        delegate.downloadChanged(self, downloadModel: model, state: HTZDownloadManagerState.paused)
                     }
                 }
             }
@@ -198,8 +198,8 @@ class HTZDownloadManager: NSObject {
                     model.state = HTZDownloadManagerState.waiting
                     updateDownloadModel(model: model)
                     
-                    if let delegate = self.delegate, delegate.responds(to: Selector(("downloadChanged:::"))) {
-                        delegate.downloadChanged(downloadManager: self, downloadModel: model, state: HTZDownloadManagerState.waiting)
+                    if let delegate = self.delegate, delegate.responds(to: #selector(HTZPlayViewController.downloadChanged(_:downloadModel:state:))) {
+                        delegate.downloadChanged(self, downloadModel: model, state: HTZDownloadManagerState.waiting)
                     }
                 }
             }
@@ -222,8 +222,8 @@ class HTZDownloadManager: NSObject {
         }
         self.deleteDownloadModelArr(modelArr: toClearArr)
         
-        if let delegate = self.delegate, delegate.responds(to: Selector(("removedDownloadArr::"))) {
-            delegate.removedDownloadArr(downloadManager: self, downloadArr: toClearArr)
+        if let delegate = self.delegate, delegate.responds(to: #selector(HTZPlayViewController.removedDownloadArr(_:downloadArr:))) {
+            delegate.removedDownloadArr(self, downloadArr: toClearArr)
         }
     }
     
@@ -318,8 +318,8 @@ extension HTZDownloadManager {
                 self.updateDownloadModel(model: model)
                 
                 // 下载中
-                if let delegate = self.delegate, delegate.responds(to: Selector(("downloadChanged:::"))) {
-                    delegate.downloadChanged(downloadManager: self, downloadModel: model, state: HTZDownloadManagerState.downloading)
+                if let delegate = self.delegate, delegate.responds(to: #selector(HTZPlayViewController.downloadChanged(_:downloadModel:state:))) {
+                    delegate.downloadChanged(self, downloadModel: model, state: HTZDownloadManagerState.downloading)
                 }
                 
                 if self.isCanBreakpoint {
@@ -334,16 +334,16 @@ extension HTZDownloadManager {
     }
     
     private func startDownloadData(model: HTZDownloadModel) {
-        let urlStr = "http://htzshanghai.top/resources/audios/xingfuneixinchan/"
-        let request = URLRequest(url: URL(string:urlStr + model.fileUrl!)!)
+        
+        let request = URLRequest(url: URL(string: model.fileUrl!)!)
        
         self.downloadRequest = download(request) { (url, response) -> (destinationURL: URL, options: DownloadRequest.DownloadOptions) in
 //            downloadDataFilePath()
             
-            return (URL(string: model.fileLocalPath)!,DownloadRequest.DownloadOptions())
+            return (URL(string: "file://"+model.fileLocalPath)!,DownloadRequest.DownloadOptions())
             }.downloadProgress(closure: { (downloadProgress) in
-                if let delegate = self.delegate, delegate.responds(to: Selector(("downloadChanged:::"))) {
-                    delegate.downloadProgress(downloadManager: self, downloadModel: model, totalSize: NSInteger(downloadProgress.totalUnitCount), downloadSize: NSInteger(downloadProgress.completedUnitCount), progress: Float(downloadProgress.completedUnitCount / downloadProgress.totalUnitCount))
+                if let delegate = self.delegate, delegate.responds(to: #selector(HTZPlayViewController.downloadProgress(_:downloadModel:totalSize:downloadSize:progress:))) {
+                    delegate.downloadProgress(self, downloadModel: model, totalSize: NSInteger(downloadProgress.totalUnitCount), downloadSize: NSInteger(downloadProgress.completedUnitCount), progress: Float(downloadProgress.completedUnitCount) / Float(downloadProgress.totalUnitCount))
                 }
                 print("共\(downloadProgress.totalUnitCount)\n当前下载\(downloadProgress.completedUnitCount)")
             }).responseData(completionHandler: { (response) in
@@ -351,12 +351,12 @@ extension HTZDownloadManager {
                 case .success(_): // 下载完成
                     model.state = HTZDownloadManagerState.finished
                     self.updateDownloadModel(model: model)
-                    if let delegate = self.delegate, delegate.responds(to: Selector(("downloadChanged:::"))) {
-                        delegate.downloadChanged(downloadManager: self, downloadModel: model, state: HTZDownloadManagerState.finished)
+                    if let delegate = self.delegate, delegate.responds(to: #selector(HTZPlayViewController.downloadChanged(_:downloadModel:state:))) {
+                        delegate.downloadChanged(self, downloadModel: model, state: HTZDownloadManagerState.finished)
                     }
                     
-                    if let delegate = self.delegate, delegate.responds(to: Selector(("removedDownloadArr::"))) {
-                        delegate.removedDownloadArr(downloadManager: self, downloadArr: [model])
+                    if let delegate = self.delegate, delegate.responds(to: #selector(HTZPlayViewController.removedDownloadArr(_:downloadArr:))) {
+                        delegate.removedDownloadArr(self, downloadArr: [model])
                     }
                     print(response)
                 case .failure(_): // 下载失败
@@ -365,8 +365,8 @@ extension HTZDownloadManager {
                     model.state = HTZDownloadManagerState.failed
                     self.updateDownloadModel(model: model)
                     self.resumeData = response.resumeData
-                    if let delegate = self.delegate, delegate.responds(to: Selector(("downloadChanged:::"))) {
-                        delegate.downloadChanged(downloadManager: self, downloadModel: model, state: HTZDownloadManagerState.failed)
+                    if let delegate = self.delegate, delegate.responds(to: #selector(HTZPlayViewController.downloadChanged(_:downloadModel:state:))) {
+                        delegate.downloadChanged(self, downloadModel: model, state: HTZDownloadManagerState.failed)
                     }
                     print(response)
                 }
@@ -389,8 +389,8 @@ extension HTZDownloadManager {
         
         if let resumeData = self.resumeData {
             self.downloadRequest = download(resumingWith: resumeData).downloadProgress(closure: { (downloadProgress) in
-                if let delegate = self.delegate, delegate.responds(to: Selector(("downloadChanged:::"))) {
-                    delegate.downloadProgress(downloadManager: self, downloadModel: model, totalSize: NSInteger(downloadProgress.totalUnitCount), downloadSize: NSInteger(downloadProgress.completedUnitCount), progress: Float(downloadProgress.completedUnitCount / downloadProgress.totalUnitCount))
+                if let delegate = self.delegate, delegate.responds(to: #selector(HTZPlayViewController.downloadProgress(_:downloadModel:totalSize:downloadSize:progress:))) {
+                    delegate.downloadProgress(self, downloadModel: model, totalSize: NSInteger(downloadProgress.totalUnitCount), downloadSize: NSInteger(downloadProgress.completedUnitCount), progress: Float(downloadProgress.completedUnitCount / downloadProgress.totalUnitCount))
                 }
                 print("共\(downloadProgress.totalUnitCount)\n当前下载\(downloadProgress.completedUnitCount)")
             }).responseData(completionHandler: { (downloadResponse) in
@@ -398,12 +398,12 @@ extension HTZDownloadManager {
                     model.state = HTZDownloadManagerState.finished
                     self.updateDownloadModel(model: model)
                     
-                    if let delegate = self.delegate, delegate.responds(to: Selector(("downloadChanged:::"))) {
-                        delegate.downloadChanged(downloadManager: self, downloadModel: model, state: HTZDownloadManagerState.finished)
+                    if let delegate = self.delegate, delegate.responds(to: #selector(HTZPlayViewController.downloadChanged(_:downloadModel:state:))) {
+                        delegate.downloadChanged(self, downloadModel: model, state: HTZDownloadManagerState.finished)
                     }
                     
-                    if let delegate = self.delegate, delegate.responds(to: Selector(("removedDownloadArr::"))) {
-                        delegate.removedDownloadArr(downloadManager: self, downloadArr: [model])
+                    if let delegate = self.delegate, delegate.responds(to: #selector(HTZPlayViewController.removedDownloadArr(_:downloadArr:))) {
+                        delegate.removedDownloadArr(self, downloadArr: [model])
                     }
                 } else { // 下载失败
                     // 删除已下载的数据防止出错
@@ -412,8 +412,8 @@ extension HTZDownloadManager {
                     model.state = HTZDownloadManagerState.failed
                     self.updateDownloadModel(model: model)
                     
-                    if let delegate = self.delegate, delegate.responds(to: Selector(("downloadChanged:::"))) {
-                        delegate.downloadChanged(downloadManager: self, downloadModel: model, state: HTZDownloadManagerState.failed)
+                    if let delegate = self.delegate, delegate.responds(to: #selector(HTZPlayViewController.downloadChanged(_:downloadModel:state:))) {
+                        delegate.downloadChanged(self, downloadModel: model, state: HTZDownloadManagerState.failed)
                     }
                     print("断点方式下载失败\(String(describing: downloadResponse.error))")
                 }
@@ -508,8 +508,8 @@ extension HTZDownloadManager {
                         model.state = HTZDownloadManagerState.none
                         updateDownloadModel(model: model)
                         
-                        if let delegate = self.delegate, delegate.responds(to: Selector(("downloadChanged:::"))) {
-                            delegate.downloadChanged(downloadManager: self, downloadModel: model, state: HTZDownloadManagerState.none)
+                        if let delegate = self.delegate, delegate.responds(to: #selector(HTZPlayViewController.downloadChanged(_:downloadModel:state:))) {
+                            delegate.downloadChanged(self, downloadModel: model, state: HTZDownloadManagerState.none)
                         }
                         // 删除文件
                         if ifPathExist(path: obj.fileLocalPath) {
@@ -536,12 +536,12 @@ extension HTZDownloadManager {
         if let doc = doc {
            str = str.appending(doc)
         }
-        return str.appending("downloadModel.plist")
+        return str.appending("/downloadModel.plist")
     }
     
     func downloadDataDir() -> String {
         
-        return kDocumentDirectory!.appending("download")
+        return kDocumentDirectory!.appending("/download")
     }
     
     private func createFilePathWithPath(path: String) -> Bool {

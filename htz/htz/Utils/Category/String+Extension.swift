@@ -10,6 +10,14 @@ import Foundation
 import UIKit
 
 extension String {
+    static func UUID() -> String {
+        let uuidRef = CFUUIDCreate(nil)
+        let uuidStringRef = CFUUIDCreateString(nil, uuidRef)
+        return uuidStringRef! as String
+    }
+}
+
+extension String {
     //截取第一个到任意位置
     //parameter end 结束的位置
     //Returns: 截取后的字符串

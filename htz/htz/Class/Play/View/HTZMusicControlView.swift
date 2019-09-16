@@ -105,10 +105,10 @@ class HTZMusicControlView: BaseView {
     var is_love: Bool? {
         didSet {
             if let is_love = is_love, is_love {
-                    self.loveButton.setImage(UIImage(named: "avatar"), for: UIControl.State.normal)
-                    self.loveButton.setImage(UIImage(named: "avatar"), for: UIControl.State.highlighted)
+                    self.loveButton.setImage(UIImage(named: "liked"), for: UIControl.State.normal)
+                    self.loveButton.setImage(UIImage(named: "liked"), for: UIControl.State.highlighted)
                 } else {
-                    self.loveButton.setImage(UIImage(named: "favorite"), for: UIControl.State.normal)
+                    self.loveButton.setImage(UIImage(named: "like"), for: UIControl.State.normal)
                     
             }
             
@@ -117,11 +117,11 @@ class HTZMusicControlView: BaseView {
     var is_download: Bool? {
         didSet {
             if let is_download = is_download, is_download {
-                self.downloadButton.setImage(UIImage(named: "item_list"), for: UIControl.State.normal)
-                self.downloadButton.setImage(UIImage(named: "item_list"), for: UIControl.State.highlighted)
+                self.downloadButton.setImage(UIImage(named: "downloaded"), for: UIControl.State.normal)
+                self.downloadButton.setImage(UIImage(named: "downloaded"), for: UIControl.State.highlighted)
             } else {
-                self.downloadButton.setImage(UIImage(named: "next"), for: UIControl.State.normal)
-                self.downloadButton.setImage(UIImage(named: "next"), for: UIControl.State.highlighted)
+                self.downloadButton.setImage(UIImage(named: "download"), for: UIControl.State.normal)
+                self.downloadButton.setImage(UIImage(named: "download"), for: UIControl.State.highlighted)
             }
         }
     }
@@ -268,7 +268,7 @@ class HTZMusicControlView: BaseView {
             make.width.equalTo(50)
         }
         
-        self.loveButton.snp.makeConstraints { (make) in
+        self.downloadButton.snp.makeConstraints { (make) in
             make.left.equalTo(self.topView.centerX).offset(2 * kGlobelMargin)
             make.centerY.equalTo(self.topView)
             make.width.equalTo(50)
@@ -299,9 +299,9 @@ class HTZMusicControlView: BaseView {
         self.playButton.snp.makeConstraints { (make) in
             make.centerX.equalTo(self)
             if #available(iOS 11.0, *) {
-                make.bottom.equalTo(self.safeAreaLayoutGuide).offset(2 * kGlobelMargin)
+                make.bottom.equalTo(self.safeAreaLayoutGuide).offset(-2 * kGlobelMargin)
             } else {
-                make.bottom.equalTo(self).offset(2 * kGlobelMargin)
+                make.bottom.equalTo(self).offset(-2 * kGlobelMargin)
             }
             make.size.equalTo(CGSize(width: 60, height: 60))
         }

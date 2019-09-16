@@ -109,6 +109,11 @@ class HTZMusicModel: NSObject, HandyJSON, NSCoding {
         return nil
     }
     
+    func mapping(mapper: HelpingMapper) {
+        mapper <<<
+            self.song_id <-- "hash"
+    }
+    
     required override init() {
         super.init()
     }

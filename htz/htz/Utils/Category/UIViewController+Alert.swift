@@ -10,6 +10,30 @@ import Foundation
 
 extension UIViewController {
     
+    func visibleViewControllerIfExist() -> UIViewController? {
+        if (self.presentedViewController != nil) {
+            return self.presentedViewController?.visibleViewControllerIfExist()
+        }
+        
+        if self.isKind(of: UINavigationController.self) {
+            return (self as! UINavigationController).topViewController?.visibleViewControllerIfExist()
+        }
+        
+        if self.isKind(of: UITabBarController.self) {
+            return (self as! UITabBarController).selectedViewController?.visibleViewControllerIfExist()
+        }
+        
+        if self.isViewLoaded && ((self.view?.window) != nil) {
+            return self
+        } else {
+            print(String(format: "visibleViewControllerIfExist:，找不到可见的viewController。self = %@, self.view.window = %@", self, self.view.window!))
+            return nil
+        }
+    }
+}
+
+extension UIViewController {
+    
     func alert(message:String) {
         let attr = NSMutableAttributedString(string: message, attributes: [NSAttributedString.Key.font : UIFont.boldSystemFont(ofSize: 18),NSAttributedString.Key.foregroundColor : RGBHEXCOLOR(rgbValue: 0xFFFFFF)])
         // 初始化提示框

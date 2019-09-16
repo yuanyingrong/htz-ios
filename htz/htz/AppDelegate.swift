@@ -9,23 +9,100 @@
 import UIKit
 import CoreData
 import Alamofire
+import AVFoundation
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
 
-
+    lazy var palyButton: UIButton = {
+        let button = UIButton(type: UIButton.ButtonType.custom)
+        button.setImage(UIImage(named: "cm2_topbar_icn_playing1"), for: UIControl.State.normal)
+        button.setImage(UIImage(named: "cm2_topbar_icn_playing1_prs"), for: UIControl.State.highlighted)
+        button.addTarget(self, action: #selector(topbarPlayButtonClickAction), for: UIControl.Event.touchUpInside)
+        return button
+    }()
+    
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        
+        // 初始化主窗口
         window = UIWindow(frame: UIScreen.main.bounds)
         window?.backgroundColor = UIColor.white
         window?.rootViewController = HTZTabbarViewController()
         window?.makeKeyAndVisible()
         
+        // 初始化全局播放按钮
+        initPlayButton()
+        
         // 初始化播放器
         HTZPlayViewController.sharedInstance.initialData()
         
+        // 网络监测
+        networkStateCheck()
+        
+        // 告诉app支持后台播放
+         let audioSession = AVAudioSession.sharedInstance()
+        do {
+            try audioSession.setCategory(AVAudioSession.Category.playback)
+            try audioSession.setActive(true, options: AVAudioSession.SetActiveOptions.init())
+        } catch  {
+            print(error)
+        }
+       
+        
+        
+        
+        
+        #if DEBUG
+        pgyerCrash()
+        #endif
+        
+        return true
+    }
+    
+    ///
+    func initPlayButton() {
+        self.window?.addSubview(palyButton)
+        
+        let statusBarFrame = UIApplication.shared.statusBarFrame
+        palyButton.snp.makeConstraints({ (make) in
+            make.top.equalTo(self.window!).offset(statusBarFrame.size.height)
+            make.right.equalTo(self.window!).offset(-4)
+            make.width.height.equalTo(44)
+        })
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(playStatusChanged(noti:)), name: NSNotification.Name(kPlayStateChangeNotification), object: nil)
+    }
+    
+    @objc private func topbarPlayButtonClickAction() {
+        HTZMusicTool.visibleViewController()?.navigationController?.pushViewController(HTZPlayViewController.sharedInstance, animated: true)
+    }
+    
+    @objc private func playStatusChanged(noti: Notification) {
+        DispatchQueue.main.async {
+            if let isPlaying = HTZPlayViewController.sharedInstance.isPlaying, isPlaying {
+                var images = [UIImage]()
+                for i in 1...6 {
+                    let imageName = "cm2_topbar_icn_playing" + String(i)
+                    images.append(UIImage(named: imageName)!)
+                }
+                self.palyButton.imageView?.animationImages = images
+                self.palyButton.imageView?.animationDuration = 0.75
+                self.palyButton.imageView?.startAnimating()
+            } else {
+                if self.palyButton.imageView!.isAnimating {
+                    self.palyButton.imageView?.stopAnimating()
+                }
+                self.palyButton.setImage(UIImage(named: "cm2_topbar_icn_playing1"), for: UIControl.State.normal)
+                self.palyButton.setImage(UIImage(named: "cm2_topbar_icn_playing1_prs"), for: UIControl.State.highlighted)
+            }
+        }
+    }
+ 
+    /// 网络监测
+    func networkStateCheck() {
         let manager = NetworkReachabilityManager()
         manager?.listener = { status in
             switch status {
@@ -47,13 +124,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 }
                 break
             }
+            // 发送网络状态改变的通知
+            NotificationCenter.default.post(name: NSNotification.Name(kNetworkChangeNotification), object: nil)
         }
+        
         manager?.startListening()
-
-        return true
     }
     
- 
+    private func pgyerCrash() {
+        // 启动基本SDK
+        PgyManager.shared()?.start(withAppId: "f87f93f5acb6b5363c23b8d208324857")
+        // 启动更新检查SDK
+        PgyUpdateManager.sharedPgy()?.start(withAppId: "f87f93f5acb6b5363c23b8d208324857")
+    }
 
     func applicationWillResignActive(_ application: UIApplication) {
         // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.

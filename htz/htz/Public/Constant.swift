@@ -37,10 +37,10 @@ func printLog<T>(_ message : T, file : String = #file, funcName : String = #func
     
     #endif
 }
-let networkChangeNotification = "networkChangeNotification" // 网络状态改变
-let playStateChangeNotification = "playStateChangeNotification" // 播放状态改变
-let loveMusicNotification = "loveMusicNotification" // 喜欢音乐
-let playMusicChangeNotification = "playMusicChangeNotification" // 播放数据改变
+let kNetworkChangeNotification = "kNetworkChangeNotification" // 网络状态改变
+let kPlayStateChangeNotification = "kPlayStateChangeNotification" // 播放状态改变
+let kLoveMusicNotification = "kLoveMusicNotification" // 喜欢音乐
+let kPlayMusicChangeNotification = "kPlayMusicChangeNotification" // 播放数据改变
 
 struct UserDefaults {
     static let Standard = Foundation.UserDefaults.standard

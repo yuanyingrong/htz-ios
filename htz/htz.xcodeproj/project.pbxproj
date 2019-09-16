@@ -977,6 +977,11 @@
 					19A957EA229BC716007B48ED = {
 						CreatedOnToolsVersion = 10.2;
 						LastSwiftMigration = 1030;
+						SystemCapabilities = {
+							com.apple.BackgroundModes = {
+								enabled = 1;
+							};
+						};
 					};
 					19A95801229BC718007B48ED = {
 						CreatedOnToolsVersion = 10.2;
