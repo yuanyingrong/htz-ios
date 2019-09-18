@@ -58,6 +58,7 @@ class HTZDownloadModel: NSObject, NSCoding {
         aCoder.encode(fileID, forKey: "fileID")
         aCoder.encode(fileName, forKey: "fileName")
         aCoder.encode(fileUrl, forKey: "fileUrl")
+        aCoder.encode(fileLyric, forKey: "fileLyric")
         aCoder.encode(state?.rawValue, forKey: "state")
         aCoder.encode(fileDuration, forKey: "fileDuration")
         aCoder.encode(fileFormat, forKey: "fileFormat")

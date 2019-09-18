@@ -8,7 +8,7 @@
 
 import UIKit
 
-class HTZHomeViewController: BaseViewController {
+class HTZHomeViewController: HTZBaseViewController {
     
     private lazy var homeViewModel: HTZHomeViewModel = HTZHomeViewModel()
     

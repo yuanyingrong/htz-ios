@@ -15,7 +15,7 @@
                      "normal_icon_select": "read_classics_icon_select"
                      },
                      {
-                     "page": "BaseViewController",
+                     "page": "HTZBaseViewController",
                      "type": "play",
                      "title": "",
                      "normal_icon": " ",

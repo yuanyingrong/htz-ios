@@ -8,7 +8,7 @@
 
 import UIKit
 
-class HTZLoginViewController: BaseViewController {
+class HTZLoginViewController: HTZBaseViewController {
 
     private lazy var topImageView: UIImageView = {
         let imageView = UIImageView(image: UIImage(named: "logo"))

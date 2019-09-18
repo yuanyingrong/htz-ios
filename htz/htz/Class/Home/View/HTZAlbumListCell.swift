@@ -8,6 +8,11 @@
 
 import UIKit
 
+protocol HTZAlbumListCellDelegate: NSObjectProtocol {
+    
+    func downloadButtonClickAction(_ cell: HTZAlbumListCell)
+}
+
 class HTZAlbumListCell: BaseTableViewCell {
     
     var albumPartModel: HTZAlbumPartModel? {
@@ -28,6 +33,23 @@ class HTZAlbumListCell: BaseTableViewCell {
         }
     }
     
+    var musicModel: HTZMusicModel? {
+        
+        didSet {
+            if let musicModel = musicModel {
+//                titleLabel.text = musicModel.song_name
+                //                if albumPartModel.icon!.hasPrefix("http") {
+                //                    albumImageView.wb_setImageWith(urlStr: albumPartModel.icon!)
+                //                } else {
+                //                    albumImageView.image = UIImage(named: albumModel.icon ?? "")
+                //                }
+                playCountButton.setTitle(musicModel.lrcName, for: UIControl.State.normal)
+                playTimeLabel.text = ""
+                
+            }
+        }
+    }
+    
     var imageName: String? {
         didSet {
             if imageName!.hasPrefix("http") {
@@ -37,6 +59,8 @@ class HTZAlbumListCell: BaseTableViewCell {
             }
         }
     }
+    
+    weak var delegate: HTZAlbumListCellDelegate?
     
     private lazy var albumImageView: UIImageView = {
         let imageView = UIImageView()
@@ -65,7 +89,7 @@ class HTZAlbumListCell: BaseTableViewCell {
 
     private lazy var downloadButton: UIButton = {
         let downloadButton = UIButton(type: UIButton.ButtonType.custom)
-        downloadButton.setImage(UIImage(named: "time"), for: UIControl.State.normal)
+        downloadButton.setImage(UIImage(named: "download"), for: UIControl.State.normal)
         downloadButton.addTarget(self, action: #selector(downloadButtonClickAction), for: UIControl.Event.touchUpInside)
         return downloadButton
     }()
@@ -149,7 +173,8 @@ class HTZAlbumListCell: BaseTableViewCell {
 extension HTZAlbumListCell {
     
     @objc private func downloadButtonClickAction() {
-        
-        print("下载")
+        if let delegate = self.delegate, delegate.responds(to: Selector(("downloadButtonClickAction:"))) {
+            delegate.downloadButtonClickAction(self)
+        }
     }
 }

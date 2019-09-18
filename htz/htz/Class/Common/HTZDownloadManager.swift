@@ -496,7 +496,7 @@ extension HTZDownloadManager {
     }
     
     // 删除数据模型
-    private func deleteDownloadModelArr(modelArr: [HTZDownloadModel]) -> Void {
+    func deleteDownloadModelArr(modelArr: [HTZDownloadModel]) -> Void {
         
         if ifPathExist(path: downloadDataFilePath()) {
             var downloadArr = downloadFileList()

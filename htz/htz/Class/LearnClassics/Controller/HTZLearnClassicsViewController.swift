@@ -8,7 +8,7 @@
 
 import UIKit
 
-class HTZLearnClassicsViewController: BaseViewController {
+class HTZLearnClassicsViewController: HTZBaseViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()

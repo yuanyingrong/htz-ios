@@ -8,7 +8,7 @@
 
 import UIKit
 
-class BaseViewController: UIViewController {
+class HTZBaseViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()

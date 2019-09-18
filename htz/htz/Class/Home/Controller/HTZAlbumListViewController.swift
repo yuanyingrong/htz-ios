@@ -9,7 +9,7 @@
 import UIKit
 import Alamofire
 
-class HTZAlbumListViewController: BaseViewController {
+class HTZAlbumListViewController: HTZBaseViewController {
     
     private lazy var albumListViewModel: HTZAlbumListViewModel = HTZAlbumListViewModel()
     
@@ -126,6 +126,7 @@ extension HTZAlbumListViewController: UITableViewDataSource, UITableViewDelegate
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell =  tableView.dequeueReusableCell(withIdentifier: "HTZAlbumListCellReuseID", for: indexPath) as! HTZAlbumListCell
+        cell.delegate = self
         cell.imageName = albumModel?.icon
         cell.albumPartModel = self.albumListViewModel.dataArr[indexPath.row]
         return cell
@@ -147,6 +148,43 @@ extension HTZAlbumListViewController: UITableViewDataSource, UITableViewDelegate
         vc.playMusic(index: indexPath.row, isSetList: true)
         navigationController?.pushViewController(vc, animated: true)
         
+    }
+    
+}
+
+// MARK: - HTZAlbumListCellDelegate
+extension HTZAlbumListViewController: HTZAlbumListCellDelegate {
+    
+    @objc func downloadButtonClickAction(_ cell: HTZAlbumListCell) {
+        let indexPath = self.tableView.indexPath(for: cell)
+        let model = self.albumListViewModel.dataSongArr[indexPath!.row]
+        if let model = model, let downloadState = model.downloadState {
+            switch downloadState {
+                
+            case .none: // 未开始
+                model.downloadState = .downloading
+                HTZMusicTool.downloadMusic(musicModel: model)
+                break
+            case .waiting: // 等待下载
+                break
+            case .downloading: // 下载中
+                self.alert(message: "下载中")
+                break
+            case .paused: // 下载暂停
+                break
+            case .failed:  // 下载失败
+                break
+            case .finished:  // 下载完成
+                self.alertConfirmCacellActionAlert(title: "", message: "该歌曲已下载，是否删除下载问题", leftConfirmTitle: "删除", rightConfirmTitle: "取消", selectLeftBlock: {
+                    let dModel = HTZDownloadModel()
+                    dModel.fileID = model.song_id
+                    kDownloadManager.deleteDownloadModelArr(modelArr: [dModel])
+                }, selectRightBlock: nil)
+                break
+            
+            }
+           
+        }
     }
     
 }

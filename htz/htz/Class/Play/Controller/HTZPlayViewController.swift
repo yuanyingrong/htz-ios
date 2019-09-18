@@ -16,7 +16,7 @@ enum HTZPlayerPlayStyle: NSInteger {
     case random = 2 // 随机播放
 }
 
-class HTZPlayViewController: BaseViewController {
+class HTZPlayViewController: HTZBaseViewController {
     
     /// 循环类型
     var playStyle: HTZPlayerPlayStyle?
@@ -663,7 +663,7 @@ extension HTZPlayViewController {
             
             // 解析歌词
             self.topLyricView.lyrics = HTZLyricParser.lyricParser(url: (self.model?.song_lyricPath)!, isDelBlank: true)
-            self.bottomLyricView.lyrics = HTZLyricParser.lyricParser(url: (self.model?.lrclink)!, isDelBlank: true)
+            self.bottomLyricView.lyrics = HTZLyricParser.lyricParser(url: (self.model?.song_lyricPath)!, isDelBlank: true)
         } else {
             if HTZMusicTool.networkState() == "none" {
                 alert(message: "网络连接失败")
