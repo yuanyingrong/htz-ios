@@ -36,14 +36,25 @@ class HTZMusicTool: NSObject {
         return nil
     }
     
-    static func lovedMusicList() -> [HTZMusicModel]? {
-        return NSKeyedUnarchiver.unarchiveObject(withFile: kLovedDataPath!) as? [HTZMusicModel]
+    static func lovedMusicList() -> [HTZSaveDataModel]? {
+        return NSKeyedUnarchiver.unarchiveObject(withFile: kLovedDataPath!) as? [HTZSaveDataModel]
     }
     
     static func love(music: HTZMusicModel) {
+        var saveArr = [HTZSaveDataModel]()
         var arr = [HTZMusicModel]()
+        var saveIndex: Int?
         if let lovedMusicList = lovedMusicList() {
-            arr = lovedMusicList
+            for (idx, obj) in lovedMusicList.enumerated() {
+                saveArr = lovedMusicList
+                saveIndex = idx
+                if obj.albumID == music.album_id {
+                    if let files = obj.files {
+                        arr = files
+                    }
+                    break
+                }
+            }
         }
         if music.isLove! {
             var exist = false
@@ -55,6 +66,16 @@ class HTZMusicTool: NSObject {
             }
             if !exist {
                 arr.append(music)
+                if let saveIndex = saveIndex, saveArr[saveIndex].albumID == music.album_id {
+                    saveArr[saveIndex].files = arr
+                } else {
+                    let model = HTZSaveDataModel()
+                    model.albumID = music.album_id
+                    model.albumTitle = music.album_title
+                    model.albumIcon = music.icon
+                    model.files = arr
+                    saveArr.append(model)
+                }
             }
         } else {
             var index = 0
@@ -69,9 +90,15 @@ class HTZMusicTool: NSObject {
             if exist {
                 arr.remove(at: index)
             }
+            if arr.count > 0 {
+                saveArr[saveIndex!].files = arr
+            } else {
+                saveArr.remove(at: saveIndex!)
+            }
         }
-        NSKeyedArchiver.archiveRootObject(arr, toFile: kLovedDataPath!)
+        NSKeyedArchiver.archiveRootObject(saveArr, toFile: kLovedDataPath!)
     }
+    
     static func index(from musicID: String) -> NSInteger {
         var index = 0
         for (idx, obj) in musicList()!.enumerated() {
@@ -87,7 +114,14 @@ class HTZMusicTool: NSObject {
         
         var musics = [HTZMusicModel]()
         if let lovedMusicList = lovedMusicList() {
-            musics = lovedMusicList
+            for obj in lovedMusicList {
+                if obj.albumID == model.album_id {
+                    if let files = obj.files {
+                        musics = files
+                    }
+                    break
+                }
+            }
         }
         for (idx, obj) in musics.enumerated() {
             if obj.song_id == model.song_id {

@@ -294,6 +294,17 @@ class HTZDownloadManager: NSObject {
         return 0
     }
     
+    func fileSizeWithFileLocalPath(fileLocalPath: String) -> CUnsignedLongLong {
+        if ifPathExist(path: fileLocalPath) {
+            do {
+                return try FileManager.default.attributesOfItem(atPath: fileLocalPath)[FileAttributeKey.size] as! CUnsignedLongLong
+            } catch {
+                print(error)
+            }
+        }
+        return 0
+    }
+    
 }
 
 // MARK: - 下载

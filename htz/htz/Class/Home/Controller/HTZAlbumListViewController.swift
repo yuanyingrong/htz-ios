@@ -25,6 +25,19 @@ class HTZAlbumListViewController: HTZBaseViewController {
                 }
                 contentLabel.text = albumModel.desc
                 countLabel.text = "共\(albumModel.item_total ?? "0")集"
+                var target: API = API.xingfuneixinchan
+                if albumModel.index == 0 {
+                    target = API.xingfuneixinchan
+                } else if albumModel.index == 1  {
+                    target = API.jingxinyangsheng
+                }
+                albumListViewModel.icon = albumModel.icon
+                albumListViewModel.albumTitle = albumModel.title
+                albumListViewModel.requestData(target: target, isPullDown: true) { (success) in
+                    if success {
+                        self.tableView.reloadData()
+                    }
+                }
             }
         }
     }
@@ -92,11 +105,7 @@ class HTZAlbumListViewController: HTZBaseViewController {
     
     override func configData() {
         super.configData()
-        albumListViewModel.requestData(isPullDown: true) { (success) in
-            if success {
-                self.tableView.reloadData()
-            }
-        }
+        
 //        albumListViewModel.requestSongData(isPullDown: true) { (sucess) in
 //            
 //        }
@@ -129,6 +138,7 @@ extension HTZAlbumListViewController: UITableViewDataSource, UITableViewDelegate
         cell.delegate = self
         cell.imageName = albumModel?.icon
         cell.albumPartModel = self.albumListViewModel.dataArr[indexPath.row]
+        cell.musicModel = self.albumListViewModel.dataSongArr[indexPath.row]
         return cell
     }
     
@@ -183,10 +193,9 @@ extension HTZAlbumListViewController: HTZAlbumListCellDelegate {
                 break
             
             }
-           
         }
+        self.tableView.reloadData()
     }
-    
 }
 
 

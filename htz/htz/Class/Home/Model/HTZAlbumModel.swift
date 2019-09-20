@@ -29,6 +29,8 @@ class HTZAlbumModel: HandyJSON {
     //
     var time: String?
     
+    var index: NSInteger?
+    
     required init() {}
     
     func mapping(mapper: HelpingMapper) {

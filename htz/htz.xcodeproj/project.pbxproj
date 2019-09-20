@@ -15,6 +15,11 @@
 		193A8B922318C62C00B520B1 /* UIViewController+Alert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193A8B912318C62C00B520B1 /* UIViewController+Alert.swift */; };
 		193A8B942318C82000B520B1 /* CurrentViewControllerUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193A8B932318C82000B520B1 /* CurrentViewControllerUtil.swift */; };
 		193A8B9623190ACB00B520B1 /* HTZSignUpViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193A8B9523190ACB00B520B1 /* HTZSignUpViewController.swift */; };
+		193B866B2334A5C6006D4A3D /* HTZSaveDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193B866A2334A5C6006D4A3D /* HTZSaveDataModel.swift */; };
+		193B866D2334AB67006D4A3D /* HTZMyFavoriteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193B866C2334AB67006D4A3D /* HTZMyFavoriteViewController.swift */; };
+		193B866F2334ACCA006D4A3D /* HTZMyFavoriteCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193B866E2334ACCA006D4A3D /* HTZMyFavoriteCell.swift */; };
+		193B86712334CD03006D4A3D /* HTZMyDownloadedCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193B86702334CD03006D4A3D /* HTZMyDownloadedCell.swift */; };
+		193B86732334CE71006D4A3D /* HTZMyDownloadedViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193B86722334CE71006D4A3D /* HTZMyDownloadedViewController.swift */; };
 		193C11072314C70E0038B8BD /* HTZLabelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193C11062314C70E0038B8BD /* HTZLabelView.swift */; };
 		193C11092314CB760038B8BD /* HTZProfileFunctionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193C11082314CB760038B8BD /* HTZProfileFunctionView.swift */; };
 		193C919E22FC099000E3AA4A /* HTZHomeTitleCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193C919D22FC099000E3AA4A /* HTZHomeTitleCollectionViewCell.swift */; };
@@ -22,10 +27,10 @@
 		193C91A222FC0C6E00E3AA4A /* HTZHomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193C91A122FC0C6E00E3AA4A /* HTZHomeViewModel.swift */; };
 		193CB48423161CBE00A1B21F /* HTZLoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193CB48323161CBE00A1B21F /* HTZLoginViewController.swift */; };
 		193CB4872316329D00A1B21F /* HTZConstans.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193CB4862316329D00A1B21F /* HTZConstans.swift */; };
-		193D6F2423320AC8004BF5FB /* HTZMyDownloadedViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193D6F2323320AC8004BF5FB /* HTZMyDownloadedViewController.swift */; };
-		193D6F2623320B07004BF5FB /* HTZMyFavoriteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193D6F2523320B07004BF5FB /* HTZMyFavoriteViewController.swift */; };
-		193D6F2823320C2B004BF5FB /* HTZMyDownloadedCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193D6F2723320C2B004BF5FB /* HTZMyDownloadedCell.swift */; };
-		193D6F2A23320C43004BF5FB /* HTZMyFavoriteCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193D6F2923320C43004BF5FB /* HTZMyFavoriteCell.swift */; };
+		193D6F2423320AC8004BF5FB /* HTZMyDownloadedAlbumViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193D6F2323320AC8004BF5FB /* HTZMyDownloadedAlbumViewController.swift */; };
+		193D6F2623320B07004BF5FB /* HTZMyFavoriteAlbumViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193D6F2523320B07004BF5FB /* HTZMyFavoriteAlbumViewController.swift */; };
+		193D6F2823320C2B004BF5FB /* HTZMyDownloadedAlbumCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193D6F2723320C2B004BF5FB /* HTZMyDownloadedAlbumCell.swift */; };
+		193D6F2A23320C43004BF5FB /* HTZMyFavoriteAlbumCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193D6F2923320C43004BF5FB /* HTZMyFavoriteAlbumCell.swift */; };
 		193D7D8823273857001A5F21 /* HTZSliderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193D7D8723273857001A5F21 /* HTZSliderView.swift */; };
 		193D7D8A2327574E001A5F21 /* HTZMusicControlView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193D7D892327574E001A5F21 /* HTZMusicControlView.swift */; };
 		193D7D8C23277090001A5F21 /* HTZMusicTool.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193D7D8B23277090001A5F21 /* HTZMusicTool.swift */; };
@@ -127,6 +132,11 @@
 		193A8B912318C62C00B520B1 /* UIViewController+Alert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Alert.swift"; sourceTree = "<group>"; };
 		193A8B932318C82000B520B1 /* CurrentViewControllerUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentViewControllerUtil.swift; sourceTree = "<group>"; };
 		193A8B9523190ACB00B520B1 /* HTZSignUpViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZSignUpViewController.swift; sourceTree = "<group>"; };
+		193B866A2334A5C6006D4A3D /* HTZSaveDataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZSaveDataModel.swift; sourceTree = "<group>"; };
+		193B866C2334AB67006D4A3D /* HTZMyFavoriteViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZMyFavoriteViewController.swift; sourceTree = "<group>"; };
+		193B866E2334ACCA006D4A3D /* HTZMyFavoriteCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZMyFavoriteCell.swift; sourceTree = "<group>"; };
+		193B86702334CD03006D4A3D /* HTZMyDownloadedCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZMyDownloadedCell.swift; sourceTree = "<group>"; };
+		193B86722334CE71006D4A3D /* HTZMyDownloadedViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZMyDownloadedViewController.swift; sourceTree = "<group>"; };
 		193C11062314C70E0038B8BD /* HTZLabelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZLabelView.swift; sourceTree = "<group>"; };
 		193C11082314CB760038B8BD /* HTZProfileFunctionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZProfileFunctionView.swift; sourceTree = "<group>"; };
 		193C919D22FC099000E3AA4A /* HTZHomeTitleCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZHomeTitleCollectionViewCell.swift; sourceTree = "<group>"; };
@@ -134,10 +144,10 @@
 		193C91A122FC0C6E00E3AA4A /* HTZHomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZHomeViewModel.swift; sourceTree = "<group>"; };
 		193CB48323161CBE00A1B21F /* HTZLoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZLoginViewController.swift; sourceTree = "<group>"; };
 		193CB4862316329D00A1B21F /* HTZConstans.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZConstans.swift; sourceTree = "<group>"; };
-		193D6F2323320AC8004BF5FB /* HTZMyDownloadedViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZMyDownloadedViewController.swift; sourceTree = "<group>"; };
-		193D6F2523320B07004BF5FB /* HTZMyFavoriteViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZMyFavoriteViewController.swift; sourceTree = "<group>"; };
-		193D6F2723320C2B004BF5FB /* HTZMyDownloadedCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZMyDownloadedCell.swift; sourceTree = "<group>"; };
-		193D6F2923320C43004BF5FB /* HTZMyFavoriteCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZMyFavoriteCell.swift; sourceTree = "<group>"; };
+		193D6F2323320AC8004BF5FB /* HTZMyDownloadedAlbumViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZMyDownloadedAlbumViewController.swift; sourceTree = "<group>"; };
+		193D6F2523320B07004BF5FB /* HTZMyFavoriteAlbumViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZMyFavoriteAlbumViewController.swift; sourceTree = "<group>"; };
+		193D6F2723320C2B004BF5FB /* HTZMyDownloadedAlbumCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZMyDownloadedAlbumCell.swift; sourceTree = "<group>"; };
+		193D6F2923320C43004BF5FB /* HTZMyFavoriteAlbumCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZMyFavoriteAlbumCell.swift; sourceTree = "<group>"; };
 		193D7D8723273857001A5F21 /* HTZSliderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZSliderView.swift; sourceTree = "<group>"; };
 		193D7D892327574E001A5F21 /* HTZMusicControlView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZMusicControlView.swift; sourceTree = "<group>"; };
 		193D7D8B23277090001A5F21 /* HTZMusicTool.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZMusicTool.swift; sourceTree = "<group>"; };
@@ -263,6 +273,7 @@
 				193F560A2320F5450037BC70 /* HTZDownloadManager.swift */,
 				193F560C2320FD120037BC70 /* HTZDownloadModel.swift */,
 				193D7D8B23277090001A5F21 /* HTZMusicTool.swift */,
+				193B866A2334A5C6006D4A3D /* HTZSaveDataModel.swift */,
 			);
 			path = Common;
 			sourceTree = "<group>";
@@ -866,8 +877,10 @@
 			isa = PBXGroup;
 			children = (
 				195C195522B24A6F002E8A04 /* HTZProfileViewController.swift */,
-				193D6F2323320AC8004BF5FB /* HTZMyDownloadedViewController.swift */,
-				193D6F2523320B07004BF5FB /* HTZMyFavoriteViewController.swift */,
+				193B86722334CE71006D4A3D /* HTZMyDownloadedViewController.swift */,
+				193D6F2323320AC8004BF5FB /* HTZMyDownloadedAlbumViewController.swift */,
+				193B866C2334AB67006D4A3D /* HTZMyFavoriteViewController.swift */,
+				193D6F2523320B07004BF5FB /* HTZMyFavoriteAlbumViewController.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -885,8 +898,10 @@
 				1935D54E2313CB3600FE2547 /* HTZProfileHeaderView.swift */,
 				193C11082314CB760038B8BD /* HTZProfileFunctionView.swift */,
 				1935D5502313D34D00FE2547 /* HTZProfileTableViewCell.swift */,
-				193D6F2723320C2B004BF5FB /* HTZMyDownloadedCell.swift */,
-				193D6F2923320C43004BF5FB /* HTZMyFavoriteCell.swift */,
+				193D6F2723320C2B004BF5FB /* HTZMyDownloadedAlbumCell.swift */,
+				193B86702334CD03006D4A3D /* HTZMyDownloadedCell.swift */,
+				193D6F2923320C43004BF5FB /* HTZMyFavoriteAlbumCell.swift */,
+				193B866E2334ACCA006D4A3D /* HTZMyFavoriteCell.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -1170,13 +1185,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				193CB48423161CBE00A1B21F /* HTZLoginViewController.swift in Sources */,
+				193B866F2334ACCA006D4A3D /* HTZMyFavoriteCell.swift in Sources */,
 				193E5086231E69BE000184EC /* HTZMusicPlayTool.swift in Sources */,
 				193CB4872316329D00A1B21F /* HTZConstans.swift in Sources */,
 				1946C4AA231F508400808F3C /* HTZMusicModel.swift in Sources */,
 				195DDD2622AFAF5B00C5F04C /* UILabel+Extension.swift in Sources */,
 				195DDD3122AFB21F00C5F04C /* BaseView.swift in Sources */,
 				195C194722B24397002E8A04 /* BaseTabBarController.swift in Sources */,
-				193D6F2623320B07004BF5FB /* HTZMyFavoriteViewController.swift in Sources */,
+				193D6F2623320B07004BF5FB /* HTZMyFavoriteAlbumViewController.swift in Sources */,
 				193A8B922318C62C00B520B1 /* UIViewController+Alert.swift in Sources */,
 				195DDD3922AFB30700C5F04C /* BaseViewModel.swift in Sources */,
 				1942E1692329D575007E7C36 /* HTZLyricParser.swift in Sources */,
@@ -1184,6 +1200,7 @@
 				1934795D232636D300138B36 /* HTZAudioPlayer.swift in Sources */,
 				1946C4B0231F620500808F3C /* HTZLrcModel.swift in Sources */,
 				193F56072320AA680037BC70 /* HTZAlbumListViewModel.swift in Sources */,
+				193B866D2334AB67006D4A3D /* HTZMyFavoriteViewController.swift in Sources */,
 				19A957EF229BC716007B48ED /* AppDelegate.swift in Sources */,
 				193E5088231E7184000184EC /* HTZMusicOperationTool.swift in Sources */,
 				195DDD3322AFB24B00C5F04C /* BaseTableViewCell.swift in Sources */,
@@ -1193,9 +1210,11 @@
 				195DDD3522AFB29400C5F04C /* BaseCollectionViewCell.swift in Sources */,
 				1947F4F822FA5A9500B57813 /* HTZHomeTitleCollectionView.swift in Sources */,
 				195DDD3722AFB2E900C5F04C /* BaseModel.swift in Sources */,
+				193B86732334CE71006D4A3D /* HTZMyDownloadedViewController.swift in Sources */,
 				193D7D8C23277090001A5F21 /* HTZMusicTool.swift in Sources */,
 				195C19C822B25BE5002E8A04 /* JsonHelper.swift in Sources */,
 				195DDD2A22AFAFC300C5F04C /* UIButton+Extension.swift in Sources */,
+				193B86712334CD03006D4A3D /* HTZMyDownloadedCell.swift in Sources */,
 				193A8B902318C11A00B520B1 /* UIWindow+Extension.swift in Sources */,
 				193D7D8823273857001A5F21 /* HTZSliderView.swift in Sources */,
 				193C11072314C70E0038B8BD /* HTZLabelView.swift in Sources */,
@@ -1210,7 +1229,7 @@
 				195DDD2822AFAF9000C5F04C /* UIView+Extension.swift in Sources */,
 				193C919E22FC099000E3AA4A /* HTZHomeTitleCollectionViewCell.swift in Sources */,
 				195DDD2F22AFB1D900C5F04C /* HTZBaseViewController.swift in Sources */,
-				193D6F2423320AC8004BF5FB /* HTZMyDownloadedViewController.swift in Sources */,
+				193D6F2423320AC8004BF5FB /* HTZMyDownloadedAlbumViewController.swift in Sources */,
 				1946C4AE231F61F500808F3C /* HTZLrcDataTool.swift in Sources */,
 				193A8B9623190ACB00B520B1 /* HTZSignUpViewController.swift in Sources */,
 				193D7D8A2327574E001A5F21 /* HTZMusicControlView.swift in Sources */,
@@ -1224,8 +1243,9 @@
 				193F560D2320FD120037BC70 /* HTZDownloadModel.swift in Sources */,
 				193F56092320AE500037BC70 /* HTZAlbumPartModel.swift in Sources */,
 				195C195E22B24ADC002E8A04 /* HTZHomeViewController.swift in Sources */,
-				193D6F2823320C2B004BF5FB /* HTZMyDownloadedCell.swift in Sources */,
+				193D6F2823320C2B004BF5FB /* HTZMyDownloadedAlbumCell.swift in Sources */,
 				1971F397231CFBBF002FFF42 /* HTZAlbumListCell.swift in Sources */,
+				193B866B2334A5C6006D4A3D /* HTZSaveDataModel.swift in Sources */,
 				19510C7D22A798840067AA5D /* Constant.swift in Sources */,
 				193C91A222FC0C6E00E3AA4A /* HTZHomeViewModel.swift in Sources */,
 				193E5084231E635B000184EC /* HTZAlbumInfoModel.swift in Sources */,
@@ -1247,7 +1267,7 @@
 				193F560523209AFD0037BC70 /* HTZHomeSearchView.swift in Sources */,
 				195C195822B24AA0002E8A04 /* HTZLearnClassicsViewController.swift in Sources */,
 				195C195C22B24ACD002E8A04 /* HTZReadClassicsViewController.swift in Sources */,
-				193D6F2A23320C43004BF5FB /* HTZMyFavoriteCell.swift in Sources */,
+				193D6F2A23320C43004BF5FB /* HTZMyFavoriteAlbumCell.swift in Sources */,
 				193C11092314CB760038B8BD /* HTZProfileFunctionView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

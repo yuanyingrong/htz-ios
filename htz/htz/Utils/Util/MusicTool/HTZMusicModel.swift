@@ -63,8 +63,10 @@ class HTZMusicModel: NSObject, HandyJSON, NSCoding {
         var exist = false
         if let lovedMusicList = HTZMusicTool.lovedMusicList() {
             for model in lovedMusicList {
-                if model.song_id == self.song_id {
-                    exist = true
+                for music in model.files! {
+                    if music.song_id == self.song_id {
+                        exist = true
+                    }
                 }
             }
         }
@@ -139,7 +141,7 @@ class HTZMusicModel: NSObject, HandyJSON, NSCoding {
         aCoder.encode(isLove, forKey: "isLove")
         aCoder.encode(isLike, forKey: "isLike")
         aCoder.encode(isDownload, forKey: "isDownload")
-        aCoder.encode(downloadState, forKey: "downloadState")
+//        aCoder.encode(downloadState, forKey: "downloadState")
         aCoder.encode(song_size, forKey: "song_size")
         aCoder.encode(completed_size, forKey: "completed_size")
         aCoder.encode(progress, forKey: "progress")
@@ -170,7 +172,7 @@ class HTZMusicModel: NSObject, HandyJSON, NSCoding {
         
         isLove = aDecoder.decodeObject(forKey: "isLove") as? Bool
         
-        downloadState = aDecoder.decodeObject(forKey: "downloadState") as? HTZDownloadManagerState
+//        downloadState = aDecoder.decodeObject(forKey: "downloadState") as? HTZDownloadManagerState
         song_size = aDecoder.decodeObject(forKey: "song_size") as? String
         completed_size = aDecoder.decodeObject(forKey: "completed_size") as? String
         progress = aDecoder.decodeObject(forKey: "progress") as? Float

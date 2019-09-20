@@ -12,6 +12,7 @@ import Moya
 enum API {
     case albums
     case xingfuneixinchan
+    case jingxinyangsheng
     case song(type: String, size: String, offset: String)
     case songDetail(songId: String)
     case sinaOAuth(code: String)
@@ -39,6 +40,8 @@ extension API: TargetType {
          return "albums.json"
         case .xingfuneixinchan:
             return "xingfuneixinchan/xingfuneixinchan.json"
+        case .jingxinyangsheng:
+            return "jingxinyangsheng/jingxinyangsheng.json"
         case .sinaOAuth(_):
             return "OAuth2/authorize"
         case let .song(type, size, offset):
@@ -74,7 +77,7 @@ extension API: TargetType {
         //        return .requestParameters(parameters: nil, encoding: JSONArrayEncoding.default)
         switch self {
         
-        case .albums, .xingfuneixinchan, .song(_), .songDetail(_):
+        case .albums, .xingfuneixinchan, .jingxinyangsheng, .song(_), .songDetail(_):
             return .requestPlain
         case let .register(email, password):
             return .requestParameters(parameters: ["email": email, "password": password], encoding: JSONEncoding.default)
@@ -110,3 +113,7 @@ extension API: TargetType {
     
 }
 
+
+extension TargetType {
+    
+}

@@ -1,8 +1,8 @@
 //
-//  HTZMyFavoriteViewController.swift
+//  HTZMyFavoriteListViewController.swift
 //  htz
 //
-//  Created by 袁应荣 on 2019/9/18.
+//  Created by 袁应荣 on 2019/9/20.
 //  Copyright © 2019 袁应荣. All rights reserved.
 //
 
@@ -10,7 +10,7 @@ import UIKit
 
 class HTZMyFavoriteViewController: HTZBaseViewController {
     
-    private var dataArr: [HTZMusicModel?] = [HTZMusicModel]()
+    private var dataArr: [HTZSaveDataModel] = []
     
     private lazy var tableView: UITableView = {
         let tableView = UITableView()
@@ -20,21 +20,23 @@ class HTZMyFavoriteViewController: HTZBaseViewController {
         tableView.register(HTZMyFavoriteCell.self, forCellReuseIdentifier: "HTZMyFavoriteCellReuseID")
         return tableView
     }()
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         
         // Do any additional setup after loading the view.
     }
     
-    override func configData() {
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
         dataArr = HTZMusicTool.lovedMusicList() ?? []
         
         self.tableView.reloadData()
     }
     
-
+    
     override func configSubView() {
         super.configSubView()
         
@@ -48,8 +50,8 @@ class HTZMyFavoriteViewController: HTZBaseViewController {
             make.edges.equalTo(view)
         }
     }
-  
-
+    
+    
 }
 
 // MARK: - UITableViewDataSource, UITableViewDelegate
@@ -60,27 +62,31 @@ extension HTZMyFavoriteViewController: UITableViewDataSource, UITableViewDelegat
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell =  tableView.dequeueReusableCell(withIdentifier: "HTZMyFavoriteCellReuseID", for: indexPath) as! HTZMyFavoriteCell
-//        cell.imageName = albumModel?.icon
-        cell.musicModel = dataArr[indexPath.row]
+        cell.delegate = self
+        cell.saveDataModel = dataArr[indexPath.row]
         return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         
-        let vc = HTZPlayViewController.sharedInstance
-        //        let music = HTZMusicModel()
-        //        music.fileName = self.albumListViewModel.dataArr[indexPath.row]?.audio
-        //        music.lrcName = self.albumListViewModel.dataArr[indexPath.row]?.lyric
-        //        music.name = self.albumListViewModel.dataArr[indexPath.row]?.title
-        //        music.icon = "chuan_xi_lu"
-        //        music.singer = "dddd"
-        //        music.singerIcon = "chuan_xi_lu"
-        vc.title = dataArr[indexPath.row]?.album_title
-        vc.setPlayerList(playList: dataArr as! [HTZMusicModel])
-        vc.playMusic(index: indexPath.row, isSetList: true)
+        let vc = HTZMyFavoriteAlbumViewController()
+        vc.title = dataArr[indexPath.row].albumTitle
+        vc.index = indexPath.row
         navigationController?.pushViewController(vc, animated: true)
         
     }
-    
+}
+
+// MARK: - HTZMyFavoriteCellDelegate
+extension HTZMyFavoriteViewController: HTZMyFavoriteCellDelegate {
+    @objc func deleteAction(_ cell: HTZMyFavoriteCell) {
+//        let indexPath = self.tableView.indexPath(for: cell)
+//        let model = HTZDownloadModel()
+//        model.fileID = self.dataArr[(indexPath?.row)!]!.song_id
+//        kDownloadManager.deleteDownloadModelArr(modelArr: [model])
+        
+        self.configData()
+    }
+
 }

@@ -1,30 +1,25 @@
 //
-//  HTZAlbumListCell.swift
+//  HTZMyFavoriteCell.swift
 //  htz
 //
-//  Created by 袁应荣 on 2019/9/2.
+//  Created by 袁应荣 on 2019/9/18.
 //  Copyright © 2019 袁应荣. All rights reserved.
 //
 
 import UIKit
 
-protocol HTZAlbumListCellDelegate: NSObjectProtocol {
-    
-    func downloadButtonClickAction(_ cell: HTZAlbumListCell)
-}
-
-class HTZAlbumListCell: BaseTableViewCell {
+class HTZMyFavoriteAlbumCell: BaseTableViewCell {
     
     var albumPartModel: HTZAlbumPartModel? {
         
         didSet {
             if let albumPartModel = albumPartModel {
                 titleLabel.text = albumPartModel.title
-//                if albumPartModel.icon!.hasPrefix("http") {
-//                    albumImageView.wb_setImageWith(urlStr: albumPartModel.icon!)
-//                } else {
-//                    albumImageView.image = UIImage(named: albumModel.icon ?? "")
-//                }
+                //                if albumPartModel.icon!.hasPrefix("http") {
+                //                    albumImageView.wb_setImageWith(urlStr: albumPartModel.icon!)
+                //                } else {
+                //                    albumImageView.image = UIImage(named: albumModel.icon ?? "")
+                //                }
                 playCountButton.setTitle(albumPartModel.playcount!, for: UIControl.State.normal)
                 playTimeLabel.text = ""
             }
@@ -37,7 +32,7 @@ class HTZAlbumListCell: BaseTableViewCell {
         
         didSet {
             if let musicModel = musicModel {
-//                titleLabel.text = musicModel.song_name
+                titleLabel.text = musicModel.song_name
                 //                if albumPartModel.icon!.hasPrefix("http") {
                 //                    albumImageView.wb_setImageWith(urlStr: albumPartModel.icon!)
                 //                } else {
@@ -45,13 +40,6 @@ class HTZAlbumListCell: BaseTableViewCell {
                 //                }
                 playCountButton.setTitle(musicModel.lrcName, for: UIControl.State.normal)
                 playTimeLabel.text = ""
-                self.timeButton.setTitle(HTZMusicTool.timeStr(msTime: NSString(string: musicModel.file_duration!).doubleValue), for: UIControl.State.normal)
-                if musicModel.isDownload {
-                    self.downloadButton.setImage(UIImage(named: "downloaded"), for: UIControl.State.normal)
-                } else {
-                   self.downloadButton.setImage(UIImage(named: "download"), for: UIControl.State.normal)
-                }
-                
             }
         }
     }
@@ -65,8 +53,6 @@ class HTZAlbumListCell: BaseTableViewCell {
             }
         }
     }
-    
-    weak var delegate: HTZAlbumListCellDelegate?
     
     private lazy var albumImageView: UIImageView = {
         let imageView = UIImageView()
@@ -92,11 +78,10 @@ class HTZAlbumListCell: BaseTableViewCell {
     }()
     
     private let playTimeLabel = UILabel(title: "已播60%", fontSize: 13, textColor: UIColor.red)
-
+    
     private lazy var downloadButton: UIButton = {
         let downloadButton = UIButton(type: UIButton.ButtonType.custom)
-        downloadButton.setImage(UIImage(named: "download"), for: UIControl.State.normal)
-        downloadButton.addTarget(self, action: #selector(downloadButtonClickAction), for: UIControl.Event.touchUpInside)
+        downloadButton.setImage(UIImage(named: "time"), for: UIControl.State.normal)
         return downloadButton
     }()
     
@@ -110,10 +95,10 @@ class HTZAlbumListCell: BaseTableViewCell {
         super.awakeFromNib()
         // Initialization code
     }
-
+    
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
-
+        
         // Configure the view for the selected state
     }
     
@@ -146,7 +131,7 @@ class HTZAlbumListCell: BaseTableViewCell {
         playCountButton.snp.makeConstraints { (make) in
             make.left.equalTo(titleLabel)
             make.top.equalTo(titleLabel.snp.bottom)
-//            make.size.equalTo(CGSize(width: 60, height: 28))
+            //            make.size.equalTo(CGSize(width: 60, height: 28))
             make.bottom.equalTo(albumImageView)
         }
         
@@ -173,14 +158,4 @@ class HTZAlbumListCell: BaseTableViewCell {
         }
     }
     
-}
-
-// MARK: 按钮点击事件
-extension HTZAlbumListCell {
-    
-    @objc private func downloadButtonClickAction() {
-        if let delegate = self.delegate, delegate.responds(to: Selector(("downloadButtonClickAction:"))) {
-            delegate.downloadButtonClickAction(self)
-        }
-    }
 }

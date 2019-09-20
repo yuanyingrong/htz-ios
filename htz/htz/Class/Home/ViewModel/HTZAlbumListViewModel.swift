@@ -14,8 +14,12 @@ class HTZAlbumListViewModel: NSObject {
     
     var dataSongArr = [HTZMusicModel?]()
     
-    func requestData(isPullDown: Bool, callBack: @escaping (Bool) -> ()) {
-        NetWorkRequest(API.xingfuneixinchan) { (response) -> (Void) in
+    var icon: String?
+    
+    var albumTitle: String?
+    
+    func requestData(target: API, isPullDown: Bool, callBack: @escaping (Bool) -> ()) {
+        NetWorkRequest(target) { (response) -> (Void) in
             
             let arr = [HTZAlbumPartModel].deserialize(from: response["sutra_items"].rawString())
             if let arr = arr {
@@ -25,6 +29,9 @@ class HTZAlbumListViewModel: NSObject {
                     let obj = HTZMusicModel()
                     obj.song_name = model?.title
                     obj.song_id = model?.hash
+                    obj.album_id = self.icon
+                    obj.icon = self.icon
+                    obj.album_title = self.albumTitle
                     obj.file_link = "http://htzshanghai.top/resources/audios/xingfuneixinchan/" + model!.audio!
                     obj.lrclink = "http://htzshanghai.top/resources/lyrics/xingfuneixinchan/" + model!.lyric!
                     obj.file_duration = model?.duration
