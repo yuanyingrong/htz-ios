@@ -34,7 +34,7 @@ class HTZDownloadModel: NSObject, NSCoding {
     var fileLyric: String?
     var fileLocalPath: String {
         
-        return kDownloadManager.downloadDataDir() + "/" + fileID! + "." + fileFormat!
+        return kDownloadManager.downloadDataDir(doc: fileAlbumName!) + "/" + fileID! + "." + fileFormat!
     }
     var fileLyricPath: String {
         return kDownloadManager.downloadDataDir() + "/" + fileID! + ".lrc"
@@ -57,6 +57,8 @@ class HTZDownloadModel: NSObject, NSCoding {
     func encode(with aCoder: NSCoder) {
         aCoder.encode(fileID, forKey: "fileID")
         aCoder.encode(fileName, forKey: "fileName")
+        aCoder.encode(fileAlbumId, forKey: "fileAlbumId")
+        aCoder.encode(fileAlbumName, forKey: "fileAlbumName")
         aCoder.encode(fileUrl, forKey: "fileUrl")
         aCoder.encode(fileLyric, forKey: "fileLyric")
         aCoder.encode(state?.rawValue, forKey: "state")
@@ -73,6 +75,8 @@ class HTZDownloadModel: NSObject, NSCoding {
     required init?(coder aDecoder: NSCoder) {
         fileID = aDecoder.decodeObject(forKey: "fileID") as? String
         fileName = aDecoder.decodeObject(forKey: "fileName") as? String
+        fileAlbumId = aDecoder.decodeObject(forKey: "fileAlbumId") as? String
+        fileAlbumName = aDecoder.decodeObject(forKey: "fileAlbumName") as? String
         fileUrl = aDecoder.decodeObject(forKey: "fileUrl") as? String
         fileLyric = aDecoder.decodeObject(forKey: "fileLyric") as? String
         fileDuration = aDecoder.decodeObject(forKey: "fileDuration") as? String

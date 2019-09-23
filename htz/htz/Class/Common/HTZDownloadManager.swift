@@ -75,10 +75,13 @@ class HTZDownloadManager: NSObject {
     // 根据id判断文件是否下载完成
     func checkDownloadWithID(fileID: String) -> Bool {
         var isDownload = false
-        for obj in downloadFileList() {
-            if fileID == obj.fileID && obj.state == HTZDownloadManagerState.finished {
-                isDownload = true
+        for saveModel in downloadFileList() {
+            for obj in saveModel.downloadFiles! {
+                if fileID == obj.fileID && obj.state == HTZDownloadManagerState.finished {
+                    isDownload = true
+                }
             }
+            
         }
         return isDownload
     }
@@ -87,9 +90,11 @@ class HTZDownloadManager: NSObject {
     func modelWithID(fileID: String) -> HTZDownloadModel? {
         if checkDownloadWithID(fileID: fileID) {
             var model: HTZDownloadModel? = nil
-            for obj in downloadFileList() {
-                if fileID == obj.fileID {
-                   model = obj
+            for saveModel in downloadFileList() {
+                for obj in saveModel.downloadFiles! {
+                    if fileID == obj.fileID {
+                        model = obj
+                    }
                 }
             }
             return model
@@ -169,41 +174,46 @@ class HTZDownloadManager: NSObject {
         }
         
         // 遍历数据，暂停当前下载
-        for model in downloadFileList() {
-            for obj in downloadArr {
-                // 文件未下载完成，并且是需要暂停的文件
-                if model.fileID == obj.fileID && model.state != HTZDownloadManagerState.finished {
-                    // 状态改变
-                    model.state = HTZDownloadManagerState.paused
-                    updateDownloadModel(model: model)
-                    
-                    if let delegate = self.delegate, delegate.responds(to: #selector(HTZPlayViewController.downloadChanged(_:downloadModel:state:))) {
-                        delegate.downloadChanged(self, downloadModel: model, state: HTZDownloadManagerState.paused)
+        for saveModel in downloadFileList() {
+            for model in saveModel.downloadFiles! {
+                for obj in downloadArr {
+                    // 文件未下载完成，并且是需要暂停的文件
+                    if model.fileAlbumId == obj.fileAlbumId && model.fileID == obj.fileID && model.state != HTZDownloadManagerState.finished {
+                        // 状态改变
+                        model.state = HTZDownloadManagerState.paused
+                        updateDownloadModel(model: model)
+                        
+                        if let delegate = self.delegate, delegate.responds(to: #selector(HTZPlayViewController.downloadChanged(_:downloadModel:state:))) {
+                            delegate.downloadChanged(self, downloadModel: model, state: HTZDownloadManagerState.paused)
+                        }
                     }
                 }
             }
         }
+        
         // 开始其他下载
         self.startdownloadRequest()
     }
     
     // 继续下载 恢复下载，暂停后才能调用
     func resumeDownloadArr(downloadArr: [HTZDownloadModel]) -> Void {
-        
-        for model in downloadFileList() {
-            for obj in downloadArr {
-                // 文件未下载完成并且是需要恢复下载的文件
-                if model.fileID == obj.fileID && model.state != HTZDownloadManagerState.finished {
-                    // 状态改变
-                    model.state = HTZDownloadManagerState.waiting
-                    updateDownloadModel(model: model)
-                    
-                    if let delegate = self.delegate, delegate.responds(to: #selector(HTZPlayViewController.downloadChanged(_:downloadModel:state:))) {
-                        delegate.downloadChanged(self, downloadModel: model, state: HTZDownloadManagerState.waiting)
+        for saveModel in downloadFileList() {
+            for model in saveModel.downloadFiles! {
+                for obj in downloadArr {
+                    // 文件未下载完成并且是需要恢复下载的文件
+                    if model.fileAlbumId == obj.fileAlbumId && model.fileID == obj.fileID && model.state != HTZDownloadManagerState.finished {
+                        // 状态改变
+                        model.state = HTZDownloadManagerState.waiting
+                        updateDownloadModel(model: model)
+                        
+                        if let delegate = self.delegate, delegate.responds(to: #selector(HTZPlayViewController.downloadChanged(_:downloadModel:state:))) {
+                            delegate.downloadChanged(self, downloadModel: model, state: HTZDownloadManagerState.waiting)
+                        }
                     }
                 }
             }
         }
+        
         // 开始其他下载
         self.startdownloadRequest()
     }
@@ -215,11 +225,14 @@ class HTZDownloadManager: NSObject {
         }
         
         var toClearArr = [HTZDownloadModel]()
-        for obj in downloadFileList() {
-            if obj.state != HTZDownloadManagerState.finished {
-                toClearArr.append(obj)
+        for saveModel in downloadFileList() {
+            for obj in saveModel.downloadFiles! {
+                if obj.state != HTZDownloadManagerState.finished {
+                    toClearArr.append(obj)
+                }
             }
         }
+        
         self.deleteDownloadModelArr(modelArr: toClearArr)
         
         if let delegate = self.delegate, delegate.responds(to: #selector(HTZPlayViewController.removedDownloadArr(_:downloadArr:))) {
@@ -228,23 +241,30 @@ class HTZDownloadManager: NSObject {
     }
     
     /// 遍历文件（全部）
-    func downloadFileList() -> [HTZDownloadModel] {
+    func downloadFileList() -> [HTZSaveDataModel] {
         if ifPathExist(path: downloadDataFilePath()) {
-            return NSKeyedUnarchiver.unarchiveObject(withFile: downloadDataFilePath()) as! [HTZDownloadModel]
+            return NSKeyedUnarchiver.unarchiveObject(withFile: downloadDataFilePath()) as! [HTZSaveDataModel]
         }
         return []
     }
     
     /// 遍历文件（已下载）
-    func downloadedFileList() -> [HTZDownloadModel] {
+    func downloadedFileList() -> [HTZSaveDataModel] {
         if ifPathExist(path: downloadDataFilePath()) {
-            var downloadedArr = [HTZDownloadModel]()
-            for obj in downloadFileList() {
-                if obj.state == HTZDownloadManagerState.finished {
-                    downloadedArr.append(obj)
+            var saveArr = [HTZSaveDataModel]()
+            for saveModel in downloadFileList() {
+                var downloadedArr = [HTZDownloadModel]()
+                for obj in saveModel.downloadFiles! {
+                    if obj.state == HTZDownloadManagerState.finished {
+                        downloadedArr.append(obj)
+                    }
+                }
+                if downloadedArr.count > 0 {
+                    saveModel.downloadFiles = downloadedArr
+                    saveArr.append(saveModel)
                 }
             }
-            return downloadedArr
+            return saveArr
         }
         return []
     }
@@ -255,17 +275,20 @@ class HTZDownloadManager: NSObject {
     private func toDownloadFileList() -> [HTZDownloadModel] {
         if ifPathExist(path: downloadDataFilePath()) {
             var toDownloadArr = [HTZDownloadModel]()
-            for obj in downloadFileList() {
-                if obj.state != HTZDownloadManagerState.finished {
-                    toDownloadArr.append(obj)
+            for saveModel in downloadFileList() {
+                for obj in saveModel.downloadFiles! {
+                    if obj.state != HTZDownloadManagerState.finished {
+                        toDownloadArr.append(obj)
+                    }
                 }
             }
+            
             return toDownloadArr
         }
         return []
     }
     
-    private func writeToFileWithModelArr(modelArr: [HTZDownloadModel]) -> Void {
+    private func writeToFileWithModelArr(modelArr: [HTZSaveDataModel]) -> Void {
         NSKeyedArchiver.archiveRootObject(modelArr, toFile: downloadDataFilePath())
     }
     
@@ -282,6 +305,23 @@ class HTZDownloadManager: NSObject {
         }
         return exist
     }
+    
+    private func ifExistDownloadModel(downloadModel: HTZDownloadModel) -> Bool {
+           var exist = false
+           if ifPathExist(path: downloadDataFilePath()) {
+               let saveArr = NSKeyedUnarchiver.unarchiveObject(withFile: downloadDataFilePath()) as! [HTZSaveDataModel]
+               for model in saveArr {
+                guard let downloadFiles = model.downloadFiles else { continue }
+                for obj in downloadFiles {
+                    if obj.fileID == downloadModel.fileID && obj.fileAlbumId == obj.fileAlbumId {
+                        exist = true
+                        break
+                    }
+                }
+               }
+           }
+           return exist
+       }
     
     func fileSizeWithModel(model: HTZDownloadModel) -> CUnsignedLongLong {
         if ifPathExist(path: model.fileLocalPath) {
@@ -316,12 +356,15 @@ extension HTZDownloadManager {
             // do nothing
         } else {
             var model: HTZDownloadModel?
-            for obj in downloadFileList() {
-                if obj.state == HTZDownloadManagerState.waiting {
-                    model = obj
-                    break
+            for saveModel in downloadFileList() {
+                for obj in saveModel.downloadFiles! {
+                    if obj.state == HTZDownloadManagerState.waiting {
+                        model = obj
+                        break
+                    }
                 }
             }
+            
             if let model = model {
                 self.currentDownloadFileID = model.fileID!
                 model.state = HTZDownloadManagerState.downloading
@@ -332,12 +375,12 @@ extension HTZDownloadManager {
                 if let delegate = self.delegate, delegate.responds(to: #selector(HTZPlayViewController.downloadChanged(_:downloadModel:state:))) {
                     delegate.downloadChanged(self, downloadModel: model, state: HTZDownloadManagerState.downloading)
                 }
-                
                 if self.isCanBreakpoint {
-                    startBreakpoint(model: model)
+                   self.startBreakpoint(model: model)
                 } else {
-                    startDownloadData(model: model)
+                   self.startDownloadData(model: model)
                 }
+                
             } else { // 没有需要下载的文件
                 self.currentDownloadFileID = nil
             }
@@ -356,7 +399,7 @@ extension HTZDownloadManager {
                 if let delegate = self.delegate, delegate.responds(to: #selector(HTZPlayViewController.downloadProgress(_:downloadModel:totalSize:downloadSize:progress:))) {
                     delegate.downloadProgress(self, downloadModel: model, totalSize: NSInteger(downloadProgress.totalUnitCount), downloadSize: NSInteger(downloadProgress.completedUnitCount), progress: Float(downloadProgress.completedUnitCount) / Float(downloadProgress.totalUnitCount))
                 }
-                print("共\(downloadProgress.totalUnitCount)\n当前下载\(downloadProgress.completedUnitCount)")
+                print("共需下载\(downloadProgress.totalUnitCount)\n当前下载\(downloadProgress.completedUnitCount)")
             }).responseData(completionHandler: { (response) in
                 switch response.result {
                 case .success(_): // 下载完成
@@ -471,26 +514,59 @@ extension HTZDownloadManager {
     
     // 保存数据模型
     private func saveDownloadModelArr(modelArr: [HTZDownloadModel]) -> Void {
-        var downloadModelArr = [HTZDownloadModel]()
+        var saveArr = downloadFileList()
+        var saveIndex: Int?
+        var arr = [HTZDownloadModel]()
+        for (idx, model) in saveArr.enumerated() {
+            if modelArr.first!.fileAlbumId == model.albumID {
+                arr = model.downloadFiles!
+                saveIndex = idx
+            }
+        }
         if ifPathExist(path: downloadDataFilePath()) {
             for obj in modelArr {
-                if !ifExistDownloadModelWithID(ID: obj.fileID!) {
-                    downloadModelArr.append(obj)
+                if !ifExistDownloadModel(downloadModel: obj) {
+                    arr.append(obj)
                 }
             }
+            if let saveIndex = saveIndex {
+                saveArr[saveIndex].downloadFiles = arr
+            } else {
+                let downloadModel = modelArr.first
+                let model = HTZSaveDataModel()
+                model.albumID = downloadModel?.fileAlbumId
+                model.albumTitle = downloadModel?.fileAlbumName
+                model.albumIcon = downloadModel?.fileCover
+                model.downloadFiles = modelArr
+                saveArr.append(model)
+            }
         } else {
-            downloadModelArr = modelArr
+            let downloadModel = modelArr.first
+            let model = HTZSaveDataModel()
+            model.albumID = downloadModel?.fileAlbumId
+            model.albumTitle = downloadModel?.fileAlbumName
+            model.albumIcon = downloadModel?.fileCover
+            model.downloadFiles = modelArr
+            saveArr.append(model)
         }
         
         // 保存
-        writeToFileWithModelArr(modelArr: downloadModelArr)
+        writeToFileWithModelArr(modelArr: saveArr)
     }
     
     // 更新数据模型
     private func updateDownloadModel(model: HTZDownloadModel) -> Void {
 
         if ifPathExist(path: downloadDataFilePath()) {
-            var downloadArr = downloadFileList()
+            let saveArr = downloadFileList()
+            var saveIndex: Int?
+            var downloadArr = [HTZDownloadModel]()
+            for (idx, obj) in saveArr.enumerated() {
+                if model.fileAlbumId == obj.albumID {
+                    downloadArr = obj.downloadFiles!
+                    saveIndex = idx
+                }
+            }
             for (idx, obj) in downloadArr.enumerated() {
                 if model.fileID == obj.fileID  {
                     if model.state == HTZDownloadManagerState.finished  {
@@ -501,8 +577,12 @@ extension HTZDownloadManager {
                     break
                 }
             }
+            if let saveIndex = saveIndex {
+                saveArr[saveIndex].downloadFiles = downloadArr
+            }
+            
             // 保存
-            writeToFileWithModelArr(modelArr: downloadArr)
+            writeToFileWithModelArr(modelArr: saveArr)
         }
     }
     
@@ -510,29 +590,40 @@ extension HTZDownloadManager {
     func deleteDownloadModelArr(modelArr: [HTZDownloadModel]) -> Void {
         
         if ifPathExist(path: downloadDataFilePath()) {
-            var downloadArr = downloadFileList()
-            
+
+            var saveArr = downloadFileList()
             for model in modelArr {
-                for (idx, obj) in downloadArr.enumerated() {
-                    if model.fileID == obj.fileID {
-                        // 状态改变
-                        model.state = HTZDownloadManagerState.none
-                        updateDownloadModel(model: model)
-                        
-                        if let delegate = self.delegate, delegate.responds(to: #selector(HTZPlayViewController.downloadChanged(_:downloadModel:state:))) {
-                            delegate.downloadChanged(self, downloadModel: model, state: HTZDownloadManagerState.none)
+                for (saveIdx, saveModel) in saveArr.enumerated() {
+                    guard model.fileAlbumId == saveModel.albumID else {
+                        continue
+                    }
+                    var arr = saveModel.downloadFiles!
+                    for (idx, obj) in arr.enumerated() {
+                        if model.fileID == obj.fileID {
+                            // 状态改变
+                            model.state = HTZDownloadManagerState.none
+                            updateDownloadModel(model: model)
+                            
+                            if let delegate = self.delegate, delegate.responds(to: #selector(HTZPlayViewController.downloadChanged(_:downloadModel:state:))) {
+                                delegate.downloadChanged(self, downloadModel: model, state: HTZDownloadManagerState.none)
+                            }
+                            // 删除文件
+                            if ifPathExist(path: obj.fileLocalPath) {
+                                _ = removeDirWithPath(path: obj.fileLocalPath)
+                            }
+                            // 删除模型
+                            arr.remove(at: idx)
+                            if arr.count > 0 {
+                                saveArr[saveIdx].downloadFiles = arr
+                            } else {
+                                saveArr.remove(at: saveIdx)
+                            }
+                            // 重新保存
+                            writeToFileWithModelArr(modelArr: saveArr)
                         }
-                        // 删除文件
-                        if ifPathExist(path: obj.fileLocalPath) {
-                            _ = removeDirWithPath(path: obj.fileLocalPath)
-                        }
-                        // 删除模型
-                        downloadArr.remove(at: idx)
-                        
-                        // 重新保存
-                        writeToFileWithModelArr(modelArr: downloadArr)
                     }
                 }
+                
             }
         }
     }
@@ -550,9 +641,14 @@ extension HTZDownloadManager {
         return str.appending("/downloadModel.plist")
     }
     
-    func downloadDataDir() -> String {
+    func downloadDataDir(doc: String? = nil) -> String {
+        var path = kDocumentDirectory!.appending("/download")
         
-        return kDocumentDirectory!.appending("/download")
+        if let doc = doc {
+           path = path.appending("/\(doc)")
+        }
+        _ = createDirWithPath(path: path)
+        return path
     }
     
     private func createFilePathWithPath(path: String) -> Bool {

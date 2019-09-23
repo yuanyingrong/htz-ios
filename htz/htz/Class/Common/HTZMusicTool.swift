@@ -42,8 +42,8 @@ class HTZMusicTool: NSObject {
     
     static func love(music: HTZMusicModel) {
         var saveArr = [HTZSaveDataModel]()
-        var arr = [HTZMusicModel]()
         var saveIndex: Int?
+        var arr = [HTZMusicModel]()
         if let lovedMusicList = lovedMusicList() {
             for (idx, obj) in lovedMusicList.enumerated() {
                 saveArr = lovedMusicList
@@ -215,6 +215,8 @@ class HTZMusicTool: NSObject {
         let dModel = HTZDownloadModel()
         dModel.fileID = musicModel.song_id
         dModel.fileName = musicModel.song_name
+        dModel.fileAlbumId = musicModel.album_id
+        dModel.fileAlbumName = musicModel.album_title
         dModel.fileUrl = musicModel.file_link
         dModel.fileDuration = musicModel.file_duration
         dModel.fileLyric = musicModel.lrclink

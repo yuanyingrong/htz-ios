@@ -55,9 +55,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         
         
-        #if DEBUG
-        pgyerCrash()
-        #endif
+//        #if DEBUG
+//        pgyerCrash()
+//        #endif
         
         return true
     }
@@ -131,12 +131,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         manager?.startListening()
     }
     
-    private func pgyerCrash() {
-        // 启动基本SDK
-        PgyManager.shared()?.start(withAppId: "f87f93f5acb6b5363c23b8d208324857")
-        // 启动更新检查SDK
-        PgyUpdateManager.sharedPgy()?.start(withAppId: "f87f93f5acb6b5363c23b8d208324857")
-    }
+//    private func pgyerCrash() {
+//        // 启动基本SDK
+//        PgyManager.shared()?.start(withAppId: "f87f93f5acb6b5363c23b8d208324857")
+//        // 启动更新检查SDK
+//        PgyUpdateManager.sharedPgy()?.start(withAppId: "f87f93f5acb6b5363c23b8d208324857")
+//    }
 
     func applicationWillResignActive(_ application: UIApplication) {
         // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.

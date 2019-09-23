@@ -178,9 +178,23 @@ extension HTZAlbumListViewController: HTZAlbumListCellDelegate {
             case .waiting: // 等待下载
                 break
             case .downloading: // 下载中
-                self.alert(message: "下载中")
+//                self.alert(message: "下载中")
+                self.alertConfirmCacellActionAlert(title: "", message: "下载中", leftConfirmTitle: "取消下载", rightConfirmTitle: "不取消", selectLeftBlock: {
+                    model.downloadState = .paused
+                    let dModel = HTZDownloadModel()
+                    dModel.fileID = model.song_id
+                    dModel.fileAlbumId = model.album_id
+                    kDownloadManager.pausedDownloadArr(downloadArr: [dModel])
+                }, selectRightBlock: nil)
                 break
             case .paused: // 下载暂停
+                 self.alertConfirmCacellActionAlert(title: "", message: "下载暂停", leftConfirmTitle: "继续下载", rightConfirmTitle: "取消", selectLeftBlock: {
+                                    model.downloadState = .downloading
+                                   let dModel = HTZDownloadModel()
+                                   dModel.fileID = model.song_id
+                                   dModel.fileAlbumId = model.album_id
+                                   kDownloadManager.resumeDownloadArr(downloadArr: [dModel])
+                               }, selectRightBlock: nil)
                 break
             case .failed:  // 下载失败
                 break
@@ -188,6 +202,12 @@ extension HTZAlbumListViewController: HTZAlbumListCellDelegate {
                 self.alertConfirmCacellActionAlert(title: "", message: "该歌曲已下载，是否删除下载问题", leftConfirmTitle: "删除", rightConfirmTitle: "取消", selectLeftBlock: {
                     let dModel = HTZDownloadModel()
                     dModel.fileID = model.song_id
+                    dModel.fileName = model.song_name
+                    dModel.fileAlbumId = model.album_id
+                    dModel.fileAlbumName = model.album_title
+                    dModel.fileUrl = model.file_link
+                    dModel.fileDuration = model.file_duration
+                    dModel.fileLyric = model.lrclink
                     kDownloadManager.deleteDownloadModelArr(modelArr: [dModel])
                 }, selectRightBlock: nil)
                 break

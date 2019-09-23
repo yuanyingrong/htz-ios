@@ -31,6 +31,8 @@ class HTZSaveDataModel: NSObject, NSCoding {
     
     var files: [HTZMusicModel]?
     
+    var downloadFiles: [HTZDownloadModel]?
+    
     
     func encode(with aCoder: NSCoder) {
         aCoder.encode(albumID, forKey: "albumID")
@@ -39,6 +41,7 @@ class HTZSaveDataModel: NSObject, NSCoding {
         aCoder.encode(fileCount, forKey: "fileCount")
         aCoder.encode(fileSizeCount, forKey: "fileSizeCount")
         aCoder.encode(files, forKey: "files")
+        aCoder.encode(downloadFiles, forKey: "downloadFiles")
     }
     
     required override init() {
@@ -53,6 +56,7 @@ class HTZSaveDataModel: NSObject, NSCoding {
 //        fileCount = aDecoder.decodeObject(forKey: "fileCount") as? String
 //        fileSizeCount = aDecoder.decodeObject(forKey: "fileSizeCount") as? String
         files = aDecoder.decodeObject(forKey: "files") as? [HTZMusicModel]
+        downloadFiles = aDecoder.decodeObject(forKey: "downloadFiles") as? [HTZDownloadModel]
     }
     
 

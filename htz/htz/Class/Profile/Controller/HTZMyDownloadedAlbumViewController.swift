@@ -22,23 +22,25 @@ class HTZMyDownloadedAlbumViewController: HTZBaseViewController {
         // Do any additional setup after loading the view.
     }
     
-    override func configData() {
-        super.configData()
-        
-        dataArr.removeAll()
-        for obj in kDownloadManager.downloadedFileList() {
-            let musicModel = HTZMusicModel()
-            musicModel.song_id = obj.fileID
-            musicModel.song_name = obj.fileName
-            musicModel.file_link = obj.fileUrl
-            musicModel.file_duration = obj.fileDuration
-            musicModel.lrclink = obj.fileLyric
-            
-            dataArr.append(musicModel)
-        }
-        
-        self.tableView.reloadData()
-    }
+    override func viewWillAppear(_ animated: Bool) {
+          super.viewWillAppear(animated)
+          
+         dataArr.removeAll()
+        let arr = kDownloadManager.downloadedFileList().count > index ? kDownloadManager.downloadedFileList()[index].downloadFiles ?? [] : []
+        albumIcon = kDownloadManager.downloadedFileList().count > index ? kDownloadManager.downloadedFileList()[index].albumIcon ?? "" : ""
+        for obj in arr {
+             let musicModel = HTZMusicModel()
+             musicModel.song_id = obj.fileID
+             musicModel.song_name = obj.fileName
+             musicModel.file_link = obj.fileUrl
+             musicModel.file_duration = obj.fileDuration
+             musicModel.lrclink = obj.fileLyric
+             
+             dataArr.append(musicModel)
+         }
+         
+         self.tableView.reloadData()
+      }
     
     override func configSubView() {
         super.configSubView()

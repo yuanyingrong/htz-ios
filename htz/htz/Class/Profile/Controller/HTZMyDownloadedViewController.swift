@@ -22,7 +22,7 @@ class HTZMyDownloadedViewController: HTZBaseViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        dataArr = HTZMusicTool.lovedMusicList() ?? []
+        dataArr = kDownloadManager.downloadedFileList()
         
         self.tableView.reloadData()
     }

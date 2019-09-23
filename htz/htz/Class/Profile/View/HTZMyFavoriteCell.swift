@@ -25,7 +25,7 @@ class HTZMyFavoriteCell: UITableViewCell {
                 } else {
                     albumImageView.image = UIImage(named: saveDataModel.albumIcon ?? "")
                 }
-                fileCountButton.setTitle(saveDataModel.fileCount!, for: UIControl.State.normal)
+                fileCountButton.setTitle("saveDataModel.fileCount!集", for: UIControl.State.normal)
             }
         }
     }
