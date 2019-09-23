@@ -117,7 +117,7 @@ extension HTZProfileViewController: HTZProfileHeaderViewDelegate {
     
     @objc func iDownloadsClickAction() {
         print("我的下载")
-        let vc = HTZMyDownloadedAlbumViewController()
+        let vc = HTZMyDownloadedViewController()
         vc.title = "我的下载"
         navigationController?.pushViewController(vc, animated: true)
     }

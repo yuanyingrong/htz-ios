@@ -197,6 +197,7 @@ class HTZDownloadManager: NSObject {
     
     // 继续下载 恢复下载，暂停后才能调用
     func resumeDownloadArr(downloadArr: [HTZDownloadModel]) -> Void {
+        self.setCanBreakpoint(isCan: true)
         for saveModel in downloadFileList() {
             for model in saveModel.downloadFiles! {
                 for obj in downloadArr {
@@ -394,7 +395,7 @@ extension HTZDownloadManager {
         self.downloadRequest = download(request) { (url, response) -> (destinationURL: URL, options: DownloadRequest.DownloadOptions) in
 //            downloadDataFilePath()
             
-            return (URL(string: "file://"+model.fileLocalPath)!,DownloadRequest.DownloadOptions())
+            return (URL(fileURLWithPath: model.fileLocalPath),DownloadRequest.DownloadOptions())
             }.downloadProgress(closure: { (downloadProgress) in
                 if let delegate = self.delegate, delegate.responds(to: #selector(HTZPlayViewController.downloadProgress(_:downloadModel:totalSize:downloadSize:progress:))) {
                     delegate.downloadProgress(self, downloadModel: model, totalSize: NSInteger(downloadProgress.totalUnitCount), downloadSize: NSInteger(downloadProgress.completedUnitCount), progress: Float(downloadProgress.completedUnitCount) / Float(downloadProgress.totalUnitCount))

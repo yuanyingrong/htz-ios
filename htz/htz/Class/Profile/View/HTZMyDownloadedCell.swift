@@ -26,7 +26,7 @@ class HTZMyDownloadedCell: UITableViewCell {
                     albumImageView.image = UIImage(named: saveDataModel.albumIcon ?? "")
                 }
                 fileSizeCountButton.setTitle(saveDataModel.fileSizeCount!, for: UIControl.State.normal)
-                fileCountButton.setTitle(saveDataModel.fileCount!, for: UIControl.State.normal)
+                fileCountButton.setTitle("\(saveDataModel.downloadFiles!.count)集", for: UIControl.State.normal)
             }
         }
     }

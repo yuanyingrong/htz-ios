@@ -68,7 +68,7 @@ extension HTZMyDownloadedViewController: UITableViewDataSource, UITableViewDeleg
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         
-        let vc = HTZMyFavoriteAlbumViewController()
+        let vc = HTZMyDownloadedAlbumViewController()
         vc.title = dataArr[indexPath.row].albumTitle
         vc.index = indexPath.row
         navigationController?.pushViewController(vc, animated: true)

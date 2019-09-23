@@ -25,7 +25,7 @@ class HTZMyDownloadedAlbumViewController: HTZBaseViewController {
     override func viewWillAppear(_ animated: Bool) {
           super.viewWillAppear(animated)
           
-         dataArr.removeAll()
+        dataArr.removeAll()
         let arr = kDownloadManager.downloadedFileList().count > index ? kDownloadManager.downloadedFileList()[index].downloadFiles ?? [] : []
         albumIcon = kDownloadManager.downloadedFileList().count > index ? kDownloadManager.downloadedFileList()[index].albumIcon ?? "" : ""
         for obj in arr {

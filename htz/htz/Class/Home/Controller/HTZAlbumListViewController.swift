@@ -179,7 +179,7 @@ extension HTZAlbumListViewController: HTZAlbumListCellDelegate {
                 break
             case .downloading: // 下载中
 //                self.alert(message: "下载中")
-                self.alertConfirmCacellActionAlert(title: "", message: "下载中", leftConfirmTitle: "取消下载", rightConfirmTitle: "不取消", selectLeftBlock: {
+                self.alertConfirmCacellActionAlert(title: "", message: "下载中", leftConfirmTitle: "下载暂停", rightConfirmTitle: "不取消", selectLeftBlock: {
                     model.downloadState = .paused
                     let dModel = HTZDownloadModel()
                     dModel.fileID = model.song_id
