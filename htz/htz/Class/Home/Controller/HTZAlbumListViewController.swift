@@ -95,6 +95,7 @@ class HTZAlbumListViewController: HTZBaseViewController {
         super.viewDidLoad()
 
        self.view.backgroundColor = UIColor.white
+        kDownloadManager.delegate = self
     }
     
     override func configSubView() {
@@ -205,6 +206,7 @@ extension HTZAlbumListViewController: HTZAlbumListCellDelegate {
                     dModel.fileName = model.song_name
                     dModel.fileAlbumId = model.album_id
                     dModel.fileAlbumName = model.album_title
+                    dModel.fileCover = model.icon
                     dModel.fileUrl = model.file_link
                     dModel.fileDuration = model.file_duration
                     dModel.fileLyric = model.lrclink
@@ -217,7 +219,34 @@ extension HTZAlbumListViewController: HTZAlbumListCellDelegate {
         self.tableView.reloadData()
     }
 }
-
+// MARK: HTZDownloadManagerDelegate
+extension HTZAlbumListViewController: HTZDownloadManagerDelegate {
+    func downloadChanged(_ downloadManager: HTZDownloadManager, downloadModel: HTZDownloadModel, state: HTZDownloadManagerState) {
+        if state == HTZDownloadManagerState.finished {
+            var target: API = API.xingfuneixinchan
+            if albumModel!.index == 0 {
+                target = API.xingfuneixinchan
+            } else if albumModel!.index == 1  {
+                target = API.jingxinyangsheng
+            }
+            albumListViewModel.requestData(target: target, isPullDown: true) { (success) in
+                if success {
+                    self.tableView.reloadData()
+                }
+            }
+        }
+    }
+    
+    func removedDownloadArr(_ downloadManager: HTZDownloadManager, downloadArr: [HTZDownloadModel]) {
+        
+    }
+    
+    func downloadProgress(_ downloadManager: HTZDownloadManager, downloadModel: HTZDownloadModel, totalSize: NSInteger, downloadSize: NSInteger, progress: Float) {
+        
+    }
+    
+    
+}
 
 // MARK: - UI
 extension HTZAlbumListViewController {

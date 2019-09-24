@@ -37,10 +37,10 @@ class HTZDownloadModel: NSObject, NSCoding {
         return kDownloadManager.downloadDataDir(doc: fileAlbumName!) + "/" + fileID! + "." + fileFormat!
     }
     var fileLyricPath: String {
-        return kDownloadManager.downloadDataDir() + "/" + fileID! + ".lrc"
+        return kDownloadManager.downloadDataDir(doc: fileAlbumName!) + "/" + fileID! + ".lrc"
     }
     var fileImagePath: String {
-        return kDownloadManager.downloadDataDir() + "/" + fileID! + ".jpg"
+        return kDownloadManager.downloadDataDir(doc: fileAlbumName!) + "/" + fileID! + ".jpg"
     }
     var file_size: String?
     var state: HTZDownloadManagerState?
@@ -48,6 +48,8 @@ class HTZDownloadModel: NSObject, NSCoding {
     var fileLength: NSInteger?
     /// 当前的下载长度
     var currentLength: NSInteger?
+    
+    var resumeData: NSData?
     
     required override init() {
         super.init()
@@ -69,6 +71,7 @@ class HTZDownloadModel: NSObject, NSCoding {
         aCoder.encode(file_size, forKey: "file_size")
         aCoder.encode(fileLength, forKey: "fileLength")
         aCoder.encode(currentLength, forKey: "currentLength")
+        aCoder.encode(resumeData, forKey: "resumeData")
         
     }
     
@@ -89,6 +92,6 @@ class HTZDownloadModel: NSObject, NSCoding {
         if let str = aDecoder.decodeObject(forKey: "state") {
             state = HTZDownloadManagerState(rawValue: str as! NSInteger)
         }
-        
+        resumeData = aDecoder.decodeObject(forKey: "resumeData") as? NSData
     }
 }

@@ -23,8 +23,12 @@ class HTZMyDownloadedAlbumViewController: HTZBaseViewController {
     }
     
     override func viewWillAppear(_ animated: Bool) {
-          super.viewWillAppear(animated)
-          
+        
+        super.viewWillAppear(animated)
+        self.requestData()
+      }
+    
+    private func requestData() {
         dataArr.removeAll()
         let arr = kDownloadManager.downloadedFileList().count > index ? kDownloadManager.downloadedFileList()[index].downloadFiles ?? [] : []
         albumIcon = kDownloadManager.downloadedFileList().count > index ? kDownloadManager.downloadedFileList()[index].albumIcon ?? "" : ""
@@ -33,6 +37,7 @@ class HTZMyDownloadedAlbumViewController: HTZBaseViewController {
              musicModel.song_id = obj.fileID
              musicModel.song_name = obj.fileName
              musicModel.file_link = obj.fileUrl
+             musicModel.album_id = obj.fileAlbumId
              musicModel.file_duration = obj.fileDuration
              musicModel.lrclink = obj.fileLyric
              
@@ -40,7 +45,7 @@ class HTZMyDownloadedAlbumViewController: HTZBaseViewController {
          }
          
          self.tableView.reloadData()
-      }
+    }
     
     override func configSubView() {
         super.configSubView()
@@ -108,9 +113,10 @@ extension HTZMyDownloadedAlbumViewController: HTZMyDownloadedAlbumCellDelegate {
         let indexPath = self.tableView.indexPath(for: cell)
         let model = HTZDownloadModel()
         model.fileID = self.dataArr[(indexPath?.row)!]!.song_id
+        model.fileAlbumId = self.dataArr[(indexPath?.row)!]!.album_id
         kDownloadManager.deleteDownloadModelArr(modelArr: [model])
         
-        self.configData()
+        self.requestData()
     }
 
     

@@ -660,10 +660,14 @@ extension HTZPlayViewController {
                     kPlayer.play()
                 }
             }
+            var lyrics = HTZLyricParser.lyricParser(url: (self.model?.song_lyricPath)!, isDelBlank: true)
             
+            if lyrics == nil {
+               lyrics = HTZLyricParser.lyricParser(url: (self.model?.lrclink)!, isDelBlank: true)
+            }
             // 解析歌词
-            self.topLyricView.lyrics = HTZLyricParser.lyricParser(url: (self.model?.song_lyricPath)!, isDelBlank: true)
-            self.bottomLyricView.lyrics = HTZLyricParser.lyricParser(url: (self.model?.song_lyricPath)!, isDelBlank: true)
+            self.topLyricView.lyrics = lyrics
+            self.bottomLyricView.lyrics = lyrics
         } else {
             if HTZMusicTool.networkState() == "none" {
                 alert(message: "网络连接失败")
@@ -1291,11 +1295,6 @@ extension HTZPlayViewController: HTZDownloadManagerDelegate {
         if let model = self.model, model.song_id == downloadModel.fileID {
             if state == HTZDownloadManagerState.finished { // 下载完成
                 DispatchQueue.main.async {
-                    // 下载图片
-                    
-                    // 歌词
-                    let lrcData = NSData(contentsOf: URL(string: downloadModel.fileLyric!)!)
-                    lrcData?.write(toFile: downloadModel.fileLyricPath, atomically: true)
                     
                     // 改变状态
                     self.controlView.is_download = self.model?.isDownload

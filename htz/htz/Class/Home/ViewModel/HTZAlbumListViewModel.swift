@@ -35,7 +35,8 @@ class HTZAlbumListViewModel: NSObject {
                     obj.file_link = "http://htzshanghai.top/resources/audios/xingfuneixinchan/" + model!.audio!
                     obj.lrclink = "http://htzshanghai.top/resources/lyrics/xingfuneixinchan/" + model!.lyric!
                     obj.file_duration = model?.duration
-                    obj.downloadState = HTZDownloadManagerState.none
+                    
+                    obj.downloadState = kDownloadManager.checkDownloadState(fileID: obj.song_id!)
                     arrM.append(obj)
                 }
                 self.dataSongArr = arrM
