@@ -25,6 +25,7 @@ class HTZMyFavoriteCell: UITableViewCell {
                 } else {
                     albumImageView.image = UIImage(named: saveDataModel.albumIcon ?? "")
                 }
+                deleteButton.isHidden = true
                 fileCountButton.setTitle("\(saveDataModel.fileCount!)集", for: UIControl.State.normal)
             }
         }

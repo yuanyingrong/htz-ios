@@ -61,11 +61,12 @@ class HTZTabbarViewController: UITabBarController {
         playButton.setImage(UIImage(named: "play_normal"), for: UIControl.State.highlighted)
         playButton.addTarget(self, action: #selector(playButtonClickAction), for: UIControl.Event.touchUpInside)
         playButton.center = CGPoint(x: self.tabBar.centerX, y: self.tabBar.bounds.size.height * 0.5)
-        self.tabBar.addSubview(playButton)
+//        self.tabBar.addSubview(playButton)
     }
     
     @objc func playButtonClickAction() {
         let nav = UINavigationController(rootViewController: HTZPlayViewController.sharedInstance)
+        nav.modalPresentationStyle = .fullScreen
         self.present(nav, animated: true, completion: nil)
     }
     

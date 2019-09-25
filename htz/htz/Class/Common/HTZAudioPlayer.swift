@@ -89,7 +89,7 @@ class HTZAudioPlayer: NSObject {
     private var playTimer: Timer?
     private var bufferTimer: Timer?
     
-    private lazy var audioStream: FSAudioStream = {
+    private lazy var audioStream: FSAudioStream = { [unowned self] in
         let configuration = FSStreamConfiguration()
         let audioStream = FSAudioStream(configuration: configuration)
         audioStream?.strictContentTypeChecking = false
@@ -105,7 +105,7 @@ class HTZAudioPlayer: NSObject {
             case .fsAudioStreamRetrievingURL: //检索url
                 print("检索url")
                 self.playerState = .loading
-                
+                break
             case .fsAudioStreamStopped: // 停止
                 
                 // 切换歌曲时主动调用停止方法也会走这里，所以这里添加判断，区分是切换歌曲还是被打断等停止
@@ -113,23 +113,24 @@ class HTZAudioPlayer: NSObject {
                     print("播放停止被打断")
                     self.playerState = .stopped
                 }
+                break
             case .fsAudioStreamBuffering: // 缓冲
                 print("缓冲中。。")
                 weakSelf?.playerState = .buffering
                 weakSelf?.bufferState = HTZAudioBufferState.buffering
-                
+                break
             case .fsAudioStreamPlaying: // 播放
                 print("播放中。。")
                 weakSelf?.playerState = HTZAudioPlayerState.playing
-                
+                break
             case .fsAudioStreamPaused: // 暂停
                 print("播放暂停")
                 weakSelf?.playerState = HTZAudioPlayerState.paused
-                
+                break
             case .fsAudioStreamSeeking: // seek
                 print("seek中。。")
                 weakSelf?.playerState = HTZAudioPlayerState.loading
-                
+                break
             case .fsAudioStreamEndOfFile:  // 缓冲结束
                 print("缓冲结束")
                 
@@ -138,31 +139,31 @@ class HTZAudioPlayer: NSObject {
                 weakSelf?.bufferTimerAction()
                 
                 weakSelf?.stopBufferTimer()
-                
+                break
             case .fsAudioStreamFailed:  // 播放失败
                 print("播放失败")
                 weakSelf?.playerState = HTZAudioPlayerState.error
-                
+                break
             case .fsAudioStreamRetryingStarted: // 检索开始
                 print("检索开始")
                 weakSelf?.playerState = HTZAudioPlayerState.loading
-                
+                break
             case .fsAudioStreamRetryingSucceeded: // 检索成功
                 print("检索成功")
                 weakSelf?.playerState = HTZAudioPlayerState.loading
-                
+                break
             case .fsAudioStreamRetryingFailed:   // 检索失败
                 print("检索失败")
                 weakSelf?.playerState = HTZAudioPlayerState.error
-                
+                break
             case .fsAudioStreamPlaybackCompleted: // 播放完成
                 print("播放完成")
                 weakSelf?.playerState = HTZAudioPlayerState.ended
-                
+                break
             case .fsAudioStreamUnknownState:  // 未知状态
                 print("未知状态")
                 weakSelf?.playerState = HTZAudioPlayerState.error
-                
+                break
             @unknown default: break
                 
             }

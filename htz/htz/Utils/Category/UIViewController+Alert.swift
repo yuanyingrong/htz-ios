@@ -65,7 +65,7 @@ extension UIViewController {
         let alertController = UIAlertController(title: nil, message: nil, preferredStyle: UIAlertController.Style.alert)
         
         // 改变title的大小和颜色
-        let titleAttr = NSMutableAttributedString(string: message, attributes: [NSAttributedString.Key.font : UIFont.boldSystemFont(ofSize: 16),NSAttributedString.Key.foregroundColor : RGBHEXCOLOR(rgbValue: 0x334A60)])
+        let titleAttr = NSMutableAttributedString(string: title, attributes: [NSAttributedString.Key.font : UIFont.boldSystemFont(ofSize: 16),NSAttributedString.Key.foregroundColor : RGBHEXCOLOR(rgbValue: 0x334A60)])
         alertController.setValue(titleAttr, forKey: "attributedTitle")
         
         // 改变message的大小和颜色

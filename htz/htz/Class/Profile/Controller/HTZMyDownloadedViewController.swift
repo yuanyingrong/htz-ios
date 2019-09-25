@@ -22,11 +22,14 @@ class HTZMyDownloadedViewController: HTZBaseViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
+        self.requestData()
+    }
+    
+    private func requestData() {
         dataArr = kDownloadManager.downloadedFileList()
         
         self.tableView.reloadData()
     }
-    
     
     override func configSubView() {
         super.configSubView()
@@ -70,6 +73,7 @@ extension HTZMyDownloadedViewController: UITableViewDataSource, UITableViewDeleg
         
         let vc = HTZMyDownloadedAlbumViewController()
         vc.title = dataArr[indexPath.row].albumTitle
+        vc.albumId = dataArr[indexPath.row].albumID
         vc.index = indexPath.row
         navigationController?.pushViewController(vc, animated: true)
         
@@ -79,12 +83,16 @@ extension HTZMyDownloadedViewController: UITableViewDataSource, UITableViewDeleg
 // MARK: - HTZMyDownloadedCellDelegate
 extension HTZMyDownloadedViewController: HTZMyDownloadedCellDelegate {
     @objc func deleteAction(_ cell: HTZMyDownloadedCell) {
-        //        let indexPath = self.tableView.indexPath(for: cell)
-        //        let model = HTZDownloadModel()
-        //        model.fileID = self.dataArr[(indexPath?.row)!]!.song_id
-        //        kDownloadManager.deleteDownloadModelArr(modelArr: [model])
         
-        self.configData()
+        let indexPath = self.tableView.indexPath(for: cell)
+        let model = self.dataArr[indexPath!.row]
+        
+        alertConfirmCacellActionAlert(title: "提示", message: "是否删除专辑：\(model.albumTitle!)", leftConfirmTitle: "删除", rightConfirmTitle: "取消", selectLeftBlock: {
+            
+            kDownloadManager.deleteDownloadedAlbum(albumId: model.albumID!)
+            self.requestData()
+        }, selectRightBlock: nil)
+        
     }
     
 }

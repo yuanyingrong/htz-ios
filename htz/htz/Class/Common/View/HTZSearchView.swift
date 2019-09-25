@@ -10,7 +10,6 @@ import UIKit
 
 class HTZSearchView: UIView {
     
-    
     private lazy var contentView: UIView = {
         let view: UIView = UIView()
         view.backgroundColor = UIColor.white
@@ -63,10 +62,12 @@ extension HTZSearchView {
         contentView.addSubview(leftImageView)
         contentView.addSubview(searchBar)
         
+        weak var weakSel = self
+        guard let weakSelf = weakSel else { return }
         contentView.snp.makeConstraints { (make) in
-            make.top.bottom.equalTo(self)
-            make.left.equalTo(self).offset(4)
-            make.right.equalTo(self).offset(-4)
+            make.top.bottom.equalTo(weakSelf)
+            make.left.equalTo(weakSelf).offset(4)
+            make.right.equalTo(weakSelf).offset(-4)
         }
         
         leftImageView.snp.makeConstraints { (make) in

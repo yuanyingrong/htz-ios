@@ -31,7 +31,7 @@ class HTZPlayViewController: HTZBaseViewController {
     static let sharedInstance = HTZPlayViewController()
     
     lazy var leftBarButtonItem: UIBarButtonItem = {
-        let button = UIButton(setImage: "back", setBackgroundImage: "back", target: self, action: #selector(back))
+        let button = UIButton(setImage: "downArrow", setBackgroundImage: "", target: self, action: #selector(back))
         let buttonItem = UIBarButtonItem(customView: button)
         button.frame = CGRect(x: 0, y: 0, width: 50, height: 30)
         return buttonItem
@@ -127,7 +127,6 @@ class HTZPlayViewController: HTZBaseViewController {
     }
     
     @objc func back() {
-       self.navigationController?.popViewController(animated: true)
         self.dismiss(animated: true, completion: nil)
     }
     
@@ -158,8 +157,7 @@ class HTZPlayViewController: HTZBaseViewController {
     
     override func configSubView() {
         super.configSubView()
-        self.view.backgroundColor = UIColor.clear
-//        self.view.backgroundColor = UIColor.clear
+        self.view.backgroundColor = UIColor.white
         // 获取播放方式，并设置
         self.playStyle = HTZPlayerPlayStyle(rawValue: UserDefaults.Standard.integer(forKey: UserDefaults.keyPlayStyle))
         self.controlView.style = self.playStyle
@@ -273,6 +271,7 @@ extension HTZPlayViewController {
             if let isPlaying = self.isPlaying, isPlaying {
                 self.pauseMusic()
             }
+            break
         default: break
             
         }
@@ -921,7 +920,54 @@ extension HTZPlayViewController: HTZMusicControlViewDelegate {
                 
                 present(alertController, animated: true, completion: nil)
             } else {
-                HTZMusicTool.downloadMusic(musicModel: model)
+                if let model = self.model, let downloadState = model.downloadState {
+                            switch downloadState {
+                                
+                            case .none: // 未开始
+                                model.downloadState = .downloading
+                                HTZMusicTool.downloadMusic(musicModel: model)
+                                break
+                            case .waiting: // 等待下载
+                                break
+                            case .downloading: // 下载中
+                //                self.alert(message: "下载中")
+                                self.alertConfirmCacellActionAlert(title: "", message: "下载中", leftConfirmTitle: "下载暂停", rightConfirmTitle: "不取消", selectLeftBlock: {
+                                    model.downloadState = .paused
+                                    let dModel = HTZDownloadModel()
+                                    dModel.fileID = model.song_id
+                                    dModel.fileName = model.song_name
+                                    dModel.fileAlbumId = model.album_id
+                                    dModel.fileAlbumName = model.album_title
+                                    dModel.fileCover = model.icon
+                                    dModel.fileUrl = model.file_link
+                                    dModel.fileDuration = model.file_duration
+                                    dModel.fileLyric = model.lrclink
+                                    kDownloadManager.pausedDownloadArr(downloadArr: [dModel])
+                                }, selectRightBlock: nil)
+                                break
+                            case .paused: // 下载暂停
+                                 self.alertConfirmCacellActionAlert(title: "", message: "下载暂停", leftConfirmTitle: "继续下载", rightConfirmTitle: "取消", selectLeftBlock: {
+                                                    model.downloadState = .downloading
+                                                   let dModel = HTZDownloadModel()
+                                                   dModel.fileID = model.song_id
+                                                   dModel.fileAlbumId = model.album_id
+                                                   kDownloadManager.resumeDownloadArr(downloadArr: [dModel])
+                                               }, selectRightBlock: nil)
+                                break
+                            case .failed:  // 下载失败
+                                break
+                            case .finished:  // 下载完成
+                                self.alertConfirmCacellActionAlert(title: "", message: "该歌曲已下载，是否删除下载", leftConfirmTitle: "删除", rightConfirmTitle: "取消", selectLeftBlock: {
+                                    let dModel = HTZDownloadModel()
+                                    dModel.fileID = model.song_id
+                                    dModel.fileAlbumId = model.album_id
+                                    kDownloadManager.deleteDownloadModelArr(modelArr: [dModel])
+                                }, selectRightBlock: nil)
+                                break
+                            
+                            }
+                        }
+                
                 //            HTZMusicTool.downloadMusic(songId: model.song_id!)
             }
         }
@@ -1295,7 +1341,6 @@ extension HTZPlayViewController: HTZDownloadManagerDelegate {
         if let model = self.model, model.song_id == downloadModel.fileID {
             if state == HTZDownloadManagerState.finished { // 下载完成
                 DispatchQueue.main.async {
-                    
                     // 改变状态
                     self.controlView.is_download = self.model?.isDownload
                 }

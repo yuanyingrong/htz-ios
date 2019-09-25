@@ -114,6 +114,3 @@ extension API: TargetType {
 }
 
 
-extension TargetType {
-    
-}

@@ -217,11 +217,13 @@ class HTZMusicTool: NSObject {
         dModel.fileName = musicModel.song_name
         dModel.fileAlbumId = musicModel.album_id
         dModel.fileAlbumName = musicModel.album_title
+        dModel.fileCover = musicModel.icon
         dModel.fileUrl = musicModel.file_link
         dModel.fileDuration = musicModel.file_duration
         dModel.fileLyric = musicModel.lrclink
         
         dModel.fileFormat = musicModel.file_link?.components(separatedBy: ".").last
+        
         kDownloadManager.addDownloadArr(downloadArr: [dModel])
         print("已加入到下载队列")
         

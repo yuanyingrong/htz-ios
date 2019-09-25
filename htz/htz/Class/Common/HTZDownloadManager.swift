@@ -137,6 +137,17 @@ class HTZDownloadManager: NSObject {
         self.startdownloadRequest()
     }
     
+    // 删除已下载专辑
+    func deleteDownloadedAlbum(albumId: String) -> Void {
+        
+        for item in downloadedFileList() {
+            if item.albumID == albumId {
+                // 删除下载的文件
+                self.deleteDownloadModelArr(modelArr: item.downloadFiles!)
+            }
+        }
+    }
+    
     // 删除下载
     func removeDownloadArr(downloadArr: [HTZDownloadModel]) -> Void {
         // 如果删除列表中有正在下载的文件，先暂停下载

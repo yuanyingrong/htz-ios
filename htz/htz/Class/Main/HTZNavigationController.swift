@@ -23,7 +23,7 @@ class HTZNavigationController: UINavigationController,UIGestureRecognizerDelegat
 //            if children.count == 1 {
 //                title = children.first?.title
 //            }
-            viewController.navigationItem.leftBarButtonItem = UIBarButtonItem(setHighlightedImg:"navigationbar_back_withtext", title: title, target: self, action: #selector(popVC))
+            viewController.navigationItem.leftBarButtonItem = UIBarButtonItem(setHighlightedImg:"", title: title, target: self, action: #selector(popVC))
         }
         super.pushViewController(viewController, animated: animated)
     }

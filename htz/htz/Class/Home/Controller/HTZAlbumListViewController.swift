@@ -25,15 +25,10 @@ class HTZAlbumListViewController: HTZBaseViewController {
                 }
                 contentLabel.text = albumModel.desc
                 countLabel.text = "共\(albumModel.item_total ?? "0")集"
-                var target: API = API.xingfuneixinchan
-                if albumModel.index == 0 {
-                    target = API.xingfuneixinchan
-                } else if albumModel.index == 1  {
-                    target = API.jingxinyangsheng
-                }
+                
                 albumListViewModel.icon = albumModel.icon
                 albumListViewModel.albumTitle = albumModel.title
-                albumListViewModel.requestData(target: target, isPullDown: true) { (success) in
+                albumListViewModel.requestData(index: albumModel.index!, isPullDown: true) { (success) in
                     if success {
                         self.tableView.reloadData()
                     }
@@ -157,7 +152,9 @@ extension HTZAlbumListViewController: UITableViewDataSource, UITableViewDelegate
         vc.title = self.albumListViewModel.dataSongArr[indexPath.row]?.album_title
         vc.setPlayerList(playList: self.albumListViewModel.dataSongArr as! [HTZMusicModel])
         vc.playMusic(index: indexPath.row, isSetList: true)
-        navigationController?.pushViewController(vc, animated: true)
+        let nav = UINavigationController(rootViewController: vc)
+        nav.modalPresentationStyle = .fullScreen
+        self.present(nav, animated: true, completion: nil)
         
     }
     
@@ -184,7 +181,13 @@ extension HTZAlbumListViewController: HTZAlbumListCellDelegate {
                     model.downloadState = .paused
                     let dModel = HTZDownloadModel()
                     dModel.fileID = model.song_id
+                    dModel.fileName = model.song_name
                     dModel.fileAlbumId = model.album_id
+                    dModel.fileAlbumName = model.album_title
+                    dModel.fileCover = model.icon
+                    dModel.fileUrl = model.file_link
+                    dModel.fileDuration = model.file_duration
+                    dModel.fileLyric = model.lrclink
                     kDownloadManager.pausedDownloadArr(downloadArr: [dModel])
                 }, selectRightBlock: nil)
                 break
@@ -203,13 +206,7 @@ extension HTZAlbumListViewController: HTZAlbumListCellDelegate {
                 self.alertConfirmCacellActionAlert(title: "", message: "该歌曲已下载，是否删除下载问题", leftConfirmTitle: "删除", rightConfirmTitle: "取消", selectLeftBlock: {
                     let dModel = HTZDownloadModel()
                     dModel.fileID = model.song_id
-                    dModel.fileName = model.song_name
                     dModel.fileAlbumId = model.album_id
-                    dModel.fileAlbumName = model.album_title
-                    dModel.fileCover = model.icon
-                    dModel.fileUrl = model.file_link
-                    dModel.fileDuration = model.file_duration
-                    dModel.fileLyric = model.lrclink
                     kDownloadManager.deleteDownloadModelArr(modelArr: [dModel])
                 }, selectRightBlock: nil)
                 break
@@ -223,13 +220,8 @@ extension HTZAlbumListViewController: HTZAlbumListCellDelegate {
 extension HTZAlbumListViewController: HTZDownloadManagerDelegate {
     func downloadChanged(_ downloadManager: HTZDownloadManager, downloadModel: HTZDownloadModel, state: HTZDownloadManagerState) {
         if state == HTZDownloadManagerState.finished {
-            var target: API = API.xingfuneixinchan
-            if albumModel!.index == 0 {
-                target = API.xingfuneixinchan
-            } else if albumModel!.index == 1  {
-                target = API.jingxinyangsheng
-            }
-            albumListViewModel.requestData(target: target, isPullDown: true) { (success) in
+           
+            albumListViewModel.requestData(index: albumModel!.index!, isPullDown: true) { (success) in
                 if success {
                     self.tableView.reloadData()
                 }

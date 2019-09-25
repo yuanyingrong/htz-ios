@@ -34,7 +34,7 @@ class HTZHomeViewController: HTZBaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        view.backgroundColor = UIColor.gray
+        view.backgroundColor = UIColor.white
         // Do any additional setup after loading the view.
         
         view.addSubview(searchVew)

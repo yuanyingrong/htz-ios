@@ -18,7 +18,8 @@ struct ProfileCell {
 class HTZProfileViewController: HTZBaseViewController {
 
     let dataArr: [ProfileCell] = {
-        let dataArr = [ProfileCell(imageName: "favorite", title: "我的消息"), ProfileCell(imageName: "history", title: "我的收藏"), ProfileCell(imageName: "favorite", title: "我的设置"), ProfileCell(imageName: "history", title: "我的赞赏"), ProfileCell(imageName: "history", title: "我的意见反馈")]
+        let dataArr = [ProfileCell(imageName: "history", title: "我的收藏")]
+//        let dataArr = [ProfileCell(imageName: "favorite", title: "我的消息"), ProfileCell(imageName: "history", title: "我的收藏"), ProfileCell(imageName: "favorite", title: "我的设置"), ProfileCell(imageName: "history", title: "我的赞赏"), ProfileCell(imageName: "history", title: "我的意见反馈")]
         return dataArr
     }()
     
@@ -84,7 +85,7 @@ extension HTZProfileViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         
-        if indexPath.row == 1 {
+        if indexPath.row == 0 {
             let vc = HTZMyFavoriteViewController()
             vc.title = "我的收藏"
             navigationController?.pushViewController(vc, animated: true)
@@ -96,8 +97,6 @@ extension HTZProfileViewController: UITableViewDataSource, UITableViewDelegate {
 
 // MARK: - HTZProfileHeaderViewDelegate
 extension HTZProfileViewController: HTZProfileHeaderViewDelegate {
-    
-    
     
     @objc func nameButtonClickAction() {
         let vc = HTZLoginViewController()
@@ -113,6 +112,7 @@ extension HTZProfileViewController: HTZProfileHeaderViewDelegate {
         } else if index == 3 {
             print("收藏")
         }
+        alert(message: "暂未开发")
     }
     
     @objc func iDownloadsClickAction() {

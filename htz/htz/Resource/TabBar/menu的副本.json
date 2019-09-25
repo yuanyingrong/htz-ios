@@ -8,11 +8,25 @@
                      "normal_icon_select": "home_icon_select"
                      },
                      {
+                     "page": "HTZReadClassicsViewController",
+                     "type": "readClassics",
+                     "title": "读经典",
+                     "normal_icon": "read_classics_icon_normal",
+                     "normal_icon_select": "read_classics_icon_select"
+                     },
+                     {
                      "page": "HTZBaseViewController",
                      "type": "play",
                      "title": "",
                      "normal_icon": " ",
                      "normal_icon_select": " "
+                     },
+                     {
+                     "page": "HTZLearnClassicsViewController",
+                     "type": "learnClassics",
+                     "title": "学经典",
+                     "normal_icon": "learn_classics_icon_normal",
+                     "normal_icon_select": "learn_classics_icon_select"
                      },
                      {
                      "page": "HTZProfileViewController",

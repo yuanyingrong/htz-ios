@@ -88,7 +88,9 @@ extension HTZMyFavoriteAlbumViewController: UITableViewDataSource, UITableViewDe
         vc.title = dataArr[indexPath.row].album_title
         vc.setPlayerList(playList: dataArr )
         vc.playMusic(index: indexPath.row, isSetList: true)
-        navigationController?.pushViewController(vc, animated: true)
+       let nav = UINavigationController(rootViewController: vc)
+       nav.modalPresentationStyle = .fullScreen
+       self.present(nav, animated: true, completion: nil)
         
     }
     

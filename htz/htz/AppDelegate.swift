@@ -18,8 +18,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     lazy var palyButton: UIButton = {
         let button = UIButton(type: UIButton.ButtonType.custom)
-        button.setImage(UIImage(named: "cm2_topbar_icn_playing1"), for: UIControl.State.normal)
-        button.setImage(UIImage(named: "cm2_topbar_icn_playing1_prs"), for: UIControl.State.highlighted)
+        button.setBackgroundImage(UIImage(named: "play_normal"), for: UIControl.State.normal)
+//        button.setImage(UIImage(named: "play"), for: UIControl.State.normal)
         button.addTarget(self, action: #selector(topbarPlayButtonClickAction), for: UIControl.Event.touchUpInside)
         return button
     }()
@@ -66,10 +66,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func initPlayButton() {
         self.window?.addSubview(palyButton)
         
-        let statusBarFrame = UIApplication.shared.statusBarFrame
         palyButton.snp.makeConstraints({ (make) in
-            make.top.equalTo(self.window!).offset(statusBarFrame.size.height)
-            make.right.equalTo(self.window!).offset(-4)
+            if #available(iOS 11.0, *) {
+                make.bottom.equalTo(self.window!.safeAreaLayoutGuide)
+            } else {
+                make.bottom.equalTo(self.window!)
+            }
+            make.centerX.equalTo(self.window!)
             make.width.height.equalTo(44)
         })
         
@@ -77,26 +80,25 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     @objc private func topbarPlayButtonClickAction() {
-        HTZMusicTool.visibleViewController()?.navigationController?.pushViewController(HTZPlayViewController.sharedInstance, animated: true)
+        if HTZMusicTool.musicList() != nil {
+            let nav = UINavigationController(rootViewController: HTZPlayViewController.sharedInstance)
+            HTZPlayViewController.sharedInstance.playMusic()
+            nav.modalPresentationStyle = .fullScreen
+            HTZMusicTool.visibleViewController()?.present(nav, animated: true, completion: nil)
+        } else {
+            HTZMusicTool.visibleViewController()?.alert(message: "暂无播放内容")
+        }
+       
     }
     
     @objc private func playStatusChanged(noti: Notification) {
         DispatchQueue.main.async {
             if let isPlaying = HTZPlayViewController.sharedInstance.isPlaying, isPlaying {
-                var images = [UIImage]()
-                for i in 1...6 {
-                    let imageName = "cm2_topbar_icn_playing" + String(i)
-                    images.append(UIImage(named: imageName)!)
-                }
-                self.palyButton.imageView?.animationImages = images
-                self.palyButton.imageView?.animationDuration = 0.75
-                self.palyButton.imageView?.startAnimating()
+                self.palyButton.setBackgroundImage(UIImage(named: "play_normal"), for: UIControl.State.normal)
+                self.palyButton.setImage(UIImage(named: ""), for: UIControl.State.normal)
             } else {
-                if self.palyButton.imageView!.isAnimating {
-                    self.palyButton.imageView?.stopAnimating()
-                }
-                self.palyButton.setImage(UIImage(named: "cm2_topbar_icn_playing1"), for: UIControl.State.normal)
-                self.palyButton.setImage(UIImage(named: "cm2_topbar_icn_playing1_prs"), for: UIControl.State.highlighted)
+                self.palyButton.setBackgroundImage(UIImage(named: "play_normal"), for: UIControl.State.normal)
+                self.palyButton.setImage(UIImage(named: "tabbar_play"), for: UIControl.State.normal)
             }
         }
     }
