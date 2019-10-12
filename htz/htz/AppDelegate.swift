@@ -16,7 +16,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
     
-    var rotate: NSInteger?
+    var blockRotation = Bool()
 
     lazy var palyButton: UIButton = {
         let button = UIButton(type: UIButton.ButtonType.custom)
@@ -145,10 +145,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {
         
         // 1.当设备横竖屏转换的时候回调用这个方法
-        if let rotate = rotate, rotate == 1 {
-            return UIInterfaceOrientationMask.all
+        if blockRotation {
+            return .landscapeRight
         } else {
-            return UIInterfaceOrientationMask.portrait
+            return .portrait
         }
     }
     

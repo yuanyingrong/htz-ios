@@ -28,11 +28,9 @@ class HTZVideoPlayFullViewController: HTZBaseViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        let appDelegate = UIApplication.shared.delegate as! AppDelegate
-        appDelegate.rotate = 1
-        UIDevice.current.setValue(UIInterfaceOrientation.landscapeLeft.rawValue, forKey: "orientation")
         
+        initSubView()
+        initConstraint()
     }
     
 
@@ -40,8 +38,8 @@ class HTZVideoPlayFullViewController: HTZBaseViewController {
         super.viewWillAppear(animated)
         
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
-        appDelegate.rotate = 0
-        UIDevice.current.setValue(UIInterfaceOrientation.portrait.rawValue, forKey: "orientation")
+        appDelegate.blockRotation = true
+        DeviceTool.interfaceOrientation(.landscapeLeft)
         
         installMovieNotificationObservers()
         
@@ -53,6 +51,10 @@ class HTZVideoPlayFullViewController: HTZBaseViewController {
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+        
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
+        appDelegate.blockRotation = false
+        DeviceTool.interfaceOrientation(.portrait)
         
         self.player?.pause()//暂停
         self.player?.shutdown()
@@ -92,9 +94,9 @@ class HTZVideoPlayFullViewController: HTZBaseViewController {
 //            [self performSelector:@selector(refreshMediaControl) withObject:nil afterDelay:0.5];
 //        }
     }
-    
-    override func configSubView() {
-        super.configSubView()
+    func initSubView() {
+//    override func configSubView() {
+//        super.configSubView()
         
         
 //        let url: URL = URL.init(string: "http://htzshanghai.top/resources/videos/others/never_give_up.mp4")!
@@ -108,52 +110,28 @@ class HTZVideoPlayFullViewController: HTZBaseViewController {
         IJKFFMoviePlayerController.checkIfFFmpegVersionMatch(true)
         
         let options: IJKFFOptions = IJKFFOptions.byDefault()
-        
+
         self.player = IJKFFMoviePlayerController.init(contentURL: URL(string: urlStr), with: options)
         var arm1 = UIView.AutoresizingMask()
         arm1.insert(UIView.AutoresizingMask.flexibleWidth)
         arm1.insert(UIView.AutoresizingMask.flexibleHeight)
         self.player?.view.autoresizingMask = arm1
         self.player?.view.backgroundColor = UIColor.white
-        
+
         self.player?.view.frame = self.view.bounds
-        self.player?.scalingMode = .aspectFit
+//        self.player?.scalingMode = .aspectFit
         self.player?.shouldAutoplay = true
-        self.view.autoresizesSubviews = true
+//        self.view.autoresizesSubviews = true
+        self.player?.view.frame = UIScreen.main.bounds
         self.view.addSubview((self.player?.view)!)
         
         self.view.addSubview(self.slider)
         
     }
     
-    override var shouldAutorotate: Bool {
-        get {
-            return true
-        }
-    }
-    
-    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        return UIInterfaceOrientationMask.allButUpsideDown
-    }
-    
-    func forceSetOrientation(_ orientation: UIInterfaceOrientation) {
-        if orientation == .unknown {
-            
-        }
-        UIDevice.current.setValue(orientation.rawValue, forKey: "orientation")
-    }
-    
-    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
-        let duration: TimeInterval = coordinator.transitionDuration
-        if size.width > size.height {
-//            horiz
-        } else {
-            
-        }
-    }
-    
-    override func configConstraint() {
-        super.configConstraint()
+    func initConstraint() {
+//    override func configConstraint() {
+//        super.configConstraint()
         weak var weakSelf = self
         self.slider.snp.makeConstraints { (make) in
             make.left.right.equalTo(weakSelf!.view)

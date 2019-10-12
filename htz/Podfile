@@ -12,12 +12,15 @@ target 'htz' do
   pod 'Moya'
   pod 'SwiftyJSON'
   pod 'HandyJSON'
+  pod 'NicooPlayer'
   
   pod 'Weibo_SDK', :git => 'https://github.com/sinaweibosdk/weibo_ios_sdk.git'
   pod 'WechatOpenSDK'
   pod 'TencentOpenAPI-Unofficial'
   
   pod 'FreeStreamer'
+  
+#  pod 'SJVideoPlayer'
   
 #  pod 'Pgyer'
 #  pod 'PgyUpdate'

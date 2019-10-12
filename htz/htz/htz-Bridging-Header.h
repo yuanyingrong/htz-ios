@@ -6,6 +6,13 @@
 
 #import "WXApi.h"
 
+
+
+#import "DeviceTool.h"
+
+//#import <SJVideoPlayer/SJVideoPlayer.h>
+
+
 #import <TencentOpenAPI/QQApiInterface.h>
 #import <TencentOpenAPI/TencentOAuth.h>
 

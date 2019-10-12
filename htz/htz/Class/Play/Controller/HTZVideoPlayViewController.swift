@@ -15,6 +15,8 @@ class HTZVideoPlayViewController: HTZBaseViewController {
     
     var urlStr: String
     
+    var smallPreViewFrame = CGRect()
+    
     private var isMediaSliderBeingDragged: Bool = false
     
     init(urlStr: String) {
@@ -86,72 +88,181 @@ class HTZVideoPlayViewController: HTZBaseViewController {
 //        }
     }
     
-    override func configSubView() {
-        super.configSubView()
-        
-        
-//        let url: URL = URL.init(string: "http://htzshanghai.top/resources/videos/others/never_give_up.mp4")!
-    #if DEBUG
-        IJKFFMoviePlayerController.setLogReport(true)
-        IJKFFMoviePlayerController.setLogLevel(k_IJK_LOG_DEBUG)
-    #else
-        IJKFFMoviePlayerController.setLogReport(false)
-        IJKFFMoviePlayerController.setLogLevel(k_IJK_LOG_INFO)
-    #endif
-        IJKFFMoviePlayerController.checkIfFFmpegVersionMatch(true)
-        
-        let options: IJKFFOptions = IJKFFOptions.byDefault()
-        
-        self.player = IJKFFMoviePlayerController.init(contentURL: URL(string: urlStr), with: options)
-        var arm1 = UIView.AutoresizingMask()
-        arm1.insert(UIView.AutoresizingMask.flexibleWidth)
-        arm1.insert(UIView.AutoresizingMask.flexibleHeight)
-        self.player?.view.autoresizingMask = arm1
-        self.player?.view.backgroundColor = UIColor.white
-        
-//        self.player?.view.frame = CGRect.init(x: 0, y: 0, width: UIScreen.main.bounds.size.width, height: 300)
-        self.player?.view.frame = self.view.bounds
-        self.player?.scalingMode = .aspectFit
-        self.player?.shouldAutoplay = true
-        self.view.autoresizesSubviews = true
-        self.view.addSubview((self.player?.view)!)
-        
-        let btn = UIButton.init(type: .custom)
-        btn.backgroundColor = UIColor.red
-        btn.frame = CGRect.init(x: 100, y: 400, width: 100, height: 50)
-        btn.setTitle("全屏", for: .normal)
-        btn.addTarget(self, action: #selector(fullScreen), for: .touchUpInside)
-        self.view.addSubview(btn)
-        
-        self.view.addSubview(self.slider)
-        view.addSubview(self.playButton)
-    }
+    
     
     @objc func fullScreen() {
-        let vc = HTZVideoPlayFullViewController(urlStr: self.urlStr)
-        self.navigationController?.pushViewController(vc, animated: true)
+//        let vc = HTZVideoPlayFullViewController(urlStr: self.urlStr)
+//        vc.player = self.player
+//        self.navigationController?.pushViewController(vc, animated: true)
+        enterFullScreen()
     }
+    
+    //进入全屏模式
+    func enterFullScreen() {
+        
+        self.fullBackButton.isHidden = false
+        self.fullScreenButton.isHidden = true
+        
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
+        appDelegate.blockRotation = true
+        DeviceTool.interfaceOrientation(.landscapeLeft)
+        
+        self.smallPreViewFrame = self.preView.frame
+        let rectInWindow = self.preView.convert(self.preView.bounds, to: UIApplication.shared.keyWindow)
+        self.preView.removeFromSuperview()
+        self.preView.frame = rectInWindow
+        UIApplication.shared.keyWindow?.addSubview(self.preView)
+        
+        weak var weakSelf = self
+        UIView.animate(withDuration: 0.5, animations: {
+//            weakSelf!.preView.transform = weakSelf!.preView.transform.rotated(by: .pi / 2)
+//            weakSelf!.preView.bounds = CGRect(x: 0, y: 0, width: max(kScreenWidth, kScreenHeight), height: min(kScreenWidth, kScreenHeight))
+//            weakSelf!.preView.center = CGPoint(x: weakSelf!.preView.superview!.bounds.midX, y: weakSelf!.preView.superview!.bounds.midY)
+            weakSelf!.preView.snp.makeConstraints { (make) in
+                make.edges.equalTo((UIApplication.shared.keyWindow)!)
+                
+            }
+        }) { (isFinished) in
+            
+        }
+    }
+     
+     
+    //退出全屏
+    @objc func exitFullScreen() {
+        
+        self.fullBackButton.isHidden = true
+        self.fullScreenButton.isHidden = false
+        
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
+        appDelegate.blockRotation = false
+        DeviceTool.interfaceOrientation(.portrait)
+        
+        let frame = self.view.convert(self.smallPreViewFrame, to: UIApplication.shared.keyWindow)
+        weak var weakSelf = self
+        UIView.animate(withDuration: 0.5, animations: {
+//            self.preView.transform = CGAffineTransform.identity
+//            self.preView.frame = frame
+        }) { (isFinished) in
+            // 回到小屏位置
+            self.preView.removeFromSuperview()
+            self.preView.frame = self.smallPreViewFrame
+            self.view.addSubview(self.preView)
+            
+            
+            weakSelf!.preView.snp.makeConstraints { (make) in
+                make.left.right.equalTo(weakSelf!.view)
+                make.top.equalTo(weakSelf!.view.snp.topMargin)
+                make.height.equalTo(250)
+            }
+        }
+    }
+    
+    override func configSubView() {
+            super.configSubView()
+            
+            
+    //        let url: URL = URL.init(string: "http://htzshanghai.top/resources/videos/others/never_give_up.mp4")!
+        #if DEBUG
+            IJKFFMoviePlayerController.setLogReport(true)
+            IJKFFMoviePlayerController.setLogLevel(k_IJK_LOG_DEBUG)
+        #else
+            IJKFFMoviePlayerController.setLogReport(false)
+            IJKFFMoviePlayerController.setLogLevel(k_IJK_LOG_INFO)
+        #endif
+            IJKFFMoviePlayerController.checkIfFFmpegVersionMatch(true)
+            
+            let options: IJKFFOptions = IJKFFOptions.byDefault()
+            
+            self.player = IJKFFMoviePlayerController.init(contentURL: URL(string: urlStr), with: options)
+            var arm1 = UIView.AutoresizingMask()
+            arm1.insert(UIView.AutoresizingMask.flexibleWidth)
+            arm1.insert(UIView.AutoresizingMask.flexibleHeight)
+            self.player?.view.autoresizingMask = arm1
+            self.player?.view.backgroundColor = UIColor.white
+            
+    //        self.player?.view.frame = CGRect.init(x: 0, y: 0, width: UIScreen.main.bounds.size.width, height: 300)
+            
+    //        self.player?.scalingMode = .aspectFit
+            self.player?.shouldAutoplay = true
+    //        self.view.autoresizesSubviews = true
+            
+//            preView.frame = CGRect(x: 0, y: 88, width: kScreenWidth, height: 300)
+            view.addSubview(preView)
+            
+            self.player?.view.frame = preView.bounds
+            preView.addSubview((self.player?.view)!)
+            
+            preView.addSubview(self.slider)
+            preView.addSubview(self.playButton)
+            preView.addSubview(fullBackButton)
+            preView.addSubview(fullScreenButton)
+        }
     
     override func configConstraint() {
         super.configConstraint()
         weak var weakSelf = self
-        self.slider.snp.makeConstraints { (make) in
+        
+        preView.snp.makeConstraints { (make) in
             make.left.right.equalTo(weakSelf!.view)
-            make.top.equalTo((weakSelf?.player?.view.snp.bottom)!)
+            make.top.equalTo(weakSelf!.view.snp.topMargin)
+            make.height.equalTo(250)
         }
         
         playButton.snp.makeConstraints { (make) in
-            make.center.equalTo(weakSelf!.view)
+            make.left.equalTo(weakSelf!.preView).offset(16)
+            make.centerY.equalTo(weakSelf!.slider)
         }
+        self.slider.snp.makeConstraints { (make) in
+            make.left.equalTo(weakSelf!.playButton.snp.right)
+//            make.right.equalTo(weakSelf!.preView)
+            make.bottom.equalTo(weakSelf!.preView)
+        }
+        
+        
+     
+        
+        fullScreenButton.snp.makeConstraints { (make) in
+            make.left.equalTo(weakSelf!.slider.snp.right)
+            make.right.equalTo(weakSelf!.preView).offset(-16)
+            make.centerY.equalTo(weakSelf!.slider)
+        }
+        
+        fullBackButton.snp.makeConstraints { (make) in
+            make.top.left.equalTo(weakSelf!.preView).offset(16)
+            make.size.equalTo(CGSize(width: 66, height: 32))
+        }
+        
     }
+    
+    private lazy var preView: UIView = {
+        let view = UIView()
+        return view
+    }()
     
     private lazy var playButton: UIButton = {
         let button = UIButton(type: UIButton.ButtonType.custom)
-        button.setImage(UIImage(named: "play"), for: UIControl.State.normal)
-        button.setImage(UIImage(named: "stop"), for: UIControl.State.highlighted)
+        button.setImage(UIImage(named: "stop"), for: UIControl.State.normal)
+        button.setImage(UIImage(named: "play"), for: UIControl.State.selected)
         button.addTarget(self, action: #selector(playOrPause), for: UIControl.Event.touchUpInside)
         return button
     }()
+    
+    private lazy var fullScreenButton: UIButton = {
+        let button = UIButton.init(type: .custom)
+        button.setTitle("全屏", for: .normal)
+        button.addTarget(self, action: #selector(fullScreen), for: .touchUpInside)
+        return button
+    }()
+    
+    private lazy var fullBackButton: UIButton = {
+        let button = UIButton(type: UIButton.ButtonType.custom)
+        button.setImage(UIImage(named: "back"), for: UIControl.State.normal)
+        button.isHidden = true
+        button.addTarget(self, action: #selector(exitFullScreen), for: UIControl.Event.touchUpInside)
+        return button
+    }()
+    
     lazy var slider: UISlider = {
         let slider = UISlider()
         
@@ -254,8 +365,10 @@ extension HTZVideoPlayViewController {
     
     @objc private func playOrPause() {
         if (self.player?.isPlaying())! {
+            self.playButton.isSelected = true
             self.player?.pause()
         } else {
+            self.playButton.isSelected = false
             self.player?.play()
         }
     }
