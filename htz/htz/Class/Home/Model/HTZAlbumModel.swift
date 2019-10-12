@@ -31,6 +31,8 @@ class HTZAlbumModel: HandyJSON {
     
     var index: NSInteger?
     
+    var isVideo: Bool?
+    
     required init() {}
     
     func mapping(mapper: HelpingMapper) {

@@ -36,4 +36,18 @@ class HTZNavigationController: UINavigationController,UIGestureRecognizerDelegat
     func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
         return children.count != 1
     }
+    
+    // 是否支持屏幕翻转
+    override var shouldAutorotate: Bool {
+        get {
+            return visibleViewController?.shouldAutorotate ?? false
+        }
+    }
+    
+    // 支持的屏幕旋转方向
+    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+        get {
+            return visibleViewController?.supportedInterfaceOrientations ?? UIInterfaceOrientationMask.portrait
+        }
+    }
 }

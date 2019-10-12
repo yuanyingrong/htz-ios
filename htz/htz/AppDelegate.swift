@@ -15,6 +15,8 @@ import AVFoundation
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
+    
+    var rotate: NSInteger?
 
     lazy var palyButton: UIButton = {
         let button = UIButton(type: UIButton.ButtonType.custom)
@@ -139,6 +141,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 //        // 启动更新检查SDK
 //        PgyUpdateManager.sharedPgy()?.start(withAppId: "f87f93f5acb6b5363c23b8d208324857")
 //    }
+    
+    func application(_ application: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {
+        
+        // 1.当设备横竖屏转换的时候回调用这个方法
+        if let rotate = rotate, rotate == 1 {
+            return UIInterfaceOrientationMask.all
+        } else {
+            return UIInterfaceOrientationMask.portrait
+        }
+    }
+    
+    
+    
 
     func applicationWillResignActive(_ application: UIApplication) {
         // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.

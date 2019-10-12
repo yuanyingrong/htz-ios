@@ -41,6 +41,8 @@ class HTZAlbumPartModel: HandyJSON {
     //
     var time: String?
     
+    var isVideo: Bool?
+    
     required init() {}
     
     func mapping(mapper: HelpingMapper) {

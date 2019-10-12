@@ -16,7 +16,8 @@ class HTZHomeViewController: HTZBaseViewController {
     
     
     // 图片
-    private let pictures = ["https://goodreading.mobi/StudentApi/UserFiles/Banner/Student/Home/banner_tz.png", "https://goodreading.mobi/StudentApi/UserFiles/Banner/Student/Home/banner_dzsyy.png", "https://goodreading.mobi/studentapi/userfiles/banner/student/home/studenttj.png"]
+    private let pictures = ["banner_dian_zi_bao", "banner_zhu_zi_wan_nian_ding_lun"]
+//    ["https://goodreading.mobi/StudentApi/UserFiles/Banner/Student/Home/banner_tz.png", "https://goodreading.mobi/StudentApi/UserFiles/Banner/Student/Home/banner_dzsyy.png", "https://goodreading.mobi/studentapi/userfiles/banner/student/home/studenttj.png"]
     
     // 默认滚动视图
     private lazy var cycleView: HTZCycleView = {
@@ -85,6 +86,8 @@ extension HTZHomeViewController: HTZCycleViewDelegate {
     
     internal func htzCycleView(cycleView: HTZCycleView, didSelectItemAt index: Int) {
         print(index)
+        let vc = HTZVideoPlayViewController(urlStr: "http://htzshanghai.top/resources/videos/others/never_give_up.mp4")
+        navigationController?.pushViewController(vc, animated: true)
     }
 }
 
@@ -95,8 +98,8 @@ extension HTZHomeViewController: HTZHomeTitleCollectionViewDelegate {
     }
     
     @objc internal func collectionViewdidSelectItemAt(_ indexPath: IndexPath) {
-        if indexPath.row > 1 {
-             alert(message: "暂无数据")
+        if indexPath.row > 2 {
+             alert(message: "暂未上架")
             return
         }
         let vc = HTZAlbumListViewController()

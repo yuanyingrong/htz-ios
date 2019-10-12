@@ -133,6 +133,7 @@ extension HTZAlbumListViewController: UITableViewDataSource, UITableViewDelegate
         let cell =  tableView.dequeueReusableCell(withIdentifier: "HTZAlbumListCellReuseID", for: indexPath) as! HTZAlbumListCell
         cell.delegate = self
         cell.imageName = albumModel?.icon
+        self.albumListViewModel.dataArr[indexPath.row]?.isVideo = albumModel?.isVideo
         cell.albumPartModel = self.albumListViewModel.dataArr[indexPath.row]
         cell.musicModel = self.albumListViewModel.dataSongArr[indexPath.row]
         return cell
@@ -141,20 +142,30 @@ extension HTZAlbumListViewController: UITableViewDataSource, UITableViewDelegate
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
     
-        let vc = HTZPlayViewController.sharedInstance
-//        let music = HTZMusicModel()
-//        music.fileName = self.albumListViewModel.dataArr[indexPath.row]?.audio
-//        music.lrcName = self.albumListViewModel.dataArr[indexPath.row]?.lyric
-//        music.name = self.albumListViewModel.dataArr[indexPath.row]?.title
-//        music.icon = "chuan_xi_lu"
-//        music.singer = "dddd"
-//        music.singerIcon = "chuan_xi_lu"
-        vc.title = self.albumListViewModel.dataSongArr[indexPath.row]?.album_title
-        vc.setPlayerList(playList: self.albumListViewModel.dataSongArr as! [HTZMusicModel])
-        vc.playMusic(index: indexPath.row, isSetList: true)
-        let nav = UINavigationController(rootViewController: vc)
-        nav.modalPresentationStyle = .fullScreen
-        self.present(nav, animated: true, completion: nil)
+        if albumModel!.isVideo! {
+            let vc = HTZVideoPlayViewController(urlStr: self.albumListViewModel.dataSongArr[indexPath.row]!.file_link!)
+            vc.title = self.albumListViewModel.dataSongArr[indexPath.row]?.album_title
+            navigationController?.pushViewController(vc, animated: true)
+//            let nav = UINavigationController(rootViewController: vc)
+//            nav.modalPresentationStyle = .fullScreen
+//            self.present(nav, animated: true, completion: nil)
+        } else {
+            let vc = HTZPlayViewController.sharedInstance
+            //        let music = HTZMusicModel()
+            //        music.fileName = self.albumListViewModel.dataArr[indexPath.row]?.audio
+            //        music.lrcName = self.albumListViewModel.dataArr[indexPath.row]?.lyric
+            //        music.name = self.albumListViewModel.dataArr[indexPath.row]?.title
+            //        music.icon = "chuan_xi_lu"
+            //        music.singer = "dddd"
+            //        music.singerIcon = "chuan_xi_lu"
+                    vc.title = self.albumListViewModel.dataSongArr[indexPath.row]?.album_title
+                    vc.setPlayerList(playList: self.albumListViewModel.dataSongArr as! [HTZMusicModel])
+                    vc.playMusic(index: indexPath.row, isSetList: true)
+                    let nav = UINavigationController(rootViewController: vc)
+                    nav.modalPresentationStyle = .fullScreen
+                    self.present(nav, animated: true, completion: nil)
+        }
+        
         
     }
     

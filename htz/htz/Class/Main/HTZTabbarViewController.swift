@@ -64,6 +64,20 @@ class HTZTabbarViewController: UITabBarController {
 //        self.tabBar.addSubview(playButton)
     }
     
+    // 是否支持屏幕翻转
+    override var shouldAutorotate: Bool {
+        get {
+            return selectedViewController?.shouldAutorotate ?? false
+        }
+    }
+    
+    // 支持的屏幕旋转方向
+    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+        get {
+            return selectedViewController?.supportedInterfaceOrientations ?? UIInterfaceOrientationMask.portrait
+        }
+    }
+    
     @objc func playButtonClickAction() {
         let nav = UINavigationController(rootViewController: HTZPlayViewController.sharedInstance)
         nav.modalPresentationStyle = .fullScreen

@@ -34,6 +34,16 @@ class HTZHomeViewModel: NSObject {
             let arr = [HTZAlbumModel].deserialize(from: response["sutra_items"].rawString())
             if let arr = arr {
                 self.dataArr = arr
+                
+                let model = HTZAlbumModel()
+                model.title = "觅心小视频(视频)"
+                model.icon = "play_normal"
+                model.playcount = "0"
+                model.item_total = "11"
+                model.desc = "1111111111111111111"
+                model.isVideo = true
+                self.dataArr.insert(model, at: 0)
+                
                 callBack(true)
             }
             print(response["sutra_items"])

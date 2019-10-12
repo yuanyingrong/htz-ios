@@ -27,6 +27,8 @@ class HTZAlbumListCell: BaseTableViewCell {
 //                }
                 playCountButton.setTitle(albumPartModel.playcount!, for: UIControl.State.normal)
                 playTimeLabel.text = ""
+                downloadButton.isHidden = albumPartModel.isVideo ?? false
+                
             }
             
             
@@ -45,7 +47,7 @@ class HTZAlbumListCell: BaseTableViewCell {
                 //                }
                 playCountButton.setTitle(musicModel.lrcName, for: UIControl.State.normal)
                 playTimeLabel.text = ""
-                self.timeButton.setTitle(HTZMusicTool.timeStr(msTime: NSString(string: musicModel.file_duration!).doubleValue), for: UIControl.State.normal)
+                self.timeButton.setTitle(HTZMusicTool.timeStr(msTime: NSString(string: musicModel.file_duration ?? "").doubleValue), for: UIControl.State.normal)
                 if musicModel.isDownload {
                     self.downloadButton.setImage(UIImage(named: "downloaded"), for: UIControl.State.normal)
                 } else {
