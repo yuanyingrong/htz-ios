@@ -51,24 +51,29 @@ class HTZTabbarViewController: UITabBarController {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        let playButton = UIButton()
+        let playButton = UIButton(type: .custom)
 //        let count = self.children.count
         // 将按钮的内缩进的宽度减少
 //        let w = self.tabBar.bounds.size.width / CGFloat(count) - 1
         // CGRectInset 正数内向缩进,负数外向扩展
-        playButton.frame = self.tabBar.bounds.insetBy(dx: kScreenWidth/5 * 2 - 1, dy: 5)
+        playButton.frame = self.tabBar.bounds.insetBy(dx: kScreenWidth/5 * 2 - 1, dy: 0)
         playButton.setImage(UIImage(named: "play_normal"), for: UIControl.State.normal)
         playButton.setImage(UIImage(named: "play_normal"), for: UIControl.State.highlighted)
         playButton.addTarget(self, action: #selector(playButtonClickAction), for: UIControl.Event.touchUpInside)
-        playButton.center = CGPoint(x: self.tabBar.centerX, y: self.tabBar.bounds.size.height * 0.5)
-//        self.tabBar.addSubview(playButton)
+        playButton.center = CGPoint(x: self.tabBar.centerX, y: self.tabBar.bounds.size.height * 0.3)
+        self.tabBar.addSubview(playButton)
     }
     
     
     @objc func playButtonClickAction() {
-        let nav = UINavigationController(rootViewController: HTZPlayViewController.sharedInstance)
-        nav.modalPresentationStyle = .fullScreen
-        self.present(nav, animated: true, completion: nil)
+        if HTZMusicTool.musicList() != nil {
+            let nav = UINavigationController(rootViewController: HTZPlayViewController.sharedInstance)
+            HTZPlayViewController.sharedInstance.playMusic()
+            nav.modalPresentationStyle = .fullScreen
+            HTZMusicTool.visibleViewController()?.present(nav, animated: true, completion: nil)
+        } else {
+            HTZMusicTool.visibleViewController()?.alert(message: "暂无播放内容")
+        }
     }
     
     func addChildViewController(vcName: String, title: String, imageName: String) {

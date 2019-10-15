@@ -13,6 +13,7 @@ enum API {
     case albums
     case xingfuneixinchan
     case jingxinyangsheng
+    case mixinxiaoshipin
     case song(type: String, size: String, offset: String)
     case songDetail(songId: String)
     case sinaOAuth(code: String)
@@ -42,6 +43,8 @@ extension API: TargetType {
             return "xingfuneixinchan/xingfuneixinchan.json"
         case .jingxinyangsheng:
             return "jingxinyangsheng/jingxinyangsheng.json"
+        case .mixinxiaoshipin:
+            return "mixinxiaoshipin/mixinxiaoshipin.json"
         case .sinaOAuth(_):
             return "OAuth2/authorize"
         case let .song(type, size, offset):
@@ -77,7 +80,7 @@ extension API: TargetType {
         //        return .requestParameters(parameters: nil, encoding: JSONArrayEncoding.default)
         switch self {
         
-        case .albums, .xingfuneixinchan, .jingxinyangsheng, .song(_), .songDetail(_):
+        case .albums, .xingfuneixinchan, .jingxinyangsheng, .mixinxiaoshipin, .song(_), .songDetail(_):
             return .requestPlain
         case let .register(email, password):
             return .requestParameters(parameters: ["email": email, "password": password], encoding: JSONEncoding.default)

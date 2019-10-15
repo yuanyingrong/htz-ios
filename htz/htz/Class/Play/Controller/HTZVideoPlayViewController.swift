@@ -2,465 +2,154 @@
 //  HTZVideoPlayViewController.swift
 //  htz
 //
-//  Created by 袁应荣 on 2019/10/9.
+//  Created by 袁应荣 on 2019/10/12.
 //  Copyright © 2019 袁应荣. All rights reserved.
 //
 
 import UIKit
 
-class HTZVideoPlayViewController: HTZBaseViewController {
+class HTZVideoPlayViewController: UIViewController {
     
+    var videoUrl: String?
+//    {
+//        didSet {
+//            self.player?.assetURL = URL(string: videoUrl!)!
+//            self.controlView.showTitle("title", coverURLString: self.kVideoCover, fullScreenMode: ZFFullScreenMode.landscape)
+//        }
+//    }
     
-    var player: IJKFFMoviePlayerController?
+    var player: ZFPlayerController?
     
-    var urlStr: String
-    
-    var smallPreViewFrame = CGRect()
-    
-    private var isMediaSliderBeingDragged: Bool = false
-    
-    init(urlStr: String) {
-        self.urlStr = urlStr
-        super.init(nibName: nil, bundle: nil)
-    }
-    
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
+    let kVideoCover = "https://upload-images.jianshu.io/upload_images/635942-14593722fe3f0695.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"
+
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        self.view.addSubview(self.containerView)
+        self.containerView.addSubview(self.playButton)
 
+
+//        let playerManager = ZFAVPlayerManager()
+        let playerManager = ZFIJKPlayerManager()
+        /// 播放器相关
+        self.player = ZFPlayerController(playerManager: playerManager, containerView: self.containerView)
+        self.player?.controlView = self.controlView
+        /// 设置退到后台继续播放
+        self.player?.pauseWhenAppResignActive = false
+        
+        weak var weakSelfs = self
+        guard let weakSelf = weakSelfs else {
+            return
+        }
+        
+        self.player?.orientationWillChange = {(player: ZFPlayerController,  isFullScreen: Bool) in
+            weakSelf.setNeedsStatusBarAppearanceUpdate()
+        }
+        
+        /// 播放完成
+        self.player?.playerDidToEnd = { asset in
+            weakSelf.player?.currentPlayerManager.replay?()
+            weakSelf.player?.playTheNext()
+            if weakSelf.player?.isLastAssetURL == nil {
+                let title = String(format: "视频标题%zd", weakSelf.player?.currentPlayIndex ?? 0)
+                weakSelf.controlView.showTitle(title, coverURLString: weakSelf.kVideoCover, fullScreenMode: ZFFullScreenMode.landscape)
+            } else {
+                weakSelf.player?.stop()
+            }
+        }
+        
+        self.player?.assetURL = URL(string: videoUrl!)!
         
     }
     
-
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
-        installMovieNotificationObservers()
-        
-        self.player?.prepareToPlay() //准备
-        self.player?.play() //播放
-        
-        refreshMediaControl()
+        self.player?.isViewControllerDisappear = false
     }
-
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+//        HTZMusicTool.hidePlayBtn()
+    }
+    
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        
-        self.player?.pause()//暂停
-        self.player?.shutdown()
-        
-        removeMovieNotificationObservers()
+//        HTZMusicTool.showPlayBtn()
+        self.player?.isViewControllerDisappear = true
     }
     
-    @objc func refreshMediaControl() {
-        let duration = self.player?.duration
-        let intDuration = NSInteger(duration! + 0.5)
-        if intDuration > 0 {
-            self.slider.maximumValue = Float(duration!)
-        } else {
-            self.slider.maximumValue = 0.0
-        }
-        // position
-        var position: TimeInterval?
-        if isMediaSliderBeingDragged {
-            position = TimeInterval(self.slider.value)
-        } else {
-            position = self.player?.currentPlaybackTime
-        }
-        let intPosition = NSInteger(position! + 0.5)
-        if intDuration > 0 {
-            self.slider.value = Float(position!)
-        } else {
-            self.slider.value = 0.0
-        }
+    override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
+        var x: CGFloat = 0
+        var y = self.navigationController?.navigationBar.frame.maxY
+        var w: CGFloat = self.view.frame.width
+        var h: CGFloat = w*9/16
+        self.containerView.frame = CGRect(x: x, y: y!, width: w, height: h)
         
-        // status
-//        let isPlaying = self.player?.isPlaying()
-//        self.playButton
-        
-        NSObject.cancelPreviousPerformRequests(withTarget: self, selector: #selector(refreshMediaControl), object: nil)
-        perform(#selector(refreshMediaControl), with: nil, afterDelay: 0.5)
-//        if (!self.overlayPanel.hidden) {
-//            [self performSelector:@selector(refreshMediaControl) withObject:nil afterDelay:0.5];
-//        }
-    }
-    
-    
-    
-    @objc func fullScreen() {
-//        let vc = HTZVideoPlayFullViewController(urlStr: self.urlStr)
-//        vc.player = self.player
-//        self.navigationController?.pushViewController(vc, animated: true)
-        enterFullScreen()
-    }
-    
-    //进入全屏模式
-    func enterFullScreen() {
-        
-        self.fullBackButton.isHidden = false
-        self.fullScreenButton.isHidden = true
-        
-        let appDelegate = UIApplication.shared.delegate as! AppDelegate
-        appDelegate.blockRotation = true
-        DeviceTool.interfaceOrientation(.landscapeLeft)
-        
-        self.smallPreViewFrame = self.preView.frame
-        let rectInWindow = self.preView.convert(self.preView.bounds, to: UIApplication.shared.keyWindow)
-        self.preView.removeFromSuperview()
-        self.preView.frame = rectInWindow
-        UIApplication.shared.keyWindow?.addSubview(self.preView)
-        
-        weak var weakSelf = self
-        UIView.animate(withDuration: 0.5, animations: {
-//            weakSelf!.preView.transform = weakSelf!.preView.transform.rotated(by: .pi / 2)
-//            weakSelf!.preView.bounds = CGRect(x: 0, y: 0, width: max(kScreenWidth, kScreenHeight), height: min(kScreenWidth, kScreenHeight))
-//            weakSelf!.preView.center = CGPoint(x: weakSelf!.preView.superview!.bounds.midX, y: weakSelf!.preView.superview!.bounds.midY)
-            weakSelf!.preView.snp.makeConstraints { (make) in
-                make.edges.equalTo((UIApplication.shared.keyWindow)!)
-                
-            }
-        }) { (isFinished) in
-            
-        }
-    }
-     
-     
-    //退出全屏
-    @objc func exitFullScreen() {
-        
-        self.fullBackButton.isHidden = true
-        self.fullScreenButton.isHidden = false
-        
-        let appDelegate = UIApplication.shared.delegate as! AppDelegate
-        appDelegate.blockRotation = false
-        DeviceTool.interfaceOrientation(.portrait)
-        
-        let frame = self.view.convert(self.smallPreViewFrame, to: UIApplication.shared.keyWindow)
-        weak var weakSelf = self
-        UIView.animate(withDuration: 0.5, animations: {
-//            self.preView.transform = CGAffineTransform.identity
-//            self.preView.frame = frame
-        }) { (isFinished) in
-            // 回到小屏位置
-            self.preView.removeFromSuperview()
-            self.preView.frame = self.smallPreViewFrame
-            self.view.addSubview(self.preView)
-            
-            
-            weakSelf!.preView.snp.makeConstraints { (make) in
-                make.left.right.equalTo(weakSelf!.view)
-                make.top.equalTo(weakSelf!.view.snp.topMargin)
-                make.height.equalTo(250)
-            }
-        }
-    }
-    
-    override func configSubView() {
-            super.configSubView()
-            
-            
-    //        let url: URL = URL.init(string: "http://htzshanghai.top/resources/videos/others/never_give_up.mp4")!
-        #if DEBUG
-            IJKFFMoviePlayerController.setLogReport(true)
-            IJKFFMoviePlayerController.setLogLevel(k_IJK_LOG_DEBUG)
-        #else
-            IJKFFMoviePlayerController.setLogReport(false)
-            IJKFFMoviePlayerController.setLogLevel(k_IJK_LOG_INFO)
-        #endif
-            IJKFFMoviePlayerController.checkIfFFmpegVersionMatch(true)
-            
-            let options: IJKFFOptions = IJKFFOptions.byDefault()
-            
-            self.player = IJKFFMoviePlayerController.init(contentURL: URL(string: urlStr), with: options)
-            var arm1 = UIView.AutoresizingMask()
-            arm1.insert(UIView.AutoresizingMask.flexibleWidth)
-            arm1.insert(UIView.AutoresizingMask.flexibleHeight)
-            self.player?.view.autoresizingMask = arm1
-            self.player?.view.backgroundColor = UIColor.white
-            
-    //        self.player?.view.frame = CGRect.init(x: 0, y: 0, width: UIScreen.main.bounds.size.width, height: 300)
-            
-    //        self.player?.scalingMode = .aspectFit
-            self.player?.shouldAutoplay = true
-    //        self.view.autoresizesSubviews = true
-            
-//            preView.frame = CGRect(x: 0, y: 88, width: kScreenWidth, height: 300)
-            view.addSubview(preView)
-            
-            self.player?.view.frame = preView.bounds
-            preView.addSubview((self.player?.view)!)
-            
-            preView.addSubview(self.slider)
-            preView.addSubview(self.playButton)
-            preView.addSubview(fullBackButton)
-            preView.addSubview(fullScreenButton)
-        }
-    
-    override func configConstraint() {
-        super.configConstraint()
-        weak var weakSelf = self
-        
-        preView.snp.makeConstraints { (make) in
-            make.left.right.equalTo(weakSelf!.view)
-            make.top.equalTo(weakSelf!.view.snp.topMargin)
-            make.height.equalTo(250)
-        }
-        
-        playButton.snp.makeConstraints { (make) in
-            make.left.equalTo(weakSelf!.preView).offset(16)
-            make.centerY.equalTo(weakSelf!.slider)
-        }
-        self.slider.snp.makeConstraints { (make) in
-            make.left.equalTo(weakSelf!.playButton.snp.right)
-//            make.right.equalTo(weakSelf!.preView)
-            make.bottom.equalTo(weakSelf!.preView)
-        }
-        
-        
-     
-        
-        fullScreenButton.snp.makeConstraints { (make) in
-            make.left.equalTo(weakSelf!.slider.snp.right)
-            make.right.equalTo(weakSelf!.preView).offset(-16)
-            make.centerY.equalTo(weakSelf!.slider)
-        }
-        
-        fullBackButton.snp.makeConstraints { (make) in
-            make.top.left.equalTo(weakSelf!.preView).offset(16)
-            make.size.equalTo(CGSize(width: 66, height: 32))
-        }
+        w = 44
+        h = w
+        x = (self.containerView.frame.width - w)/2
+        y = (self.containerView.frame.height - h)/2
+        self.playButton.frame = CGRect(x: x, y: y!, width: w, height: h)
         
     }
     
-    private lazy var preView: UIView = {
-        let view = UIView()
-        return view
-    }()
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        if self.player?.isFullScreen ?? false {
+            return .lightContent
+        }
+        return .default
+    }
     
-    private lazy var playButton: UIButton = {
+    override var prefersStatusBarHidden: Bool {
+        return self.player?.isStatusBarHidden ?? false
+    }
+    
+    override var preferredStatusBarUpdateAnimation: UIStatusBarAnimation {
+        return .slide
+    }
+    
+    override var shouldAutorotate: Bool {
+        return self.player?.shouldAutorotate ?? false
+    }
+    
+    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+        if self.player?.isFullScreen ?? false {
+            return .landscape
+        }
+        return .portrait
+    }
+
+    private func _setupViews() {
+        
+    }
+    
+    @objc func playClickAction() {
+        self.player?.playTheIndex(0)
+        self.controlView.showTitle(title, coverURLString: self.kVideoCover, fullScreenMode: ZFFullScreenMode.landscape)
+    }
+    
+    fileprivate lazy var playButton: UIButton = {
         let button = UIButton(type: UIButton.ButtonType.custom)
-        button.setImage(UIImage(named: "stop"), for: UIControl.State.normal)
-        button.setImage(UIImage(named: "play"), for: UIControl.State.selected)
-        button.addTarget(self, action: #selector(playOrPause), for: UIControl.Event.touchUpInside)
+        button.setImage(UIImage(named: "new_allPlay_44x44_"), for: UIControl.State.normal)
+        button.addTarget(self, action: #selector(playClickAction), for: UIControl.Event.touchUpInside)
         return button
     }()
     
-    private lazy var fullScreenButton: UIButton = {
-        let button = UIButton.init(type: .custom)
-        button.setTitle("全屏", for: .normal)
-        button.addTarget(self, action: #selector(fullScreen), for: .touchUpInside)
-        return button
+    fileprivate lazy var controlView: ZFPlayerControlView = {
+        let controlView = ZFPlayerControlView()
+        controlView.fastViewAnimated = true
+        controlView.autoHiddenTimeInterval = 5
+        controlView.autoFadeTimeInterval = 0.5
+        controlView.prepareShowLoading = true
+        controlView.prepareShowControlView = true
+        return controlView
     }()
-    
-    private lazy var fullBackButton: UIButton = {
-        let button = UIButton(type: UIButton.ButtonType.custom)
-        button.setImage(UIImage(named: "back"), for: UIControl.State.normal)
-        button.isHidden = true
-        button.addTarget(self, action: #selector(exitFullScreen), for: UIControl.Event.touchUpInside)
-        return button
+
+    fileprivate lazy var containerView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.wb_setImage(urlStr: kVideoCover, placeHolderImage: YYRUtilities.image(color: UIColor(red: 220/255.0, green: 220/255.0, blue: 220/255.0, alpha: 1), size: CGSize(width: 1, height: 1)))
+        return imageView
     }()
-    
-    lazy var slider: UISlider = {
-        let slider = UISlider()
-        
-        //设置默认值
-        slider.value = 0.1
-        //设置Slider值，并有动画效果
-        slider.setValue(0.5, animated: true)
-        //设置Slider两边槽的颜色
-        slider.minimumTrackTintColor = UIColor.red
-        slider.maximumTrackTintColor = UIColor.green
-        //添加两边槽图片
-        slider.minimumValueImage = UIImage(named: "image")
-        slider.maximumValueImage = UIImage(named: "image1")
-        //设置Slider组件图片
-        slider.setMaximumTrackImage(UIImage(named:"Maximage1"), for: .normal)
-        slider.setMinimumTrackImage(UIImage(named:"MinImage2"), for: .normal)
-        slider.setThumbImage(UIImage(named: "thumInage"), for: .normal)
-        //使用三宫格缩放
-        let image = UIImage(named: "image3")?.stretchableImage(withLeftCapWidth: 14, topCapHeight: 0)//左右像素为14px，中间缩放
-        slider.setMaximumTrackImage(image, for: .normal)
-        //Slider值改变响应
-        slider.isContinuous = false//设置在停止滑动时才出发响应事件
-        slider.addTarget(self, action: #selector(didSliderTouchDown), for: .touchDown)
-        slider.addTarget(self, action: #selector(didSliderTouchCancel), for: .touchCancel)
-        slider.addTarget(self, action: #selector(didSliderTouchUpOutside), for: .touchUpOutside)
-        slider.addTarget(self, action: #selector(didSliderTouchUpInside), for: .touchUpInside)
-        slider.addTarget(self, action: #selector(sliderChanged), for: .valueChanged)
-        //添加到视图中
-        self.view.addSubview(slider)
-        
-        return slider
-    }()
-    
-   
-    @objc func didSliderTouchDown() {
-           print(slider.value)
-        self.isMediaSliderBeingDragged = true
-       }
-    @objc func didSliderTouchCancel() {
-           print(slider.value)
-           self.isMediaSliderBeingDragged = false
-       }
-    @objc func didSliderTouchUpOutside() {
-        print(slider.value)
-        self.isMediaSliderBeingDragged = false
-    }
-    @objc func didSliderTouchUpInside() {
-        print(slider.value)
-        self.player!.currentPlaybackTime = TimeInterval(self.slider.value)
-        self.isMediaSliderBeingDragged = false
-    }
-    @objc func sliderChanged(_ slider: UISlider) {
-           print(slider.value)
-           refreshMediaControl()
-       }
-//    lazy var slider: HTZSliderView = {
-//        let slider = HTZSliderView()
-//        slider.setBackgroundImage(image: UIImage(named: "read_classics_icon_normal"), state: UIControl.State.normal)
-//        slider.setBackgroundImage(image: UIImage(named: "read_classics_icon_normal"), state: UIControl.State.selected)
-//        slider.setBackgroundImage(image: UIImage(named: "read_classics_icon_normal"), state: UIControl.State.highlighted)
-//
-//        slider.setThumbImage(image: UIImage(named: "read_classics_icon_normal"), state: UIControl.State.normal)
-//        slider.setThumbImage(image: UIImage(named: "read_classics_icon_normal"), state: UIControl.State.selected)
-//        slider.setThumbImage(image: UIImage(named: "read_classics_icon_normal"), state: UIControl.State.highlighted)
-//
-//        slider.maximumTrackImage = UIImage(named: "read_classics_icon_normal")
-//        slider.minimumTrackImage = UIImage(named: "read_classics_icon_normal")
-//        slider.bufferTrackImage = UIImage(named: "read_classics_icon_normal")
-//
-//        slider.delegate = self
-//        slider.sliderHeight = 2
-//
-//        return slider
-//    }()
 }
-
-/// HTZSliderViewDelegate
-extension HTZVideoPlayViewController: HTZSliderViewDelegate {
-    func sliderTouchBegin(_ value: CGFloat) {
-        
-    }
-    
-    func sliderValueChanged(_ value: CGFloat) {
-        
-    }
-    
-    func sliderTouchEnded(_ value: CGFloat) {
-        
-    }
-    
-    func sliderTapped(_ value: CGFloat) {
-        
-    }
-    
-    
-}
-
-/// 按钮点击事件
-extension HTZVideoPlayViewController {
-    
-    @objc private func playOrPause() {
-        if (self.player?.isPlaying())! {
-            self.playButton.isSelected = true
-            self.player?.pause()
-        } else {
-            self.playButton.isSelected = false
-            self.player?.play()
-        }
-    }
-}
-/// 通知
-extension HTZVideoPlayViewController {
-    
-    private func installMovieNotificationObservers() {
-        
-        NotificationCenter.default.addObserver(self, selector: #selector(loadStateDidChange(noti:)), name: NSNotification.Name.IJKMPMoviePlayerLoadStateDidChange, object: self.player)
-        NotificationCenter.default.addObserver(self, selector: #selector(moviePlayBackDidFinish(noti:)), name: NSNotification.Name.IJKMPMoviePlayerPlaybackDidFinish, object: self.player)
-        NotificationCenter.default.addObserver(self, selector: #selector(mediaIsPreparedToPlayDidChange(noti:)), name: NSNotification.Name.IJKMPMediaPlaybackIsPreparedToPlayDidChange, object: self.player)
-        NotificationCenter.default.addObserver(self, selector: #selector(moviePlayBackStateDidChange(noti:)), name: NSNotification.Name.IJKMPMoviePlayerPlaybackStateDidChange, object: self.player)
-    }
-    
-    @objc func loadStateDidChange(noti: Notification) {
-        
-        let loadState = self.player?.loadState
-        if (loadState!.rawValue & IJKMPMovieLoadState.playthroughOK.rawValue) != 0 {
-            print(String(format: "loadStateDidChange: IJKMPMovieLoadStatePlaythroughOK:%d\n",loadState!.rawValue))
-        } else if (loadState!.rawValue & IJKMPMovieLoadState.stalled.rawValue) != 0 {
-            print("loadStateDidChange: IJKMPMovieLoadStateStalled: \(loadState?.rawValue)\n")
-        } else {
-            print("loadStateDidChange: ???: \(loadState?.rawValue)\n")
-        }
-    }
-    
-    @objc func moviePlayBackDidFinish(noti: Notification) {
-        //    MPMovieFinishReasonPlaybackEnded,
-        //    MPMovieFinishReasonPlaybackError,
-        //    MPMovieFinishReasonUserExited
-        let reason1 = noti.userInfo?[IJKMPMoviePlayerPlaybackDidFinishReasonUserInfoKey]
-       let reason = reason1!
-//        switch reason {
-//        case IJKMPMovieFinishReason.playbackEnded:
-//            print(String(format: "playbackStateDidChange: IJKMPMovieFinishReasonPlaybackEnded: %d\n", reason.rawValue))
-//            break
-//        case IJKMPMovieFinishReason.userExited:
-//        print(String(format: "playbackStateDidChange: IJKMPMovieFinishReasonUserExited: %d\n", reason.rawValue))
-//            break
-//        case IJKMPMovieFinishReason.playbackError:
-//        print(String(format: "playbackStateDidChange: IJKMPMovieFinishReasonPlaybackError: %d\n", reason.rawValue))
-//            break
-//        default:
-//            print(String(format: "playbackPlayBackDidFinish: ???: %d\n", reason.rawValue))
-//            break
-//        }
-    }
-    
-    @objc func mediaIsPreparedToPlayDidChange(noti: Notification) {
-        print("mediaIsPreparedToPlayDidChange\n")
-    }
-    
-    @objc func moviePlayBackStateDidChange(noti: Notification) {
-        //    MPMoviePlaybackStateStopped,
-        //    MPMoviePlaybackStatePlaying,
-        //    MPMoviePlaybackStatePaused,
-        //    MPMoviePlaybackStateInterrupted,
-        //    MPMoviePlaybackStateSeekingForward,
-        //    MPMoviePlaybackStateSeekingBackward
-        if let playbackState = self.player?.playbackState {
-            switch playbackState {
-            case IJKMPMoviePlaybackState.stopped:
-                print(String(format: "IJKMPMoviePlayBackStateDidChange %d: stoped", playbackState.rawValue))
-                break
-            case IJKMPMoviePlaybackState.playing:
-                print(String(format: "IJKMPMoviePlayBackStateDidChange %d: playing", playbackState.rawValue))
-                break
-            case IJKMPMoviePlaybackState.paused:
-                print(String(format: "IJKMPMoviePlayBackStateDidChange %d: paused", playbackState.rawValue))
-                break
-            case IJKMPMoviePlaybackState.interrupted:
-                print(String(format: "IJKMPMoviePlayBackStateDidChange %d: interrupted", playbackState.rawValue))
-                break
-            case IJKMPMoviePlaybackState.seekingForward,IJKMPMoviePlaybackState.seekingBackward:
-                print(String(format: "IJKMPMoviePlayBackStateDidChange %d: seeking", playbackState.rawValue))
-                break
-                
-            default:
-                print(String(format: "IJKMPMoviePlayBackStateDidChange %d: unknown", playbackState.rawValue))
-                break
-            }
-        }
-        
-    }
-    
-    func removeMovieNotificationObservers() {
-        NotificationCenter.default.removeObserver(self, name: NSNotification.Name.IJKMPMoviePlayerLoadStateDidChange, object: self.player)
-        NotificationCenter.default.removeObserver(self, name: NSNotification.Name.IJKMPMoviePlayerPlaybackDidFinish, object: self.player)
-        NotificationCenter.default.removeObserver(self, name: NSNotification.Name.IJKMPMediaPlaybackIsPreparedToPlayDidChange, object: self.player)
-        NotificationCenter.default.removeObserver(self, name: NSNotification.Name.IJKMPMoviePlayerPlaybackStateDidChange, object: self.player)
-    }
-}
-
 

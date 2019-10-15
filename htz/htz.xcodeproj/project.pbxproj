@@ -19,7 +19,6 @@
 		19333393234DD1FB00498D76 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 19333392234DD1FB00498D76 /* OpenGLES.framework */; };
 		19333395234DD20300498D76 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 19333394234DD20300498D76 /* QuartzCore.framework */; };
 		19333397234DD21100498D76 /* VideoToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 19333396234DD21100498D76 /* VideoToolbox.framework */; };
-		1933339A234DDAFE00498D76 /* HTZVideoPlayViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19333399234DDAFE00498D76 /* HTZVideoPlayViewController.swift */; };
 		1934795D232636D300138B36 /* HTZAudioPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1934795C232636D300138B36 /* HTZAudioPlayer.swift */; };
 		1935D54F2313CB3600FE2547 /* HTZProfileHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1935D54E2313CB3600FE2547 /* HTZProfileHeaderView.swift */; };
 		1935D5512313D34D00FE2547 /* HTZProfileTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1935D5502313D34D00FE2547 /* HTZProfileTableViewCell.swift */; };
@@ -69,7 +68,6 @@
 		1947F4FA22FA5E9E00B57813 /* LeftTitleRightImageButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1947F4F922FA5E9E00B57813 /* LeftTitleRightImageButton.swift */; };
 		194E175B23517FBC008F7BFF /* IJKMediaFramework.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 194E175A23517FBC008F7BFF /* IJKMediaFramework.framework */; };
 		194E175E23518824008F7BFF /* DeviceTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 194E175D23518824008F7BFF /* DeviceTool.m */; };
-		194E17602351C597008F7BFF /* HTZVideoPlaySJViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 194E175F2351C597008F7BFF /* HTZVideoPlaySJViewController.swift */; };
 		194E215E22B0E9F2000F96D4 /* PhotoManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 194E215D22B0E9F2000F96D4 /* PhotoManager.swift */; };
 		19507C692328F156005FE7BD /* HTZMusicLyricView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19507C682328F156005FE7BD /* HTZMusicLyricView.swift */; };
 		19507C6B2328F794005FE7BD /* HTZLyricModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19507C6A2328F794005FE7BD /* HTZLyricModel.swift */; };
@@ -104,11 +102,14 @@
 		195DDD3522AFB29400C5F04C /* BaseCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 195DDD3422AFB29400C5F04C /* BaseCollectionViewCell.swift */; };
 		195DDD3722AFB2E900C5F04C /* BaseModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 195DDD3622AFB2E900C5F04C /* BaseModel.swift */; };
 		195DDD3922AFB30700C5F04C /* BaseViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 195DDD3822AFB30700C5F04C /* BaseViewModel.swift */; };
+		1965FB132355851500924EF6 /* YYRUtilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1965FB122355851500924EF6 /* YYRUtilities.swift */; };
+		1965FB162355948B00924EF6 /* ZFIJKPlayerManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 1965FB142355948B00924EF6 /* ZFIJKPlayerManager.m */; };
+		1965FB1A23559DC900924EF6 /* HTZVideoModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1965FB1923559DC900924EF6 /* HTZVideoModel.swift */; };
+		1965FB1C23559E7500924EF6 /* HTZVideoPlayViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1965FB1B23559E7500924EF6 /* HTZVideoPlayViewController.swift */; };
 		1971F391231CB5C0002FFF42 /* HTZAlbumListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1971F390231CB5C0002FFF42 /* HTZAlbumListViewController.swift */; };
 		1971F393231CB7CD002FFF42 /* Bundle+extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1971F392231CB7CD002FFF42 /* Bundle+extension.swift */; };
 		1971F395231CCA8C002FFF42 /* UIImageView+extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1971F394231CCA8C002FFF42 /* UIImageView+extension.swift */; };
 		1971F397231CFBBF002FFF42 /* HTZAlbumListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1971F396231CFBBF002FFF42 /* HTZAlbumListCell.swift */; };
-		197EFD8A23507A24006C8B68 /* HTZVideoPlayFullViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 197EFD8923507A24006C8B68 /* HTZVideoPlayFullViewController.swift */; };
 		19A957EF229BC716007B48ED /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19A957EE229BC716007B48ED /* AppDelegate.swift */; };
 		19A957F1229BC716007B48ED /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19A957F0229BC716007B48ED /* ViewController.swift */; };
 		19A957F4229BC716007B48ED /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 19A957F2229BC716007B48ED /* Main.storyboard */; };
@@ -153,7 +154,6 @@
 		19333392234DD1FB00498D76 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		19333394234DD20300498D76 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		19333396234DD21100498D76 /* VideoToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = VideoToolbox.framework; path = System/Library/Frameworks/VideoToolbox.framework; sourceTree = SDKROOT; };
-		19333399234DDAFE00498D76 /* HTZVideoPlayViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZVideoPlayViewController.swift; sourceTree = "<group>"; };
 		1934795C232636D300138B36 /* HTZAudioPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZAudioPlayer.swift; sourceTree = "<group>"; };
 		1935D54E2313CB3600FE2547 /* HTZProfileHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZProfileHeaderView.swift; sourceTree = "<group>"; };
 		1935D5502313D34D00FE2547 /* HTZProfileTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZProfileTableViewCell.swift; sourceTree = "<group>"; };
@@ -204,7 +204,6 @@
 		194E175A23517FBC008F7BFF /* IJKMediaFramework.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = IJKMediaFramework.framework; sourceTree = "<group>"; };
 		194E175C23518824008F7BFF /* DeviceTool.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DeviceTool.h; sourceTree = "<group>"; };
 		194E175D23518824008F7BFF /* DeviceTool.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DeviceTool.m; sourceTree = "<group>"; };
-		194E175F2351C597008F7BFF /* HTZVideoPlaySJViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZVideoPlaySJViewController.swift; sourceTree = "<group>"; };
 		194E215D22B0E9F2000F96D4 /* PhotoManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoManager.swift; sourceTree = "<group>"; };
 		19507C682328F156005FE7BD /* HTZMusicLyricView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZMusicLyricView.swift; sourceTree = "<group>"; };
 		19507C6A2328F794005FE7BD /* HTZLyricModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZLyricModel.swift; sourceTree = "<group>"; };
@@ -240,11 +239,15 @@
 		195DDD3422AFB29400C5F04C /* BaseCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseCollectionViewCell.swift; sourceTree = "<group>"; };
 		195DDD3622AFB2E900C5F04C /* BaseModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseModel.swift; sourceTree = "<group>"; };
 		195DDD3822AFB30700C5F04C /* BaseViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseViewModel.swift; sourceTree = "<group>"; };
+		1965FB122355851500924EF6 /* YYRUtilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YYRUtilities.swift; sourceTree = "<group>"; };
+		1965FB142355948B00924EF6 /* ZFIJKPlayerManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZFIJKPlayerManager.m; sourceTree = "<group>"; };
+		1965FB152355948B00924EF6 /* ZFIJKPlayerManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZFIJKPlayerManager.h; sourceTree = "<group>"; };
+		1965FB1923559DC900924EF6 /* HTZVideoModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZVideoModel.swift; sourceTree = "<group>"; };
+		1965FB1B23559E7500924EF6 /* HTZVideoPlayViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HTZVideoPlayViewController.swift; sourceTree = "<group>"; };
 		1971F390231CB5C0002FFF42 /* HTZAlbumListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZAlbumListViewController.swift; sourceTree = "<group>"; };
 		1971F392231CB7CD002FFF42 /* Bundle+extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Bundle+extension.swift"; sourceTree = "<group>"; };
 		1971F394231CCA8C002FFF42 /* UIImageView+extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImageView+extension.swift"; sourceTree = "<group>"; };
 		1971F396231CFBBF002FFF42 /* HTZAlbumListCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZAlbumListCell.swift; sourceTree = "<group>"; };
-		197EFD8923507A24006C8B68 /* HTZVideoPlayFullViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZVideoPlayFullViewController.swift; sourceTree = "<group>"; };
 		19A957EB229BC716007B48ED /* htz.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = htz.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		19A957EE229BC716007B48ED /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		19A957F0229BC716007B48ED /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -387,6 +390,9 @@
 				1946C4A8231F503100808F3C /* MusicTool */,
 				194E175C23518824008F7BFF /* DeviceTool.h */,
 				194E175D23518824008F7BFF /* DeviceTool.m */,
+				1965FB152355948B00924EF6 /* ZFIJKPlayerManager.h */,
+				1965FB142355948B00924EF6 /* ZFIJKPlayerManager.m */,
+				1965FB122355851500924EF6 /* YYRUtilities.swift */,
 			);
 			path = Util;
 			sourceTree = "<group>";
@@ -728,6 +734,7 @@
 				193E5083231E635B000184EC /* HTZAlbumInfoModel.swift */,
 				1936CADE231FA6E5001218DD /* HTZAlbumModel.swift */,
 				193F56082320AE500037BC70 /* HTZAlbumPartModel.swift */,
+				1965FB1923559DC900924EF6 /* HTZVideoModel.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -766,9 +773,7 @@
 			isa = PBXGroup;
 			children = (
 				195C195922B24ABB002E8A04 /* HTZPlayViewController.swift */,
-				19333399234DDAFE00498D76 /* HTZVideoPlayViewController.swift */,
-				197EFD8923507A24006C8B68 /* HTZVideoPlayFullViewController.swift */,
-				194E175F2351C597008F7BFF /* HTZVideoPlaySJViewController.swift */,
+				1965FB1B23559E7500924EF6 /* HTZVideoPlayViewController.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -1167,11 +1172,11 @@
 				"${BUILT_PRODUCTS_DIR}/HandyJSON/HandyJSON.framework",
 				"${BUILT_PRODUCTS_DIR}/Kingfisher/Kingfisher.framework",
 				"${BUILT_PRODUCTS_DIR}/Moya/Moya.framework",
-				"${BUILT_PRODUCTS_DIR}/NicooPlayer/NicooPlayer.framework",
 				"${BUILT_PRODUCTS_DIR}/Reachability/Reachability.framework",
 				"${BUILT_PRODUCTS_DIR}/Result/Result.framework",
 				"${BUILT_PRODUCTS_DIR}/SnapKit/SnapKit.framework",
 				"${BUILT_PRODUCTS_DIR}/SwiftyJSON/SwiftyJSON.framework",
+				"${BUILT_PRODUCTS_DIR}/ZFPlayer/ZFPlayer.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
@@ -1180,11 +1185,11 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/HandyJSON.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Kingfisher.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Moya.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/NicooPlayer.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Reachability.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Result.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SnapKit.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftyJSON.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ZFPlayer.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -1259,9 +1264,9 @@
 				1946C4AA231F508400808F3C /* HTZMusicModel.swift in Sources */,
 				195DDD2622AFAF5B00C5F04C /* UILabel+Extension.swift in Sources */,
 				195DDD3122AFB21F00C5F04C /* BaseView.swift in Sources */,
-				194E17602351C597008F7BFF /* HTZVideoPlaySJViewController.swift in Sources */,
 				195C194722B24397002E8A04 /* BaseTabBarController.swift in Sources */,
 				193D6F2623320B07004BF5FB /* HTZMyFavoriteAlbumViewController.swift in Sources */,
+				1965FB1A23559DC900924EF6 /* HTZVideoModel.swift in Sources */,
 				193A8B922318C62C00B520B1 /* UIViewController+Alert.swift in Sources */,
 				195DDD3922AFB30700C5F04C /* BaseViewModel.swift in Sources */,
 				1942E1692329D575007E7C36 /* HTZLyricParser.swift in Sources */,
@@ -1290,11 +1295,13 @@
 				19585DBD2317B902009536EE /* AppDelegate+OAuth.swift in Sources */,
 				1947F4FA22FA5E9E00B57813 /* LeftTitleRightImageButton.swift in Sources */,
 				19444CFA22F92D0D0063EF38 /* HTZSearchView.swift in Sources */,
+				1965FB1C23559E7500924EF6 /* HTZVideoPlayViewController.swift in Sources */,
 				1936CADF231FA6E5001218DD /* HTZAlbumModel.swift in Sources */,
 				195C194922B243D1002E8A04 /* BaseTabBar.swift in Sources */,
 				1946C4AC231F509900808F3C /* HTZMusicMessageModel.swift in Sources */,
 				195C195A22B24ABB002E8A04 /* HTZPlayViewController.swift in Sources */,
 				19585DB123177B1C009536EE /* HTZNetWorkManager.swift in Sources */,
+				1965FB162355948B00924EF6 /* ZFIJKPlayerManager.m in Sources */,
 				195DDD2822AFAF9000C5F04C /* UIView+Extension.swift in Sources */,
 				193C919E22FC099000E3AA4A /* HTZHomeTitleCollectionViewCell.swift in Sources */,
 				195DDD2F22AFB1D900C5F04C /* HTZBaseViewController.swift in Sources */,
@@ -1304,7 +1311,6 @@
 				193D7D8A2327574E001A5F21 /* HTZMusicControlView.swift in Sources */,
 				193C91A022FC0B3600E3AA4A /* HTZHomeTitleModel.swift in Sources */,
 				19A957F7229BC716007B48ED /* htz.xcdatamodeld in Sources */,
-				197EFD8A23507A24006C8B68 /* HTZVideoPlayFullViewController.swift in Sources */,
 				19585DB523177D13009536EE /* MoyaConfig.swift in Sources */,
 				194E175E23518824008F7BFF /* DeviceTool.m in Sources */,
 				193F560B2320F5450037BC70 /* HTZDownloadManager.swift in Sources */,
@@ -1337,8 +1343,8 @@
 				195C195622B24A6F002E8A04 /* HTZProfileViewController.swift in Sources */,
 				193F560523209AFD0037BC70 /* HTZHomeSearchView.swift in Sources */,
 				195C195822B24AA0002E8A04 /* HTZLearnClassicsViewController.swift in Sources */,
-				1933339A234DDAFE00498D76 /* HTZVideoPlayViewController.swift in Sources */,
 				195C195C22B24ACD002E8A04 /* HTZReadClassicsViewController.swift in Sources */,
+				1965FB132355851500924EF6 /* YYRUtilities.swift in Sources */,
 				193D6F2A23320C43004BF5FB /* HTZMyFavoriteAlbumCell.swift in Sources */,
 				193C11092314CB760038B8BD /* HTZProfileFunctionView.swift in Sources */,
 			);
@@ -1530,7 +1536,10 @@
 				);
 				INFOPLIST_FILE = htz/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = cn.net.szfdc.general.htz;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "htz/htz-Bridging-Header.h";
@@ -1556,7 +1565,10 @@
 				);
 				INFOPLIST_FILE = htz/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = cn.net.szfdc.general.htz;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "htz/htz-Bridging-Header.h";
@@ -1574,7 +1586,11 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				INFOPLIST_FILE = htzTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.yyr.ios.www.htzTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -1591,7 +1607,11 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				INFOPLIST_FILE = htzTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.yyr.ios.www.htzTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -1607,7 +1627,11 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				INFOPLIST_FILE = htzUITests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.yyr.ios.www.htzUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -1623,7 +1647,11 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				INFOPLIST_FILE = htzUITests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.yyr.ios.www.htzUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;

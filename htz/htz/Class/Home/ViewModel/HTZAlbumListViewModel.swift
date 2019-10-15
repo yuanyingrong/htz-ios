@@ -22,27 +22,28 @@ class HTZAlbumListViewModel: NSObject {
         var target: API = API.xingfuneixinchan
         var album = "xingfuneixinchan"
         if index == 0 {
+            target = API.mixinxiaoshipin
             album = "mixinxiaoshipin"
-            var arrM = [HTZMusicModel]()
-            let arr = ["[2019-05-21]_001.mp4", "[2019-05-22]_002.mp4", "[2019-05-23]_003.mp4", "[2019-05-24]_004.mp4", "[2019-05-25]-005.mp4", "[2019-05-28]-007.mp4", "[2019-05-30]-009.mp4", "[2019-05-31]-010.mp4", "[2019-06-01]-011.mp4", "[2019-06-03]-013.mp4", "[2019-06-04]-014.mp4", "[2019-06-05]-015.mp4", "[2019-06-06]-016.mp4", "[2019-06-07]-017.mp4"]
-            for str in arr {
-                let obj = HTZMusicModel()
-                obj.song_name = str
-                obj.song_id = str
-                obj.album_id = self.icon
-                obj.icon = self.icon
-                obj.album_title = self.albumTitle
-                obj.file_link = "http://htzshanghai.top/resources/videos/\(album)/" + obj.song_name!
-                
-                obj.downloadState = kDownloadManager.checkDownloadState(fileID: obj.song_id!)
-                arrM.append(obj)
-                let model = HTZAlbumPartModel()
-                model.playcount = "0"
-                self.dataArr.append(model)
-            }
-            self.dataSongArr = arrM
-            callBack(true)
-            return
+//            var arrM = [HTZMusicModel]()
+//            let arr = ["[2019-05-21]_001.mp4", "[2019-05-22]_002.mp4", "[2019-05-23]_003.mp4", "[2019-05-24]_004.mp4", "[2019-05-25]-005.mp4", "[2019-05-28]-007.mp4", "[2019-05-30]-009.mp4", "[2019-05-31]-010.mp4", "[2019-06-01]-011.mp4", "[2019-06-03]-013.mp4", "[2019-06-04]-014.mp4", "[2019-06-05]-015.mp4", "[2019-06-06]-016.mp4", "[2019-06-07]-017.mp4"]
+//            for str in arr {
+//                let obj = HTZMusicModel()
+//                obj.song_name = str
+//                obj.song_id = str
+//                obj.album_id = self.icon
+//                obj.icon = self.icon
+//                obj.album_title = self.albumTitle
+//                obj.file_link = "http://htzshanghai.top/resources/videos/\(album)/" + obj.song_name!
+//                
+//                obj.downloadState = kDownloadManager.checkDownloadState(fileID: obj.song_id!)
+//                arrM.append(obj)
+//                let model = HTZAlbumPartModel()
+//                model.playcount = "0"
+//                self.dataArr.append(model)
+//            }
+//            self.dataSongArr = arrM
+//            callBack(true)
+//            return
         } else if index == 1 {
             target = API.xingfuneixinchan
             album = "xingfuneixinchan"
@@ -70,6 +71,31 @@ class HTZAlbumListViewModel: NSObject {
                     
                     obj.downloadState = kDownloadManager.checkDownloadState(fileID: obj.song_id!)
                     arrM.append(obj)
+                }
+                self.dataSongArr = arrM
+                callBack(true)
+            }
+            let videos = [HTZVideoModel].deserialize(from: response["videos"].rawString())
+            if let videos = videos {
+                
+                var arrM = [HTZMusicModel]()
+                for model in videos {
+                    let obj = HTZMusicModel()
+                    obj.song_name = model?.content
+                    obj.song_id = model?.videoUrl
+                    obj.album_id = self.icon
+                    obj.icon = self.icon
+                    obj.album_title = model?.title
+                    obj.file_link = "http://htzshanghai.top/resources/videos/" + model!.videoUrl!
+                    obj.icon = "http://htzshanghai.top/resources/videos/" + model!.coverUrl!
+        
+                    arrM.append(obj)
+                    
+                    let m = HTZAlbumPartModel()
+                    m.title = model?.content
+                    m.isVideo = true
+                    m.playcount = "0"
+                    self.dataArr.append(m)
                 }
                 self.dataSongArr = arrM
                 callBack(true)

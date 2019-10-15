@@ -60,11 +60,13 @@ class HTZProfileViewController: HTZBaseViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.navigationBar.isHidden = true
+        HTZMusicTool.showPlayBtn()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         navigationController?.navigationBar.isHidden = false
+        HTZMusicTool.hidePlayBtn()
     }
     
 }

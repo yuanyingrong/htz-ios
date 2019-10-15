@@ -31,4 +31,15 @@ extension UIImageView {
             }
         }
     }
+    
+    func wb_setImage(urlStr: String, placeHolderImage: UIImage? = nil) {
+        if let url = URL(string: urlStr) {
+            
+            if let placeHolderImage = placeHolderImage {
+                kf.setImage(with: url, placeholder: placeHolderImage)
+            } else {
+                kf.setImage(with: url)
+            }
+        }
+    }
 }

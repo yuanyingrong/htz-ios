@@ -23,6 +23,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         button.setBackgroundImage(UIImage(named: "play_normal"), for: UIControl.State.normal)
 //        button.setImage(UIImage(named: "play"), for: UIControl.State.normal)
         button.addTarget(self, action: #selector(topbarPlayButtonClickAction), for: UIControl.Event.touchUpInside)
+        button.isHidden = true
         return button
     }()
     
@@ -36,7 +37,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         window?.makeKeyAndVisible()
         
         // 初始化全局播放按钮
-        initPlayButton()
+//        initPlayButton()
         
         // 初始化播放器
         HTZPlayViewController.sharedInstance.initialData()

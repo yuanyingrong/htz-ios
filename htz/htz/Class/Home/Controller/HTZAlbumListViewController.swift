@@ -28,8 +28,10 @@ class HTZAlbumListViewController: HTZBaseViewController {
                 
                 albumListViewModel.icon = albumModel.icon
                 albumListViewModel.albumTitle = albumModel.title
+                
                 albumListViewModel.requestData(index: albumModel.index!, isPullDown: true) { (success) in
                     if success {
+                        self.countLabel.text = "共\(self.albumListViewModel.dataArr.count)集"
                         self.tableView.reloadData()
                     }
                 }
@@ -133,6 +135,9 @@ extension HTZAlbumListViewController: UITableViewDataSource, UITableViewDelegate
         let cell =  tableView.dequeueReusableCell(withIdentifier: "HTZAlbumListCellReuseID", for: indexPath) as! HTZAlbumListCell
         cell.delegate = self
         cell.imageName = albumModel?.icon
+        if let imageName = self.albumListViewModel.dataSongArr[indexPath.row]?.icon {
+            cell.imageName = imageName
+        }
         self.albumListViewModel.dataArr[indexPath.row]?.isVideo = albumModel?.isVideo
         cell.albumPartModel = self.albumListViewModel.dataArr[indexPath.row]
         cell.musicModel = self.albumListViewModel.dataSongArr[indexPath.row]
@@ -142,8 +147,9 @@ extension HTZAlbumListViewController: UITableViewDataSource, UITableViewDelegate
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
     
-        if albumModel!.isVideo! {
-            let vc = HTZVideoPlayViewController(urlStr: self.albumListViewModel.dataSongArr[indexPath.row]!.file_link!)
+        if let isVideo = albumModel!.isVideo, isVideo {
+            let vc = HTZVideoPlayViewController()
+            vc.videoUrl = self.albumListViewModel.dataSongArr[indexPath.row]!.file_link
             vc.title = self.albumListViewModel.dataSongArr[indexPath.row]?.album_title
             navigationController?.pushViewController(vc, animated: true)
 //            let nav = UINavigationController(rootViewController: vc)
