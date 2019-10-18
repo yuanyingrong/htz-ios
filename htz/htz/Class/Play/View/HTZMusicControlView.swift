@@ -247,11 +247,10 @@ class HTZMusicControlView: BaseView {
         
         // 底部
         
-        self.addSubview(self.loopButton)
+        self.addSubview(self.listButton)
         self.addSubview(self.playButton)
         self.addSubview(self.previousButton)
         self.addSubview(self.nextButton)
-        self.addSubview(self.listButton)
     }
     
     override func configConstraint() {
@@ -318,17 +317,17 @@ class HTZMusicControlView: BaseView {
             make.size.equalTo(CGSize(width: 40, height: 40))
         }
         
-        self.loopButton.snp.makeConstraints { (make) in
+        self.listButton.snp.makeConstraints { (make) in
             make.centerY.equalTo(playButton)
             make.right.equalTo(previousButton.snp.left).offset(-4 * kGlobelMargin)
             make.size.equalTo(CGSize(width: 40, height: 40))
         }
         
-        self.listButton.snp.makeConstraints { (make) in
-            make.centerY.equalTo(playButton)
-            make.left.equalTo(nextButton.snp.right).offset(4 * kGlobelMargin)
-            make.size.equalTo(CGSize(width: 40, height: 40))
-        }
+//        self.listButton.snp.makeConstraints { (make) in
+//            make.centerY.equalTo(playButton)
+//            make.left.equalTo(nextButton.snp.right).offset(4 * kGlobelMargin)
+//            make.size.equalTo(CGSize(width: 40, height: 40))
+//        }
     }
 }
 

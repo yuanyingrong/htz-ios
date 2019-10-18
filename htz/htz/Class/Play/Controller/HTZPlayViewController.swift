@@ -30,52 +30,6 @@ class HTZPlayViewController: HTZBaseViewController {
     
     static let sharedInstance = HTZPlayViewController()
     
-    lazy var leftBarButtonItem: UIBarButtonItem = {
-        let button = UIButton(setImage: "downArrow", setBackgroundImage: "", target: self, action: #selector(back))
-        let buttonItem = UIBarButtonItem(customView: button)
-        button.frame = CGRect(x: 0, y: 0, width: 50, height: 30)
-        return buttonItem
-    }()
-    
-    lazy var bgImageView: UIImageView = {
-        let imageView = UIImageView(frame: self.view.bounds)
-        return imageView
-    }()
-   
-    lazy var controlView: HTZMusicControlView = {
-        let controlView = HTZMusicControlView()
-        controlView.delegate = self
-        return controlView
-    }()
-    
-    private lazy var topLabel: UILabel = {
-        let label = UILabel()
-        label.textColor = UIColor.darkGray
-        label.text = "原文"
-        label.font = UIFont.systemFont(ofSize: 16.0)
-        return label
-    }()
-    lazy var topLyricView: HTZMusicLyricView = {
-        let lyricView = HTZMusicLyricView()
-        return lyricView
-    }()
-    lazy var middleLine: UIView = {
-        let view = UIView()
-        view.backgroundColor = UIColor.groupTableViewBackground
-        return view
-    }()
-    private lazy var bottomLabel: UILabel = {
-        let label = UILabel()
-        label.textColor = UIColor.darkGray
-        label.text = "讲解"
-        label.font = UIFont.systemFont(ofSize: 16.0)
-        return label
-    }()
-    lazy var bottomLyricView: HTZMusicLyricView = {
-        let lyricView = HTZMusicLyricView()
-        return lyricView
-    }()
-    
     /// 音乐原始播放列表
     private var musicList: [HTZMusicModel?] = []
     /// 当前播放的列表,包括乱序后的列表
@@ -238,6 +192,59 @@ class HTZPlayViewController: HTZBaseViewController {
         
         NotificationCenter.default.post(name: NSNotification.Name.init(kLoveMusicNotification), object: nil)
     }
+    
+     lazy var leftBarButtonItem: UIBarButtonItem = {
+            let button = UIButton(setImage: "downArrow", setBackgroundImage: "", target: self, action: #selector(back))
+            let buttonItem = UIBarButtonItem(customView: button)
+            button.frame = CGRect(x: 0, y: 0, width: 50, height: 30)
+            return buttonItem
+        }()
+        
+        lazy var bgImageView: UIImageView = {
+            let imageView = UIImageView(frame: self.view.bounds)
+            return imageView
+        }()
+       
+        lazy var controlView: HTZMusicControlView = {
+            let controlView = HTZMusicControlView()
+            controlView.delegate = self
+            return controlView
+        }()
+        
+        private lazy var topLabel: UILabel = {
+            let label = UILabel()
+            label.textColor = UIColor.darkGray
+            label.text = "原文"
+            label.font = UIFont.systemFont(ofSize: 16.0)
+            return label
+        }()
+        lazy var topLyricView: HTZMusicLyricView = {
+            let lyricView = HTZMusicLyricView()
+            return lyricView
+        }()
+        lazy var middleLine: UIView = {
+            let view = UIView()
+            view.backgroundColor = UIColor.groupTableViewBackground
+            return view
+        }()
+        private lazy var bottomLabel: UILabel = {
+            let label = UILabel()
+            label.textColor = UIColor.darkGray
+            label.text = "讲解"
+            label.font = UIFont.systemFont(ofSize: 16.0)
+            return label
+        }()
+        private lazy var bottomLyricView: HTZMusicLyricView = {
+            let lyricView = HTZMusicLyricView()
+            return lyricView
+        }()
+        
+        lazy var listView: HTZMusicListView = {
+            let view = HTZMusicListView()
+            view.delegate = self
+            return view
+        }()
+        
     
 }
 
@@ -1032,6 +1039,24 @@ extension HTZPlayViewController: HTZMusicControlViewDelegate {
     
     @objc func controlViewDidClickList(_ controlView: HTZMusicControlView) {
         print("controlViewDidClickList")
+        
+        var rect = self.listView.frame
+        rect.size = CGSize(width: kScreenWidth, height: 440)
+        self.listView.frame = rect
+        self.listView.dataArr = self.musicList as! [HTZMusicModel]
+        
+        let view = UIView()
+        view.backgroundColor = .black
+        view.alpha = 0.5
+        view.frame = (self.navigationController?.view.frame)!
+        self.navigationController?.view.addSubview(view)
+        self.navigationController?.view.addSubview(self.listView)
+        self.listView.frame.origin.y = (self.navigationController?.view.height)!
+        UIView.animate(withDuration: 0.25, animations: {
+            self.listView.frame.origin.y = (self.navigationController?.view.height)! - self.listView.height
+        }) { (finished) in
+            
+        }
     }
     
     @objc func controlView(_ controlView: HTZMusicControlView, didSliderTouchBegan value: CGFloat) {
@@ -1332,6 +1357,20 @@ extension HTZPlayViewController {
             self.seekTimer = nil
         }
     }
+}
+
+// MARK: - HTZMusicListViewDeleagate
+extension HTZPlayViewController: HTZMusicListViewDeleagate {
+    func listViewDidClose(_ listView: HTZMusicListView) {
+        
+    }
+    
+    func listViewDidSelect(_ listView: HTZMusicListView, _ selectRow: NSInteger) {
+        
+    }
+    
+    
+    
 }
 
 // MARK: - HTZDownloadManagerDelegate

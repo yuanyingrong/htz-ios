@@ -11,6 +11,7 @@ import UIKit
 class HTZVideoPlayViewController: UIViewController {
     
     var videoUrl: String?
+    var coverImageUrl: String?
 //    {
 //        didSet {
 //            self.player?.assetURL = URL(string: videoUrl!)!
@@ -143,6 +144,7 @@ class HTZVideoPlayViewController: UIViewController {
         controlView.autoFadeTimeInterval = 0.5
         controlView.prepareShowLoading = true
         controlView.prepareShowControlView = true
+        controlView.coverImageView.wb_setImageWith(urlStr: self.coverImageUrl ?? self.kVideoCover)
         return controlView
     }()
 

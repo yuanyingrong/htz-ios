@@ -21,7 +21,7 @@ protocol HTZDownloadManagerDelegate: NSObjectProtocol {
     ///   - downloadManager: <#downloadManager description#>
     ///   - downloadModel: <#downloadModel description#>
     ///   - state: <#state description#>
-    func downloadChanged(_ downloadManager: HTZDownloadManager, downloadModel:HTZDownloadModel, state: HTZDownloadManagerState)
+    func downloadChanged(_ downloadManager: HTZDownloadManager, downloadModel: HTZDownloadModel, state: HTZDownloadManagerState)
     
     /// 删除下载
     ///
@@ -301,7 +301,7 @@ class HTZDownloadManager: NSObject {
     /// 遍历文件（未下载、下载中、暂停）
     ///
     /// - Returns:
-    private func toDownloadFileList() -> [HTZDownloadModel] {
+    func toDownloadFileList() -> [HTZDownloadModel] {
         if ifPathExist(path: downloadDataFilePath()) {
             var toDownloadArr = [HTZDownloadModel]()
             for saveModel in downloadFileList() {
@@ -379,7 +379,7 @@ class HTZDownloadManager: NSObject {
 // MARK: - 下载
 extension HTZDownloadManager {
     
-    private func startdownloadRequest() {
+    func startdownloadRequest() {
         // 正在下载
         if let downloadRequest = self.downloadRequest, downloadRequest.task?.state == URLSessionTask.State.running {
             // do nothing
@@ -387,7 +387,7 @@ extension HTZDownloadManager {
             var model: HTZDownloadModel?
             for saveModel in downloadFileList() {
                 for obj in saveModel.downloadFiles! {
-                    if obj.state == HTZDownloadManagerState.waiting {
+                    if obj.state == HTZDownloadManagerState.waiting || obj.state == HTZDownloadManagerState.downloading || obj.state == HTZDownloadManagerState.paused {
                         model = obj
                         break
                     }
@@ -569,11 +569,11 @@ extension HTZDownloadManager {
         
         var strSize = ""
         if b/1024/1024/1024 >= 1 {
-            strSize = String(format: "%.1fGB", b/1024/1024/1024)
+            strSize = String(format: "%.1fGB", CGFloat(b)/1024/1024/1024)
         } else if b/1024/1024 >= 1 && b/1024/1024/1024 < 1  {
-            strSize = String(format: "%.1fMB", b/1024/1024)
+            strSize = String(format: "%.1fMB", CGFloat(b)/1024/1024)
         } else if b/1024 >= 0 && b/1024/1024 < 1  {
-            strSize = String(format: "%.1fKB", b/1024)
+            strSize = String(format: "%.1fKB", CGFloat(b)/1024)
         }
         
         return strSize

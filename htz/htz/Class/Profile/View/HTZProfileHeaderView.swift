@@ -49,6 +49,7 @@ class HTZProfileHeaderView: BaseView {
     private lazy var functionView: HTZProfileFunctionView = {
         let functionView = HTZProfileFunctionView()
         functionView.delegate = self
+        functionView.isHidden = true // 暂时隐藏
         return functionView
     }()
     
@@ -102,7 +103,7 @@ class HTZProfileHeaderView: BaseView {
         functionView.snp.makeConstraints { (make) in
             make.left.right.equalTo(self)
             make.top.equalTo(bgImageView.snp.bottom)
-            make.height.equalTo(66)
+            make.height.equalTo(1) // 66
         }
         
         iDownloadsButton.snp.makeConstraints { (make) in

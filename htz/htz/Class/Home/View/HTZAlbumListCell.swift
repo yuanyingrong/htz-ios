@@ -70,43 +70,6 @@ class HTZAlbumListCell: BaseTableViewCell {
     
     weak var delegate: HTZAlbumListCellDelegate?
     
-    private lazy var albumImageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.image = UIImage(named: "li_ji")
-        imageView.cornerRadius = 22
-        return imageView
-    }()
-    
-    private let titleLabel = UILabel(title: "1、第一讲", fontSize: 16, textColor: UIColor.darkText)
-    
-    private lazy var playCountButton: UIButton = {
-        let playCountButton = UIButton(frame: CGRect(x: 0, y: 0, width: 0, height: 0))
-        playCountButton.set(image: UIImage(named: "play_count"), title: "555", titlePosition: UIView.ContentMode.right , additionalSpacing: 8, state: UIControl.State.normal)
-        playCountButton.setTitleColor(UIColor.darkGray, for: UIControl.State.normal)
-        return playCountButton
-    }()
-    
-    private lazy var timeButton: UIButton = {
-        let timeButton = UIButton(frame: CGRect(x: 0, y: 0, width: 0, height: 0))
-        timeButton.set(image: UIImage(named: "time"), title: "21:47", titlePosition: UIView.ContentMode.right , additionalSpacing: 4, state: UIControl.State.normal)
-        timeButton.setTitleColor(UIColor.darkGray, for: UIControl.State.normal)
-        return timeButton
-    }()
-    
-    private let playTimeLabel = UILabel(title: "已播60%", fontSize: 13, textColor: UIColor.red)
-
-    private lazy var downloadButton: UIButton = {
-        let downloadButton = UIButton(type: UIButton.ButtonType.custom)
-        downloadButton.setImage(UIImage(named: "download"), for: UIControl.State.normal)
-        downloadButton.addTarget(self, action: #selector(downloadButtonClickAction), for: UIControl.Event.touchUpInside)
-        return downloadButton
-    }()
-    
-    private lazy var bottomLine: UIView = {
-        let bottomLine = UIView()
-        bottomLine.backgroundColor = UIColor.groupTableViewBackground
-        return bottomLine
-    }()
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -174,6 +137,45 @@ class HTZAlbumListCell: BaseTableViewCell {
             make.height.equalTo(1)
         }
     }
+    
+    private lazy var albumImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = UIImage(named: "li_ji")
+        imageView.cornerRadius = 22
+        return imageView
+    }()
+    
+    private let titleLabel = UILabel(title: "1、第一讲", fontSize: 16, textColor: UIColor.darkText)
+    
+    private lazy var playCountButton: UIButton = {
+        let playCountButton = UIButton(frame: CGRect(x: 0, y: 0, width: 0, height: 0))
+        playCountButton.set(image: UIImage(named: "play_count"), title: "555", titlePosition: UIView.ContentMode.right , additionalSpacing: 8, state: UIControl.State.normal)
+        playCountButton.setTitleColor(UIColor.darkGray, for: UIControl.State.normal)
+        return playCountButton
+    }()
+    
+    private lazy var timeButton: UIButton = {
+        let timeButton = UIButton(frame: CGRect(x: 0, y: 0, width: 0, height: 0))
+        timeButton.set(image: UIImage(named: "time"), title: "21:47", titlePosition: UIView.ContentMode.right , additionalSpacing: 4, state: UIControl.State.normal)
+        timeButton.setTitleColor(UIColor.darkGray, for: UIControl.State.normal)
+        return timeButton
+    }()
+    
+    private let playTimeLabel = UILabel(title: "已播60%", fontSize: 13, textColor: UIColor.red)
+
+    private lazy var downloadButton: UIButton = {
+        let downloadButton = UIButton(type: UIButton.ButtonType.custom)
+        downloadButton.setImage(UIImage(named: "download"), for: UIControl.State.normal)
+        downloadButton.addTarget(self, action: #selector(downloadButtonClickAction), for: UIControl.Event.touchUpInside)
+        return downloadButton
+    }()
+    
+    private lazy var bottomLine: UIView = {
+        let bottomLine = UIView()
+        bottomLine.backgroundColor = UIColor.groupTableViewBackground
+        return bottomLine
+    }()
+    
     
 }
 

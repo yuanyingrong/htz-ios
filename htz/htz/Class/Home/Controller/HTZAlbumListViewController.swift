@@ -150,6 +150,7 @@ extension HTZAlbumListViewController: UITableViewDataSource, UITableViewDelegate
         if let isVideo = albumModel!.isVideo, isVideo {
             let vc = HTZVideoPlayViewController()
             vc.videoUrl = self.albumListViewModel.dataSongArr[indexPath.row]!.file_link
+            vc.coverImageUrl = self.albumListViewModel.dataSongArr[indexPath.row]!.icon
             vc.title = self.albumListViewModel.dataSongArr[indexPath.row]?.album_title
             navigationController?.pushViewController(vc, animated: true)
 //            let nav = UINavigationController(rootViewController: vc)

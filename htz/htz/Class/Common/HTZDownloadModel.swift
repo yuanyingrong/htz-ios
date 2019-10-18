@@ -31,6 +31,7 @@ class HTZDownloadModel: NSObject, NSCoding {
     var fileFormat: String?
     var fileRate: String?
     var fileSize: String?
+    var fileCurrentSize: String?
     var fileLyric: String?
     var fileLocalPath: String {
         

@@ -8,23 +8,43 @@
 
 import UIKit
 
-class HTZSearchViewController: UISearchController {
+class HTZSearchViewController: UIViewController {
+    
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        // Do any additional setup after loading the view.
+        
+        addSearchController()
     }
     
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+    private func addSearchController() {
+        
+        
+        self.searchViewController.didSearchBlock = {(searchViewController, searchBar, searchText) in
+            print(searchText)
+        }
+        
+        let nav = HTZNavigationController(rootViewController: self.searchViewController)
+        self.addChild(nav)
+        self.view.addSubview(nav.view)
+        nav.view.frame = self.view.bounds
     }
-    */
+    
+    private lazy var searchViewController: PYSearchViewController = {
+        let searchViewController = PYSearchViewController(hotSearches: nil, searchBarPlaceholder: nil)
+        searchViewController?.searchHistoryStyle = PYSearchHistoryStyle.default
+        searchViewController?.delegate = self
+        return searchViewController!
+    }()
 
+}
+
+/// PYSearchViewControllerDelegate
+extension HTZSearchViewController: PYSearchViewControllerDelegate {
+    
+    func searchViewController(_ searchViewController: PYSearchViewController!, searchTextDidChange searchBar: UISearchBar!, searchText: String!) {
+        
+//        searchViewController.searchSuggestions =
+    }
 }

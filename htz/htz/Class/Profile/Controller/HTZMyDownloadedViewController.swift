@@ -16,12 +16,12 @@ class HTZMyDownloadedViewController: HTZBaseViewController {
         super.viewDidLoad()
         
         
+        
         // Do any additional setup after loading the view.
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
         self.requestData()
     }
     
@@ -34,7 +34,14 @@ class HTZMyDownloadedViewController: HTZBaseViewController {
     override func configSubView() {
         super.configSubView()
         
+        self.navigationItem.titleView = segmentControl
+        
         view.addSubview(tableView)
+        
+        self.view.addSubview(toDownloadVC.view)
+        self.addChild(toDownloadVC)
+        toDownloadVC.didMove(toParent: self)
+        toDownloadVC.view.isHidden = true
     }
     
     override func configConstraint() {
@@ -43,7 +50,35 @@ class HTZMyDownloadedViewController: HTZBaseViewController {
         tableView.snp.makeConstraints { (make) in
             make.edges.equalTo(view)
         }
+        
+        toDownloadVC.view.snp.makeConstraints { (make) in
+            make.edges.equalTo(self.view)
+        }
     }
+    
+    @objc private func segmentedChanged(_ segmented: UISegmentedControl) {
+        
+        self.toDownloadVC.view.isHidden = segmented.selectedSegmentIndex == 0
+        //打印选项的索引
+       print("index is \(segmented.selectedSegmentIndex)")
+        //打印选择的文字
+        print("option is \(String(describing: segmented.titleForSegment(at: segmented.selectedSegmentIndex)))")//将获得值转为String类型
+    }
+    
+    private lazy var toDownloadVC: HTZToDownloadListViewController = {
+        let vc = HTZToDownloadListViewController()
+        return vc
+    }()
+    
+    private lazy var segmentControl: UISegmentedControl = {
+        let items = ["已下载", "下载中"]
+        let segmentControl = UISegmentedControl(items: items)
+        //设置默认选中的索引,索引从0开始
+        segmentControl.selectedSegmentIndex = 0
+        //添加监听事件
+        segmentControl.addTarget(self, action: #selector(HTZMyDownloadedViewController.segmentedChanged(_:)), for: .valueChanged)
+        return segmentControl
+    }()
     
     private lazy var tableView: UITableView = {
         let tableView = UITableView()

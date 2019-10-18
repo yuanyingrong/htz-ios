@@ -8,43 +8,15 @@
 
 import UIKit
 
+protocol HTZHomeSearchViewDelegate: NSObjectProtocol {
+    
+    func searchClickAction()
+    
+    func recordButtonClickAction()
+}
 class HTZHomeSearchView: BaseView {
     
-    private lazy var contentView: UIView = {
-        let view: UIView = UIView()
-        view.backgroundColor = UIColor.white
-        view.cornerRadius = 22
-        view.layer.borderColor = UIColor.groupTableViewBackground.cgColor
-        view.layer.borderWidth = 2
-        return view
-    }()
-    
-    private lazy var leftImageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.image = UIImage(named: "home_icon_select")
-        return imageView
-    }()
-    
-    private lazy var middleView: UIView = {
-        let view: UIView = UIView()
-        view.backgroundColor = UIColor.white
-        view.cornerRadius = 15
-        view.layer.borderColor = UIColor.groupTableViewBackground.cgColor
-        view.layer.borderWidth = 2
-        return view
-    }()
-    
-    private lazy var searchImageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.image = UIImage(named: "search")
-        return imageView
-    }()
-    
-    private lazy var rightImageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.image = UIImage(named: "time")
-        return imageView
-    }()
+    weak var delegate: HTZHomeSearchViewDelegate?
     
     override func configSubviews() {
         super.configSubviews()
@@ -52,7 +24,7 @@ class HTZHomeSearchView: BaseView {
         contentView.addSubview(leftImageView)
         contentView.addSubview(middleView)
         middleView.addSubview(searchImageView)
-        contentView.addSubview(rightImageView)
+        contentView.addSubview(rightButton)
         
         // 添加点击手势
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(middleViewTapGestrueAction))
@@ -85,12 +57,49 @@ class HTZHomeSearchView: BaseView {
             make.centerY.equalTo(middleView)
         }
         
-        rightImageView.snp.makeConstraints { (make) in
+        rightButton.snp.makeConstraints { (make) in
             make.left.equalTo(middleView.snp.right).offset(2 * kGlobelMargin)
             make.right.equalTo(contentView).offset(-kGlobelMargin)
             make.centerY.equalTo(contentView)
         }
     }
+    
+    private lazy var contentView: UIView = {
+        let view: UIView = UIView()
+        view.backgroundColor = UIColor.white
+        view.cornerRadius = 22
+        view.layer.borderColor = UIColor.groupTableViewBackground.cgColor
+        view.layer.borderWidth = 2
+        return view
+    }()
+    
+    private lazy var leftImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = UIImage(named: "home_icon_select")
+        return imageView
+    }()
+    
+    private lazy var middleView: UIView = {
+        let view: UIView = UIView()
+        view.backgroundColor = UIColor.white
+        view.cornerRadius = 15
+        view.layer.borderColor = UIColor.groupTableViewBackground.cgColor
+        view.layer.borderWidth = 2
+        return view
+    }()
+    
+    private lazy var searchImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = UIImage(named: "search")
+        return imageView
+    }()
+    
+    private lazy var rightButton: UIButton = {
+        let button = UIButton(type: UIButton.ButtonType.custom)
+        button.setImage(UIImage(named: "time"), for: .normal)
+        button.addTarget(self, action: #selector(recordButtonClickAction), for: UIControl.Event.touchUpInside)
+        return button
+    }()
     
 }
 
@@ -99,6 +108,15 @@ extension HTZHomeSearchView {
     
     @objc private func middleViewTapGestrueAction() {
         
-        
+        if let delegate = delegate, delegate.responds(to: Selector(("searchClickAction"))) {
+            delegate.searchClickAction()
+        }
     }
+    @objc private func recordButtonClickAction() {
+           
+        if let delegate = delegate, delegate.responds(to: #selector(HTZHomeSearchView.recordButtonClickAction)) {
+               delegate.recordButtonClickAction()
+           }
+       }
+    
 }

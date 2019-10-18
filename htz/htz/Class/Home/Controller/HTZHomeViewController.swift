@@ -10,27 +10,13 @@ import UIKit
 
 class HTZHomeViewController: HTZBaseViewController {
     
-    private lazy var homeViewModel: HTZHomeViewModel = HTZHomeViewModel()
     
-    private lazy var searchVew: HTZHomeSearchView = HTZHomeSearchView()
     
     
     // 图片
     private let pictures = ["banner_dian_zi_bao", "banner_zhu_zi_wan_nian_ding_lun", "https://goodreading.mobi/studentapi/userfiles/banner/student/home/studenttj.png"]
 //    ["https://goodreading.mobi/StudentApi/UserFiles/Banner/Student/Home/banner_tz.png", "https://goodreading.mobi/StudentApi/UserFiles/Banner/Student/Home/banner_dzsyy.png", "https://goodreading.mobi/studentapi/userfiles/banner/student/home/studenttj.png"]
     
-    // 默认滚动视图
-    private lazy var cycleView: HTZCycleView = {
-        let cycleView = HTZCycleView(frame: CGRect.zero)
-        cycleView.delegate = self
-        return cycleView
-    }()
-
-    private lazy var bottomView: HTZHomeTitleCollectionView = {
-        let view = HTZHomeTitleCollectionView()
-        view.delegate = self
-        return view
-    }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -83,6 +69,26 @@ class HTZHomeViewController: HTZBaseViewController {
         }
     }
 
+    private lazy var homeViewModel: HTZHomeViewModel = HTZHomeViewModel()
+    
+    private lazy var searchVew: HTZHomeSearchView = {
+        let searchVew = HTZHomeSearchView()
+        searchVew.delegate = self
+        return searchVew
+    }()
+    
+    // 默认滚动视图
+    private lazy var cycleView: HTZCycleView = {
+        let cycleView = HTZCycleView(frame: CGRect.zero)
+        cycleView.delegate = self
+        return cycleView
+    }()
+
+    private lazy var bottomView: HTZHomeTitleCollectionView = {
+        let view = HTZHomeTitleCollectionView()
+        view.delegate = self
+        return view
+    }()
 }
 
 // MARK: - HTZCycleViewDelegate
@@ -91,11 +97,16 @@ extension HTZHomeViewController: HTZCycleViewDelegate {
     internal func htzCycleView(cycleView: HTZCycleView, didSelectItemAt index: Int) {
         print(index)
 //        let vc = HTZVideoPlayViewController(urlStr: "http://htzshanghai.top/resources/videos/others/never_give_up.mp4")
-        let vc = HTZVideoPlayViewController()
-        let str = index == 0 ? "never_give_up.mp4" : (index == 1 ? "steven_jobs.flv" : "SteveVai_Tender_Surrender.mp4")
-        vc.videoUrl = "http://htzshanghai.top/resources/videos/others/"+str
-        navigationController?.pushViewController(vc, animated: true)
         
+        if index != 2 {
+            let vc = HTZVideoPlayViewController()
+            let str = index == 0 ? "never_give_up.mp4" : (index == 1 ? "steven_jobs.flv" : "SteveVai_Tender_Surrender.mp4")
+            vc.videoUrl = "http://htzshanghai.top/resources/videos/others/"+str
+            navigationController?.pushViewController(vc, animated: true)
+        } else {
+            let vc = HTZVideoPlayTableViewController()
+            navigationController?.pushViewController(vc, animated: true)
+        }
     }
 }
 
@@ -118,4 +129,18 @@ extension HTZHomeViewController: HTZHomeTitleCollectionViewDelegate {
         print(indexPath.row)
     }
     
+}
+
+// MARK: - HTZHomeSearchViewDelegate
+extension HTZHomeViewController: HTZHomeSearchViewDelegate {
+    
+    @objc func searchClickAction() {
+        let vc = HTZSearchViewController()
+        vc.modalPresentationStyle = .fullScreen
+        self.present(vc, animated: true, completion: nil)
+    }
+
+    @objc internal func recordButtonClickAction() {
+        print("333")
+    }
 }
