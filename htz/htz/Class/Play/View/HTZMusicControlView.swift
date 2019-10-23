@@ -61,18 +61,19 @@ class HTZMusicControlView: BaseView {
     
     lazy var slider: HTZSliderView = {
         let slider = HTZSliderView()
-        slider.setBackgroundImage(image: UIImage(named: "read_classics_icon_normal"), state: UIControl.State.normal)
-        slider.setBackgroundImage(image: UIImage(named: "read_classics_icon_normal"), state: UIControl.State.selected)
-        slider.setBackgroundImage(image: UIImage(named: "read_classics_icon_normal"), state: UIControl.State.highlighted)
         
-        slider.setThumbImage(image: UIImage(named: "read_classics_icon_normal"), state: UIControl.State.normal)
-        slider.setThumbImage(image: UIImage(named: "read_classics_icon_normal"), state: UIControl.State.selected)
-        slider.setThumbImage(image: UIImage(named: "read_classics_icon_normal"), state: UIControl.State.highlighted)
+        slider.setBackgroundImage(image: UIImage(named: "cm2_fm_playbar_btn"), state: UIControl.State.normal)
+        slider.setBackgroundImage(image: UIImage(named: "cm2_fm_playbar_btn"), state: UIControl.State.selected)
+        slider.setBackgroundImage(image: UIImage(named: "cm2_fm_playbar_btn"), state: UIControl.State.highlighted)
         
-        slider.maximumTrackImage = UIImage(named: "read_classics_icon_normal")
-        slider.minimumTrackImage = UIImage(named: "read_classics_icon_normal")
-        slider.bufferTrackImage = UIImage(named: "read_classics_icon_normal")
+        slider.setThumbImage(image: UIImage(named: "cm2_fm_playbar_btn_dot"), state: UIControl.State.normal)
+        slider.setThumbImage(image: UIImage(named: "cm2_fm_playbar_btn_dot"), state: UIControl.State.selected)
+        slider.setThumbImage(image: UIImage(named: "cm2_fm_playbar_btn_dot"), state: UIControl.State.highlighted)
         
+        slider.maximumTrackImage = UIImage(named: "cm2_fm_playbar_bg")
+        slider.minimumTrackImage = UIImage(named: "cm2_fm_playbar_curr")
+        slider.bufferTrackImage = UIImage(named: "cm2_fm_playbar_ready")
+        slider.maximumTrackTintColor = UIColor.groupTableViewBackground
         slider.delegate = self
         slider.sliderHeight = 2
         
@@ -281,17 +282,19 @@ class HTZMusicControlView: BaseView {
         
         self.slider.snp.makeConstraints { (make) in
             make.top.bottom.equalTo(self.sliderView)
-            make.left.equalTo(self.sliderView).offset(60)
-            make.right.equalTo(self.sliderView).offset(-60)
+//            make.left.equalTo(self.sliderView).offset(60)
+//            make.right.equalTo(self.sliderView).offset(-60)
         }
         
         self.currentLabel.snp.makeConstraints { (make) in
-            make.centerX.equalTo(self.slider.snp.left).offset(-30)
+            make.left.equalTo(self).offset(kGlobelMargin)
+            make.right.equalTo(self.slider.snp.left).offset(-kGlobelMargin)
             make.centerY.equalTo(self.sliderView)
         }
         
         self.totalLabel.snp.makeConstraints { (make) in
-            make.centerX.equalTo(self.slider.snp.right).offset(30)
+            make.left.equalTo(self.slider.snp.right).offset(kGlobelMargin)
+            make.right.equalTo(self).offset(-kGlobelMargin)
             make.centerY.equalTo(self.sliderView)
         }
         

@@ -2,6 +2,7 @@ PODS:
   - Alamofire (4.9.0)
   - FreeStreamer (4.0.0):
     - Reachability (~> 3.0)
+  - GKCoverSwift (1.1.0)
   - HandyJSON (5.0.0)
   - Kingfisher (5.7.1)
   - Moya (13.0.1):
@@ -27,6 +28,7 @@ PODS:
 
 DEPENDENCIES:
   - FreeStreamer
+  - GKCoverSwift
   - HandyJSON
   - Kingfisher
   - Moya
@@ -44,6 +46,7 @@ SPEC REPOS:
   https://github.com/cocoapods/specs.git:
     - Alamofire
     - FreeStreamer
+    - GKCoverSwift
     - HandyJSON
     - Kingfisher
     - Moya
@@ -68,6 +71,7 @@ CHECKOUT OPTIONS:
 SPEC CHECKSUMS:
   Alamofire: afc3e7c6db61476cb45cdd23fed06bad03bbc321
   FreeStreamer: 7e9c976045701ac2f7e9c14c17245203c37bf2ea
+  GKCoverSwift: 40c387c80c5cc695b77e3f105c04cdfb714a883c
   HandyJSON: 992f2d661716d6a91de82d0056927bc7813b5770
   Kingfisher: 176d377ad339113c99ad4980cbae687f807e20fe
   Moya: f4a4b80ff2f8a4ffc208dfb31cd91636622fee6e
@@ -81,6 +85,6 @@ SPEC CHECKSUMS:
   Weibo_SDK: 977b5352ef6c5861e67c4fa1a81b916e47343713
   ZFPlayer: b2ba40c924e1b9a7f0a670632c4235ffbe6ee055
 
-PODFILE CHECKSUM: 3732a4f1b1eaa844b2fec4bbc0c4af7fa9525137
+PODFILE CHECKSUM: a74ba7e56ed10a2edc23d671eb7e0d6bf99bff76
 
 COCOAPODS: 1.5.3

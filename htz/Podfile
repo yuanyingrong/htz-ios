@@ -12,6 +12,8 @@ target 'htz' do
   pod 'Moya'
   pod 'SwiftyJSON'
   pod 'HandyJSON'
+  pod 'GKCoverSwift'
+  
   
   pod 'PYSearch'
   

@@ -10,6 +10,8 @@ import UIKit
 
 protocol HTZMusicListViewDeleagate: NSObjectProtocol {
     
+    func listViewDidClickLoop(_ listView: HTZMusicListView)
+    
     func listViewDidClickClose(_ listView: HTZMusicListView)
     
     func listViewDidSelect(_ listView: HTZMusicListView, _ selectRow: NSInteger)
@@ -18,6 +20,32 @@ protocol HTZMusicListViewDeleagate: NSObjectProtocol {
 class HTZMusicListView: BaseView {
     
     var dataArr: [HTZMusicModel] = []
+    
+    var style: HTZPlayerPlayStyle? {
+        didSet {
+            switch style {
+            case .loop?:
+                self.loopButton.setImage(UIImage(named: "loop_play"), for: UIControl.State.normal)
+                self.loopButton.setImage(UIImage(named: "loop_play"), for: UIControl.State.highlighted)
+                self.loopLabel.text = "列表循环"
+                break
+            case .random?:
+                self.loopButton.setImage(UIImage(named: "random_play"), for: UIControl.State.normal)
+                self.loopButton.setImage(UIImage(named: "random_play"), for: UIControl.State.highlighted)
+                self.loopLabel.text = "随机播放"
+                break
+            case .one?:
+                self.loopButton.setImage(UIImage(named: "single_play"), for: UIControl.State.normal)
+                self.loopButton.setImage(UIImage(named: "single_play"), for: UIControl.State.highlighted)
+                self.loopLabel.text = "单曲循环"
+                break
+                
+            case .none: break
+                
+            }
+        }
+    }
+    
     
     weak var delegate: HTZMusicListViewDeleagate?
 
@@ -43,7 +71,7 @@ class HTZMusicListView: BaseView {
         
         self.topView.snp.makeConstraints { (make) in
             make.left.right.top.equalTo(weakSelf)
-            make.height.equalTo(50)
+            make.height.equalTo(66)
         }
         
         self.closeButton.snp.makeConstraints { (make) in
@@ -65,6 +93,7 @@ class HTZMusicListView: BaseView {
         self.loopButton.snp.makeConstraints { (make) in
             make.left.equalTo(weakSelf.topView).offset(2 * kGlobelMargin)
             make.centerY.equalTo(weakSelf.topView)
+            make.size.equalTo(CGSize(width: 24, height: 24))
         }
         
         self.loopLabel.snp.makeConstraints { (make) in
@@ -96,6 +125,7 @@ class HTZMusicListView: BaseView {
         let label = UILabel()
         label.textColor = UIColor.red
         label.font = UIFont.systemFont(ofSize: 17.0)
+        label.text = "列表循环"
         return label
     }()
     
@@ -117,7 +147,7 @@ class HTZMusicListView: BaseView {
     
     private lazy var closeButton: UIButton = {
         let button = UIButton(type: UIButton.ButtonType.custom)
-        button.setImage(UIImage(named: "loop_play"), for: UIControl.State.normal)
+        button.setImage(UIImage(named: "close"), for: UIControl.State.normal)
          button.addTarget(self, action: #selector(closeButtonClickAction), for: UIControl.Event.touchUpInside)
         return button
     }()
@@ -133,19 +163,18 @@ class HTZMusicListView: BaseView {
 extension HTZMusicListView {
     
     @objc func loopButtonClickAction() {
-        print("loopButtonClickAction")
-        
+        if let delegate = self.delegate, delegate.responds(to: Selector(("listViewDidClickLoop:"))) {
+            delegate.listViewDidClickLoop(self)
+        }
     }
     
     @objc func closeButtonClickAction() {
-           print("closeButtonClickAction")
         if let delegate = self.delegate, delegate.responds(to: Selector(("listViewDidClickClose:"))) {
             delegate.listViewDidClickClose(self)
         }
     }
     
     @objc func downloadButtonClickAction(cell: HTZMusicListCell) {
-           print("downloadButtonClickAction")
         if let delegate = self.delegate, delegate.responds(to: Selector(("controlView:didSliderTapped:"))) {
             let indexPath = self.listTableView.indexPath(for: cell)
             delegate.listViewDidSelect(self, indexPath?.row ?? 0)
@@ -170,6 +199,13 @@ extension HTZMusicListView: UITableViewDataSource, UITableViewDelegate {
     
     internal func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 44
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        if let delegate = self.delegate, delegate.responds(to: Selector(("listViewDidClickClose:"))) {
+            delegate.listViewDidSelect(self, indexPath.row)
+        }
     }
 }
 

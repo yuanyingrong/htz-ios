@@ -28,6 +28,7 @@ class HTZToDownloadListCell: BaseTableViewCell {
                 //                }
                 playCountButton.setTitle(String(format: "%@/%@", downloadModel.fileCurrentSize ?? "", downloadModel.fileSize ?? ""), for: UIControl.State.normal)
                 playTimeLabel.text = ""
+//                downloadModel.state
             }
         }
     }
@@ -65,6 +66,7 @@ class HTZToDownloadListCell: BaseTableViewCell {
         let imageView = UIImageView()
         imageView.image = UIImage(named: "li_ji")
         imageView.cornerRadius = 22
+        imageView.isUserInteractionEnabled = true
         return imageView
     }()
     

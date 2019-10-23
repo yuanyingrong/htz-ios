@@ -9,6 +9,7 @@
 import UIKit
 import AVFoundation
 import MediaPlayer
+import GKCoverSwift
 
 enum HTZPlayerPlayStyle: NSInteger {
     case loop = 0 // 循环播放
@@ -65,6 +66,9 @@ class HTZPlayViewController: HTZBaseViewController {
     private var ifNowPlay: Bool?
     /// seek进度
     private var toSeekProgress: CGFloat?
+    
+    private var cover: GKCover?
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -1045,18 +1049,8 @@ extension HTZPlayViewController: HTZMusicControlViewDelegate {
         self.listView.frame = rect
         self.listView.dataArr = self.musicList as! [HTZMusicModel]
         
-        let view = UIView()
-        view.backgroundColor = .black
-        view.alpha = 0.5
-        view.frame = (self.navigationController?.view.frame)!
-        self.navigationController?.view.addSubview(view)
-        self.navigationController?.view.addSubview(self.listView)
-        self.listView.frame.origin.y = (self.navigationController?.view.height)!
-        UIView.animate(withDuration: 0.25, animations: {
-            self.listView.frame.origin.y = (self.navigationController?.view.height)! - self.listView.height
-        }) { (finished) in
-            
-        }
+        cover = GKCover(fromView: self.navigationController!.view, contentView: self.listView, style: .Translucent, showStyle: .Bottom, showAnimStyle: .Bottom, hideAnimStyle: .Bottom, notClick: false, showBlock: {}) {}
+        cover!.show()
     }
     
     @objc func controlView(_ controlView: HTZMusicControlView, didSliderTouchBegan value: CGFloat) {
@@ -1106,20 +1100,15 @@ extension HTZPlayViewController: HTZMusicControlViewDelegate {
 //        [self.coverView resetMusicList:self.playList idx:currentIndex];
     }
     
-    // TODO: - 需要实现
     private func randomArray(arr: [HTZMusicModel]) -> [HTZMusicModel] {
-        let randomArr = (arr as NSArray).sortedArray { (obj1, obj2) -> ComparisonResult in
-            let seed = arc4random_uniform(2)
-            let song_id1 = (obj1 as! HTZMusicModel).song_id!
-            let song_id2 = (obj1 as! HTZMusicModel).song_id!
-            if seed != 0 {
-                
-                return song_id1.compare(song_id2)
-            } else {
-                return song_id2.compare(song_id1)
+        var list = arr
+        for index in 0..<list.count {
+            let newIndex = Int(arc4random_uniform(UInt32(list.count-index))) + index
+            if index != newIndex {
+                list.swapAt(index, newIndex)
             }
         }
-        return randomArr as! [HTZMusicModel]
+        return list
     }
 }
 
@@ -1361,12 +1350,38 @@ extension HTZPlayViewController {
 
 // MARK: - HTZMusicListViewDeleagate
 extension HTZPlayViewController: HTZMusicListViewDeleagate {
-    func listViewDidClose(_ listView: HTZMusicListView) {
+    
+    @objc internal func listViewDidClickLoop(_ listView: HTZMusicListView) {
+        if self.playStyle == HTZPlayerPlayStyle.loop { // 循环->单曲
+            self.playStyle = HTZPlayerPlayStyle.one
+            self.playList = self.musicList
+            
+            self.setCoverList()
+        } else if self.playStyle == HTZPlayerPlayStyle.one { // 单曲->随机
+            self.playStyle = HTZPlayerPlayStyle.random
+            self.playList = self.randomArray(arr: self.musicList as! [HTZMusicModel])
+            
+            self.setCoverList()
+        } else { // 随机-> 循环
+            self.playStyle = HTZPlayerPlayStyle.loop
+            self.playList = self.musicList
+            
+            self.setCoverList()
+        }
+        
+        self.listView.style = self.playStyle
+        UserDefaults.Standard.set(self.playStyle?.rawValue, forKey: UserDefaults.keyPlayStyle)
         
     }
     
-    func listViewDidSelect(_ listView: HTZMusicListView, _ selectRow: NSInteger) {
-        
+    @objc internal func listViewDidClickClose(_ listView: HTZMusicListView) {
+        cover!.hide()
+    }
+    
+    
+    @objc internal func listViewDidSelect(_ listView: HTZMusicListView, _ selectRow: NSInteger) {
+        cover!.hide()
+        self.playMusic(index: selectRow, isSetList: false)
     }
     
     
