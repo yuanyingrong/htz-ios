@@ -2,17 +2,17 @@
   "images" : [
     {
       "idiom" : "universal",
-      "filename" : "item_play.png",
+      "filename" : "cm2_fm_playbar_btn.png",
       "scale" : "1x"
     },
     {
       "idiom" : "universal",
-      "filename" : "item_play@2x.png",
+      "filename" : "cm2_fm_playbar_btn@2x.png",
       "scale" : "2x"
     },
     {
       "idiom" : "universal",
-      "filename" : "item_play@3x.png",
+      "filename" : "cm2_fm_playbar_btn@3x.png",
       "scale" : "3x"
     }
   ],
