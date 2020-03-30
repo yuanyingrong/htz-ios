@@ -41,6 +41,7 @@ let kNetworkChangeNotification = "kNetworkChangeNotification" // 网络状态改
 let kPlayStateChangeNotification = "kPlayStateChangeNotification" // 播放状态改变
 let kLoveMusicNotification = "kLoveMusicNotification" // 喜欢音乐
 let kPlayMusicChangeNotification = "kPlayMusicChangeNotification" // 播放数据改变
+let kLoginSuccessNotification = "kLoginSuccessNotification" // 登录成功
 
 struct UserDefaults {
     static let Standard = Foundation.UserDefaults.standard
@@ -49,6 +50,7 @@ struct UserDefaults {
     static let keyLastPlayId = "lastPlayId" // 上一次播放id
     static let keyPlayInfo = "playInfo" // 播放信息
     
+     static let keyUserAccount = "keyUserAccount" 
     
     static let keySavedImageUserProfile = "NSUSERDEFAULT_KEY_IMAGE_CURRENT_USER"
     static let keySavedFirstName = "NSUSERDEFAULT_KEY_FIRST_NAME"

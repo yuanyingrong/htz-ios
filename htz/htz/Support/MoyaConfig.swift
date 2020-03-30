@@ -9,7 +9,7 @@
 import UIKit
 
 /// 定义基础域名
-let Moya_baseURL = "http://htzshanghai.top/resources/app_json/"
+let Moya_baseURL = "http://39.96.5.46:9100/"
 
 /// 定义返回的JSON数据字段
 let RESULT_CODE = "flag"      //状态码

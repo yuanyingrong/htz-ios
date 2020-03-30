@@ -1,5 +1,5 @@
 //
-//  HTZAlbumModel.swift
+//  HTZSutraInfoModel.swift
 //  htz
 //
 //  Created by 袁应荣 on 2019/9/4.
@@ -9,24 +9,25 @@
 import UIKit
 import HandyJSON
 
-class HTZAlbumModel: HandyJSON {
+class HTZSutraInfoModel: HandyJSON {
     
-    // 图片
-    var icon: String?
     
-    // 专辑名称
-    var title: String?
-    
-    //
+    /// 唯一标识符
+    var id: String?
+    /// 经典名称
+    var name: String?
+    /// 封面文件ID
+    var cover: String?
+    /// 经典简介
     var desc: String?
-
-    //
-    var playcount: String?
-    
-    //
+    /// 总共播放次数
+    var played_count: String?
+    /// 一共有多少集
     var item_total: String?
+    /// 创建时间
+    var created_at: String?
     
-    //
+    ///
     var time: String?
     
     var index: NSInteger?
@@ -37,6 +38,7 @@ class HTZAlbumModel: HandyJSON {
     
     func mapping(mapper: HelpingMapper) {
         mapper <<<
+            
             self.desc <-- "description"
     }
     

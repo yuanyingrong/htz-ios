@@ -4,6 +4,9 @@ PODS:
     - Reachability (~> 3.0)
   - GKCoverSwift (1.1.0)
   - HandyJSON (5.0.0)
+  - JCore (2.2.4)
+  - JPush (3.3.2):
+    - JCore (< 3.0.0, >= 2.0.0)
   - Kingfisher (5.7.1)
   - Moya (13.0.1):
     - Moya/Core (= 13.0.1)
@@ -30,6 +33,7 @@ DEPENDENCIES:
   - FreeStreamer
   - GKCoverSwift
   - HandyJSON
+  - JPush
   - Kingfisher
   - Moya
   - PYSearch
@@ -43,7 +47,7 @@ DEPENDENCIES:
   - ZFPlayer/ControlView
 
 SPEC REPOS:
-  https://github.com/cocoapods/specs.git:
+  https://github.com/CocoaPods/Specs.git:
     - Alamofire
     - FreeStreamer
     - GKCoverSwift
@@ -58,6 +62,9 @@ SPEC REPOS:
     - TencentOpenAPI-Unofficial
     - WechatOpenSDK
     - ZFPlayer
+  trunk:
+    - JCore
+    - JPush
 
 EXTERNAL SOURCES:
   Weibo_SDK:
@@ -73,6 +80,8 @@ SPEC CHECKSUMS:
   FreeStreamer: 7e9c976045701ac2f7e9c14c17245203c37bf2ea
   GKCoverSwift: 40c387c80c5cc695b77e3f105c04cdfb714a883c
   HandyJSON: 992f2d661716d6a91de82d0056927bc7813b5770
+  JCore: b007693f7ac4d12d5c77861660a4184522454eb1
+  JPush: 9468c84a3809dc3ac2fc1c89c6d1d6c858a91bf5
   Kingfisher: 176d377ad339113c99ad4980cbae687f807e20fe
   Moya: f4a4b80ff2f8a4ffc208dfb31cd91636622fee6e
   PYSearch: 76dee18eea3309b60921a5d6a69390a63a5dda15
@@ -85,6 +94,6 @@ SPEC CHECKSUMS:
   Weibo_SDK: 977b5352ef6c5861e67c4fa1a81b916e47343713
   ZFPlayer: b2ba40c924e1b9a7f0a670632c4235ffbe6ee055
 
-PODFILE CHECKSUM: a74ba7e56ed10a2edc23d671eb7e0d6bf99bff76
+PODFILE CHECKSUM: dd51fd40d6f1df8f65b757338c26a995e86c42e8
 
-COCOAPODS: 1.5.3
+COCOAPODS: 1.8.4

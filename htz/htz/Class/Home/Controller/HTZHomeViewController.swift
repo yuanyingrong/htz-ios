@@ -46,7 +46,11 @@ class HTZHomeViewController: HTZBaseViewController {
             make.left.right.bottom.equalTo(view)
         }
         
-        
+        NotificationCenter.default.addObserver(self, selector: #selector(loginSuccess(noti:)), name: NSNotification.Name(kLoginSuccessNotification), object: nil)
+    }
+    
+    @objc private func loginSuccess(noti: Notification) {
+        configData()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -122,7 +126,7 @@ extension HTZHomeViewController: HTZHomeTitleCollectionViewDelegate {
             return
         }
         let vc = HTZAlbumListViewController()
-        vc.title = homeViewModel.dataArr[indexPath.row]?.title
+        vc.title = homeViewModel.dataArr[indexPath.row]?.name
         homeViewModel.dataArr[indexPath.row]!.index = indexPath.row
         vc.albumModel = homeViewModel.dataArr[indexPath.row]
         navigationController?.pushViewController(vc, animated: true)

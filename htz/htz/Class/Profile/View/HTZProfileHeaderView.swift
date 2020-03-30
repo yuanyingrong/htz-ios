@@ -19,6 +19,22 @@ protocol HTZProfileHeaderViewDelegate: NSObjectProtocol {
 }
 class HTZProfileHeaderView: BaseView {
     
+    var iconImage: String? {
+        didSet {
+            if let iconImage = iconImage {
+                iconImageView.wb_setImageWith(urlStr: iconImage, placeHolder: "favorite")
+            }
+        }
+    }
+    
+    var name: String? {
+        didSet {
+            if let name = name {
+                nameButton.setTitle(name, for: UIControl.State.normal)
+            }
+        }
+    }
+    
     weak var delegate: HTZProfileHeaderViewDelegate?
     
     private lazy var bgImageView: UIImageView = {
@@ -30,13 +46,23 @@ class HTZProfileHeaderView: BaseView {
     private lazy var iconImageView: UIImageView = {
         let iconImageView = UIImageView()
         iconImageView.cornerRadius = 44
-        iconImageView.image = UIImage(named: "favorite")
+        if let headimgurl = HTZUserAccount.shared.headimgurl {
+            iconImageView.wb_setImageWith(urlStr: headimgurl, placeHolder: "favorite")
+        } else {
+           iconImageView.image = UIImage(named: "favorite")
+        }
+        
         return iconImageView
     }()
     
     private lazy var nameButton: UIButton = {
         let nameButton = UIButton(type: UIButton.ButtonType.custom)
-        nameButton.setTitle("点击登录", for: UIControl.State.normal)
+        if let name = HTZUserAccount.shared.name {
+            nameButton.setTitle(name, for: UIControl.State.normal)
+        } else {
+           nameButton.setTitle("点击登录", for: UIControl.State.normal)
+        }
+        
         nameButton.addTarget(self, action: #selector(nameBtnClickAction), for: UIControl.Event.touchUpInside)
         return nameButton
     }()

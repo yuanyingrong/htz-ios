@@ -10,6 +10,8 @@ import Foundation
 import Moya
 
 enum API {
+    case login(code: String)
+    case sutras
     case albums
     case xingfuneixinchan
     case jingxinyangsheng
@@ -37,6 +39,10 @@ extension API: TargetType {
     
     var path: String {
         switch self {
+        case .login(_):
+            return "post/login";
+        case .sutras:
+            return "get/sutras"
         case .albums:
          return "albums.json"
         case .xingfuneixinchan:
@@ -62,10 +68,10 @@ extension API: TargetType {
     
     var method: Moya.Method {
         switch self {
-        case .easyRequset:
+        case .easyRequset,.sutras:
             return .get
         default:
-            return .get
+            return .post
         }
     }
     
@@ -79,7 +85,10 @@ extension API: TargetType {
     var task: Task {
         //        return .requestParameters(parameters: nil, encoding: JSONArrayEncoding.default)
         switch self {
-        
+        case let .login(code):
+            return .requestParameters(parameters: ["code": code], encoding: JSONEncoding.default)
+        case .sutras:
+            return .requestParameters(parameters: ["page_index" : 0,"page_size":20], encoding: JSONEncoding.default)
         case .albums, .xingfuneixinchan, .jingxinyangsheng, .mixinxiaoshipin, .song(_), .songDetail(_):
             return .requestPlain
         case let .register(email, password):
@@ -111,7 +120,10 @@ extension API: TargetType {
     
     
     var headers: [String : String]? {
-        return ["Content-Type":"application/x-www-form-urlencoded"]
+        if let token = HTZUserAccount.shared.token {
+            return ["Content-Type" : "application/x-www-form-urlencoded","token" : token]
+        }
+        return ["Content-Type" : "application/x-www-form-urlencoded"]
     }
     
 }

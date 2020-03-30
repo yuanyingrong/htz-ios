@@ -18,8 +18,8 @@ let wbpassWord = "517517"
 let qqAppID = "1109745735"
 let qqAppKey = "mubtaqjG8tQ9Clvy"
 
-let wxAppID = "1109745735"
-let wxAppSecrect = "7e8d59de270734ddce414cd0dc675df6"
+let wxAppID = "wx411fef9024bd3b5b"
+let wxAppSecrect = "01a0b78aeaec432cf778c6a37b40aa9c"
 let wxAppKey = "mubtaqjG8tQ9Clvy"
 
 enum ThirdLoginType {
@@ -29,7 +29,7 @@ enum ThirdLoginType {
 }
 
 // 成功数据的回调
-typealias ThirdLoginResultCallback = ((_ loginResult: [String : Any]?, _ error: String?) -> (Void))
+typealias ThirdLoginResultCallback = ((_ loginResult: HTZLoginModel?, _ error: String?) -> (Void))
 
 class HTZAccountThirdLoginUtil: NSObject {
 
@@ -102,9 +102,13 @@ extension HTZAccountThirdLoginUtil: TencentSessionDelegate {
         if let tencentOAuth = tencentOAuth, response.retCode == URLREQUEST_SUCCEED.rawValue {
             print(response.jsonResponse!)
             print("openId: \(tencentOAuth.openId!)")
-            let parameter = ["third_id" : tencentOAuth.openId, "third_name" : response.jsonResponse["nickname"], "third_image" : response.jsonResponse["figureurl_qq_2"], "access_token" : tencentOAuth.accessToken]
+//            let parameter = ["third_id" : tencentOAuth.openId, "third_name" : response.jsonResponse["nickname"], "third_image" : response.jsonResponse["figureurl_qq_2"], "access_token" : tencentOAuth.accessToken]
+            let model = HTZLoginModel()
+            model.name = response.jsonResponse["nickname"] as? String;
+            model.wx_login_resp?.headimgurl = response.jsonResponse["figureurl_qq_2"] as? String;
+            model.token = tencentOAuth.accessToken;
             if self.resultCallback != nil {
-                self.resultCallback!(parameter as [String : Any], nil)
+                self.resultCallback!(model, nil)
             }
         } else {
             resultCallback!(nil, "授权失败")
@@ -138,50 +142,64 @@ extension HTZAccountThirdLoginUtil: WXApiDelegate {
             resultCallback!(nil, "授权失败")
         }
     }
-    
     private func getWeiXinUserInfo(code: String) {
-        
-        let queue = OperationQueue()
-        var access_token: String = ""
-        
-        let getAccessTokenOperation = BlockOperation.init {
-            let urlStr = "https://api.weixin.qq.com/sns/oauth2/access_token?appid=\(wxAppID)&secret=\(wxAppSecrect)&code=\(code)&grant_type=authorization_code"
-            let url = URL(string: urlStr)
-            do {
-                let responseStr = try String.init(contentsOf: url!, encoding: String.Encoding.utf8)
-                let responseData = responseStr.data(using: String.Encoding.utf8)
-                let json = try JSONSerialization.jsonObject(with: responseData!, options: JSONSerialization.ReadingOptions.mutableContainers)
-                let dict = json as! Dictionary<String, Any>
-                access_token = dict["access_token"] as! String
-            } catch {
-                print(error)
-            }
-        }
-        
-        let getUserInfoOperation = BlockOperation.init {
-            let urlStr = "https://api.weixin.qq.com/sns/userinfo?access_token=\(access_token)&openid=\(wxAppID)"
-            let url = URL(string: urlStr)
-            do {
-                let responseStr = try String.init(contentsOf: url!, encoding: String.Encoding.utf8)
-                let responseData = responseStr.data(using: String.Encoding.utf8)
-                let json = try JSONSerialization.jsonObject(with: responseData!, options: JSONSerialization.ReadingOptions.mutableContainers)
-                let dict = json as! Dictionary<String, Any>
-                let parameter = ["third_id" : dict["openid"], "third_name" : dict["nickname"], "third_image" : dict["headimgurl"], "access_token" : access_token]
-                OperationQueue.main.addOperation {
-                    if self.resultCallback != nil {
-                        self.resultCallback!(parameter as [String : Any], nil)
-                    }
+        NetWorkRequest(API.login(code: code)) { (response) -> (Void) in
+            print(response);
+            if (response["code"].intValue == 200) {
+                let dict = response["data"]
+                let model = HTZLoginModel.deserialize(from: dict.rawString())
+                if self.resultCallback != nil {
+                    self.resultCallback!(model, nil)
                 }
-            } catch {
-                print(error)
             }
+            
         }
-        
-        getUserInfoOperation.addDependency(getAccessTokenOperation)
-        
-        queue.addOperation(getAccessTokenOperation)
-        queue.addOperation(getUserInfoOperation)
     }
+    
+    
+//    private func getWeiXinUserInfo(code: String) {
+//
+//        let queue = OperationQueue()
+//        var access_token: String = ""
+//
+//        let getAccessTokenOperation = BlockOperation.init {
+//            let urlStr = "https://api.weixin.qq.com/sns/oauth2/access_token?appid=\(wxAppID)&secret=\(wxAppSecrect)&code=\(code)&grant_type=authorization_code"
+//            let url = URL(string: urlStr)
+//            do {
+//                let responseStr = try String.init(contentsOf: url!, encoding: String.Encoding.utf8)
+//                let responseData = responseStr.data(using: String.Encoding.utf8)
+//                let json = try JSONSerialization.jsonObject(with: responseData!, options: JSONSerialization.ReadingOptions.mutableContainers)
+//                let dict = json as! Dictionary<String, Any>
+//                access_token = dict["access_token"] as! String
+//            } catch {
+//                print(error)
+//            }
+//        }
+//
+//        let getUserInfoOperation = BlockOperation.init {
+//            let urlStr = "https://api.weixin.qq.com/sns/userinfo?access_token=\(access_token)&openid=\(wxAppID)"
+//            let url = URL(string: urlStr)
+//            do {
+//                let responseStr = try String.init(contentsOf: url!, encoding: String.Encoding.utf8)
+//                let responseData = responseStr.data(using: String.Encoding.utf8)
+//                let json = try JSONSerialization.jsonObject(with: responseData!, options: JSONSerialization.ReadingOptions.mutableContainers)
+//                let dict = json as! Dictionary<String, Any>
+//                let parameter = ["third_id" : dict["openid"], "third_name" : dict["nickname"], "third_image" : dict["headimgurl"], "access_token" : access_token]
+//                OperationQueue.main.addOperation {
+//                    if self.resultCallback != nil {
+//                        self.resultCallback!(parameter as [String : Any], nil)
+//                    }
+//                }
+//            } catch {
+//                print(error)
+//            }
+//        }
+//
+//        getUserInfoOperation.addDependency(getAccessTokenOperation)
+//
+//        queue.addOperation(getAccessTokenOperation)
+//        queue.addOperation(getUserInfoOperation)
+//    }
 }
 
 // MARK: WeiboSDKDelegate
@@ -215,10 +233,14 @@ extension HTZAccountThirdLoginUtil: WeiboSDKDelegate,URLSessionDelegate {
             print(Thread.current)
             let json = try? JSONSerialization.jsonObject(with: data!, options: JSONSerialization.ReadingOptions.mutableContainers)
             let dict = json as! Dictionary<String, Any>
-            let parameter = ["third_id" : dict["idstr"], "third_name" : dict["screen_name"], "third_image" : dict["avatar_hd"], "access_token" : access_token]
+//            let parameter = ["third_id" : dict["idstr"], "third_name" : dict["screen_name"], "third_image" : dict["avatar_hd"], "access_token" : access_token]
+            let model = HTZLoginModel()
+            model.name = dict["screen_name"] as? String;
+            model.wx_login_resp?.headimgurl = dict["avatar_hd"] as? String;
+            model.token = access_token;
             OperationQueue.main.addOperation {
                 if self.resultCallback != nil {
-                    self.resultCallback!(parameter as [String : Any], nil)
+                    self.resultCallback!(model, nil)
                 }
             }
         }

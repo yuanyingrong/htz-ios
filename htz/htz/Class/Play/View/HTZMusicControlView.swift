@@ -62,9 +62,9 @@ class HTZMusicControlView: BaseView {
     lazy var slider: HTZSliderView = {
         let slider = HTZSliderView()
         
-        slider.setBackgroundImage(image: UIImage(named: "cm2_fm_playbar_btn"), state: UIControl.State.normal)
-        slider.setBackgroundImage(image: UIImage(named: "cm2_fm_playbar_btn"), state: UIControl.State.selected)
-        slider.setBackgroundImage(image: UIImage(named: "cm2_fm_playbar_btn"), state: UIControl.State.highlighted)
+        slider.setBackgroundImage(image: UIImage(named: "cm2_fm_playbar_btn_dot"), state: UIControl.State.normal)
+        slider.setBackgroundImage(image: UIImage(named: "cm2_fm_playbar_btn_dot"), state: UIControl.State.selected)
+        slider.setBackgroundImage(image: UIImage(named: "cm2_fm_playbar_btn_dot"), state: UIControl.State.highlighted)
         
         slider.setThumbImage(image: UIImage(named: "cm2_fm_playbar_btn_dot"), state: UIControl.State.normal)
         slider.setThumbImage(image: UIImage(named: "cm2_fm_playbar_btn_dot"), state: UIControl.State.selected)

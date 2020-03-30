@@ -25,7 +25,7 @@
 			<string>weixin</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>wx45</string>
+				<string>wx411fef9024bd3b5b</string>
 			</array>
 		</dict>
 		<dict>
@@ -95,6 +95,7 @@
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>audio</string>
+		<string>remote-notification</string>
 	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>

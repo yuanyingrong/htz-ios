@@ -13,21 +13,21 @@ class HTZAlbumListViewController: HTZBaseViewController {
     
     private lazy var albumListViewModel: HTZAlbumListViewModel = HTZAlbumListViewModel()
     
-    var albumModel: HTZAlbumModel? {
+    var albumModel: HTZSutraInfoModel? {
     
         didSet {
             if let albumModel = albumModel {
-                nameLabel.text = albumModel.title
-                if albumModel.icon!.hasPrefix("http") {
-                    albumImageView.wb_setImageWith(urlStr: albumModel.icon!)
+                nameLabel.text = albumModel.name
+                if albumModel.cover!.hasPrefix("http") {
+                    albumImageView.wb_setImageWith(urlStr: albumModel.cover!)
                 } else {
-                    albumImageView.image = UIImage(named: albumModel.icon ?? "")
+                    albumImageView.image = UIImage(named: albumModel.cover ?? "")
                 }
                 contentLabel.text = albumModel.desc
                 countLabel.text = "共\(albumModel.item_total ?? "0")集"
                 
-                albumListViewModel.icon = albumModel.icon
-                albumListViewModel.albumTitle = albumModel.title
+                albumListViewModel.icon = albumModel.cover
+                albumListViewModel.albumTitle = albumModel.name
                 
                 albumListViewModel.requestData(index: albumModel.index!, isPullDown: true) { (success) in
                     if success {
@@ -134,7 +134,7 @@ extension HTZAlbumListViewController: UITableViewDataSource, UITableViewDelegate
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell =  tableView.dequeueReusableCell(withIdentifier: "HTZAlbumListCellReuseID", for: indexPath) as! HTZAlbumListCell
         cell.delegate = self
-        cell.imageName = albumModel?.icon
+        cell.imageName = albumModel?.cover
         if let imageName = self.albumListViewModel.dataSongArr[indexPath.row]?.icon {
             cell.imageName = imageName
         }

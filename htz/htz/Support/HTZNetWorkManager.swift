@@ -172,6 +172,7 @@ func NetWorkRequest(_ target: API, completion: @escaping successCallback , faile
         print("提示用户网络似乎出现了问题")
         return
     }
+    
     //这里显示loading图
     Provider.request(target) { (result) in
         //隐藏hud
