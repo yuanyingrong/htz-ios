@@ -419,7 +419,8 @@ extension HTZDownloadManager {
     private func startDownloadData(model: HTZDownloadModel) {
         
         let request = URLRequest(url: URL(string: model.fileUrl!)!)
-       
+        
+        DownloadRequest
         self.downloadRequest = download(request) { (url, response) -> (destinationURL: URL, options: DownloadRequest.DownloadOptions) in
 //            downloadDataFilePath()
             
@@ -491,6 +492,7 @@ extension HTZDownloadManager {
             self.resumeData = model.resumeData as Data?
         }
         if let resumeData = self.resumeData {
+            
             self.downloadRequest = download(resumingWith: resumeData).downloadProgress(closure: { (downloadProgress) in
                 if let delegate = self.delegate, delegate.responds(to: #selector(HTZPlayViewController.downloadProgress(_:downloadModel:totalSize:downloadSize:progress:))) {
                     delegate.downloadProgress(self, downloadModel: model, totalSize: NSInteger(downloadProgress.totalUnitCount), downloadSize: NSInteger(downloadProgress.completedUnitCount), progress: Float(downloadProgress.completedUnitCount / downloadProgress.totalUnitCount))

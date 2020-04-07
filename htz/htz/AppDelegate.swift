@@ -56,7 +56,22 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
        
         // 极光推送
         configPush(launchOptions: launchOptions)
-        
+        let shareConfig = JSHARELaunchConfig()
+        shareConfig.appKey = "AppKey copied from JiGuang Portal application"
+        shareConfig.sinaWeiboAppKey = "374535501"
+        shareConfig.sinaWeiboAppSecret = "baccd12c166f1df96736b51ffbf600a2"
+        shareConfig.sinaRedirectUri = "https://www.jiguang.cn"
+        shareConfig.qqAppId = "1105864531"
+        shareConfig.qqAppKey = "glFYjkHQGSOCJHMC"
+        shareConfig.weChatAppId = "wxa2ea563906227379"
+        shareConfig.weChatAppSecret = "bb63c0a06bf0ee7f633a5bc44304d110"
+        shareConfig.facebookAppID = "1847959632183996"
+        shareConfig.facebookDisplayName = "JShareDemo"
+        shareConfig.twitterConsumerKey = "4hCeIip1cpTk9oPYeCbYKhVWi"
+        shareConfig.twitterConsumerSecret = "DuIontT8KPSmO2Y1oAvby7tpbWHJimuakpbiAUHEKncbffekmC"
+        shareConfig.jChatProAuth = "a7e2ce002d1a071a6ca9f37d"
+        JSHAREService.setup(with: shareConfig)
+        JSHAREService.setDebug(true)
         
 //        #if DEBUG
 //        pgyerCrash()
@@ -108,8 +123,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
  
     /// 网络监测
     func networkStateCheck() {
-        let manager = NetworkReachabilityManager()
-        manager?.listener = { status in
+        
+        NetworkReachabilityManager.default?.startListening(onUpdatePerforming: { (status) in
             switch status {
             case .unknown:
                 HTZMusicTool.setNetworkState(state: "none")
@@ -119,21 +134,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 HTZMusicTool.setNetworkState(state: "none")
                 print("无网络")
                 break
-            case .reachable(_):
-                if manager!.isReachableOnWWAN {
-                    HTZMusicTool.setNetworkState(state: "wwan")
-                    print("2G,3G,4G...")
-                } else if manager!.isReachableOnEthernetOrWiFi {
-                    HTZMusicTool.setNetworkState(state: "wifi")
-                    print("wifi")
-                }
+            case .reachable(NetworkReachabilityManager.NetworkReachabilityStatus.ConnectionType.ethernetOrWiFi):
+                HTZMusicTool.setNetworkState(state: "wifi")
                 break
+            case .reachable(NetworkReachabilityManager.NetworkReachabilityStatus.ConnectionType.cellular):
+                HTZMusicTool.setNetworkState(state: "wwan")
+                break
+
             }
             // 发送网络状态改变的通知
             NotificationCenter.default.post(name: NSNotification.Name(kNetworkChangeNotification), object: nil)
-        }
-        
-        manager?.startListening()
+        })
     }
     
 //    private func pgyerCrash() {
@@ -174,7 +185,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func applicationWillEnterForeground(_ application: UIApplication) {
-        // Called as part of the transition from the background to the active state; here you can undo many of the changes made on entering the background.
+        // Called as part of the transition from the background to the active state  here you can undo many of the changes made on entering the background.
     }
 
     func applicationDidBecomeActive(_ application: UIApplication) {

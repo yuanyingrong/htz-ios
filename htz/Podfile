@@ -1,5 +1,6 @@
 # Uncomment the next line to define a global platform for your project
 # platform :ios, '9.0'
+source 'https://github.com/CocoaPods/Specs.git'
 
 target 'htz' do
   # Comment the next line if you're not using Swift and don't want to use dynamic frameworks
@@ -15,6 +16,7 @@ target 'htz' do
   pod 'GKCoverSwift'
   
   pod 'JPush'
+  pod 'JShare'
   
   pod 'PYSearch'
   
@@ -24,8 +26,7 @@ target 'htz' do
   pod 'ZFPlayer/ControlView'
   pod 'ZFPlayer/AVPlayer'
 #  pod 'ZFPlayer/ijkplayer'
-  
-  pod 'Weibo_SDK', :git => 'https://github.com/sinaweibosdk/weibo_ios_sdk.git'
+  pod "Weibo_SDK", :git => "https://github.com/sinaweibosdk/weibo_ios_sdk.git"
   pod 'WechatOpenSDK'
   pod 'TencentOpenAPI-Unofficial'
   

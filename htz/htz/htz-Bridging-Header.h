@@ -27,6 +27,8 @@
 
 // 引入 JPush 功能所需头文件
 #import "JPUSHService.h"
+// 引入 JSHARE 功能所需头文件
+#import "JSHAREService.h"
 // iOS10 注册 APNs 所需头文件
 #ifdef NSFoundationVersionNumber_iOS_9_x_Max
 #import <UserNotifications/UserNotifications.h>

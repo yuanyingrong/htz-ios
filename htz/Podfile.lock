@@ -1,39 +1,42 @@
 PODS:
-  - Alamofire (4.9.0)
+  - Alamofire (5.0.5)
   - FreeStreamer (4.0.0):
     - Reachability (~> 3.0)
   - GKCoverSwift (1.1.0)
-  - HandyJSON (5.0.0)
+  - HandyJSON (5.0.1)
   - JCore (2.2.4)
   - JPush (3.3.2):
     - JCore (< 3.0.0, >= 2.0.0)
-  - Kingfisher (5.7.1)
-  - Moya (13.0.1):
-    - Moya/Core (= 13.0.1)
-  - Moya/Core (13.0.1):
-    - Alamofire (~> 4.1)
-    - Result (~> 4.1)
+  - JShare (1.8.1):
+    - JCore (< 3.0.0, >= 1.2.0)
+  - Kingfisher (5.13.3):
+    - Kingfisher/Core (= 5.13.3)
+  - Kingfisher/Core (5.13.3)
+  - Moya (14.0.0):
+    - Moya/Core (= 14.0.0)
+  - Moya/Core (14.0.0):
+    - Alamofire (~> 5.0)
   - PYSearch (0.9.1)
   - Reachability (3.2)
-  - Result (4.1.0)
   - SnapKit (5.0.1)
   - SwiftyJSON (5.0.0)
   - TencentOpenAPI-Unofficial (3.3.5)
-  - WechatOpenSDK (1.8.4)
-  - Weibo_SDK (3.2.4)
-  - ZFPlayer (3.2.13):
-    - ZFPlayer/Core (= 3.2.13)
-  - ZFPlayer/AVPlayer (3.2.13):
+  - WechatOpenSDK (1.8.7)
+  - Weibo_SDK (3.2.7)
+  - ZFPlayer (3.3.1):
+    - ZFPlayer/Core (= 3.3.1)
+  - ZFPlayer/AVPlayer (3.3.1):
     - ZFPlayer/Core
-  - ZFPlayer/ControlView (3.2.13):
+  - ZFPlayer/ControlView (3.3.1):
     - ZFPlayer/Core
-  - ZFPlayer/Core (3.2.13)
+  - ZFPlayer/Core (3.3.1)
 
 DEPENDENCIES:
   - FreeStreamer
   - GKCoverSwift
   - HandyJSON
   - JPush
+  - JShare
   - Kingfisher
   - Moya
   - PYSearch
@@ -52,19 +55,18 @@ SPEC REPOS:
     - FreeStreamer
     - GKCoverSwift
     - HandyJSON
+    - JCore
+    - JPush
+    - JShare
     - Kingfisher
     - Moya
     - PYSearch
     - Reachability
-    - Result
     - SnapKit
     - SwiftyJSON
     - TencentOpenAPI-Unofficial
     - WechatOpenSDK
     - ZFPlayer
-  trunk:
-    - JCore
-    - JPush
 
 EXTERNAL SOURCES:
   Weibo_SDK:
@@ -72,28 +74,28 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   Weibo_SDK:
-    :commit: 83b1235d61530e5fdeeb86c75915c6bdb1dfcedb
+    :commit: 90a5cf8d5dfb03ccf62b1c8e1a17fea766dc806b
     :git: https://github.com/sinaweibosdk/weibo_ios_sdk.git
 
 SPEC CHECKSUMS:
-  Alamofire: afc3e7c6db61476cb45cdd23fed06bad03bbc321
+  Alamofire: df2f8f826963b08b9a870791ad48e07a10090b2e
   FreeStreamer: 7e9c976045701ac2f7e9c14c17245203c37bf2ea
   GKCoverSwift: 40c387c80c5cc695b77e3f105c04cdfb714a883c
-  HandyJSON: 992f2d661716d6a91de82d0056927bc7813b5770
+  HandyJSON: d45b8415c501e3affc59ca9762c1197ff0feb646
   JCore: b007693f7ac4d12d5c77861660a4184522454eb1
   JPush: 9468c84a3809dc3ac2fc1c89c6d1d6c858a91bf5
-  Kingfisher: 176d377ad339113c99ad4980cbae687f807e20fe
-  Moya: f4a4b80ff2f8a4ffc208dfb31cd91636622fee6e
+  JShare: d19013ffb1a095de31b20236fe08e9c74064cfe5
+  Kingfisher: d2b3d6a7200c93b34de9afcdf25c8dd9282ec277
+  Moya: 5b45dacb75adb009f97fde91c204c1e565d31916
   PYSearch: 76dee18eea3309b60921a5d6a69390a63a5dda15
   Reachability: 33e18b67625424e47b6cde6d202dce689ad7af96
-  Result: bd966fac789cc6c1563440b348ab2598cc24d5c7
   SnapKit: 97b92857e3df3a0c71833cce143274bf6ef8e5eb
   SwiftyJSON: 36413e04c44ee145039d332b4f4e2d3e8d6c4db7
   TencentOpenAPI-Unofficial: bb112eb0f173390ea1bb2fd52270a808b0aa0057
-  WechatOpenSDK: 9b721089507c895d05f997408c30bb6e6f5f9b60
-  Weibo_SDK: 977b5352ef6c5861e67c4fa1a81b916e47343713
-  ZFPlayer: b2ba40c924e1b9a7f0a670632c4235ffbe6ee055
+  WechatOpenSDK: 7cd4d3386fb6ba5595d5fb863e0a3bfd43bc6768
+  Weibo_SDK: 5a4d08f7e1fedbb635435e4585c8c0439c7da089
+  ZFPlayer: 8a6021a3c45e281f2abd24dca5c88915af770a7e
 
-PODFILE CHECKSUM: dd51fd40d6f1df8f65b757338c26a995e86c42e8
+PODFILE CHECKSUM: c0a81778cd936db5a0008d16ff598efd1790e8fd
 
 COCOAPODS: 1.8.4
