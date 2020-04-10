@@ -29,9 +29,10 @@ class HTZHomeViewModel: NSObject {
 //    }
     
     func requestData(isPullDown: Bool, callBack: @escaping (Bool) -> ()) {
-        NetWorkRequest(API.sutras) { (response) -> (Void) in
+        NetWorkRequest(API.sutras(page_index: 0, page_size: 20)) { (response) -> (Void) in
             
-            let arr = [HTZSutraInfoModel].deserialize(from: response["sutra_items"].rawString())
+            
+            let arr = [HTZSutraInfoModel].deserialize(from: response["data"].rawString())
             if let arr = arr {
                 self.dataArr = arr
                 

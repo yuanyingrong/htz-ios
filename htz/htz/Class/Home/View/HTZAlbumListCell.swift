@@ -35,6 +35,26 @@ class HTZAlbumListCell: BaseTableViewCell {
         }
     }
     
+        var sutraItemModel: HTZSutraItemModel? {
+            
+            didSet {
+                if let sutraItemModel = sutraItemModel {
+                    titleLabel.text = sutraItemModel.title
+    //                if albumPartModel.icon!.hasPrefix("http") {
+    //                    albumImageView.wb_setImageWith(urlStr: albumPartModel.icon!)
+    //                } else {
+    //                    albumImageView.image = UIImage(named: albumModel.icon ?? "")
+    //                }
+                    playCountButton.setTitle(sutraItemModel.played_count!, for: UIControl.State.normal)
+                    playTimeLabel.text = ""
+                    downloadButton.isHidden = sutraItemModel.isVideo ?? false
+                    
+                }
+                
+                
+            }
+        }
+    
     var musicModel: HTZMusicModel? {
         
         didSet {

@@ -11,6 +11,9 @@ import Foundation
 
 let kGlobelMargin = 8.0
 
+// 极光
+let JAppKey = "98c449ca3a5460e6bbcc3488"
+let JMasterSecret = "e0a8bb7cb48ce138f04e14ca"
 
 
 

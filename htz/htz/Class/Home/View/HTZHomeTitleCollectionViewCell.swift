@@ -12,17 +12,20 @@ class HTZHomeTitleCollectionViewCell: UICollectionViewCell {
     
     var imageName: String? {
         didSet {
-            if imageName!.hasPrefix("http") {
-                imageView.wb_setImageWith(urlStr: imageName!)
+            if let imageName = imageName,imageName.hasPrefix("http") {
+                imageView.wb_setImageWith(urlStr: imageName)
             } else {
-                imageView.image = UIImage(named: imageName ?? "")
+                imageView.image = UIImage(named: imageName ?? "htz_no_title")
             }
         }
     }
     
     var title: String? {
         didSet {
-            label.text = title!
+            if let title = title {
+                label.text = title
+            }
+            
         }
     }
     

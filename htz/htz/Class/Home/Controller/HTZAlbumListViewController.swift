@@ -13,26 +13,36 @@ class HTZAlbumListViewController: HTZBaseViewController {
     
     private lazy var albumListViewModel: HTZAlbumListViewModel = HTZAlbumListViewModel()
     
-    var albumModel: HTZSutraInfoModel? {
+    var sutraInfoModel: HTZSutraInfoModel? {
     
         didSet {
-            if let albumModel = albumModel {
-                nameLabel.text = albumModel.name
-                if albumModel.cover!.hasPrefix("http") {
-                    albumImageView.wb_setImageWith(urlStr: albumModel.cover!)
+            if let sutraInfoModel = sutraInfoModel {
+                nameLabel.text = sutraInfoModel.name
+                if sutraInfoModel.cover!.hasPrefix("http") {
+                    albumImageView.wb_setImageWith(urlStr: sutraInfoModel.cover!)
                 } else {
-                    albumImageView.image = UIImage(named: albumModel.cover ?? "")
+                    albumImageView.image = UIImage(named: sutraInfoModel.cover ?? "")
                 }
-                contentLabel.text = albumModel.desc
-                countLabel.text = "共\(albumModel.item_total ?? "0")集"
+                contentLabel.text = sutraInfoModel.desc
+                countLabel.text = "共\(sutraInfoModel.item_total ?? "0")集"
                 
-                albumListViewModel.icon = albumModel.cover
-                albumListViewModel.albumTitle = albumModel.name
+                albumListViewModel.icon = sutraInfoModel.cover
+                albumListViewModel.albumTitle = sutraInfoModel.name
                 
-                albumListViewModel.requestData(index: albumModel.index!, isPullDown: true) { (success) in
-                    if success {
-                        self.countLabel.text = "共\(self.albumListViewModel.dataArr.count)集"
-                        self.tableView.reloadData()
+                // 数据请求
+                if sutraInfoModel.index == 0 {
+                    albumListViewModel.requestData(index: sutraInfoModel.index!, isPullDown: true) { (success) in
+                        if success {
+                            self.countLabel.text = "共\(self.albumListViewModel.dataArr.count)集"
+                            self.tableView.reloadData()
+                        }
+                    }
+                } else {
+                    albumListViewModel.requestData(sutra_id: (sutraInfoModel.id)!, isPullDown: true) { (success) in
+                        if success {
+                            self.countLabel.text = "共\(self.albumListViewModel.dataArr.count)集"
+                            self.tableView.reloadData()
+                        }
                     }
                 }
             }
@@ -134,20 +144,26 @@ extension HTZAlbumListViewController: UITableViewDataSource, UITableViewDelegate
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell =  tableView.dequeueReusableCell(withIdentifier: "HTZAlbumListCellReuseID", for: indexPath) as! HTZAlbumListCell
         cell.delegate = self
-        cell.imageName = albumModel?.cover
+        cell.imageName = sutraInfoModel?.cover
         if let imageName = self.albumListViewModel.dataSongArr[indexPath.row]?.icon {
             cell.imageName = imageName
         }
-        self.albumListViewModel.dataArr[indexPath.row]?.isVideo = albumModel?.isVideo
-        cell.albumPartModel = self.albumListViewModel.dataArr[indexPath.row]
+        self.albumListViewModel.dataArr[indexPath.row]?.isVideo = sutraInfoModel?.isVideo
+        cell.sutraItemModel = self.albumListViewModel.dataArr[indexPath.row]
         cell.musicModel = self.albumListViewModel.dataSongArr[indexPath.row]
         return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+        
+        NetWorkRequest(API.download(file_id: "tests/5e9039abe2e76d070697e296")) { (response) -> (Void) in
+            printLog(response)
+        }
+
+        return
     
-        if let isVideo = albumModel!.isVideo, isVideo {
+        if let isVideo = sutraInfoModel!.isVideo, isVideo {
             let vc = HTZVideoPlayViewController()
             vc.videoUrl = self.albumListViewModel.dataSongArr[indexPath.row]!.file_link
             vc.coverImageUrl = self.albumListViewModel.dataSongArr[indexPath.row]!.icon
@@ -239,11 +255,11 @@ extension HTZAlbumListViewController: HTZDownloadManagerDelegate {
     func downloadChanged(_ downloadManager: HTZDownloadManager, downloadModel: HTZDownloadModel, state: HTZDownloadManagerState) {
         if state == HTZDownloadManagerState.finished {
            
-            albumListViewModel.requestData(index: albumModel!.index!, isPullDown: true) { (success) in
-                if success {
-                    self.tableView.reloadData()
-                }
-            }
+//            albumListViewModel.requestData(index: sutraInfoModel!.index!, isPullDown: true) { (success) in
+//                if success {
+//                    self.tableView.reloadData()
+//                }
+//            }
         }
     }
     

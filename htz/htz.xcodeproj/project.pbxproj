@@ -127,6 +127,7 @@
 		19A957FC229BC717007B48ED /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 19A957FA229BC717007B48ED /* LaunchScreen.storyboard */; };
 		19A95807229BC718007B48ED /* htzTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19A95806229BC718007B48ED /* htzTests.swift */; };
 		19A95812229BC718007B48ED /* htzUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19A95811229BC718007B48ED /* htzUITests.swift */; };
+		19B9419224401EAE00F7424A /* HTZSutraItemModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19B9419124401EAE00F7424A /* HTZSutraItemModel.swift */; };
 		19DE3F132431E7F60008AC42 /* AppDelegate+Push.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19DE3F122431E7F60008AC42 /* AppDelegate+Push.swift */; };
 		7499498FC650705EDB86F7A6 /* Pods_htzUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A12A440892FCB15F6F9A7461 /* Pods_htzUITests.framework */; };
 		8873886FAD3016FFFE04BCDB /* Pods_htzTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C6282761BE57BC50497E9304 /* Pods_htzTests.framework */; };
@@ -282,6 +283,7 @@
 		19A9580D229BC718007B48ED /* htzUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = htzUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		19A95811229BC718007B48ED /* htzUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = htzUITests.swift; sourceTree = "<group>"; };
 		19A95813229BC718007B48ED /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		19B9419124401EAE00F7424A /* HTZSutraItemModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZSutraItemModel.swift; sourceTree = "<group>"; };
 		19DE3F122431E7F60008AC42 /* AppDelegate+Push.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppDelegate+Push.swift"; sourceTree = "<group>"; };
 		3C768F35F7899594EC38CE14 /* Pods-htzUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-htzUITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-htzUITests/Pods-htzUITests.release.xcconfig"; sourceTree = "<group>"; };
 		549B0A80A97F5545FE963EF9 /* Pods-htzTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-htzTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-htzTests/Pods-htzTests.release.xcconfig"; sourceTree = "<group>"; };
@@ -761,6 +763,7 @@
 				193E5083231E635B000184EC /* HTZAlbumInfoModel.swift */,
 				1936CADE231FA6E5001218DD /* HTZSutraInfoModel.swift */,
 				193F56082320AE500037BC70 /* HTZAlbumPartModel.swift */,
+				19B9419124401EAE00F7424A /* HTZSutraItemModel.swift */,
 				1965FB1923559DC900924EF6 /* HTZVideoModel.swift */,
 			);
 			path = Model;
@@ -1273,6 +1276,7 @@
 				193B866F2334ACCA006D4A3D /* HTZMyFavoriteCell.swift in Sources */,
 				193E5086231E69BE000184EC /* HTZMusicPlayTool.swift in Sources */,
 				193CB4872316329D00A1B21F /* HTZConstans.swift in Sources */,
+				19B9419224401EAE00F7424A /* HTZSutraItemModel.swift in Sources */,
 				1946C4AA231F508400808F3C /* HTZMusicModel.swift in Sources */,
 				195DDD2622AFAF5B00C5F04C /* UILabel+Extension.swift in Sources */,
 				195DDD3122AFB21F00C5F04C /* BaseView.swift in Sources */,

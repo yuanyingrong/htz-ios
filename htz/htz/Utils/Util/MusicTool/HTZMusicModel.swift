@@ -40,6 +40,10 @@ class HTZMusicModel: NSObject, HandyJSON, NSCoding {
     /// 声音播放路径
     var file_link: String?
     
+    var original: String?
+    var explanation: String?
+    
+    
     /// 专辑图片
     var icon: String?
     

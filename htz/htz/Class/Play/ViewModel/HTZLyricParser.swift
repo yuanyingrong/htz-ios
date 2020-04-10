@@ -82,7 +82,7 @@ class HTZLyricParser: NSObject {
     ///   - lyricString: 歌词对应的字符串
     ///   - isDelBlank: 是否去掉空白行歌词
     /// - Returns: 包含歌词模型的数组
-    private static func lyricParser(lyricString: String, isDelBlank: Bool) -> [HTZLyricModel]? {
+    static func lyricParser(lyricString: String, isDelBlank: Bool) -> [HTZLyricModel]? {
         // 1. 以\n分割歌词
         let linesArr = lyricString.components(separatedBy: "\n")
         

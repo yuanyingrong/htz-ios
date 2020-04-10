@@ -45,14 +45,15 @@ class HTZAccountThirdLoginUtil: NSObject {
     
     private func setRegisterApps() {
         // 注册Sina微博
-        WeiboSDK.registerApp(sinaAppKey)
+//        WeiboSDK.registerApp(sinaAppKey)
         // 微信注册
-        WXApi.registerApp(wxAppID, universalLink: "")
+        let res = WXApi.registerApp(wxAppID, universalLink:"https://39.96.5.46:9500/")
+        printLog(res)
         #if DEBUG
         WeiboSDK.enableDebugMode(true)
         #endif
         // 注册QQ
-        tencentOAuth = TencentOAuth(appId: qqAppID, andDelegate: self)
+//        tencentOAuth = TencentOAuth(appId: qqAppID, andDelegate: self)
     }
     
     func getUserInfo(loginType: ThirdLoginType, result: @escaping ThirdLoginResultCallback) {

@@ -8,14 +8,29 @@
 
 import Foundation
 import Moya
+import Alamofire
 
 enum API {
     case login(code: String)
-    case sutras
+    case sutras(page_index: NSInteger, page_size: NSInteger)
+    case item(id: String) // 查询单个经典信息
+    case items(sutra_id: String) // 查询多条经典items
+    case download(file_id: String) // 下载
+    
+    case postListenHistory // 添加收听记录
+    case getListenHistorys(page_index: NSInteger, page_size: NSInteger) // 添加收听记录
+    
+    case recommendations // 经典推荐列表 TODO
+    
+    case userNotifications // 获取我的通知信息 TODO
+    case putNotification // 设置我的通知信息状态为已读 TODO
+    case notifications  // 查询所有通知
+    
     case albums
     case xingfuneixinchan
     case jingxinyangsheng
     case mixinxiaoshipin
+    
     case song(type: String, size: String, offset: String)
     case songDetail(songId: String)
     case sinaOAuth(code: String)
@@ -30,8 +45,12 @@ extension API: TargetType {
         switch self {
         case .sinaOAuth:
             return URL.init(string:"https://api.weibo.com/")!
-        case .song(_), .songDetail(_):
-            return URL.init(string:"https://musicapi.qianqian.com/v1/restserver/ting?format=json&from=ios&channel=appstore&method=")!
+//        case .song(_), .songDetail(_):
+//            return URL.init(string:"https://musicapi.qianqian.com/v1/restserver/ting?format=json&from=ios&channel=appstore&method=")!
+        case .download(_):
+            return URL(string: "http://39.96.5.46:9400/")!
+        case .xingfuneixinchan, .jingxinyangsheng, .mixinxiaoshipin:
+            return URL(string: "http://htzshanghai.top/resources/app_json/")!
         default:
             return URL.init(string:(Moya_baseURL))!
         }
@@ -40,9 +59,30 @@ extension API: TargetType {
     var path: String {
         switch self {
         case .login(_):
-            return "post/login";
-        case .sutras:
+            return "post/login"
+        case .sutras(_,_):
             return "get/sutras"
+        case .items(_):
+            return "get/sutra/items"
+        case .item(_):
+            return "get/sutra/item"
+        case .download(_):
+            return "get/download"
+           
+            
+        case .postListenHistory:
+            return "post/listen/history" // 添加收听记录
+        case .getListenHistorys(_,_): // 添加收听记录
+            return "get/listen/histories"
+        case .recommendations: // 经典推荐列表
+            return "get/recommendations"
+        case .userNotifications: // 获取我的通知信息 TODO
+            return "get/user/notifications"
+        case .putNotification: // 设置我的通知信息状态为已读 TODO
+            return "put/user/notifications"
+        case .notifications: // 查询所有通知
+            return "get/notifications"
+            
         case .albums:
          return "albums.json"
         case .xingfuneixinchan:
@@ -50,7 +90,7 @@ extension API: TargetType {
         case .jingxinyangsheng:
             return "jingxinyangsheng/jingxinyangsheng.json"
         case .mixinxiaoshipin:
-            return "mixinxiaoshipin/mixinxiaoshipin.json"
+            return "mixinxiaoshipin/mixinxiaoshipin_old.json"
         case .sinaOAuth(_):
             return "OAuth2/authorize"
         case let .song(type, size, offset):
@@ -59,7 +99,7 @@ extension API: TargetType {
             return "baidu.ting.song.play&songid=\(songId)"
         case .easyRequset:
             return "4/news/latest"
-        case .uploadHeadImage( _):
+        case .uploadHeadImage(parameters: _, imageDate: _):
             return "/file/user/upload.jhtml"
         default:
             return ""
@@ -68,7 +108,7 @@ extension API: TargetType {
     
     var method: Moya.Method {
         switch self {
-        case .easyRequset,.sutras:
+        case .easyRequset, .xingfuneixinchan, .jingxinyangsheng, .mixinxiaoshipin:
             return .get
         default:
             return .post
@@ -87,10 +127,17 @@ extension API: TargetType {
         switch self {
         case let .login(code):
             return .requestParameters(parameters: ["code": code], encoding: JSONEncoding.default)
-        case .sutras:
-            return .requestParameters(parameters: ["page_index" : 0,"page_size":20], encoding: JSONEncoding.default)
-        case .albums, .xingfuneixinchan, .jingxinyangsheng, .mixinxiaoshipin, .song(_), .songDetail(_):
+        case let .sutras(page_index, page_size), let .getListenHistorys(page_index, page_size):
+            return .requestParameters(parameters: ["page_index" : page_index,"page_size":page_size], encoding: JSONEncoding.default)
+        case let .items(id):
+            return .requestParameters(parameters: ["sutra_id" : id, "page_index" : 0,"page_size":20], encoding: JSONEncoding.default)
+        case let .item(id):
+            return .requestParameters(parameters: ["id" : id], encoding: JSONEncoding.default)
+        case let .download(file_id):
+            return .downloadParameters(parameters: ["file_id" : file_id], encoding: URLEncoding.default, destination: defaultDownloadDestination)
+        case .postListenHistory, .recommendations, .userNotifications, .putNotification, .notifications, .albums, .xingfuneixinchan, .jingxinyangsheng, .mixinxiaoshipin, .song(_), .songDetail(_):
             return .requestPlain
+            
         case let .register(email, password):
             return .requestParameters(parameters: ["email": email, "password": password], encoding: JSONEncoding.default)
         case .easyRequset:
@@ -123,9 +170,22 @@ extension API: TargetType {
         if let token = HTZUserAccount.shared.token {
             return ["Content-Type" : "application/x-www-form-urlencoded","token" : token]
         }
-        return ["Content-Type" : "application/x-www-form-urlencoded"]
+        return ["Content-Type" : "application/x-www-form-urlencoded","token" : "1fe8039b-bc8f-5afe-af7a-e16e80a24f38"]
+//        return ["Content-Type" : "application/x-www-form-urlencoded"]
     }
     
 }
 
 
+private let defaultDownloadDestination: DownloadDestination = { temporaryURL, response in
+    let directoryURLs = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)
+
+    if !directoryURLs.isEmpty {
+        guard let suggestedFilename = response.suggestedFilename else {
+            fatalError("@Moya/contributor error!! We didn't anticipate this being nil")
+        }
+        return (directoryURLs[0].appendingPathComponent(suggestedFilename), [])
+    }
+
+    return (temporaryURL, [])
+}

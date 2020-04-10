@@ -10,6 +10,59 @@ import UIKit
 
 class HTZLrcDataTool: NSObject {
     
+    static func getLrcModel(lrcContent: String) -> [HTZLrcModel] {
+        
+        // 解析歌词
+        // 1 将歌词转成数组
+        let lrcStrArray = lrcContent.components(separatedBy: "\n")
+        
+        // 歌词数组
+        var lrcMs = [HTZLrcModel]()
+        
+        // 2处理歌词字符串数字, 把字符串转成歌词对象
+        for lrcStr in lrcStrArray {
+            // 过滤垃圾数据
+            /*
+             [ti:]
+             [ar:]
+             [al:]
+             */
+            let isNoUseData = lrcStr.contains(Character("[ti:")) || lrcStr.contains(Character("[ar:")) || lrcStr.contains(Character("[al:"))
+            
+            if !isNoUseData {
+                let lrcModel = HTZLrcModel()
+                lrcMs.append(lrcModel)
+                
+                // 解析 [00:00.89]传奇
+                // 去掉 [
+                let resultStr = lrcStr.replacingOccurrences(of: "[", with: "")
+                
+                // 把 00:00.89 和 传奇 取出
+                let timeAndContent = resultStr.components(separatedBy: "]")
+                
+                // 解析
+                if timeAndContent.count == 2 {
+                    let time = timeAndContent[0]
+                    lrcModel.beginTime = Date.getTimeInterval(formatTime: time)
+                    let content = timeAndContent[1]
+                    lrcModel.lrcStr = content
+                } else if timeAndContent.count == 1 {
+                    let time = timeAndContent[0]
+                    lrcModel.beginTime = Date.getTimeInterval(formatTime: time)
+                    lrcModel.lrcStr = nil
+                }
+            }
+        }
+        // 修改模型的结束时间
+        let count = lrcMs.count
+        for (index, _) in lrcMs.enumerated() {
+            if index != count - 1 {
+                lrcMs[index].endTime = lrcMs[index + 1].beginTime
+            }
+        }
+        return lrcMs
+    }
+    
     static func getLrcData(fileName: String) -> [HTZLrcModel] {
         
         // 1.文件路径

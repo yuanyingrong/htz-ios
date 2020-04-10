@@ -702,8 +702,8 @@ extension HTZPlayViewController {
                     }
                 }
                 // 解析歌词
-                self.topLyricView.lyrics = HTZLyricParser.lyricParser(url: (self.model?.lrclink)!, isDelBlank: true)
-                self.bottomLyricView.lyrics = HTZLyricParser.lyricParser(url: (self.model?.lrclink)!, isDelBlank: true)
+                self.topLyricView.lyrics = HTZLyricParser.lyricParser(lyricString: (self.model?.original)!, isDelBlank: true)
+                self.bottomLyricView.lyrics = HTZLyricParser.lyricParser(lyricString: (self.model?.explanation)!, isDelBlank: true)
             }
             // 获取歌曲信息
             

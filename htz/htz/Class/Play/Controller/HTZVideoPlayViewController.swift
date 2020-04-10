@@ -58,7 +58,6 @@ class HTZVideoPlayViewController: UIViewController {
                 weakSelf.player?.stop()
             }
         }
-        
         self.player?.assetURL = URL(string: videoUrl!)!
         
     }

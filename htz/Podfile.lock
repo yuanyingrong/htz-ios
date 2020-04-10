@@ -1,5 +1,5 @@
 PODS:
-  - Alamofire (5.0.5)
+  - Alamofire (5.1.0)
   - FreeStreamer (4.0.0):
     - Reachability (~> 3.0)
   - GKCoverSwift (1.1.0)
@@ -78,7 +78,7 @@ CHECKOUT OPTIONS:
     :git: https://github.com/sinaweibosdk/weibo_ios_sdk.git
 
 SPEC CHECKSUMS:
-  Alamofire: df2f8f826963b08b9a870791ad48e07a10090b2e
+  Alamofire: 9d5c5f602928e512395b30950c5984eca840093c
   FreeStreamer: 7e9c976045701ac2f7e9c14c17245203c37bf2ea
   GKCoverSwift: 40c387c80c5cc695b77e3f105c04cdfb714a883c
   HandyJSON: d45b8415c501e3affc59ca9762c1197ff0feb646
@@ -98,4 +98,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: c0a81778cd936db5a0008d16ff598efd1790e8fd
 
-COCOAPODS: 1.8.4
+COCOAPODS: 1.9.1

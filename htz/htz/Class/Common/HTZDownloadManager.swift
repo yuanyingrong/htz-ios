@@ -191,7 +191,7 @@ class HTZDownloadManager: NSObject {
         if exist {
             if let downloadRequest = self.downloadRequest, downloadRequest.task?.state == URLSessionTask.State.running {
                 
-                downloadRequest.cancel(createResumeData: true)
+                downloadRequest.cancel()
                 cancelled = true
                 downloadRequest.suspend()
             }
@@ -418,14 +418,11 @@ extension HTZDownloadManager {
     
     private func startDownloadData(model: HTZDownloadModel) {
         
-        let request = URLRequest(url: URL(string: model.fileUrl!)!)
+//        let request = URLRequest(url: URL(string: model.fileUrl!)!)
         
-        DownloadRequest
-        self.downloadRequest = download(request) { (url, response) -> (destinationURL: URL, options: DownloadRequest.DownloadOptions) in
-//            downloadDataFilePath()
-            
-            return (URL(fileURLWithPath: model.fileLocalPath),DownloadRequest.DownloadOptions())
-            }.downloadProgress(closure: { (downloadProgress) in
+        let destination = DownloadRequest.suggestedDownloadDestination(for: FileManager.SearchPathDirectory.cachesDirectory, in: FileManager.SearchPathDomainMask.allDomainsMask)
+        
+        self.downloadRequest = AF.download(model.fileUrl!, to: destination).downloadProgress(closure: { (downloadProgress) in
                 if let delegate = self.delegate, delegate.responds(to: #selector(HTZPlayViewController.downloadProgress(_:downloadModel:totalSize:downloadSize:progress:))) {
                     delegate.downloadProgress(self, downloadModel: model, totalSize: NSInteger(downloadProgress.totalUnitCount), downloadSize: NSInteger(downloadProgress.completedUnitCount), progress: Float(downloadProgress.completedUnitCount) / Float(downloadProgress.totalUnitCount))
                 }
@@ -492,8 +489,9 @@ extension HTZDownloadManager {
             self.resumeData = model.resumeData as Data?
         }
         if let resumeData = self.resumeData {
+            let destination = DownloadRequest.suggestedDownloadDestination(for: FileManager.SearchPathDirectory.cachesDirectory, in: FileManager.SearchPathDomainMask.allDomainsMask)
             
-            self.downloadRequest = download(resumingWith: resumeData).downloadProgress(closure: { (downloadProgress) in
+            self.downloadRequest = AF.download(resumingWith: resumeData, to: destination).downloadProgress(closure: { (downloadProgress) in
                 if let delegate = self.delegate, delegate.responds(to: #selector(HTZPlayViewController.downloadProgress(_:downloadModel:totalSize:downloadSize:progress:))) {
                     delegate.downloadProgress(self, downloadModel: model, totalSize: NSInteger(downloadProgress.totalUnitCount), downloadSize: NSInteger(downloadProgress.completedUnitCount), progress: Float(downloadProgress.completedUnitCount / downloadProgress.totalUnitCount))
                 }
