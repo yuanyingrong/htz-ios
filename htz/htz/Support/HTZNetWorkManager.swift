@@ -178,6 +178,7 @@ func NetWorkRequest(_ target: API, completion: @escaping successCallback , faile
         //隐藏hud
         switch result {
         case let .success(response):
+           
             do {
                 let jsonData = try JSON(data: response.data)
                 print(jsonData)

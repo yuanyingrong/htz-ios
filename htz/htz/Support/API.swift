@@ -134,7 +134,8 @@ extension API: TargetType {
         case let .item(id):
             return .requestParameters(parameters: ["id" : id], encoding: JSONEncoding.default)
         case let .download(file_id):
-            return .downloadParameters(parameters: ["file_id" : file_id], encoding: URLEncoding.default, destination: defaultDownloadDestination)
+            return .requestParameters(parameters: ["file_id" : file_id], encoding: JSONEncoding.default)
+//            return .downloadParameters(parameters: ["file_id" : file_id], encoding: URLEncoding.default, destination: defaultDownloadDestination)
         case .postListenHistory, .recommendations, .userNotifications, .putNotification, .notifications, .albums, .xingfuneixinchan, .jingxinyangsheng, .mixinxiaoshipin, .song(_), .songDetail(_):
             return .requestPlain
             
