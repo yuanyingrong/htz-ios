@@ -6,6 +6,12 @@
                      "title": "首页",
                      "normal_icon": "home_icon_normal",
                      "normal_icon_select": "home_icon_select"
+                     },                     {
+                     "page": "HTZAlbumViewController",
+                     "type": "sutra",
+                     "title": "专辑",
+                     "normal_icon": "albums_icon_normal",
+                     "normal_icon_select": "albums_icon_select"
                      },
                      {
                      "page": "HTZBaseViewController",
@@ -13,6 +19,12 @@
                      "title": "",
                      "normal_icon": " ",
                      "normal_icon_select": " "
+                     },                     {
+                     "page": "HTZVideoPlayTableViewController",
+                     "type": "video",
+                     "title": "视频",
+                     "normal_icon": "video_icon_normal",
+                     "normal_icon_select": "video_icon_select"
                      },
                      {
                      "page": "HTZProfileViewController",

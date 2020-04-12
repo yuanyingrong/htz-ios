@@ -80,10 +80,12 @@ class HTZAlbumListCell: BaseTableViewCell {
     
     var imageName: String? {
         didSet {
-            if imageName!.hasPrefix("http") {
-                albumImageView.wb_setImageWith(urlStr: imageName!)
-            } else {
-                albumImageView.image = UIImage(named: imageName ?? "")
+            if let imageName = imageName {
+                if imageName.hasPrefix("http") {
+                    albumImageView.wb_setImageWith(urlStr: imageName)
+                } else {
+                    albumImageView.image = UIImage(named: imageName)
+                }
             }
         }
     }

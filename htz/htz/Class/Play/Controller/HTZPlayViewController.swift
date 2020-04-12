@@ -88,6 +88,25 @@ class HTZPlayViewController: HTZBaseViewController {
         self.dismiss(animated: true, completion: nil)
     }
     
+    @objc func share() {
+//        let shareView = HTZShareMenuView.menuShow()
+        let shareView = HTZShareMenuView.showInView(view: self.view, shareImageURL: "图片url" as AnyObject, shareContent: "分享内容", shareTitle: "分享标题", shareUrl: "www.baidu.com")
+        shareView?.shareTitle = model?.song_name ?? "标题"
+        shareView?.shareUrl = "www.baidu.com"
+        shareView?.shareContent = "分享text"
+        shareView?.backgroundColor = .clear
+//        let shareMessage = JSHAREMessage()
+//        shareMessage.title = model?.song_name
+//        shareMessage.url = "www.baidu.com"
+//        shareMessage.text = "分享text"
+////        shareMessage.platform = JSHAREPlatform(rawValue: JSHAREPlatform.wechatTimeLine.rawValue | JSHAREPlatform.wechatSession.rawValue | JSHAREPlatform.wechatFavourite.rawValue)!
+//        shareMessage.platform = .wechatSession
+//        shareMessage.mediaType = .text
+//        JSHAREService.share(shareMessage) { (state, error) in
+//            printLog("分享回调")
+//        }
+    }
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
@@ -121,6 +140,7 @@ class HTZPlayViewController: HTZBaseViewController {
         self.controlView.style = self.playStyle
         
         navigationItem.leftBarButtonItem = leftBarButtonItem
+        navigationItem.rightBarButtonItem = shareBarButtonItem
         
         self.view.addSubview(bgImageView)
 //        // 添加毛玻璃效果
@@ -203,6 +223,14 @@ class HTZPlayViewController: HTZBaseViewController {
             button.frame = CGRect(x: 0, y: 0, width: 50, height: 30)
             return buttonItem
         }()
+    lazy var shareBarButtonItem: UIBarButtonItem = {
+        let button = UIButton(setImage: "share", setBackgroundImage: "", target: self, action: #selector(share))
+        let buttonItem = UIBarButtonItem(customView: button)
+        button.frame = CGRect(x: 0, y: 0, width: 50, height: 30)
+        return buttonItem
+    }()
+
+    
         
         lazy var bgImageView: UIImageView = {
             let imageView = UIImageView(frame: self.view.bounds)
@@ -702,8 +730,13 @@ extension HTZPlayViewController {
                     }
                 }
                 // 解析歌词
-                self.topLyricView.lyrics = HTZLyricParser.lyricParser(lyricString: (self.model?.original)!, isDelBlank: true)
-                self.bottomLyricView.lyrics = HTZLyricParser.lyricParser(lyricString: (self.model?.explanation)!, isDelBlank: true)
+                if let original = self.model?.lrclink, original.hasPrefix("http") {
+                    self.topLyricView.lyrics = HTZLyricParser.lyricParser(url: (self.model?.lrclink)!, isDelBlank: true)
+                    self.bottomLyricView.lyrics = HTZLyricParser.lyricParser(url: (self.model?.lrclink)!, isDelBlank: true)                } else {
+                    self.topLyricView.lyrics = HTZLyricParser.lyricParser(lyricString: (self.model?.original)!, isDelBlank: true)
+                    self.bottomLyricView.lyrics = HTZLyricParser.lyricParser(lyricString: (self.model?.explanation)!, isDelBlank: true)
+                }
+                
             }
             // 获取歌曲信息
             

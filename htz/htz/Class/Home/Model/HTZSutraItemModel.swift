@@ -39,13 +39,26 @@ class HTZSutraItemModel: HandyJSON {
     /// 创建时间
     var created_at: String?
     
+    
     var isVideo: Bool?
+    
+    var audio: String?
     
     required init() {}
     
     func mapping(mapper: HelpingMapper) {
         mapper <<<
             self.desc <-- "description"
+        
+        mapper <<<
+            self.id <-- "hash"
+        
+        mapper <<<
+        self.played_count <-- "playcount"
+        
+        mapper <<<
+            self.explanation <-- "lyric"
+
     }
     
 

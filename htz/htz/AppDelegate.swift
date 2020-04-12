@@ -55,25 +55,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
        
         // 极光推送
-//        configPush(launchOptions: launchOptions)
-        
-//        let shareConfig = JSHARELaunchConfig()
-//        shareConfig.appKey = "AppKey copied from JiGuang Portal application"
-//        shareConfig.sinaWeiboAppKey = "374535501"
-//        shareConfig.sinaWeiboAppSecret = "baccd12c166f1df96736b51ffbf600a2"
-//        shareConfig.sinaRedirectUri = "https://www.jiguang.cn"
-//        shareConfig.qqAppId = "1105864531"
-//        shareConfig.qqAppKey = "glFYjkHQGSOCJHMC"
-//        shareConfig.weChatAppId = "wxa2ea563906227379"
-//        shareConfig.weChatAppSecret = "bb63c0a06bf0ee7f633a5bc44304d110"
-//        shareConfig.facebookAppID = "1847959632183996"
-//        shareConfig.facebookDisplayName = "JShareDemo"
-//        shareConfig.twitterConsumerKey = "4hCeIip1cpTk9oPYeCbYKhVWi"
-//        shareConfig.twitterConsumerSecret = "DuIontT8KPSmO2Y1oAvby7tpbWHJimuakpbiAUHEKncbffekmC"
-//        shareConfig.jChatProAuth = "a7e2ce002d1a071a6ca9f37d"
-//        JSHAREService.setup(with: shareConfig)
-//        JSHAREService.setDebug(true)
-        
+        configPush(launchOptions: launchOptions)
+        // 极光分享
+        configShare()
+                
 //        #if DEBUG
 //        pgyerCrash()
 //        #endif

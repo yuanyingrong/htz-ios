@@ -25,49 +25,13 @@ class HTZHomeTitleCollectionView: BaseView {
         }
     }
     
+    var title: String? {
+        didSet {
+            leftLabel.text = title
+        }
+    }
+    
     weak var delegate: HTZHomeTitleCollectionViewDelegate?
-
-    private lazy var titleView: UIView = {
-        let view = UIView()
-        view.backgroundColor = UIColor.white
-        return view
-    }()
-    
-    private lazy var leftImageView: UIImageView = {
-        let imageView = UIImageView(image: UIImage(named: ""))
-        return imageView
-    }()
-    
-    private lazy var leftLabel: UILabel = {
-        let label = UILabel(text: "专辑列表", font: 15, textColor: UIColor.darkGray)
-        return label
-    }()
-    
-    private lazy var rightButton: LeftTitleRightImageButton = {
-        let button = LeftTitleRightImageButton()
-        button.addTarget(self, action: #selector(rightButtonClickAction), for: .touchUpInside)
-        button.setTitle("更多", for: .normal)
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 15)
-        button.setTitleColor(UIColor.darkGray, for: UIControl.State.normal)
-        return button
-    }()
-    
-    private lazy var collectionView: UICollectionView = {
-        let flowLayout = UICollectionViewFlowLayout();
-        flowLayout.itemSize = CGSize(width: (UIScreen.main.bounds.size.width - 5 * 10) / 3, height: UIScreen.main.bounds.size.width/3)
-        flowLayout.scrollDirection = UICollectionView.ScrollDirection.vertical
-        flowLayout.sectionInset = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 10)
-        flowLayout.minimumLineSpacing = 10
-        let collectionView = UICollectionView(frame: bounds, collectionViewLayout: flowLayout)
-        collectionView.backgroundColor = .clear
-        collectionView.showsHorizontalScrollIndicator = false
-        collectionView.showsVerticalScrollIndicator = false
-        collectionView.isPagingEnabled = true
-        collectionView.delegate = self
-        collectionView.dataSource = self
-        collectionView.register(HTZHomeTitleCollectionViewCell.self, forCellWithReuseIdentifier: "HTZHomeTitleCollectionViewCell")
-        return collectionView
-    }()
 
     override func configSubviews() {
         super.configSubviews()
@@ -106,6 +70,50 @@ class HTZHomeTitleCollectionView: BaseView {
             make.left.right.bottom.equalTo(self)
         }
     }
+    
+    private lazy var titleView: UIView = {
+        let view = UIView()
+        view.backgroundColor = UIColor.white
+        return view
+    }()
+    
+    private lazy var leftImageView: UIImageView = {
+        let imageView = UIImageView(image: UIImage(named: ""))
+        return imageView
+    }()
+    
+    private lazy var leftLabel: UILabel = {
+        let label = UILabel(text: "专辑列表", font: 15, textColor: UIColor.darkGray)
+        return label
+    }()
+    
+    private lazy var rightButton: LeftTitleRightImageButton = {
+        let button = LeftTitleRightImageButton()
+        button.addTarget(self, action: #selector(rightButtonClickAction), for: .touchUpInside)
+        button.setTitle("更多", for: .normal)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 15)
+        button.setTitleColor(UIColor.darkGray, for: UIControl.State.normal)
+        button.isHidden = true
+        return button
+    }()
+    
+    private lazy var collectionView: UICollectionView = {
+        let flowLayout = UICollectionViewFlowLayout();
+        flowLayout.itemSize = CGSize(width: (UIScreen.main.bounds.size.width - 5 * 10) / 3, height: UIScreen.main.bounds.size.width/3)
+        flowLayout.scrollDirection = UICollectionView.ScrollDirection.vertical
+        flowLayout.sectionInset = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 10)
+        flowLayout.minimumLineSpacing = 10
+        let collectionView = UICollectionView(frame: bounds, collectionViewLayout: flowLayout)
+        collectionView.backgroundColor = .clear
+        collectionView.showsHorizontalScrollIndicator = false
+        collectionView.showsVerticalScrollIndicator = false
+        collectionView.isPagingEnabled = true
+        collectionView.delegate = self
+        collectionView.dataSource = self
+        collectionView.register(HTZHomeTitleCollectionViewCell.self, forCellWithReuseIdentifier: "HTZHomeTitleCollectionViewCell")
+        return collectionView
+    }()
+
 }
 
 extension HTZHomeTitleCollectionView {

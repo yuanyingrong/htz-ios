@@ -25,8 +25,9 @@ class HTZWechatLoginViewController: HTZBaseViewController {
         view.backgroundColor = UIColor.colorWithHexString("F8F8FB")
         
         view.addSubview(topImageView)
-        
+//        view.addSubview(wechatImageView)
         view.addSubview(wechatButton)
+        view.addSubview(bottomLabel)
     }
     
     override func configConstraint() {
@@ -39,32 +40,55 @@ class HTZWechatLoginViewController: HTZBaseViewController {
 //                make.top.equalTo(view).offset(5.5 * kGlobelMargin)
 //            }
             make.centerX.equalTo(view)
-            make.size.equalTo(CGSize(width: 120, height: 120))
+            make.size.equalTo(CGSize(width: 160, height: 160))
         }
         
-        
+//        wechatImageView.snp.makeConstraints { (make) in
+//            make.center.equalTo(view)
+//            make.top.equalTo(topImageView.snp.bottom).offset(8 * kGlobelMargin)
+//            make.size.equalTo(CGSize(width: 88, height: 88))
+//        }
+
+
         wechatButton.snp.makeConstraints { (make) in
             make.center.equalTo(view)
             make.top.equalTo(topImageView.snp.bottom).offset(8 * kGlobelMargin)
-            make.size.equalTo(CGSize(width: 66, height: 66))
+            make.width.equalTo(kScreenWidth * 0.6)
+            make.height.equalTo(66)
         }
         
-        
+        bottomLabel.snp.makeConstraints { (make) in
+            make.centerX.equalTo(view)
+            make.bottom.equalTo(view).offset(-32)
+        }
     }
 
     
 
     private lazy var topImageView: UIImageView = {
-        let imageView = UIImageView(image: UIImage(named: "logo"))
+        let imageView = UIImageView(image: UIImage(named: "htz_no_title"))
         return imageView
     }()
     
+    private lazy var wechatImageView: UIImageView = {
+        let imageView = UIImageView(image: UIImage(named: "wechat"))
+        return imageView
+    }()
+
+    
     private lazy var wechatButton: UIButton = {
         let wechatButton = UIButton(frame: CGRect(x: 0, y: 0, width: 88, height: 88))
-        wechatButton.set(image: UIImage(named: "地图"), title: "微信登录", titlePosition: UIView.ContentMode.bottom, additionalSpacing: 8, state: UIControl.State.normal)
-        wechatButton.setTitleColor(UIColor.red, for: UIControl.State.normal)
+        wechatButton.setTitle("微信登陆", for: UIControl.State.normal)
+        wechatButton.backgroundColor = .green
+//        wechatButton.set(image: UIImage(named: "地图"), title: "微信登录", titlePosition: UIView.ContentMode.bottom, additionalSpacing: 8, state: UIControl.State.normal)
+//        wechatButton.setTitleColor(UIColor.red, for: UIControl.State.normal)
         wechatButton.addTarget(self, action: #selector(wechatButtonClickAction), for: UIControl.Event.touchUpInside)
         return wechatButton
+    }()
+    
+    private lazy var bottomLabel: UILabel = {
+        let label = UILabel(text: "登录即代表阅读并同意相关服务条款", font: 16, textColor: UIColor.green)
+        return label
     }()
 
 }

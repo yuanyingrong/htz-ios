@@ -130,8 +130,10 @@ extension HTZAccountThirdLoginUtil: WXApiDelegate {
         // 获取用户信息
         switch resp.errCode {
         case 0: // 用户同意
-            let aresp = resp as! SendAuthResp
-            getWeiXinUserInfo(code: aresp.code!)
+            if resp.isKind(of: SendAuthResp.self) {
+                let aresp = resp as! SendAuthResp
+                getWeiXinUserInfo(code: aresp.code!)
+            }
         case -2: // 用户取消授权微信登录
             print("用户取消授权微信登录")
             resultCallback!(nil, "授权失败")

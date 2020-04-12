@@ -18,10 +18,13 @@ class HTZAlbumListViewController: HTZBaseViewController {
         didSet {
             if let sutraInfoModel = sutraInfoModel {
                 nameLabel.text = sutraInfoModel.name
-                if sutraInfoModel.cover!.hasPrefix("http") {
-                    albumImageView.wb_setImageWith(urlStr: sutraInfoModel.cover!)
-                } else {
-                    albumImageView.image = UIImage(named: sutraInfoModel.cover ?? "")
+                
+                if let cover = sutraInfoModel.cover {
+                    if cover.hasPrefix("http") {
+                        albumImageView.wb_setImageWith(urlStr:cover)
+                    } else {
+                        albumImageView.image = UIImage(named:cover)
+                    }
                 }
                 contentLabel.text = sutraInfoModel.desc
                 countLabel.text = "共\(sutraInfoModel.item_total ?? "0")集"
@@ -30,7 +33,7 @@ class HTZAlbumListViewController: HTZBaseViewController {
                 albumListViewModel.albumTitle = sutraInfoModel.name
                 
                 // 数据请求
-                if sutraInfoModel.index == 0 {
+                if sutraInfoModel.index != 100 {
                     albumListViewModel.requestData(index: sutraInfoModel.index!, isPullDown: true) { (success) in
                         if success {
                             self.countLabel.text = "共\(self.albumListViewModel.dataArr.count)集"
@@ -157,11 +160,11 @@ extension HTZAlbumListViewController: UITableViewDataSource, UITableViewDelegate
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         
-        NetWorkRequest(API.download(file_id: "tests/5e9039abe2e76d070697e296")) { (response) -> (Void) in
-            printLog(response)
-        }
-
-        return
+//        NetWorkRequest(API.download(file_id: "tests/5e9039abe2e76d070697e296")) { (response) -> (Void) in
+//            printLog(response)
+//        }
+//
+//        return
     
         if let isVideo = sutraInfoModel!.isVideo, isVideo {
             let vc = HTZVideoPlayViewController()

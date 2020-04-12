@@ -20,6 +20,9 @@ class HTZHomeSearchView: BaseView {
     
     override func configSubviews() {
         super.configSubviews()
+        
+        self.backgroundColor = UIColor.groupTableViewBackground
+        
         addSubview(contentView)
         contentView.addSubview(leftImageView)
         contentView.addSubview(middleView)
@@ -43,12 +46,14 @@ class HTZHomeSearchView: BaseView {
         leftImageView.snp.makeConstraints { (make) in
             make.top.bottom.equalTo(contentView)
             make.left.equalTo(contentView).offset(2 * kGlobelMargin)
+            
+            make.size.equalTo(CGSize(width: 1, height: 66))
         }
         
         middleView.snp.makeConstraints { (make) in
             make.left.equalTo(leftImageView.snp.rightMargin).offset(2 * kGlobelMargin)
-            make.top.equalTo(contentView).offset(kGlobelMargin)
-            make.bottom.equalTo(contentView).offset(-kGlobelMargin)
+            make.top.equalTo(contentView).offset(-0.1 * kGlobelMargin)
+            make.bottom.equalTo(contentView).offset(-0.1 * kGlobelMargin)
             make.height.equalTo(30)
         }
         
@@ -66,16 +71,16 @@ class HTZHomeSearchView: BaseView {
     
     private lazy var contentView: UIView = {
         let view: UIView = UIView()
-        view.backgroundColor = UIColor.white
-        view.cornerRadius = 22
-        view.layer.borderColor = UIColor.groupTableViewBackground.cgColor
-        view.layer.borderWidth = 2
+//        view.backgroundColor = UIColor.white
+//        view.cornerRadius = 22
+//        view.layer.borderColor = UIColor.groupTableViewBackground.cgColor
+//        view.layer.borderWidth = 2
         return view
     }()
     
     private lazy var leftImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = UIImage(named: "home_icon_select")
+//        imageView.image = UIImage(named: "home_icon_select")
         return imageView
     }()
     

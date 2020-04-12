@@ -18,7 +18,7 @@ struct ProfileCell {
 class HTZProfileViewController: HTZBaseViewController {
 
     let dataArr: [ProfileCell] = {
-        let dataArr = [ProfileCell(imageName: "history", title: "我的收藏")]
+        let dataArr = [ProfileCell(imageName: "favorite", title: "我的收藏"),ProfileCell(imageName: "history", title: "播放历史"), ProfileCell(imageName: "item_list", title: "设置")]
 //        let dataArr = [ProfileCell(imageName: "favorite", title: "我的消息"), ProfileCell(imageName: "history", title: "我的收藏"), ProfileCell(imageName: "favorite", title: "我的设置"), ProfileCell(imageName: "history", title: "我的赞赏"), ProfileCell(imageName: "history", title: "我的意见反馈")]
         return dataArr
     }()
@@ -42,7 +42,10 @@ class HTZProfileViewController: HTZBaseViewController {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(loginSuccess(noti:)), name: NSNotification.Name(kLoginSuccessNotification), object: nil)
     }
+    
     
     override func configSubView() {
         super.configSubView()
@@ -69,6 +72,11 @@ class HTZProfileViewController: HTZBaseViewController {
         HTZMusicTool.hidePlayBtn()
     }
     
+    @objc private func loginSuccess(noti: Notification) {
+        self.headerView.iconImage =  HTZUserAccount.shared.headimgurl
+        self.headerView.name =  HTZUserAccount.shared.name
+    }
+    
 }
 
 // MARK: - UITableViewDataSource, UITableViewDelegate
@@ -91,6 +99,10 @@ extension HTZProfileViewController: UITableViewDataSource, UITableViewDelegate {
             let vc = HTZMyFavoriteViewController()
             vc.title = "我的收藏"
             navigationController?.pushViewController(vc, animated: true)
+        } else if indexPath.row == 1 {
+            
+        } else if indexPath.row == 2 {
+            
         }
         
     }
@@ -133,6 +145,7 @@ extension HTZProfileViewController: HTZProfileHeaderViewDelegate {
         }
         print("点击登录")
     }
+    
     
     @objc func functionTapAction(_ index: NSInteger) {
         if index == 1 {

@@ -13,6 +13,7 @@ import Alamofire
 enum API {
     case login(code: String)
     case sutras(page_index: NSInteger, page_size: NSInteger)
+    case search(key: String, output_offset: NSInteger, max_outputs: NSInteger)
     case item(id: String) // 查询单个经典信息
     case items(sutra_id: String) // 查询多条经典items
     case download(file_id: String) // 下载
@@ -20,7 +21,7 @@ enum API {
     case postListenHistory // 添加收听记录
     case getListenHistorys(page_index: NSInteger, page_size: NSInteger) // 添加收听记录
     
-    case recommendations // 经典推荐列表 TODO
+    case recommendations // 经典推荐列表
     
     case userNotifications // 获取我的通知信息 TODO
     case putNotification // 设置我的通知信息状态为已读 TODO
@@ -47,9 +48,11 @@ extension API: TargetType {
             return URL.init(string:"https://api.weibo.com/")!
 //        case .song(_), .songDetail(_):
 //            return URL.init(string:"https://musicapi.qianqian.com/v1/restserver/ting?format=json&from=ios&channel=appstore&method=")!
+        case .search(_):
+            return URL(string: "http://39.96.5.46:9300/")!
         case .download(_):
             return URL(string: "http://39.96.5.46:9400/")!
-        case .xingfuneixinchan, .jingxinyangsheng, .mixinxiaoshipin:
+        case .albums, .xingfuneixinchan, .jingxinyangsheng, .mixinxiaoshipin:
             return URL(string: "http://htzshanghai.top/resources/app_json/")!
         default:
             return URL.init(string:(Moya_baseURL))!
@@ -62,6 +65,8 @@ extension API: TargetType {
             return "post/login"
         case .sutras(_,_):
             return "get/sutras"
+        case .search(_):
+            return "get/search"
         case .items(_):
             return "get/sutra/items"
         case .item(_):
@@ -108,7 +113,7 @@ extension API: TargetType {
     
     var method: Moya.Method {
         switch self {
-        case .easyRequset, .xingfuneixinchan, .jingxinyangsheng, .mixinxiaoshipin:
+        case .easyRequset, .albums, .xingfuneixinchan, .jingxinyangsheng, .mixinxiaoshipin:
             return .get
         default:
             return .post
@@ -129,8 +134,11 @@ extension API: TargetType {
             return .requestParameters(parameters: ["code": code], encoding: JSONEncoding.default)
         case let .sutras(page_index, page_size), let .getListenHistorys(page_index, page_size):
             return .requestParameters(parameters: ["page_index" : page_index,"page_size":page_size], encoding: JSONEncoding.default)
+        case let .search(key, output_offset, max_outputs):
+            return .requestParameters(parameters: ["key" : key, "output_offset" : output_offset, "max_outputs":max_outputs], encoding: JSONEncoding.default)
         case let .items(id):
             return .requestParameters(parameters: ["sutra_id" : id, "page_index" : 0,"page_size":20], encoding: JSONEncoding.default)
+
         case let .item(id):
             return .requestParameters(parameters: ["id" : id], encoding: JSONEncoding.default)
         case let .download(file_id):
@@ -168,11 +176,11 @@ extension API: TargetType {
     
     
     var headers: [String : String]? {
+        HTZUserAccount.shared.token = "8cfb9627-98ea-54f4-bd99-a96422540971"
         if let token = HTZUserAccount.shared.token {
             return ["Content-Type" : "application/x-www-form-urlencoded","token" : token]
         }
-        return ["Content-Type" : "application/x-www-form-urlencoded","token" : "1fe8039b-bc8f-5afe-af7a-e16e80a24f38"]
-//        return ["Content-Type" : "application/x-www-form-urlencoded"]
+        return ["Content-Type" : "application/x-www-form-urlencoded"]
     }
     
 }

@@ -1,22 +1,14 @@
 //
-//  HTZHomeViewModel.swift
+//  HTZAlbumViewModel.swift
 //  htz
 //
-//  Created by 袁应荣 on 2019/8/8.
-//  Copyright © 2019 袁应荣. All rights reserved.
+//  Created by 袁应荣 on 2020/4/11.
+//  Copyright © 2020 袁应荣. All rights reserved.
 //
 
 import UIKit
 
-struct HTZHomeImageTitle {
-    
-    var title: String?
-    var imageName: String?
-    
-    
-}
-
-class HTZHomeViewModel: NSObject {
+class HTZAlbumViewModel: NSObject {
 
     var homeTitleModel: HTZHomeTitleModel?
     var dataArr = [HTZSutraInfoModel?]()
@@ -29,12 +21,10 @@ class HTZHomeViewModel: NSObject {
 //    }
     
     func requestData(isPullDown: Bool, callBack: @escaping (Bool) -> ()) {
-        // recommendations
-        NetWorkRequest(API.albums) { (response) -> (Void) in
+        NetWorkRequest(API.sutras(page_index: 0, page_size: 20)) { (response) -> (Void) in
             
             
-//            let arr = [HTZSutraInfoModel].deserialize(from: response["data"].rawString())
-            let arr = [HTZSutraInfoModel].deserialize(from: response["sutra_items"].rawString())
+            let arr = [HTZSutraInfoModel].deserialize(from: response["data"].rawString())
             if let arr = arr {
                 self.dataArr = arr
                 

@@ -38,9 +38,18 @@ class HTZSutraInfoModel: HandyJSON {
     
     func mapping(mapper: HelpingMapper) {
         mapper <<<
-            
             self.desc <-- "description"
+        
+//        mapper <<<
+//            self.name <-- "title"
+//        
+//        mapper <<<
+//            self.played_count <-- "playcount"
+//        
+//        mapper <<<
+//            self.cover <-- "icon"
     }
+    
     
     /**
      {

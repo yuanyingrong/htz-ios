@@ -19,7 +19,8 @@ class HTZAlbumListViewModel: NSObject {
     var albumTitle: String?
     
     func requestData(sutra_id: String, isPullDown: Bool, callBack: @escaping (Bool) -> ()) {
-            var target: API = API.items(sutra_id: sutra_id)
+        
+            let target: API = API.items(sutra_id: sutra_id)
             
             NetWorkRequest(target) { (response) -> (Void) in
                 if response["code"].rawString() == "200" {
@@ -88,19 +89,19 @@ class HTZAlbumListViewModel: NSObject {
 
         NetWorkRequest(target) { (response) -> (Void) in
 
-            let arr = [HTZAlbumPartModel].deserialize(from: response["sutra_items"].rawString())
+            let arr = [HTZSutraItemModel].deserialize(from: response["sutra_items"].rawString())
             if let arr = arr {
-//                self.dataArr = arr
+                self.dataArr = arr
                 var arrM = [HTZMusicModel]()
                 for model in arr {
                     let obj = HTZMusicModel()
                     obj.song_name = model?.title
-                    obj.song_id = model?.hash
+                    obj.song_id = model?.id
                     obj.album_id = self.icon
                     obj.icon = self.icon
                     obj.album_title = self.albumTitle
                     obj.file_link = "http://htzshanghai.top/resources/audios/\(album)/" + model!.audio!
-                    obj.lrclink = "http://htzshanghai.top/resources/lyrics/\(album)/" + model!.lyric!
+                    obj.lrclink = "http://htzshanghai.top/resources/lyrics/\(album)/" + model!.original!
                     obj.file_duration = model?.duration
 
                     obj.downloadState = kDownloadManager.checkDownloadState(fileID: obj.song_id!)
