@@ -10,12 +10,9 @@ import UIKit
 
 class HTZHomeViewController: HTZBaseViewController {
     
-    
-    
-    
     // 图片
-    private let pictures = ["banner_dian_zi_bao", "banner_zhu_zi_wan_nian_ding_lun", "http://wechatapppro-1252524126.file.myqcloud.com/appw8Gkxo2j3844/image/c0c2babbc244b2143a84d4eca6afe420.jpg"]
-//    ["https://goodreading.mobi/StudentApi/UserFiles/Banner/Student/Home/banner_tz.png", "https://goodreading.mobi/StudentApi/UserFiles/Banner/Student/Home/banner_dzsyy.png", "https://goodreading.mobi/studentapi/userfiles/banner/student/home/studenttj.png"]
+    private let pictures = ["banner_dian_zi_bao", "banner_zhu_zi_wan_nian_ding_lun", "http://wechatapppro-1252524126.file.myqcloud.com/appw8Gkxo2j3844/image/c0c2babbc244b2143a84d4eca6afe420.jpg","http://www.htz.org.cn/wp-content/themes/htz/images/banner_chuanxilu.jpg","http://new.htz.org.tw/wp-content/uploads/2019/02/初衷願景-背景-3.jpg","http://new.htz.org.tw/wp-content/uploads/2019/02/IMG_1378.jpg"]
+
     
     
     override func viewDidLoad() {
@@ -29,14 +26,14 @@ class HTZHomeViewController: HTZBaseViewController {
         view.addSubview(bottomView)
         
         searchVew.snp.makeConstraints { (make) in
-            make.top.equalTo(view).offset(64)
+            make.top.equalTo(view).offset(kStatusBarHeight)
             make.left.right.equalTo(view)
             
         }
         // 滚动视图
         cycleView.pictures = pictures
         cycleView.snp.makeConstraints { (make) in
-            make.top.equalTo(searchVew.snp.bottom).offset(16)
+            make.top.equalTo(searchVew.snp.bottom).offset(2 * kGlobelMargin)
             make.height.equalTo(180)
             make.left.right.equalTo(view)
         }

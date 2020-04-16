@@ -176,7 +176,7 @@ extension API: TargetType {
     
     
     var headers: [String : String]? {
-        HTZUserAccount.shared.token = "8cfb9627-98ea-54f4-bd99-a96422540971"
+//        HTZUserAccount.shared.token = "8cfb9627-98ea-54f4-bd99-a96422540971"
         if let token = HTZUserAccount.shared.token {
             return ["Content-Type" : "application/x-www-form-urlencoded","token" : token]
         }

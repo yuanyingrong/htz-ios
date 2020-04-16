@@ -50,14 +50,14 @@ class HTZSutraItemModel: HandyJSON {
         mapper <<<
             self.desc <-- "description"
         
-        mapper <<<
-            self.id <-- "hash"
-        
-        mapper <<<
-        self.played_count <-- "playcount"
-        
-        mapper <<<
-            self.explanation <-- "lyric"
+//        mapper <<<
+//            self.id <-- "hash"
+//        
+//        mapper <<<
+//        self.played_count <-- "playcount"
+//        
+//        mapper <<<
+//            self.explanation <-- "lyric"
 
     }
     

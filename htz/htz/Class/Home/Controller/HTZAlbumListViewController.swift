@@ -33,7 +33,7 @@ class HTZAlbumListViewController: HTZBaseViewController {
                 albumListViewModel.albumTitle = sutraInfoModel.name
                 
                 // 数据请求
-                if sutraInfoModel.index != 100 {
+                if let isAlbum = sutraInfoModel.isAlbum, !isAlbum {
                     albumListViewModel.requestData(index: sutraInfoModel.index!, isPullDown: true) { (success) in
                         if success {
                             self.countLabel.text = "共\(self.albumListViewModel.dataArr.count)集"

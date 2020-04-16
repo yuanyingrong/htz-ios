@@ -34,20 +34,22 @@ class HTZSutraInfoModel: HandyJSON {
     
     var isVideo: Bool?
     
+    var isAlbum: Bool?
+    
     required init() {}
     
     func mapping(mapper: HelpingMapper) {
         mapper <<<
             self.desc <-- "description"
         
-//        mapper <<<
-//            self.name <-- "title"
-//        
-//        mapper <<<
-//            self.played_count <-- "playcount"
-//        
-//        mapper <<<
-//            self.cover <-- "icon"
+        mapper <<<
+            self.name <-- "title"
+        
+        mapper <<<
+            self.played_count <-- "playcount"
+        
+        mapper <<<
+            self.cover <-- "icon"
     }
     
     

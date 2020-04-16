@@ -94,6 +94,7 @@ class HTZAudioPlayer: NSObject {
         let audioStream = FSAudioStream(configuration: configuration)
         audioStream?.strictContentTypeChecking = false
         audioStream?.defaultContentType = "audio/x-m4a"
+//        audioStream.defaultContentType = "audio/mpeg"
         
         audioStream?.onCompletion = {
             print("完成")

@@ -20,26 +20,30 @@ class HTZAlbumViewModel: NSObject {
 //        return dataArr
 //    }
     
-    func requestData(isPullDown: Bool, callBack: @escaping (Bool) -> ()) {
+    func requestData(isPullDown: Bool, callBack: @escaping (Bool, _ code:String) -> ()) {
         NetWorkRequest(API.sutras(page_index: 0, page_size: 20)) { (response) -> (Void) in
             
-            
-            let arr = [HTZSutraInfoModel].deserialize(from: response["data"].rawString())
-            if let arr = arr {
-                self.dataArr = arr
-                
-                let model = HTZSutraInfoModel()
-                model.name = "觅心小视频(视频)"
-                model.cover = "play_normal"
-                model.played_count = "0"
-                model.item_total = "11"
-                model.desc = "1111111111111111111"
-                model.isVideo = true
-                self.dataArr.insert(model, at: 0)
-                
-                callBack(true)
+            if response["code"].rawString() == "200" {
+                let arr = [HTZSutraInfoModel].deserialize(from: response["data"].rawString())
+                if let arr = arr {
+                    self.dataArr = arr
+                    
+                    let model = HTZSutraInfoModel()
+                    model.name = "觅心小视频(视频)"
+                    model.cover = "play_normal"
+                    model.played_count = "0"
+                    model.item_total = "11"
+                    model.desc = "1111111111111111111"
+                    model.isVideo = true
+                    self.dataArr.insert(model, at: 0)
+                    
+                    callBack(true, "200")
+                }
+            } else if response["code"].rawString() == "20100" {
+                // token invalid 重新登录
+                callBack(false, "20100")
             }
-            print(response["sutra_items"])
+            
         }
     }
 }

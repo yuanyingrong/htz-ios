@@ -47,9 +47,8 @@ class HTZShareMenuView: UIView {
         super.init(frame: frame)
         
         let array = checkSupportApplication()
-        titles = ["微信", "朋友圈"]
         images = array[0] as! [String]
-        let tags:[NSInteger] = array[1] as! [NSInteger]
+        titles = array[1] as! [String]
         self.setUpUI()
         self.layout()
         self.addTap()
@@ -99,7 +98,7 @@ class HTZShareMenuView: UIView {
         shareMessage.title = shareTitle
         shareMessage.url = shareUrl
         shareMessage.text = shareContent
-        shareMessage.image = UIImage(named: "wechat")?.jpegData(compressionQuality: 0.9)
+        shareMessage.image = UIImage(named: "htz_no_title")?.jpegData(compressionQuality: 0.9)
 //        shareMessage.image
         shareMessage.platform = paltfrom
         shareMessage.mediaType = .link
@@ -211,7 +210,7 @@ extension HTZShareMenuView {
             make.top.equalTo(self.snp.bottom).offset(0)
             make.left.equalTo(self).offset(0)
             make.right.equalTo(self).offset(0)
-            make.height.equalTo(250)
+            make.height.equalTo(80+80)
         }
 
         collectionView.snp.updateConstraints { (make) in
@@ -316,32 +315,32 @@ extension HTZShareMenuView {
     /// 第三方安装检测
     private func checkSupportApplication() -> [[Any]] {
         var images:[String] = []
-        var tags:[NSInteger] = []
+        var titles:[String] = []
         for type in platformTemps {
             switch type {
             case .wechatSession:
                 if JSHAREService.isWeChatInstalled() {
                     images.append("wechat")
-                    tags.append(0)
+                    titles.append("微信")
                 }
                 break
             case .wechatTimeLine:
                 if JSHAREService.isWeChatInstalled() {
                     images.append("friends")
-                    tags.append(2)
+                    titles.append("微信朋友圈")
                 }
                 break
             case .wechatFavourite:
                 if JSHAREService.isWeChatInstalled() {
-                    images.append("分享微信收藏")
-                    tags.append(3)
+                    images.append("")
+                    titles.append("微信收藏")
                 }
                 break
             default:
                 break
             }
         }
-        return [images, tags]
+        return [images, titles]
     }
 }
 
