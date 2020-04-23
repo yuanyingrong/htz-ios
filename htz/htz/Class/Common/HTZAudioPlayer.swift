@@ -73,6 +73,7 @@ class HTZAudioPlayer: NSObject {
                     
                     DispatchQueue.main.async {
                         self.audioStream.url = NSURL(string: self._playUrlStr!)
+                        
                     }
                 } else {
                     DispatchQueue.main.async {
@@ -88,6 +89,11 @@ class HTZAudioPlayer: NSObject {
     
     private var playTimer: Timer?
     private var bufferTimer: Timer?
+    
+    lazy var ijkPlayer: IJKFFMoviePlayerController = {
+        let playerController = IJKFFMoviePlayerController(contentURL: URL(string: "http://htzshanghai.top/resources/audios/xingfuneixinchan/radio-01-20130122.mp3"), with: IJKFFOptions.byDefault())
+        return playerController!
+    }()
     
     private lazy var audioStream: FSAudioStream = { [unowned self] in
         let configuration = FSStreamConfiguration()
@@ -191,6 +197,7 @@ class HTZAudioPlayer: NSObject {
         
         DispatchQueue.main.async {
             self.audioStream.seek(to: position)
+//            self.ijkPlayer.seek
         }
     }
     
@@ -204,6 +211,7 @@ class HTZAudioPlayer: NSObject {
         
         DispatchQueue.main.async {
             self.audioStream.setPlayRate(playRate)
+//            self.ijkPlayer.setrate
         }
     }
     
@@ -216,6 +224,7 @@ class HTZAudioPlayer: NSObject {
         
         DispatchQueue.main.async {
             self.audioStream.play()
+            self.ijkPlayer.play()
         }
         
         self.startTimer()
@@ -236,6 +245,7 @@ class HTZAudioPlayer: NSObject {
         
         DispatchQueue.main.async {
             self.audioStream.play(from: offset)
+//            self.ijkPlayer.play
         }
         
         self.startTimer()

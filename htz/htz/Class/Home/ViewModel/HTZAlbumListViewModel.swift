@@ -25,30 +25,30 @@ class HTZAlbumListViewModel: NSObject {
             NetWorkRequest(target) { (response) -> (Void) in
                 if response["code"].rawString() == "200" {
                     let arr = [HTZSutraItemModel].deserialize(from: response["data"].rawString())
-                                    if let arr = arr {
-                                        self.dataArr = arr
-                                        var arrM = [HTZMusicModel]()
-                                        for model in arr {
-                                            let obj = HTZMusicModel()
-                                            obj.song_name = model?.title
-                                            obj.song_id = model?.id
-                                            obj.album_id = self.icon
-                                            obj.icon = self.icon
-                                            obj.album_title = self.albumTitle
-                    //                        obj.file_link = "http://htzshanghai.top/resources/audios/\(album)/" + model!.audio!
-//                                            obj.lrclink = model!.original
-                                            obj.file_link = "http://39.96.5.46:9400/get/download"
-                                            obj.original = model?.original
-                                            obj.explanation = model?.explanation
-                                            obj.file_duration = model?.duration
-                                            
-                                            obj.downloadState = kDownloadManager.checkDownloadState(fileID: obj.song_id!)
-                                            arrM.append(obj)
-                                        }
-                                        self.dataSongArr = arrM
-                                        callBack(true)
-                                    }
-                                    
+                    if let arr = arr {
+                        self.dataArr = arr
+                        var arrM = [HTZMusicModel]()
+                        for model in arr {
+                            let obj = HTZMusicModel()
+                            obj.song_name = model?.title
+                            obj.song_id = model?.audio_id
+                            obj.album_id = model?.sutra_id
+                            obj.icon = self.icon
+                            obj.album_title = self.albumTitle
+                            //                        obj.file_link = "http://htzshanghai.top/resources/audios/\(album)/" + model!.audio!
+                            //                                            obj.lrclink = model!.original
+                            obj.file_link = "http://39.96.5.46:9400/get/download"
+                            obj.original = model?.original
+                            obj.explanation = model?.explanation
+                            obj.file_duration = model?.duration
+                            
+                            obj.downloadState = kDownloadManager.checkDownloadState(fileID: obj.song_id!)
+                            arrM.append(obj)
+                        }
+                        self.dataSongArr = arrM
+                        callBack(true)
+                    }
+                    
                 }
                 
             }

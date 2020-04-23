@@ -32,22 +32,7 @@ class HTZAlbumListViewController: HTZBaseViewController {
                 albumListViewModel.icon = sutraInfoModel.cover
                 albumListViewModel.albumTitle = sutraInfoModel.name
                 
-                // 数据请求
-                if let isAlbum = sutraInfoModel.isAlbum, !isAlbum {
-                    albumListViewModel.requestData(index: sutraInfoModel.index!, isPullDown: true) { (success) in
-                        if success {
-                            self.countLabel.text = "共\(self.albumListViewModel.dataArr.count)集"
-                            self.tableView.reloadData()
-                        }
-                    }
-                } else {
-                    albumListViewModel.requestData(sutra_id: (sutraInfoModel.id)!, isPullDown: true) { (success) in
-                        if success {
-                            self.countLabel.text = "共\(self.albumListViewModel.dataArr.count)集"
-                            self.tableView.reloadData()
-                        }
-                    }
-                }
+                requestData()
             }
         }
     }
@@ -114,15 +99,30 @@ class HTZAlbumListViewController: HTZBaseViewController {
         initConstraint()
     }
     
-    override func configData() {
-        super.configData()
+    private func requestData() {
         
-//        albumListViewModel.requestSongData(isPullDown: true) { (sucess) in
-//            
-//        }
+        // 数据请求
+        guard let sutraInfoModel = sutraInfoModel else { return }
+        if let isAlbum = sutraInfoModel.isAlbum, !isAlbum {
+            albumListViewModel.requestData(index: sutraInfoModel.index!, isPullDown: true) { (success) in
+                if success {
+                    self.countLabel.text = "共\(self.albumListViewModel.dataArr.count)集"
+                    self.tableView.reloadData()
+                }
+            }
+        } else {
+            albumListViewModel.requestData(sutra_id: (sutraInfoModel.id)!, isPullDown: true) { (success) in
+                if success {
+                    self.countLabel.text = "共\(self.albumListViewModel.dataArr.count)集"
+                    self.tableView.reloadData()
+                }
+            }
+        }
+        
     }
 
 }
+
 
 // MARK: 按钮点击事件
 extension HTZAlbumListViewController {
@@ -159,12 +159,6 @@ extension HTZAlbumListViewController: UITableViewDataSource, UITableViewDelegate
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        
-//        NetWorkRequest(API.download(file_id: "tests/5e9039abe2e76d070697e296")) { (response) -> (Void) in
-//            printLog(response)
-//        }
-//
-//        return
     
         if let isVideo = sutraInfoModel!.isVideo, isVideo {
             let vc = HTZVideoPlayViewController()
@@ -257,12 +251,7 @@ extension HTZAlbumListViewController: HTZAlbumListCellDelegate {
 extension HTZAlbumListViewController: HTZDownloadManagerDelegate {
     func downloadChanged(_ downloadManager: HTZDownloadManager, downloadModel: HTZDownloadModel, state: HTZDownloadManagerState) {
         if state == HTZDownloadManagerState.finished {
-           
-//            albumListViewModel.requestData(index: sutraInfoModel!.index!, isPullDown: true) { (success) in
-//                if success {
-//                    self.tableView.reloadData()
-//                }
-//            }
+            requestData()
         }
     }
     

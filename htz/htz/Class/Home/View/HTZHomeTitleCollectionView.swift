@@ -143,4 +143,5 @@ extension HTZHomeTitleCollectionView: UICollectionViewDataSource, UICollectionVi
             delegate?.collectionViewdidSelectItemAt(indexPath)
         }
     }
+    
 }

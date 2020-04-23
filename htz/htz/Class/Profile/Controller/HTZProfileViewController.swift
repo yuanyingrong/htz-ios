@@ -18,7 +18,7 @@ struct ProfileCell {
 class HTZProfileViewController: HTZBaseViewController {
 
     let dataArr: [ProfileCell] = {
-        let dataArr = [ProfileCell(imageName: "favorite", title: "我的收藏"),ProfileCell(imageName: "history", title: "播放历史"), ProfileCell(imageName: "item_list", title: "设置")]
+        let dataArr = [ProfileCell(imageName: "favorite", title: "我的收藏"),ProfileCell(imageName: "history", title: "播放历史"), ProfileCell(imageName: "item_list", title: "我的通知"), ProfileCell(imageName: "item_list", title: "设置")]
 //        let dataArr = [ProfileCell(imageName: "favorite", title: "我的消息"), ProfileCell(imageName: "history", title: "我的收藏"), ProfileCell(imageName: "favorite", title: "我的设置"), ProfileCell(imageName: "history", title: "我的赞赏"), ProfileCell(imageName: "history", title: "我的意见反馈")]
         return dataArr
     }()
@@ -100,9 +100,13 @@ extension HTZProfileViewController: UITableViewDataSource, UITableViewDelegate {
             vc.title = "我的收藏"
             navigationController?.pushViewController(vc, animated: true)
         } else if indexPath.row == 1 {
-            
+            let vc = HTZListenHistoryViewController()
+            vc.title = "收听记录"
+            navigationController?.pushViewController(vc, animated: true)
         } else if indexPath.row == 2 {
-            
+            let vc = HTZMyNotificationViewController()
+            vc.title = "我的通知"
+            navigationController?.pushViewController(vc, animated: true)
         }
         
     }

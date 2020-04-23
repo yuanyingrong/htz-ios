@@ -117,6 +117,20 @@ class HTZPlayViewController: HTZBaseViewController {
         super.viewDidAppear(animated)
         HTZMusicTool.hidePlayBtn()
         self.isAppear = true
+        let param = ["sutra_id" : model?.album_id ?? "",
+                     "sutra_name" : model?.album_title ?? "",
+                     "sutra_cover" : model?.icon ?? "",
+                     "sutra_item_id" : model?.song_id ?? "",
+                     "sutra_item_title" : model?.song_name ?? "",
+                     "last_position" : 10] as [String : Any];
+        NetWorkRequest(API.postListenHistory(parameters: param), completion: { (response) -> (Void) in
+            printLog(response)
+            
+            printLog(response)
+            if response["code"].rawString() == "200" {
+        
+            }
+        })
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -698,14 +712,16 @@ extension HTZPlayViewController {
                     kPlayer.play()
                 }
             }
-            var lyrics = HTZLyricParser.lyricParser(url: (self.model?.song_lyricPath)!, isDelBlank: true)
-            
+            var lyrics = HTZLyricParser.lyricParser(str: self.model?.original ?? "")
+//            var lyrics = HTZLyricParser.lyricParser(url: (self.model?.song_lyricPath)!, isDelBlank: true)
+            // FIXME: - 先注释掉不报错
             if lyrics == nil {
                lyrics = HTZLyricParser.lyricParser(url: (self.model?.lrclink)!, isDelBlank: true)
             }
             // 解析歌词
             self.topLyricView.lyrics = lyrics
-            self.bottomLyricView.lyrics = lyrics
+            let explanation = HTZLyricParser.lyricParser(str: self.model?.explanation ?? "")
+            self.bottomLyricView.lyrics = explanation
         } else {
             if HTZMusicTool.networkState() == "none" {
                 alert(message: "网络连接失败")
@@ -721,8 +737,11 @@ extension HTZPlayViewController {
                     self.controlView.currentTime = HTZMusicTool.timeStr(secTime: duration! * TimeInterval(toSeekProgress))
                     self.controlView.progress = toSeekProgress
                 }
+                // 边下边播
+                HTZMusicTool.downloadMusic(musicModel: model)
+                
                 // 设置播放地址
-                kPlayer.playUrlStr = model.file_link
+                kPlayer.playUrlStr = kDownloadManager.downloadDataDir(doc: model.album_title!) + "/" + model.song_id!.replacingOccurrences(of: "/", with: "_") + ".mp3" 
                 
                 DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.5) {
                     if let ifNowPlay = self.ifNowPlay, ifNowPlay {
@@ -733,8 +752,13 @@ extension HTZPlayViewController {
                 if let original = self.model?.lrclink, original.hasPrefix("http") {
                     self.topLyricView.lyrics = HTZLyricParser.lyricParser(url: (self.model?.lrclink)!, isDelBlank: true)
                     self.bottomLyricView.lyrics = HTZLyricParser.lyricParser(url: (self.model?.lrclink)!, isDelBlank: true)                } else {
-                    self.topLyricView.lyrics = HTZLyricParser.lyricParser(lyricString: (self.model?.original)!, isDelBlank: true)
-                    self.bottomLyricView.lyrics = HTZLyricParser.lyricParser(lyricString: (self.model?.explanation)!, isDelBlank: true)
+                    if let original = self.model?.original {
+                        self.topLyricView.lyrics = HTZLyricParser.lyricParser(lyricString: original, isDelBlank: true)
+                    }
+                    if let explanation = self.model?.explanation {
+                        self.bottomLyricView.lyrics = HTZLyricParser.lyricParser(lyricString: explanation, isDelBlank: true)
+                    }
+                    
                 }
                 
             }

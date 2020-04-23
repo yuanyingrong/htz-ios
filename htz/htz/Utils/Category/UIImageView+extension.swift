@@ -42,4 +42,30 @@ extension UIImageView {
             }
         }
     }
+    
+    func htz_setImage(fileId: String, placeHolderImage: UIImage? = nil) {
+        let imagePath = HTZDownloadManager.sharedInstance.downloadDataDir(doc: "images/")+fileId.replacingOccurrences(of: "/", with: "_")
+        if HTZDownloadManager.sharedInstance.ifPathExist(path: imagePath) {
+            self.image = UIImage(contentsOfFile: imagePath)
+        } else {
+            Provider.request(API.download(file_id: fileId, fileLocalPath: imagePath), progress: { (downloadProgressResponse) in
+                guard let downloadProgress = downloadProgressResponse.progressObject else {return}
+                
+                print("共需下载\(downloadProgress.totalUnitCount)\n当前下载\(downloadProgress.completedUnitCount)")
+            }) { (result) in
+                
+                switch result {
+                case let .success(response):
+                    printLog(response)
+                    self.image = UIImage(contentsOfFile: imagePath)
+                    break
+                case .failure(_):
+                    printLog(result)
+                    break
+                }
+                
+            }
+        }
+    }
+    
 }

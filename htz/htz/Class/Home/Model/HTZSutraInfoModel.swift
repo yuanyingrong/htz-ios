@@ -42,14 +42,14 @@ class HTZSutraInfoModel: HandyJSON {
         mapper <<<
             self.desc <-- "description"
         
-        mapper <<<
-            self.name <-- "title"
-        
-        mapper <<<
-            self.played_count <-- "playcount"
-        
-        mapper <<<
-            self.cover <-- "icon"
+//        mapper <<<
+//            self.name <-- "title"
+//        
+//        mapper <<<
+//            self.played_count <-- "playcount"
+//        
+//        mapper <<<
+//            self.cover <-- "icon"
     }
     
     

@@ -174,6 +174,7 @@ func NetWorkRequest(_ target: API, completion: @escaping successCallback , faile
     }
     
     //这里显示loading图
+    
     Provider.request(target) { (result) in
         //隐藏hud
         switch result {

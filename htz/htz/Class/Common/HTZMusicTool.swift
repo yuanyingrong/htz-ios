@@ -222,7 +222,8 @@ class HTZMusicTool: NSObject {
         dModel.fileDuration = musicModel.file_duration
         dModel.fileLyric = musicModel.lrclink
         
-        dModel.fileFormat = musicModel.file_link?.components(separatedBy: ".").last
+        dModel.fileFormat = "mp3"
+//        dModel.fileFormat = musicModel.file_link?.components(separatedBy: ".").last
         
         kDownloadManager.addDownloadArr(downloadArr: [dModel])
         print("已加入到下载队列")

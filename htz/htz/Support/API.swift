@@ -16,16 +16,18 @@ enum API {
     case search(key: String, output_offset: NSInteger, max_outputs: NSInteger)
     case item(id: String) // 查询单个经典信息
     case items(sutra_id: String) // 查询多条经典items
-    case download(file_id: String) // 下载
+    case download(file_id: String, fileLocalPath: String) // 下载
     
-    case postListenHistory // 添加收听记录
-    case getListenHistorys(page_index: NSInteger, page_size: NSInteger) // 添加收听记录
+    case postListenHistory(parameters: [String:Any]) // 添加收听记录
+    case deleteListenHistory(id: String) // 删除单条收听记录
+    case deleteAllListenHistory // 删除所有收听记录
+    case getListenHistorys(page_index: NSInteger, page_size: NSInteger) // 获取收听记录
     
     case recommendations // 经典推荐列表
     
     case userNotifications // 获取我的通知信息 TODO
     case putNotification // 设置我的通知信息状态为已读 TODO
-    case notifications  // 查询所有通知
+    case notifications(page_index: NSInteger, page_size: NSInteger)  // 查询所有通知
     
     case albums
     case xingfuneixinchan
@@ -48,9 +50,9 @@ extension API: TargetType {
             return URL.init(string:"https://api.weibo.com/")!
 //        case .song(_), .songDetail(_):
 //            return URL.init(string:"https://musicapi.qianqian.com/v1/restserver/ting?format=json&from=ios&channel=appstore&method=")!
-        case .search(_):
+        case .search(_,_,_):
             return URL(string: "http://39.96.5.46:9300/")!
-        case .download(_):
+        case .download(_,_):
             return URL(string: "http://39.96.5.46:9400/")!
         case .albums, .xingfuneixinchan, .jingxinyangsheng, .mixinxiaoshipin:
             return URL(string: "http://htzshanghai.top/resources/app_json/")!
@@ -65,19 +67,23 @@ extension API: TargetType {
             return "post/login"
         case .sutras(_,_):
             return "get/sutras"
-        case .search(_):
+        case .search(_,_,_):
             return "get/search"
         case .items(_):
             return "get/sutra/items"
         case .item(_):
             return "get/sutra/item"
-        case .download(_):
+        case .download(_,_):
             return "get/download"
            
             
-        case .postListenHistory:
-            return "post/listen/history" // 添加收听记录
-        case .getListenHistorys(_,_): // 添加收听记录
+        case .postListenHistory(_): // 添加收听记录
+            return "post/listen/history"
+        case .deleteListenHistory(_): // 删除单个收听记录
+            return "delete/listen/history"
+        case .deleteAllListenHistory: // 删除个人所有收听记录
+            return "delete/listen/histories/all"
+        case .getListenHistorys(_,_): // 获取收听记录
             return "get/listen/histories"
         case .recommendations: // 经典推荐列表
             return "get/recommendations"
@@ -85,7 +91,7 @@ extension API: TargetType {
             return "get/user/notifications"
         case .putNotification: // 设置我的通知信息状态为已读 TODO
             return "put/user/notifications"
-        case .notifications: // 查询所有通知
+        case .notifications(_,_): // 查询所有通知
             return "get/notifications"
             
         case .albums:
@@ -132,19 +138,24 @@ extension API: TargetType {
         switch self {
         case let .login(code):
             return .requestParameters(parameters: ["code": code], encoding: JSONEncoding.default)
-        case let .sutras(page_index, page_size), let .getListenHistorys(page_index, page_size):
+        case let .postListenHistory(parameters):
+            return .requestParameters(parameters: parameters, encoding: JSONEncoding.default)
+        case let .sutras(page_index, page_size), let .getListenHistorys(page_index, page_size), let .notifications(page_index, page_size):
             return .requestParameters(parameters: ["page_index" : page_index,"page_size":page_size], encoding: JSONEncoding.default)
         case let .search(key, output_offset, max_outputs):
             return .requestParameters(parameters: ["key" : key, "output_offset" : output_offset, "max_outputs":max_outputs], encoding: JSONEncoding.default)
         case let .items(id):
             return .requestParameters(parameters: ["sutra_id" : id, "page_index" : 0,"page_size":20], encoding: JSONEncoding.default)
 
-        case let .item(id):
+        case let .item(id), let .deleteListenHistory(id):
             return .requestParameters(parameters: ["id" : id], encoding: JSONEncoding.default)
-        case let .download(file_id):
-            return .requestParameters(parameters: ["file_id" : file_id], encoding: JSONEncoding.default)
-//            return .downloadParameters(parameters: ["file_id" : file_id], encoding: URLEncoding.default, destination: defaultDownloadDestination)
-        case .postListenHistory, .recommendations, .userNotifications, .putNotification, .notifications, .albums, .xingfuneixinchan, .jingxinyangsheng, .mixinxiaoshipin, .song(_), .songDetail(_):
+        case let .download(file_id, fileLocalPath):
+            return .downloadParameters(parameters: ["file_id" : file_id], encoding: JSONEncoding.default) { (url, response) -> (destinationURL: URL, options: DownloadRequest.Options) in
+                return (URL(fileURLWithPath: fileLocalPath),[])
+            }
+//            return .requestParameters(parameters: ["file_id" : file_id], encoding: JSONEncoding.default)
+
+        case .deleteAllListenHistory, .recommendations, .userNotifications, .putNotification, .albums, .xingfuneixinchan, .jingxinyangsheng, .mixinxiaoshipin, .song(_,_,_), .songDetail(_):
             return .requestPlain
             
         case let .register(email, password):
@@ -176,7 +187,7 @@ extension API: TargetType {
     
     
     var headers: [String : String]? {
-//        HTZUserAccount.shared.token = "8cfb9627-98ea-54f4-bd99-a96422540971"
+        HTZUserAccount.shared.token = "6ddbb465-0e04-5e9f-8117-6f06c486ccdf"
         if let token = HTZUserAccount.shared.token {
             return ["Content-Type" : "application/x-www-form-urlencoded","token" : token]
         }

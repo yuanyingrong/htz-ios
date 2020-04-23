@@ -33,9 +33,13 @@ class HTZDownloadModel: NSObject, NSCoding {
     var fileSize: String?
     var fileCurrentSize: String?
     var fileLyric: String?
+    
+    var original: String?
+    var explanation: String?
+    
     var fileLocalPath: String {
         
-        return kDownloadManager.downloadDataDir(doc: fileAlbumName!) + "/" + fileID! + "." + fileFormat!
+        return kDownloadManager.downloadDataDir(doc: fileAlbumName!) + "/" + fileID!.replacingOccurrences(of: "/", with: "_") + "." + fileFormat!
     }
     var fileLyricPath: String {
         return kDownloadManager.downloadDataDir(doc: fileAlbumName!) + "/" + fileID! + ".lrc"
@@ -74,6 +78,9 @@ class HTZDownloadModel: NSObject, NSCoding {
         aCoder.encode(currentLength, forKey: "currentLength")
         aCoder.encode(resumeData, forKey: "resumeData")
         
+        aCoder.encode(resumeData, forKey: "original")
+        aCoder.encode(resumeData, forKey: "explanation")
+        
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -94,5 +101,8 @@ class HTZDownloadModel: NSObject, NSCoding {
             state = HTZDownloadManagerState(rawValue: str as! NSInteger)
         }
         resumeData = aDecoder.decodeObject(forKey: "resumeData") as? NSData
+        
+        original = aDecoder.decodeObject(forKey: "original") as? String
+        explanation = aDecoder.decodeObject(forKey: "explanation") as? String
     }
 }
