@@ -28,6 +28,33 @@ class HTZHomeViewModel: NSObject {
 //        return dataArr
 //    }
     
+    func requestData(callBack: @escaping (Bool, _ code:String) -> ())  {
+        NetWorkRequest(API.recommendations) { (response) -> (Void) in
+            
+            if response["code"].rawString() == "200" {
+                let arr = [HTZRecommendationModel].deserialize(from: response["data"].rawString())
+                if let arr = arr {
+                    var arrM = [HTZSutraInfoModel]()
+                    for remcomend in arr {
+                        let model = HTZSutraInfoModel()
+                        model.id = remcomend?.sutra_id
+                        model.name = remcomend?.sutra_name
+                        model.cover = "\(ossurl)/\(remcomend?.sutra_cover ?? "")"
+                        model.desc = remcomend?.sutra_desc
+                        arrM.append(model)
+                    }
+                    self.dataArr = arrM
+                    
+                    callBack(true, "200")
+                }
+            } else if response["code"].rawString() == "20100" {
+                // token invalid 重新登录
+                callBack(false, "20100")
+            }
+            
+        }
+    }
+    
     func requestData(isPullDown: Bool, callBack: @escaping (Bool) -> ()) {
         // recommendations
         NetWorkRequest(API.albums) { (response) -> (Void) in

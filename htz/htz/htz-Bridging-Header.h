@@ -7,6 +7,7 @@
 #import "WXApi.h"
 
 #import <PYSearch/PYSearch.h>
+#import <MJRefresh/MJRefresh.h>
 
 #import "DeviceTool.h"
 #import "ZFIJKPlayerManager.h"

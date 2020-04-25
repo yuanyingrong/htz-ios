@@ -18,6 +18,8 @@ target 'htz' do
   pod 'JPush'
   pod 'JShare'
   
+  pod 'MJRefresh'
+  
   pod 'PYSearch'
   
 #  pod 'NicooPlayer'

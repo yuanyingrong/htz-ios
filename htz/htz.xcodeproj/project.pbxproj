@@ -125,6 +125,8 @@
 		1995469924164B3F0044C892 /* HTZLoginModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1995469824164B3F0044C892 /* HTZLoginModel.swift */; };
 		1995469B24171B300044C892 /* HTZWechatLoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1995469A24171B300044C892 /* HTZWechatLoginViewController.swift */; };
 		1995469D2417209B0044C892 /* HTZUserAccount.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1995469C2417209B0044C892 /* HTZUserAccount.swift */; };
+		19982F592453297C00EB1938 /* HTZRecommendationModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19982F582453297C00EB1938 /* HTZRecommendationModel.swift */; };
+		19982F5B2453344E00EB1938 /* HTZRefreshTool.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19982F5A2453344E00EB1938 /* HTZRefreshTool.swift */; };
 		19A957EF229BC716007B48ED /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19A957EE229BC716007B48ED /* AppDelegate.swift */; };
 		19A957F1229BC716007B48ED /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19A957F0229BC716007B48ED /* ViewController.swift */; };
 		19A957F4229BC716007B48ED /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 19A957F2229BC716007B48ED /* Main.storyboard */; };
@@ -283,6 +285,8 @@
 		1995469A24171B300044C892 /* HTZWechatLoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZWechatLoginViewController.swift; sourceTree = "<group>"; };
 		1995469C2417209B0044C892 /* HTZUserAccount.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZUserAccount.swift; sourceTree = "<group>"; };
 		1995469E2419D3390044C892 /* htz.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = htz.entitlements; sourceTree = "<group>"; };
+		19982F582453297C00EB1938 /* HTZRecommendationModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZRecommendationModel.swift; sourceTree = "<group>"; };
+		19982F5A2453344E00EB1938 /* HTZRefreshTool.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZRefreshTool.swift; sourceTree = "<group>"; };
 		19A957EB229BC716007B48ED /* htz.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = htz.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		19A957EE229BC716007B48ED /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		19A957F0229BC716007B48ED /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -452,6 +456,7 @@
 				194E215B22B0A6F7000F96D4 /* Config */,
 				194E215C22B0A6F7000F96D4 /* Photo */,
 				19EC4C562442CD450004E698 /* HTZShareMenuView.swift */,
+				19982F5A2453344E00EB1938 /* HTZRefreshTool.swift */,
 			);
 			path = Manager;
 			sourceTree = "<group>";
@@ -787,6 +792,7 @@
 			children = (
 				193C919F22FC0B3600E3AA4A /* HTZHomeTitleModel.swift */,
 				193E5083231E635B000184EC /* HTZAlbumInfoModel.swift */,
+				19982F582453297C00EB1938 /* HTZRecommendationModel.swift */,
 				1936CADE231FA6E5001218DD /* HTZSutraInfoModel.swift */,
 				193F56082320AE500037BC70 /* HTZAlbumPartModel.swift */,
 				19B9419124401EAE00F7424A /* HTZSutraItemModel.swift */,
@@ -1359,6 +1365,7 @@
 				195C195E22B24ADC002E8A04 /* HTZHomeViewController.swift in Sources */,
 				193D6F2823320C2B004BF5FB /* HTZMyDownloadedAlbumCell.swift in Sources */,
 				1971F397231CFBBF002FFF42 /* HTZAlbumListCell.swift in Sources */,
+				19982F592453297C00EB1938 /* HTZRecommendationModel.swift in Sources */,
 				19EC4C572442CD450004E698 /* HTZShareMenuView.swift in Sources */,
 				193B866B2334A5C6006D4A3D /* HTZSaveDataModel.swift in Sources */,
 				19510C7D22A798840067AA5D /* Constant.swift in Sources */,
@@ -1382,6 +1389,7 @@
 				195DDD2D22AFB0B800C5F04C /* RegexHelper.swift in Sources */,
 				19444CFC22F97B050063EF38 /* HTZCycleView.swift in Sources */,
 				193A8B942318C82000B520B1 /* CurrentViewControllerUtil.swift in Sources */,
+				19982F5B2453344E00EB1938 /* HTZRefreshTool.swift in Sources */,
 				195C195622B24A6F002E8A04 /* HTZProfileViewController.swift in Sources */,
 				193F560523209AFD0037BC70 /* HTZHomeSearchView.swift in Sources */,
 				195C195822B24AA0002E8A04 /* HTZLearnClassicsViewController.swift in Sources */,

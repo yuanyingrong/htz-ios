@@ -31,8 +31,8 @@ class HTZAlbumViewController: HTZBaseViewController {
         }
         
         loginButton.snp.makeConstraints { (make) in
-            make.centerX.equalTo(view)
-            make.top.equalTo(searchVew.snp.bottom).offset(8 * kGlobelMargin)
+            make.center.equalTo(view)
+//            make.top.equalTo(searchVew.snp.bottom).offset(8 * kGlobelMargin)
         }
         
         NotificationCenter.default.addObserver(self, selector: #selector(loginSuccess(noti:)), name: NSNotification.Name(kLoginSuccessNotification), object: nil)
@@ -58,7 +58,7 @@ class HTZAlbumViewController: HTZBaseViewController {
     override func configData() {
         super.configData()
         
-        albumViewModel.requestData(isPullDown: true) { (success, code) in
+        albumViewModel.requestData(page_index: 0) { (success, code) in
             self.bottomView.dataArr = self.albumViewModel.dataArr
             
             self.loginButton.isHidden = code == "200"
@@ -115,7 +115,7 @@ class HTZAlbumViewController: HTZBaseViewController {
     
     private lazy var loginButton: UIButton = {
         let loginButton = UIButton(type: .custom)
-        loginButton.setTitle(" 登录  ", for: .normal)
+        loginButton.setTitle("登录后查看更多精彩内容", for: .normal)
         loginButton.setTitleColor(.darkText, for: .normal)
         loginButton.addTarget(self, action: #selector(loginButtonClickAction), for: .touchUpInside)
         loginButton.isHidden = true
@@ -130,10 +130,7 @@ extension HTZAlbumViewController: HTZHomeTitleCollectionViewDelegate {
     }
     
     @objc internal func collectionViewdidSelectItemAt(_ indexPath: IndexPath) {
-        if indexPath.row > 2 {
-            alert(message: "暂未上架")
-            return
-        }
+       
         let vc = HTZAlbumListViewController()
         vc.title = albumViewModel.dataArr[indexPath.row]?.name
         albumViewModel.dataArr[indexPath.row]!.index = indexPath.row

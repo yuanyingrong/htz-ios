@@ -418,129 +418,70 @@ extension HTZDownloadManager {
     
     private func startDownloadData(model: HTZDownloadModel) {
         
-        Provider.request(API.download(file_id: model.fileID!, fileLocalPath: model.fileLocalPath), progress: { (downloadProgressResponse) in
-            guard let downloadProgress = downloadProgressResponse.progressObject else {return}
-            if let delegate = self.delegate, delegate.responds(to: #selector(HTZPlayViewController.downloadProgress(_:downloadModel:totalSize:downloadSize:progress:))) {
-                delegate.downloadProgress(self, downloadModel: model, totalSize: NSInteger(downloadProgress.totalUnitCount), downloadSize: NSInteger(downloadProgress.completedUnitCount), progress: Float(downloadProgress.completedUnitCount) / Float(downloadProgress.totalUnitCount))
-            }
-             print("共需下载\(downloadProgress.totalUnitCount)\n当前下载\(downloadProgress.completedUnitCount)")
-        }) { (result) in
-            
-                        switch result {
-                        case .success(_): // 下载完成
-                            model.state = HTZDownloadManagerState.finished
-                            // 下载图片
-                            
-                            // 歌词
-                            // TODO: - 需确定
-        //                    let lrcData = NSData(contentsOf: URL(string: model.fileLyric!)!)
-        //                    lrcData?.write(toFile: model.fileLyricPath, atomically: true)
-                            
-                            self.updateDownloadModel(model: model)
-                            if let delegate = self.delegate, delegate.responds(to: #selector(HTZPlayViewController.downloadChanged(_:downloadModel:state:))) {
-                                delegate.downloadChanged(self, downloadModel: model, state: HTZDownloadManagerState.finished)
-                            }
-                            
-                            if let delegate = self.delegate, delegate.responds(to: #selector(HTZPlayViewController.removedDownloadArr(_:downloadArr:))) {
-                                delegate.removedDownloadArr(self, downloadArr: [model])
-                            }
-                            print(result)
-                            break
-                        case .failure(_): // 下载失败
-                            // 删除已下载的数据防止出错
-                            if !self.cancelled {
-                                self.deleteDownloadModelArr(modelArr: [model])
-                                 model.state = HTZDownloadManagerState.failed
-                                 self.updateDownloadModel(model: model)
-                                
-                                 if let delegate = self.delegate, delegate.responds(to: #selector(HTZPlayViewController.downloadChanged(_:downloadModel:state:))) {
-                                     delegate.downloadChanged(self, downloadModel: model, state: HTZDownloadManagerState.failed)
-                                 }
-                            } else {
-                                model.state = HTZDownloadManagerState.paused
-//                                model.resumeData = result.resumeData as NSData?
-                                self.updateDownloadModel(model: model)
-                                if let delegate = self.delegate, delegate.responds(to: #selector(HTZPlayViewController.downloadChanged(_:downloadModel:state:))) {
-                                    delegate.downloadChanged(self, downloadModel: model, state: HTZDownloadManagerState.paused)
-                                }
-                            }
-                            
-//                            print(result.error)
-                        }
-                        
-                        // 停止下载
-                        if self.downloadRequest?.task?.state == URLSessionTask.State.running {
-                            self.downloadRequest?.suspend()
-                            self.downloadRequest = nil
-                        }
-                        // 开始下载下一个
-                        self.startdownloadRequest()
+        self.downloadRequest = AF.download(model.fileUrl!) { (url, response) -> (destinationURL: URL, options: DownloadRequest.Options) in
+
+            return (URL(fileURLWithPath: model.fileLocalPath),[])
+        }.downloadProgress(closure: { (downloadProgress) in
+                if let delegate = self.delegate, delegate.responds(to: #selector(HTZPlayViewController.downloadProgress(_:downloadModel:totalSize:downloadSize:progress:))) {
+                    delegate.downloadProgress(self, downloadModel: model, totalSize: NSInteger(downloadProgress.totalUnitCount), downloadSize: NSInteger(downloadProgress.completedUnitCount), progress: Float(downloadProgress.completedUnitCount) / Float(downloadProgress.totalUnitCount))
+                }
+            print("共需下载\(downloadProgress.totalUnitCount)\n当前下载\(downloadProgress.completedUnitCount)")
+            }).responseData(completionHandler: { (response) in
+
+                switch response.result {
+                case .success(_): // 下载完成
+                    model.state = HTZDownloadManagerState.finished
+                    // 下载图片
+
+                    // 歌词
+                    // TODO: - 需确定
+//                    let lrcData = NSData(contentsOf: URL(string: model.fileLyric!)!)
+//                    lrcData?.write(toFile: model.fileLyricPath, atomically: true)
+
+                    self.updateDownloadModel(model: model)
+                    if let delegate = self.delegate, delegate.responds(to: #selector(HTZPlayViewController.downloadChanged(_:downloadModel:state:))) {
+                        delegate.downloadChanged(self, downloadModel: model, state: HTZDownloadManagerState.finished)
                     }
-//        self.downloadRequest = AF.download(model.fileUrl!, method: .post, parameters: ["file_id": model.fileID],
-//        headers:["Content-Type" : "application/json"]) { (url, response) -> (destinationURL: URL, options: DownloadRequest.Options) in
-//
-//            return (URL(fileURLWithPath: model.fileLocalPath),[])
-//        }.downloadProgress(closure: { (downloadProgress) in
-//                if let delegate = self.delegate, delegate.responds(to: #selector(HTZPlayViewController.downloadProgress(_:downloadModel:totalSize:downloadSize:progress:))) {
-//                    delegate.downloadProgress(self, downloadModel: model, totalSize: NSInteger(downloadProgress.totalUnitCount), downloadSize: NSInteger(downloadProgress.completedUnitCount), progress: Float(downloadProgress.completedUnitCount) / Float(downloadProgress.totalUnitCount))
-//                }
-//                 print("共需下载\(downloadProgress.totalUnitCount)\n当前下载\(downloadProgress.completedUnitCount)")
-//            }).responseData(completionHandler: { (response) in
-//
-//                switch response.result {
-//                case .success(_): // 下载完成
-//                    model.state = HTZDownloadManagerState.finished
-//                    // 下载图片
-//
-//                    // 歌词
-//                    // TODO: - 需确定
-////                    let lrcData = NSData(contentsOf: URL(string: model.fileLyric!)!)
-////                    lrcData?.write(toFile: model.fileLyricPath, atomically: true)
-//
-//                    self.updateDownloadModel(model: model)
-//                    if let delegate = self.delegate, delegate.responds(to: #selector(HTZPlayViewController.downloadChanged(_:downloadModel:state:))) {
-//                        delegate.downloadChanged(self, downloadModel: model, state: HTZDownloadManagerState.finished)
-//                    }
-//
-//                    if let delegate = self.delegate, delegate.responds(to: #selector(HTZPlayViewController.removedDownloadArr(_:downloadArr:))) {
-//                        delegate.removedDownloadArr(self, downloadArr: [model])
-//                    }
-//                    print(response)
-//                    break
-//                case .failure(_): // 下载失败
-//                    // 删除已下载的数据防止出错
-//                    if !self.cancelled {
-//                        self.deleteDownloadModelArr(modelArr: [model])
-//                         model.state = HTZDownloadManagerState.failed
-//                         self.updateDownloadModel(model: model)
-//
-//                         if let delegate = self.delegate, delegate.responds(to: #selector(HTZPlayViewController.downloadChanged(_:downloadModel:state:))) {
-//                             delegate.downloadChanged(self, downloadModel: model, state: HTZDownloadManagerState.failed)
-//                         }
-//                    } else {
-//                        model.state = HTZDownloadManagerState.paused
-//                        model.resumeData = response.resumeData as NSData?
-//                        self.updateDownloadModel(model: model)
-//                        if let delegate = self.delegate, delegate.responds(to: #selector(HTZPlayViewController.downloadChanged(_:downloadModel:state:))) {
-//                            delegate.downloadChanged(self, downloadModel: model, state: HTZDownloadManagerState.paused)
-//                        }
-//                    }
-//
-//                    print(response.error)
-//                }
-//
-//                // 停止下载
-//                if self.downloadRequest?.task?.state == URLSessionTask.State.running {
-//                    self.downloadRequest?.suspend()
-//                    self.downloadRequest = nil
-//                }
-//                // 开始下载下一个
-//                self.startdownloadRequest()
-//            })
-//
-//        if let downloadRequest = self.downloadRequest, downloadRequest.task?.state == URLSessionTask.State.suspended {
-//            downloadRequest.resume()
-//        }
+
+                    if let delegate = self.delegate, delegate.responds(to: #selector(HTZPlayViewController.removedDownloadArr(_:downloadArr:))) {
+                        delegate.removedDownloadArr(self, downloadArr: [model])
+                    }
+                    print(response)
+                    break
+                case .failure(_): // 下载失败
+                    // 删除已下载的数据防止出错
+                    if !self.cancelled {
+                        self.deleteDownloadModelArr(modelArr: [model])
+                         model.state = HTZDownloadManagerState.failed
+                         self.updateDownloadModel(model: model)
+
+                         if let delegate = self.delegate, delegate.responds(to: #selector(HTZPlayViewController.downloadChanged(_:downloadModel:state:))) {
+                             delegate.downloadChanged(self, downloadModel: model, state: HTZDownloadManagerState.failed)
+                         }
+                    } else {
+                        model.state = HTZDownloadManagerState.paused
+                        model.resumeData = response.resumeData as NSData?
+                        self.updateDownloadModel(model: model)
+                        if let delegate = self.delegate, delegate.responds(to: #selector(HTZPlayViewController.downloadChanged(_:downloadModel:state:))) {
+                            delegate.downloadChanged(self, downloadModel: model, state: HTZDownloadManagerState.paused)
+                        }
+                    }
+
+                    print(response.error)
+                }
+
+                // 停止下载
+                if self.downloadRequest?.task?.state == URLSessionTask.State.running {
+                    self.downloadRequest?.suspend()
+                    self.downloadRequest = nil
+                }
+                // 开始下载下一个
+                self.startdownloadRequest()
+            })
+
+        if let downloadRequest = self.downloadRequest, downloadRequest.task?.state == URLSessionTask.State.suspended {
+            downloadRequest.resume()
+        }
     }
     
     private func startBreakpoint(model: HTZDownloadModel) {

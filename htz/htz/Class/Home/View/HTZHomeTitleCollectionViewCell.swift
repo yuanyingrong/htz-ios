@@ -17,31 +17,9 @@ class HTZHomeTitleCollectionViewCell: UICollectionViewCell {
             } else {
                 imageView.image = UIImage(named: imageName ?? "htz_no_title")
             }
-            if let imageName = imageName, imageName.starts(with: "tests") {
-                imageView.htz_setImage(fileId: imageName)
-//                let imagePath = HTZDownloadManager.sharedInstance.downloadDataDir(doc: "images/")+imageName.replacingOccurrences(of: "/", with: "_")
-//                if HTZDownloadManager.sharedInstance.ifPathExist(path: imagePath) {
-//                    self.imageView.image = UIImage(contentsOfFile: imagePath)
-//                } else {
-//                    Provider.request(API.download(file_id: imageName, fileLocalPath: imagePath), progress: { (downloadProgressResponse) in
-//                        guard let downloadProgress = downloadProgressResponse.progressObject else {return}
-//
-//                        print("共需下载\(downloadProgress.totalUnitCount)\n当前下载\(downloadProgress.completedUnitCount)")
-//                    }) { (result) in
-//
-//                        switch result {
-//                        case let .success(response):
-//                            printLog(response)
-//                            self.imageView.image = UIImage(contentsOfFile: imagePath)
-//                            break
-//                        case .failure(_):
-//                            printLog(result)
-//                            break
-//                        }
-//
-//                    }
-//                }
-            }
+//            if let imageName = imageName, imageName.starts(with: "tests") {
+//                imageView.htz_setImage(fileId: imageName)
+//            }
         }
     }
     

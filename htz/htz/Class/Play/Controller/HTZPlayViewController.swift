@@ -741,8 +741,7 @@ extension HTZPlayViewController {
                 HTZMusicTool.downloadMusic(musicModel: model)
                 
                 // 设置播放地址
-                kPlayer.playUrlStr = kDownloadManager.downloadDataDir(doc: model.album_title!) + "/" + model.song_id!.replacingOccurrences(of: "/", with: "_") + ".mp3" 
-                
+                kPlayer.playUrlStr = model.file_link
                 DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.5) {
                     if let ifNowPlay = self.ifNowPlay, ifNowPlay {
                         kPlayer.play()
@@ -762,43 +761,6 @@ extension HTZPlayViewController {
                 }
                 
             }
-            // 获取歌曲信息
-            
-//            NetWorkRequest(API.songDetail(songId: self.model!.song_id!), completion: { (responseObject) -> (Void) in
-//                self.model = HTZMusicModel.deserialize(from: responseObject["songinfo"].rawString())
-//                let bitrate = responseObject["bitrate"]
-//                self.model?.file_link = bitrate["file_link"].rawString()
-//                self.model?.file_duration = bitrate["file_duration"].rawString()
-//                self.model?.file_size = bitrate["file_size"].rawString()
-//                self.model?.file_extension = bitrate["file_extension"].rawString()
-//
-//                guard let model = self.model else {
-//                    return
-//                }
-//
-//                let duration = TimeInterval(model.file_duration!)
-//                //            // 总时间
-//                self.controlView.totalTime = HTZMusicTool.timeStr(secTime: duration!)
-//
-//                if let toSeekProgress = self.toSeekProgress, toSeekProgress > 0.0 {
-//                    self.controlView.currentTime = HTZMusicTool.timeStr(secTime: duration! * TimeInterval(toSeekProgress))
-//                    self.controlView.progress = toSeekProgress
-//                }
-//                // 设置播放地址
-//                kPlayer.playUrlStr = model.file_link
-//
-//                DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.5) {
-//                    if let ifNowPlay = self.ifNowPlay, ifNowPlay {
-//                        kPlayer.play()
-//                    }
-//                }
-//                // 解析歌词
-//                self.topLyricView.lyrics = HTZLyricParser.lyricParser(url: (self.model?.lrclink)!, isDelBlank: true)
-//                self.bottomLyricView.lyrics = HTZLyricParser.lyricParser(url: (self.model?.lrclink)!, isDelBlank: true)
-//            }) { (error) -> (Void) in
-//                print("获取详情失败==\(error)")
-//                self.alert(message: "数据请求失败，请检查网络后重试！")
-//            }
         }
     }
     

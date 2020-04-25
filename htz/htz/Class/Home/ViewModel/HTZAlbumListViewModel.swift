@@ -18,11 +18,9 @@ class HTZAlbumListViewModel: NSObject {
     
     var albumTitle: String?
     
-    func requestData(sutra_id: String, isPullDown: Bool, callBack: @escaping (Bool) -> ()) {
-        
-            let target: API = API.items(sutra_id: sutra_id)
+    func requestData(sutra_id: String, page_index: Int, callBack: @escaping (Bool) -> ()) {
             
-            NetWorkRequest(target) { (response) -> (Void) in
+        NetWorkRequest(API.items(sutra_id: sutra_id, page_index: page_index, page_size: 20)) { (response) -> (Void) in
                 if response["code"].rawString() == "200" {
                     let arr = [HTZSutraItemModel].deserialize(from: response["data"].rawString())
                     if let arr = arr {
@@ -37,7 +35,7 @@ class HTZAlbumListViewModel: NSObject {
                             obj.album_title = self.albumTitle
                             //                        obj.file_link = "http://htzshanghai.top/resources/audios/\(album)/" + model!.audio!
                             //                                            obj.lrclink = model!.original
-                            obj.file_link = "http://39.96.5.46:9400/get/download"
+                            obj.file_link = "\(ossurl)/\(model?.audio_id ?? "")"
                             obj.original = model?.original
                             obj.explanation = model?.explanation
                             obj.file_duration = model?.duration

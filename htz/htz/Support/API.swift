@@ -15,7 +15,7 @@ enum API {
     case sutras(page_index: NSInteger, page_size: NSInteger)
     case search(key: String, output_offset: NSInteger, max_outputs: NSInteger)
     case item(id: String) // 查询单个经典信息
-    case items(sutra_id: String) // 查询多条经典items
+    case items(sutra_id: String, page_index: NSInteger, page_size: NSInteger) // 查询多条经典items
     case download(file_id: String, fileLocalPath: String) // 下载
     
     case postListenHistory(parameters: [String:Any]) // 添加收听记录
@@ -69,7 +69,7 @@ extension API: TargetType {
             return "get/sutras"
         case .search(_,_,_):
             return "get/search"
-        case .items(_):
+        case .items(_,_,_):
             return "get/sutra/items"
         case .item(_):
             return "get/sutra/item"
@@ -144,8 +144,8 @@ extension API: TargetType {
             return .requestParameters(parameters: ["page_index" : page_index,"page_size":page_size], encoding: JSONEncoding.default)
         case let .search(key, output_offset, max_outputs):
             return .requestParameters(parameters: ["key" : key, "output_offset" : output_offset, "max_outputs":max_outputs], encoding: JSONEncoding.default)
-        case let .items(id):
-            return .requestParameters(parameters: ["sutra_id" : id, "page_index" : 0,"page_size":20], encoding: JSONEncoding.default)
+        case let .items(id, page_index, page_size):
+            return .requestParameters(parameters: ["sutra_id" : id, "page_index" : page_index, "page_size" : page_size], encoding: JSONEncoding.default)
 
         case let .item(id), let .deleteListenHistory(id):
             return .requestParameters(parameters: ["id" : id], encoding: JSONEncoding.default)
@@ -187,25 +187,11 @@ extension API: TargetType {
     
     
     var headers: [String : String]? {
-        HTZUserAccount.shared.token = "6ddbb465-0e04-5e9f-8117-6f06c486ccdf"
+//        HTZUserAccount.shared.token = "6ddbb465-0e04-5e9f-8117-6f06c486ccdf"
         if let token = HTZUserAccount.shared.token {
             return ["Content-Type" : "application/x-www-form-urlencoded","token" : token]
         }
         return ["Content-Type" : "application/x-www-form-urlencoded"]
     }
     
-}
-
-
-private let defaultDownloadDestination: DownloadDestination = { temporaryURL, response in
-    let directoryURLs = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)
-
-    if !directoryURLs.isEmpty {
-        guard let suggestedFilename = response.suggestedFilename else {
-            fatalError("@Moya/contributor error!! We didn't anticipate this being nil")
-        }
-        return (directoryURLs[0].appendingPathComponent(suggestedFilename), [])
-    }
-
-    return (temporaryURL, [])
 }

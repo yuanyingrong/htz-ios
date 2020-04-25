@@ -17,7 +17,6 @@ class HTZAlbumListViewController: HTZBaseViewController {
     
         didSet {
             if let sutraInfoModel = sutraInfoModel {
-                nameLabel.text = sutraInfoModel.name
                 
                 if let cover = sutraInfoModel.cover {
                     if cover.hasPrefix("http") {
@@ -26,7 +25,7 @@ class HTZAlbumListViewController: HTZBaseViewController {
                         albumImageView.image = UIImage(named:cover)
                     }
                 }
-                contentLabel.text = sutraInfoModel.desc
+                descContentLabel.text = sutraInfoModel.desc
                 countLabel.text = "共\(sutraInfoModel.item_total ?? "0")集"
                 
                 albumListViewModel.icon = sutraInfoModel.cover
@@ -39,29 +38,7 @@ class HTZAlbumListViewController: HTZBaseViewController {
     
     private let albumImageView = UIImageView()
     
-    private let nameLabel = UILabel(title: "", fontSize: 16, textColor: UIColor.darkText, alignMent: NSTextAlignment.center, numOfLines: 0)
-    
-    private let contentLabel = UILabel(title: "", fontSize: 14, textColor: UIColor.darkGray, alignMent: NSTextAlignment.center, numOfLines: 0)
-    
-    private lazy var onlineListeningButton: UIButton = {
-        let onlineListeningButton = UIButton(frame: CGRect(x: 0, y: 0, width: 88, height: 88))
-        onlineListeningButton.set(image: UIImage(named: "地图"), title: "在线收听", titlePosition: UIView.ContentMode.right , additionalSpacing: 4, state: UIControl.State.normal)
-        onlineListeningButton.setTitleColor(UIColor.red, for: UIControl.State.normal)
-        onlineListeningButton.layer.borderColor = UIColor.red.cgColor
-        onlineListeningButton.layer.borderWidth = 2
-        onlineListeningButton.addTarget(self, action: #selector(onlineListeningButtonClickAction), for: UIControl.Event.touchUpInside)
-        return onlineListeningButton
-    }()
-    
-    private lazy var cacheDownloadButton: UIButton = {
-        let cacheDownloadButton = UIButton(frame: CGRect(x: 0, y: 0, width: 88, height: 88))
-        cacheDownloadButton.set(image: UIImage(named: "地图"), title: "缓存下载", titlePosition: UIView.ContentMode.right , additionalSpacing: 4, state: UIControl.State.normal)
-        cacheDownloadButton.setTitleColor(UIColor.red, for: UIControl.State.normal)
-        cacheDownloadButton.layer.borderColor = UIColor.red.cgColor
-        cacheDownloadButton.layer.borderWidth = 2
-        cacheDownloadButton.addTarget(self, action: #selector(cacheDownloadButtonClickAction), for: UIControl.Event.touchUpInside)
-        return cacheDownloadButton
-    }()
+    private let descContentLabel = UILabel(title: "", fontSize: 14, textColor: UIColor.darkGray, alignMent: NSTextAlignment.center, numOfLines: 0)
     
     private lazy var middleLine: UIView = {
         let middleLine = UIView()
@@ -88,9 +65,16 @@ class HTZAlbumListViewController: HTZBaseViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
-       self.view.backgroundColor = UIColor.white
+        
+        self.view.backgroundColor = UIColor.white
         kDownloadManager.delegate = self
+        
+        HTZRefreshTool.prepareHeaderRefresh(tableView) {
+            self.requestData()
+        }
+        HTZRefreshTool.prepareFooterRefresh(tableView) {
+            self.requestData()
+        }
     }
     
     override func configSubView() {
@@ -111,7 +95,7 @@ class HTZAlbumListViewController: HTZBaseViewController {
                 }
             }
         } else {
-            albumListViewModel.requestData(sutra_id: (sutraInfoModel.id)!, isPullDown: true) { (success) in
+            albumListViewModel.requestData(sutra_id: (sutraInfoModel.id)!, page_index: 0) { (success) in
                 if success {
                     self.countLabel.text = "共\(self.albumListViewModel.dataArr.count)集"
                     self.tableView.reloadData()
@@ -121,21 +105,6 @@ class HTZAlbumListViewController: HTZBaseViewController {
         
     }
 
-}
-
-
-// MARK: 按钮点击事件
-extension HTZAlbumListViewController {
-    
-    // 在线收听
-    @objc private func onlineListeningButtonClickAction() {
-        print("在线收听")
-    }
-    
-    // 缓存下载
-    @objc private func cacheDownloadButtonClickAction() {
-        print("缓存下载")
-    }
 }
 
 // MARK: - UITableViewDataSource, UITableViewDelegate
@@ -263,7 +232,6 @@ extension HTZAlbumListViewController: HTZDownloadManagerDelegate {
         
     }
     
-    
 }
 
 // MARK: - UI
@@ -272,10 +240,7 @@ extension HTZAlbumListViewController {
      func initUI() {
         
         view.addSubview(albumImageView)
-        view.addSubview(nameLabel)
-        view.addSubview(contentLabel)
-        view.addSubview(onlineListeningButton)
-        view.addSubview(cacheDownloadButton)
+        view.addSubview(descContentLabel)
         view.addSubview(middleLine)
         view.addSubview(countLabel)
         view.addSubview(middleSecondLine)
@@ -294,33 +259,16 @@ extension HTZAlbumListViewController {
             make.size.equalTo(CGSize(width: 112, height: 122))
         }
         
-        nameLabel.snp.makeConstraints { (make) in
-            make.top.equalTo(albumImageView)
-            make.left.equalTo(albumImageView.snp.right).offset((kScreenWidth - 170)/2)
-        }
-        
-        contentLabel.snp.makeConstraints { (make) in
-            make.top.equalTo((nameLabel.snp.bottom))
+        descContentLabel.snp.makeConstraints { (make) in
+            make.top.equalTo((albumImageView))
             make.left.equalTo(albumImageView.snp.right).offset(kGlobelMargin * 0.5)
             make.bottom.equalTo(albumImageView).offset(2 * kGlobelMargin)
             make.right.equalTo(view).offset(-2 * kGlobelMargin)
         }
         
-        onlineListeningButton.snp.makeConstraints { (make) in
-            make.top.equalTo(albumImageView.snp.bottom).offset(3 * kGlobelMargin)
-            make.left.equalTo(view).offset(3 * kGlobelMargin)
-            make.right.equalTo(view.snp.centerX).offset(-kGlobelMargin)
-            make.height.equalTo(36)
-        }
-        
-        cacheDownloadButton.snp.makeConstraints { (make) in
-            make.top.height.equalTo(onlineListeningButton)
-            make.left.equalTo(view.snp.centerX).offset(kGlobelMargin)
-            make.right.equalTo(view).offset(-3 * kGlobelMargin)
-        }
         
         middleLine.snp.makeConstraints { (make) in
-            make.top.equalTo(onlineListeningButton.snp.bottom).offset(2 * kGlobelMargin)
+            make.top.equalTo(albumImageView.snp.bottom).offset(2 * kGlobelMargin)
             make.left.right.equalTo(view)
             make.height.equalTo(4)
         }

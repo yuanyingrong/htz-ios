@@ -12,6 +12,7 @@ PODS:
   - Kingfisher (5.13.3):
     - Kingfisher/Core (= 5.13.3)
   - Kingfisher/Core (5.13.3)
+  - MJRefresh (3.4.1)
   - Moya (14.0.0):
     - Moya/Core (= 14.0.0)
   - Moya/Core (14.0.0):
@@ -38,6 +39,7 @@ DEPENDENCIES:
   - JPush
   - JShare
   - Kingfisher
+  - MJRefresh
   - Moya
   - PYSearch
   - SnapKit
@@ -59,6 +61,7 @@ SPEC REPOS:
     - JPush
     - JShare
     - Kingfisher
+    - MJRefresh
     - Moya
     - PYSearch
     - Reachability
@@ -86,6 +89,7 @@ SPEC CHECKSUMS:
   JPush: 9468c84a3809dc3ac2fc1c89c6d1d6c858a91bf5
   JShare: d19013ffb1a095de31b20236fe08e9c74064cfe5
   Kingfisher: d2b3d6a7200c93b34de9afcdf25c8dd9282ec277
+  MJRefresh: 3153c59a363159092c08b2177ec3a7d09f90bfaf
   Moya: 5b45dacb75adb009f97fde91c204c1e565d31916
   PYSearch: 76dee18eea3309b60921a5d6a69390a63a5dda15
   Reachability: 33e18b67625424e47b6cde6d202dce689ad7af96
@@ -96,6 +100,6 @@ SPEC CHECKSUMS:
   Weibo_SDK: 5a4d08f7e1fedbb635435e4585c8c0439c7da089
   ZFPlayer: 8a6021a3c45e281f2abd24dca5c88915af770a7e
 
-PODFILE CHECKSUM: c0a81778cd936db5a0008d16ff598efd1790e8fd
+PODFILE CHECKSUM: 3dae845fa643c26415e4c917e9d6eed6a006bc26
 
-COCOAPODS: 1.9.1
+COCOAPODS: 1.8.4

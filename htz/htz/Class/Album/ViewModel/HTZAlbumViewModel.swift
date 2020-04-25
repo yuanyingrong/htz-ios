@@ -20,22 +20,16 @@ class HTZAlbumViewModel: NSObject {
 //        return dataArr
 //    }
     
-    func requestData(isPullDown: Bool, callBack: @escaping (Bool, _ code:String) -> ()) {
-        NetWorkRequest(API.sutras(page_index: 0, page_size: 20)) { (response) -> (Void) in
+    func requestData(page_index: Int, callBack: @escaping (Bool, _ code:String) -> ()) {
+        NetWorkRequest(API.sutras(page_index: page_index, page_size: 20)) { (response) -> (Void) in
             
             if response["code"].rawString() == "200" {
                 let arr = [HTZSutraInfoModel].deserialize(from: response["data"].rawString())
                 if let arr = arr {
+                    for sutra in arr {
+                        sutra?.cover = "\(ossurl)/\(sutra?.cover ?? "")"
+                    }
                     self.dataArr = arr
-                    
-                    let model = HTZSutraInfoModel()
-                    model.name = "觅心小视频(视频)"
-                    model.cover = "play_normal"
-                    model.played_count = "0"
-                    model.item_total = "11"
-                    model.desc = "1111111111111111111"
-                    model.isVideo = true
-                    self.dataArr.insert(model, at: 0)
                     
                     callBack(true, "200")
                 }
