@@ -27,9 +27,9 @@ extension UILabel {
         self.text = text
         self.font = UIFont.systemFont(ofSize: font)
         self.textColor = textColor
+        self.numberOfLines = 0
         if maxWidth > 0 {
             self.preferredMaxLayoutWidth = maxWidth
-            self.numberOfLines = 0
         }
     }
     
@@ -43,6 +43,7 @@ extension UILabel {
         label.textColor = textColor
         label.textAlignment = textAlignment
         label.text = text
+        label.numberOfLines = 0
         return label
     }
 }

@@ -97,6 +97,7 @@ class HTZAudioPlayer: NSObject {
     
     private lazy var audioStream: FSAudioStream = { [unowned self] in
         let configuration = FSStreamConfiguration()
+//        configuration.cacheDirectory = kDocumentDirectory
         let audioStream = FSAudioStream(configuration: configuration)
         audioStream?.strictContentTypeChecking = false
         audioStream?.defaultContentType = "audio/x-m4a"

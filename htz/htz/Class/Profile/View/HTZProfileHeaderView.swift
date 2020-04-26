@@ -21,7 +21,7 @@ class HTZProfileHeaderView: BaseView {
     
     var iconImage: String? {
         didSet {
-            if let iconImage = iconImage {
+            if let iconImage = iconImage, iconImage.length > 0 {
                 iconImageView.wb_setImageWith(urlStr: iconImage, placeHolder: "favorite")
             }
         }
@@ -60,16 +60,22 @@ class HTZProfileHeaderView: BaseView {
         if let name = HTZUserAccount.shared.name {
             nameButton.setTitle(name, for: UIControl.State.normal)
         } else {
-           nameButton.setTitle("点击登录", for: UIControl.State.normal)
+           nameButton.setTitle("", for: UIControl.State.normal)
         }
         
         nameButton.addTarget(self, action: #selector(nameBtnClickAction), for: UIControl.Event.touchUpInside)
         return nameButton
     }()
-    
+
     private lazy var arrowImageView: UIImageView = {
         let arrowImageView = UIImageView(image: UIImage(named: "enter"))
         return arrowImageView
+    }()
+    
+    private lazy var tapView: UIView = {
+        let view = UIView()
+        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(nameBtnClickAction)))
+        return view
     }()
     
     private lazy var functionView: HTZProfileFunctionView = {
@@ -96,6 +102,7 @@ class HTZProfileHeaderView: BaseView {
         bgImageView.addSubview(iconImageView)
         bgImageView.addSubview(nameButton)
         bgImageView.addSubview(arrowImageView)
+        bgImageView.addSubview(tapView)
         
         addSubview(functionView)
         addSubview(iDownloadsButton)
@@ -124,6 +131,13 @@ class HTZProfileHeaderView: BaseView {
             make.centerY.equalTo(iconImageView)
             make.size.equalTo(CGSize(width: 14, height: 14))
             make.right.equalTo(bgImageView).offset(-32)
+        }
+        
+        tapView.snp.makeConstraints { (make) in
+            make.left.equalTo((nameButton))
+            make.top.equalTo(nameButton).offset(-kGlobelMargin)
+            make.right.equalTo(arrowImageView)
+            make.bottom.equalTo(nameButton).offset(kGlobelMargin)
         }
         
         functionView.snp.makeConstraints { (make) in
@@ -160,7 +174,7 @@ extension HTZProfileHeaderView {
 // MARK: HTZProfileFunctionViewDelegate
 extension HTZProfileHeaderView: HTZProfileFunctionViewDelegate {
     @objc internal func functionTapAction(_ index: NSInteger) {
-        if delegate != nil && (delegate?.responds(to: Selector(("functionTapAction:"))))! {
+        if delegate != nil && (delegate?.responds(to: #selector(self.functionTapAction(_:))))! {
             delegate?.functionTapAction(index)
         }
     }

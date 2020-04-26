@@ -57,7 +57,7 @@ extension HTZSearchViewController: PYSearchViewControllerDelegate {
         
 //        searchViewController.searchSuggestions =
         
-        NetWorkRequest(API.search(key: searchText, output_offset: 0, max_outputs: 10)) { (response) -> (Void) in
+        NetWorkRequest(API.search(key: searchText, output_offset: 0, max_outputs: 10)) {[weak self] (response) -> (Void) in
             
             printLog(response)
             if response["code"].stringValue == "200" {
@@ -73,7 +73,7 @@ extension HTZSearchViewController: PYSearchViewControllerDelegate {
                 for item in items! {
                     arr.append(item?.title ?? "--")
                 }
-                self.searchSuggestions = arr
+                self?.searchSuggestions = arr
             }
             
         }

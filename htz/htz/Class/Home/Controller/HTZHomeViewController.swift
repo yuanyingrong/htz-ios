@@ -83,35 +83,7 @@ class HTZHomeViewController: HTZBaseViewController {
     private lazy var homeViewModel: HTZHomeViewModel = HTZHomeViewModel()
     
     @objc private func loginButtonClickAction() { // 跳转登陆
-        let vc = HTZWechatLoginViewController()
-        navigationController?.pushViewController(vc, animated: true)
-        vc.loginResult = { loginModel in
-            let dict:[String : Any?] = [
-                "token":loginModel?.token,
-                "name":loginModel?.name,
-                "id":loginModel?.id,
-                "union_id":loginModel?.union_id,
-                "mobile":loginModel?.mobile,
-                "gender":loginModel?.gender,
-                "created_at":loginModel?.created_at,
-                "avatar":loginModel?.avatar,
-                "birthday_year":loginModel?.birthday_year,
-                "country":loginModel?.wx_login_resp?.country,
-                "unionid":loginModel?.wx_login_resp?.unionid,
-                //                "city":loginModel?.wx_login_resp?.city,
-                "privilege":loginModel?.wx_login_resp?.privilege,
-                "sex":loginModel?.wx_login_resp?.sex,
-                "province":loginModel?.wx_login_resp?.province,
-                "nickname":loginModel?.wx_login_resp?.nickname,
-                "openid":loginModel?.wx_login_resp?.openid,
-                "headimgurl":loginModel?.wx_login_resp?.headimgurl]
-            
-            
-            HTZUserAccount.shared.saveUserAcountInfoWithDict(dict: dict as [String : Any])
-            
-            // 发送网络状态改变的通知
-            NotificationCenter.default.post(name: NSNotification.Name(kLoginSuccessNotification), object: nil)
-        }
+        HTZLoginManager.shared.jumpToWechatLogin(controller: self)
     }
     
     
@@ -200,35 +172,7 @@ extension HTZHomeViewController: HTZHomeSearchViewDelegate {
         if let _ = HTZUserAccount.shared.token { // 已登录，跳转历史记录
             
         } else { // 跳转登陆
-            let vc = HTZWechatLoginViewController()
-            navigationController?.pushViewController(vc, animated: true)
-            vc.loginResult = { loginModel in
-                let dict:[String : Any?] = [
-                    "token":loginModel?.token,
-                    "name":loginModel?.name,
-                    "id":loginModel?.id,
-                    "union_id":loginModel?.union_id,
-                    "mobile":loginModel?.mobile,
-                    "gender":loginModel?.gender,
-                    "created_at":loginModel?.created_at,
-                    "avatar":loginModel?.avatar,
-                    "birthday_year":loginModel?.birthday_year,
-                    "country":loginModel?.wx_login_resp?.country,
-                    "unionid":loginModel?.wx_login_resp?.unionid,
-                    //                "city":loginModel?.wx_login_resp?.city,
-                    "privilege":loginModel?.wx_login_resp?.privilege,
-                    "sex":loginModel?.wx_login_resp?.sex,
-                    "province":loginModel?.wx_login_resp?.province,
-                    "nickname":loginModel?.wx_login_resp?.nickname,
-                    "openid":loginModel?.wx_login_resp?.openid,
-                    "headimgurl":loginModel?.wx_login_resp?.headimgurl]
-                
-                
-                HTZUserAccount.shared.saveUserAcountInfoWithDict(dict: dict as [String : Any])
-                
-                // 发送网络状态改变的通知
-                NotificationCenter.default.post(name: NSNotification.Name(kLoginSuccessNotification), object: nil)
-            }
+            HTZLoginManager.shared.jumpToWechatLogin(controller: self)
         }
     }
 }

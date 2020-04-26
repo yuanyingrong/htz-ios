@@ -88,17 +88,17 @@ class HTZAlbumListViewController: HTZBaseViewController {
         // 数据请求
         guard let sutraInfoModel = sutraInfoModel else { return }
         if let isAlbum = sutraInfoModel.isAlbum, !isAlbum {
-            albumListViewModel.requestData(index: sutraInfoModel.index!, isPullDown: true) { (success) in
+            albumListViewModel.requestData(index: sutraInfoModel.index!, isPullDown: true) { [weak self] (success) in
                 if success {
-                    self.countLabel.text = "共\(self.albumListViewModel.dataArr.count)集"
-                    self.tableView.reloadData()
+                    self?.countLabel.text = "共\(self?.albumListViewModel.dataArr.count ?? 0)集"
+                    self?.tableView.reloadData()
                 }
             }
         } else {
-            albumListViewModel.requestData(sutra_id: (sutraInfoModel.id)!, page_index: 0) { (success) in
+            albumListViewModel.requestData(sutra_id: (sutraInfoModel.id)!, page_index: 0) { [weak self] (success) in
                 if success {
-                    self.countLabel.text = "共\(self.albumListViewModel.dataArr.count)集"
-                    self.tableView.reloadData()
+                    self?.countLabel.text = "共\(self?.albumListViewModel.dataArr.count ?? 0)集"
+                    self?.tableView.reloadData()
                 }
             }
         }
@@ -218,17 +218,20 @@ extension HTZAlbumListViewController: HTZAlbumListCellDelegate {
 }
 // MARK: HTZDownloadManagerDelegate
 extension HTZAlbumListViewController: HTZDownloadManagerDelegate {
-    func downloadChanged(_ downloadManager: HTZDownloadManager, downloadModel: HTZDownloadModel, state: HTZDownloadManagerState) {
+    @objc func downloadChanged(_ downloadManager: HTZDownloadManager, downloadModel: HTZDownloadModel, state: HTZDownloadManagerState) {
         if state == HTZDownloadManagerState.finished {
             requestData()
         }
     }
     
-    func removedDownloadArr(_ downloadManager: HTZDownloadManager, downloadArr: [HTZDownloadModel]) {
-        
+    @objc func removedDownloadArr(_ downloadManager: HTZDownloadManager, downloadArr: [HTZDownloadModel]) {
+        printLog("remove")
+        if downloadArr.first?.state == HTZDownloadManagerState.finished {
+            requestData()
+        }
     }
     
-    func downloadProgress(_ downloadManager: HTZDownloadManager, downloadModel: HTZDownloadModel, totalSize: NSInteger, downloadSize: NSInteger, progress: Float) {
+    @objc func downloadProgress(_ downloadManager: HTZDownloadManager, downloadModel: HTZDownloadModel, totalSize: NSInteger, downloadSize: NSInteger, progress: Float) {
         
     }
     

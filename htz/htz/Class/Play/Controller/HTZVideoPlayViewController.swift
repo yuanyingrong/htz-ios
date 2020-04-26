@@ -32,6 +32,7 @@ class HTZVideoPlayViewController: UIViewController {
 
 //        let playerManager = ZFAVPlayerManager()
         let playerManager = ZFIJKPlayerManager()
+        
         /// 播放器相关
         self.player = ZFPlayerController(playerManager: playerManager, containerView: self.containerView)
         self.player?.controlView = self.controlView

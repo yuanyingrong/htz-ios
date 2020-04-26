@@ -53,6 +53,9 @@ class HTZProfileViewController: HTZBaseViewController {
         view.addSubview(tableView)
         headerView.frame = CGRect(x: 0, y: -44, width: kScreenWidth, height: 340)
         tableView.tableHeaderView = headerView
+        
+        self.headerView.iconImage =  HTZUserAccount.shared.headimgurl
+        self.headerView.name =  HTZUserAccount.shared.name
     }
     
     override func configData() {
@@ -104,8 +107,11 @@ extension HTZProfileViewController: UITableViewDataSource, UITableViewDelegate {
             vc.title = "收听记录"
             navigationController?.pushViewController(vc, animated: true)
         } else if indexPath.row == 2 {
-            let vc = HTZMyNotificationViewController()
+            let vc = HTZMyNotificationListViewController()
             vc.title = "我的通知"
+            navigationController?.pushViewController(vc, animated: true)
+        } else if indexPath.row == 3 {
+            let vc = HTZSettingViewController()
             navigationController?.pushViewController(vc, animated: true)
         }
         
@@ -117,35 +123,11 @@ extension HTZProfileViewController: UITableViewDataSource, UITableViewDelegate {
 extension HTZProfileViewController: HTZProfileHeaderViewDelegate {
     
     @objc func nameButtonClickAction() {
-        let vc = HTZWechatLoginViewController()
-        navigationController?.pushViewController(vc, animated: true)
-        vc.loginResult = { loginModel in
-            let dict:[String : Any?] = [
-                "token":loginModel?.token,
-                "name":loginModel?.name,
-                "id":loginModel?.id,
-                "union_id":loginModel?.union_id,
-                "mobile":loginModel?.mobile,
-                "gender":loginModel?.gender,
-                "created_at":loginModel?.created_at,
-                "avatar":loginModel?.avatar,
-                "birthday_year":loginModel?.birthday_year,
-                "country":loginModel?.wx_login_resp?.country,
-                "unionid":loginModel?.wx_login_resp?.unionid,
-//                "city":loginModel?.wx_login_resp?.city,
-                "privilege":loginModel?.wx_login_resp?.privilege,
-                "sex":loginModel?.wx_login_resp?.sex,
-                "province":loginModel?.wx_login_resp?.province,
-                "nickname":loginModel?.wx_login_resp?.nickname,
-                "openid":loginModel?.wx_login_resp?.openid,
-                "headimgurl":loginModel?.wx_login_resp?.headimgurl]
-           
-            
-            HTZUserAccount.shared.saveUserAcountInfoWithDict(dict: dict as [String : Any])
-            self.headerView.iconImage =  HTZUserAccount.shared.headimgurl
-            self.headerView.name =  HTZUserAccount.shared.name
-            // 发送网络状态改变的通知
-            NotificationCenter.default.post(name: NSNotification.Name(kLoginSuccessNotification), object: nil)
+        if HTZUserAccount.shared.token != nil {
+            let vc = HTZPersonalProfileViewController()
+            navigationController?.pushViewController(vc, animated: true)
+        } else {
+            HTZLoginManager.shared.jumpToWechatLogin(controller: self)
         }
         print("点击登录")
     }

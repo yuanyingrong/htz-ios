@@ -90,9 +90,9 @@ class HTZDownloadManager: NSObject {
            for saveModel in downloadFileList() {
                for obj in saveModel.downloadFiles! {
                    if fileID == obj.fileID {
-                    if obj.resumeData == nil {
-                        obj.state = HTZDownloadManagerState.none
-                    }
+//                    if obj.resumeData == nil {
+//                        obj.state = HTZDownloadManagerState.none
+//                    }
                     state = obj.state ?? HTZDownloadManagerState.none
                    }
                }
@@ -191,7 +191,7 @@ class HTZDownloadManager: NSObject {
         if exist {
             if let downloadRequest = self.downloadRequest, downloadRequest.task?.state == URLSessionTask.State.running {
                 
-                downloadRequest.cancel()
+                downloadRequest.cancel(producingResumeData: true)
                 cancelled = true
                 downloadRequest.suspend()
             }
@@ -443,9 +443,9 @@ extension HTZDownloadManager {
                         delegate.downloadChanged(self, downloadModel: model, state: HTZDownloadManagerState.finished)
                     }
 
-                    if let delegate = self.delegate, delegate.responds(to: #selector(HTZPlayViewController.removedDownloadArr(_:downloadArr:))) {
-                        delegate.removedDownloadArr(self, downloadArr: [model])
-                    }
+//                    if let delegate = self.delegate, delegate.responds(to: #selector(HTZPlayViewController.removedDownloadArr(_:downloadArr:))) {
+//                        delegate.removedDownloadArr(self, downloadArr: [model])
+//                    }
                     print(response)
                     break
                 case .failure(_): // 下载失败
@@ -505,8 +505,8 @@ extension HTZDownloadManager {
                     // 下载图片
                     
                     // 歌词
-                    let lrcData = NSData(contentsOf: URL(string: model.fileLyric!)!)
-                    lrcData?.write(toFile: model.fileLyricPath, atomically: true)
+//                    let lrcData = NSData(contentsOf: URL(string: model.fileLyric!)!)
+//                    lrcData?.write(toFile: model.fileLyricPath, atomically: true)
                     
                     self.updateDownloadModel(model: model)
                     
@@ -514,9 +514,9 @@ extension HTZDownloadManager {
                         delegate.downloadChanged(self, downloadModel: model, state: HTZDownloadManagerState.finished)
                     }
                     
-                    if let delegate = self.delegate, delegate.responds(to: #selector(HTZPlayViewController.removedDownloadArr(_:downloadArr:))) {
-                        delegate.removedDownloadArr(self, downloadArr: [model])
-                    }
+//                    if let delegate = self.delegate, delegate.responds(to: #selector(HTZPlayViewController.removedDownloadArr(_:downloadArr:))) {
+//                        delegate.removedDownloadArr(self, downloadArr: [model])
+//                    }
                     break
                 case .failure(_):  // 下载失败
                     if !self.cancelled {
@@ -670,11 +670,15 @@ extension HTZDownloadManager {
                     for (idx, obj) in arr.enumerated() {
                         if model.fileID == obj.fileID {
                             // 状态改变
+                            
                             model.state = HTZDownloadManagerState.none
                             updateDownloadModel(model: model)
                             
                             if let delegate = self.delegate, delegate.responds(to: #selector(HTZPlayViewController.downloadChanged(_:downloadModel:state:))) {
                                 delegate.downloadChanged(self, downloadModel: model, state: HTZDownloadManagerState.none)
+                            }
+                            if let delegate = self.delegate, delegate.responds(to: #selector(HTZPlayViewController.removedDownloadArr(_:downloadArr:))) {
+                                delegate.removedDownloadArr(self, downloadArr: [obj])
                             }
                             // 删除文件
                             if ifPathExist(path: obj.fileLocalPath) {

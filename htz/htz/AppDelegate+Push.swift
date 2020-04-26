@@ -17,7 +17,12 @@ extension AppDelegate {
         JPUSHService.register(forRemoteNotificationConfig: entity, delegate: self)
         //需要IDFA 功能，定向投放广告功能
         //let advertisingId = ASIdentifierManager.shared().advertisingIdentifier.uuidString
-        JPUSHService.setup(withOption: launchOptions, appKey: "98c449ca3a5460e6bbcc3488", channel: "App Store", apsForProduction: false, advertisingIdentifier: nil)
+        #if DEBUG
+        let isProduction = false
+        #else
+        let isProduction = true
+        #endif
+        JPUSHService.setup(withOption: launchOptions, appKey: JAppKey, channel: "App Store", apsForProduction: isProduction, advertisingIdentifier: nil)
     }
     
     

@@ -29,7 +29,7 @@ class HTZHomeViewModel: NSObject {
 //    }
     
     func requestData(callBack: @escaping (Bool, _ code:String) -> ())  {
-        NetWorkRequest(API.recommendations) { (response) -> (Void) in
+        NetWorkRequest(API.recommendations) { [weak self] (response) -> (Void) in
             
             if response["code"].rawString() == "200" {
                 let arr = [HTZRecommendationModel].deserialize(from: response["data"].rawString())
@@ -43,7 +43,7 @@ class HTZHomeViewModel: NSObject {
                         model.desc = remcomend?.sutra_desc
                         arrM.append(model)
                     }
-                    self.dataArr = arrM
+                    self?.dataArr = arrM
                     
                     callBack(true, "200")
                 }

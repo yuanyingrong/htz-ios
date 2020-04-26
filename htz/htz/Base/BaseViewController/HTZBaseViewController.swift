@@ -12,7 +12,7 @@ class HTZBaseViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = RandomColor()
+        view.backgroundColor = .white
         // Do any additional setup after loading the view.
         self.configInterface()
     }
