@@ -225,7 +225,7 @@ class HTZAudioPlayer: NSObject {
         
         DispatchQueue.main.async {
             self.audioStream.play()
-            self.ijkPlayer.play()
+//            self.ijkPlayer.play()
         }
         
         self.startTimer()

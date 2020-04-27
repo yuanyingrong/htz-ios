@@ -39,7 +39,7 @@ class HTZHomeViewModel: NSObject {
                         let model = HTZSutraInfoModel()
                         model.id = remcomend?.sutra_id
                         model.name = remcomend?.sutra_name
-                        model.cover = "\(ossurl)/\(remcomend?.sutra_cover ?? "")"
+                        model.cover = "\(ossurl)\(remcomend?.sutra_cover ?? "")"
                         model.desc = remcomend?.sutra_desc
                         arrM.append(model)
                     }

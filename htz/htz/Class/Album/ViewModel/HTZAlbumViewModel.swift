@@ -27,7 +27,7 @@ class HTZAlbumViewModel: NSObject {
                 let arr = [HTZSutraInfoModel].deserialize(from: response["data"].rawString())
                 if let arr = arr {
                     for sutra in arr {
-                        sutra?.cover = "\(ossurl)/\(sutra?.cover ?? "")"
+                        sutra?.cover = "\(ossurl)\(sutra?.cover ?? "")"
                     }
                     self.dataArr = arr
                     

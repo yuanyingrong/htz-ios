@@ -119,7 +119,7 @@ class HTZPlayViewController: HTZBaseViewController {
         self.isAppear = true
         let param = ["sutra_id" : model?.album_id ?? "",
                      "sutra_name" : model?.album_title ?? "",
-                     "sutra_cover" : model?.icon ?? "",
+                     "sutra_cover" : model?.icon?.replacingOccurrences(of: ossurl, with: "") ?? "",
                      "sutra_item_id" : model?.song_id ?? "",
                      "sutra_item_title" : model?.song_name ?? "",
                      "last_position" : 10] as [String : Any];

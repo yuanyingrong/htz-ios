@@ -98,6 +98,8 @@ class HTZAlbumListViewController: HTZBaseViewController {
             albumListViewModel.requestData(sutra_id: (sutraInfoModel.id)!, page_index: 0) { [weak self] (success) in
                 if success {
                     self?.countLabel.text = "共\(self?.albumListViewModel.dataArr.count ?? 0)集"
+                    self?.tableView.mj_header?.endRefreshing()
+                    self?.tableView.mj_footer?.endRefreshingWithNoMoreData()
                     self?.tableView.reloadData()
                 }
             }

@@ -35,7 +35,7 @@ class HTZAlbumListViewModel: NSObject {
                             obj.album_title = self.albumTitle
                             //                        obj.file_link = "http://htzshanghai.top/resources/audios/\(album)/" + model!.audio!
                             //                                            obj.lrclink = model!.original
-                            obj.file_link = "\(ossurl)/\(model?.audio_id ?? "")"
+                            obj.file_link = "\(ossurl)\(model?.audio_id ?? "")"
                             obj.original = model?.original
                             obj.explanation = model?.explanation
                             obj.file_duration = model?.duration
