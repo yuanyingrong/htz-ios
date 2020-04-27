@@ -8,7 +8,22 @@
 
 import Foundation
 
-extension UIWebView {
+extension UIWindow {
     
-    
+    static func yyr_currentViewController() -> UIViewController? {
+        let window: UIWindow? = (UIApplication.shared.delegate?.window)!
+        var topViewController = window?.rootViewController
+        while true {
+            if let viewController = topViewController?.presentingViewController {
+                topViewController = viewController
+            } else if let viewcontroller = topViewController,viewcontroller is UINavigationController, let viewController = (topViewController as! UINavigationController).topViewController {
+                topViewController = viewController
+            } else if let viewcontroller = topViewController, viewcontroller is UITabBarController {
+                topViewController = (viewcontroller as! UITabBarController).selectedViewController
+            } else {
+                break
+            }
+        }
+        return topViewController
+    }
 }

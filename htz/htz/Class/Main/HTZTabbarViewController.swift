@@ -62,6 +62,7 @@ class HTZTabbarViewController: UITabBarController {
         playButton.addTarget(self, action: #selector(playButtonClickAction), for: UIControl.Event.touchUpInside)
         playButton.center = CGPoint(x: self.tabBar.centerX, y: self.tabBar.bounds.size.height * 0.3)
         self.tabBar.addSubview(playButton)
+        
     }
     
     
