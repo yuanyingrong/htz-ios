@@ -64,7 +64,7 @@ class HTZLoginViewController: HTZBaseViewController {
     
     private lazy var wechatButton: UIButton = {
         let wechatButton = UIButton(frame: CGRect(x: 0, y: 0, width: 88, height: 88))
-        wechatButton.set(image: UIImage(named: "地图"), title: "微信登录", titlePosition: UIView.ContentMode.bottom, additionalSpacing: 8, state: UIControl.State.normal)
+        wechatButton.set(image: UIImage(named: "wechat"), title: "微信登录", titlePosition: UIView.ContentMode.bottom, additionalSpacing: 8, state: UIControl.State.normal)
         wechatButton.setTitleColor(UIColor.red, for: UIControl.State.normal)
         wechatButton.addTarget(self, action: #selector(wechatButtonClickAction), for: UIControl.Event.touchUpInside)
         return wechatButton
@@ -72,7 +72,7 @@ class HTZLoginViewController: HTZBaseViewController {
     
     private lazy var qqButton: UIButton = {
         let qqButton = UIButton(frame: CGRect(x: 0, y: 0, width: 44, height: 44))
-        qqButton.set(image: UIImage(named: "地图"), title: "QQ登录", titlePosition: UIView.ContentMode.bottom, additionalSpacing: 8, state: UIControl.State.normal)
+        qqButton.set(image: UIImage(named: "wechat"), title: "QQ登录", titlePosition: UIView.ContentMode.bottom, additionalSpacing: 8, state: UIControl.State.normal)
         qqButton.addTarget(self, action: #selector(qqButtonClickAction), for: UIControl.Event.touchUpInside)
         return qqButton
     }()
@@ -82,7 +82,7 @@ class HTZLoginViewController: HTZBaseViewController {
         let sinaButton = UIButton(frame: CGRect(x: 0, y: 0, width: 88, height: 88))
 //        sinaButton.setTitleColor(UIColor.darkGray, for: UIControl.State.normal)
 //        sinaButton.titleLabel?.font = UIFont.systemFont(ofSize: 10)
-        sinaButton.set(image: UIImage(named: "地图"), title: "微博登录", titlePosition: UIView.ContentMode.bottom, additionalSpacing: 8, state: UIControl.State.normal)
+        sinaButton.set(image: UIImage(named: "wechat"), title: "微博登录", titlePosition: UIView.ContentMode.bottom, additionalSpacing: 8, state: UIControl.State.normal)
         sinaButton.addTarget(self, action: #selector(sinaButtonClickAction), for: UIControl.Event.touchUpInside)
         return sinaButton
     }()

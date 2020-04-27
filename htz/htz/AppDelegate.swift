@@ -99,7 +99,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         DispatchQueue.main.async {
             if let isPlaying = HTZPlayViewController.sharedInstance.isPlaying, isPlaying {
                 self.palyButton.setBackgroundImage(UIImage(named: "play_normal"), for: UIControl.State.normal)
-                self.palyButton.setImage(UIImage(named: ""), for: UIControl.State.normal)
+                self.palyButton.setImage(UIImage(named: "tabbar_play"), for: UIControl.State.normal)
             } else {
                 self.palyButton.setBackgroundImage(UIImage(named: "play_normal"), for: UIControl.State.normal)
                 self.palyButton.setImage(UIImage(named: "tabbar_play"), for: UIControl.State.normal)

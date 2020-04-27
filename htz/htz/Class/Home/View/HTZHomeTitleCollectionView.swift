@@ -78,7 +78,7 @@ class HTZHomeTitleCollectionView: BaseView {
     }()
     
     private lazy var leftImageView: UIImageView = {
-        let imageView = UIImageView(image: UIImage(named: ""))
+        let imageView = UIImageView()
         return imageView
     }()
     
