@@ -19,12 +19,12 @@ class HTZUserAccount: NSObject {
     @objc var created_at: String?
     @objc var avatar: String?
     @objc var birthday_year: String?
-    @objc var country: String?
     @objc var unionid: String?
-    @objc var city: [String]?
-    @objc var privilege: String?
-    @objc var sex: String?
+    @objc var country: String?
     @objc var province: String?
+    @objc var city: String?
+    @objc var privilege: [String]?
+    @objc var sex: String?
     @objc var nickname: String?
     @objc var openid: String?
     @objc var headimgurl: String?
@@ -46,7 +46,15 @@ class HTZUserAccount: NSObject {
         if let obj = obj {
             setValuesForKeys(obj as! [String : Any])
         }
-
+    }
+    
+    func update(key: String, value: Any) {
+        let dict = UserDefaults.Standard.value(forKey: UserDefaults.keyUserAccount)
+        if let dict = dict {
+            var dic = dict as! [String : Any]
+            dic[key] = value
+            saveUserAcountInfoWithDict(dict: dic)
+        }
     }
     
     

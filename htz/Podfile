@@ -21,6 +21,7 @@ target 'htz' do
   pod 'MJRefresh'
   
   pod 'PYSearch'
+  pod 'ZWAlertController'
   
 #  pod 'NicooPlayer'
 #  pod 'SJVideoPlayer'

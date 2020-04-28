@@ -29,6 +29,9 @@ enum API {
     case putNotification // 设置我的通知信息状态为已读 TODO
     case notifications(page_index: NSInteger, page_size: NSInteger)  // 查询所有通知
     
+    case getSmsCode(telephone: String)
+    case bindTelephone(code: String, telephone: String)
+    
     case albums
     case xingfuneixinchan
     case jingxinyangsheng
@@ -51,9 +54,11 @@ extension API: TargetType {
 //        case .song(_), .songDetail(_):
 //            return URL.init(string:"https://musicapi.qianqian.com/v1/restserver/ting?format=json&from=ios&channel=appstore&method=")!
         case .search(_,_,_):
-            return URL(string: "http://39.96.5.46:9300/")!
+            return URL(string: search_baseURL)!
         case .download(_,_):
-            return URL(string: "http://39.96.5.46:9400/")!
+            return URL(string: download_baseURL)!
+        case .getSmsCode(_), .bindTelephone(_,_):
+            return URL(string: mobile_baseURL)!
         case .albums, .xingfuneixinchan, .jingxinyangsheng, .mixinxiaoshipin:
             return URL(string: "http://htzshanghai.top/resources/app_json/")!
         default:
@@ -93,6 +98,11 @@ extension API: TargetType {
             return "put/user/notifications"
         case .notifications(_,_): // 查询所有通知
             return "get/notifications"
+            
+        case .getSmsCode(_):
+            return "telephone/getSmsCode"
+        case .bindTelephone(_,_):
+            return "telephone/bindTelephone"
             
         case .albums:
          return "albums.json"
@@ -158,6 +168,11 @@ extension API: TargetType {
         case .deleteAllListenHistory, .recommendations, .userNotifications, .putNotification, .albums, .xingfuneixinchan, .jingxinyangsheng, .mixinxiaoshipin, .song(_,_,_), .songDetail(_):
             return .requestPlain
             
+        case let .getSmsCode(telephone):
+            return .requestParameters(parameters: ["telephone": telephone, "unionid": HTZUserAccount.shared.unionid as Any], encoding: JSONEncoding.default)
+        case let .bindTelephone(code, telephone):
+            return .requestParameters(parameters: ["code": code, "telephone": telephone, "unionid": HTZUserAccount.shared.unionid as Any], encoding: JSONEncoding.default)
+            
         case let .register(email, password):
             return .requestParameters(parameters: ["email": email, "password": password], encoding: JSONEncoding.default)
         case .easyRequset:
@@ -187,7 +202,7 @@ extension API: TargetType {
     
     
     var headers: [String : String]? {
-        HTZUserAccount.shared.token = "bb9804a4-fdd1-5497-a153-3698f703e91b"
+//        HTZUserAccount.shared.token = "bb9804a4-fdd1-5497-a153-3698f703e91b"
         if let token = HTZUserAccount.shared.token {
             return ["Content-Type" : "application/x-www-form-urlencoded","token" : token]
         }

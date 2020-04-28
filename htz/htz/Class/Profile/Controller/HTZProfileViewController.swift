@@ -125,6 +125,10 @@ extension HTZProfileViewController: HTZProfileHeaderViewDelegate {
     @objc func nameButtonClickAction() {
         if HTZUserAccount.shared.token != nil {
             let vc = HTZPersonalProfileViewController()
+            vc.changeSuccessBlock = {
+                self.headerView.iconImage =  HTZUserAccount.shared.headimgurl
+                self.headerView.name =  HTZUserAccount.shared.name
+            }
             navigationController?.pushViewController(vc, animated: true)
         } else {
             HTZLoginManager.shared.jumpToWechatLogin(controller: self)

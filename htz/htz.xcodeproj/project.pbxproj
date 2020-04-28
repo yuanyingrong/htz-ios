@@ -132,6 +132,10 @@
 		199831732455295E0091E9D5 /* HTZMyNotificationDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 199831722455295E0091E9D5 /* HTZMyNotificationDetailViewController.swift */; };
 		19983177245536E60091E9D5 /* HTZBaseScrollViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19983176245536E60091E9D5 /* HTZBaseScrollViewController.swift */; };
 		199831792455898C0091E9D5 /* HTZSettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 199831782455898C0091E9D5 /* HTZSettingViewController.swift */; };
+		1998317B2457B94C0091E9D5 /* HTZCountDownTimerButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1998317A2457B94C0091E9D5 /* HTZCountDownTimerButton.swift */; };
+		1998317D2457BCAE0091E9D5 /* HTZBindMobileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1998317C2457BCAE0091E9D5 /* HTZBindMobileViewController.swift */; };
+		1998317F24581D990091E9D5 /* HTZPersonalProfilePortraitCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1998317E24581D990091E9D5 /* HTZPersonalProfilePortraitCell.swift */; };
+		1998318124581FCD0091E9D5 /* HTZPersonalProfileShowTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1998318024581FCD0091E9D5 /* HTZPersonalProfileShowTableViewCell.swift */; };
 		19A957EF229BC716007B48ED /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19A957EE229BC716007B48ED /* AppDelegate.swift */; };
 		19A957F1229BC716007B48ED /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19A957F0229BC716007B48ED /* ViewController.swift */; };
 		19A957F4229BC716007B48ED /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 19A957F2229BC716007B48ED /* Main.storyboard */; };
@@ -297,6 +301,10 @@
 		199831722455295E0091E9D5 /* HTZMyNotificationDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZMyNotificationDetailViewController.swift; sourceTree = "<group>"; };
 		19983176245536E60091E9D5 /* HTZBaseScrollViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZBaseScrollViewController.swift; sourceTree = "<group>"; };
 		199831782455898C0091E9D5 /* HTZSettingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZSettingViewController.swift; sourceTree = "<group>"; };
+		1998317A2457B94C0091E9D5 /* HTZCountDownTimerButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZCountDownTimerButton.swift; sourceTree = "<group>"; };
+		1998317C2457BCAE0091E9D5 /* HTZBindMobileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZBindMobileViewController.swift; sourceTree = "<group>"; };
+		1998317E24581D990091E9D5 /* HTZPersonalProfilePortraitCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZPersonalProfilePortraitCell.swift; sourceTree = "<group>"; };
+		1998318024581FCD0091E9D5 /* HTZPersonalProfileShowTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZPersonalProfileShowTableViewCell.swift; sourceTree = "<group>"; };
 		19A957EB229BC716007B48ED /* htz.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = htz.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		19A957EE229BC716007B48ED /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		19A957F0229BC716007B48ED /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -415,6 +423,7 @@
 		19444CF822F92C290063EF38 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				1998317A2457B94C0091E9D5 /* HTZCountDownTimerButton.swift */,
 				19444CF922F92D0D0063EF38 /* HTZSearchView.swift */,
 				1947F4F922FA5E9E00B57813 /* LeftTitleRightImageButton.swift */,
 				193D7D8723273857001A5F21 /* HTZSliderView.swift */,
@@ -991,6 +1000,7 @@
 			children = (
 				195C195522B24A6F002E8A04 /* HTZProfileViewController.swift */,
 				1998316E24551EFF0091E9D5 /* HTZPersonalProfileViewController.swift */,
+				1998317C2457BCAE0091E9D5 /* HTZBindMobileViewController.swift */,
 				193B86722334CE71006D4A3D /* HTZMyDownloadedViewController.swift */,
 				1978C4132359552E00C0326A /* HTZToDownloadListViewController.swift */,
 				193D6F2323320AC8004BF5FB /* HTZMyDownloadedAlbumViewController.swift */,
@@ -1025,6 +1035,8 @@
 				193D6F2923320C43004BF5FB /* HTZMyFavoriteAlbumCell.swift */,
 				193B866E2334ACCA006D4A3D /* HTZMyFavoriteCell.swift */,
 				196A701F244FD61000484F9A /* HTZListenHistoryCell.swift */,
+				1998317E24581D990091E9D5 /* HTZPersonalProfilePortraitCell.swift */,
+				1998318024581FCD0091E9D5 /* HTZPersonalProfileShowTableViewCell.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -1318,6 +1330,7 @@
 				196A6F6C244D53EB00484F9A /* HTZListenHistoryModel.swift in Sources */,
 				1942E1692329D575007E7C36 /* HTZLyricParser.swift in Sources */,
 				19A957F1229BC716007B48ED /* ViewController.swift in Sources */,
+				1998317F24581D990091E9D5 /* HTZPersonalProfilePortraitCell.swift in Sources */,
 				1934795D232636D300138B36 /* HTZAudioPlayer.swift in Sources */,
 				1946C4B0231F620500808F3C /* HTZLrcModel.swift in Sources */,
 				1978C4162359559700C0326A /* HTZToDownloadListCell.swift in Sources */,
@@ -1355,6 +1368,7 @@
 				1936CADF231FA6E5001218DD /* HTZSutraInfoModel.swift in Sources */,
 				195C194922B243D1002E8A04 /* BaseTabBar.swift in Sources */,
 				1946C4AC231F509900808F3C /* HTZMusicMessageModel.swift in Sources */,
+				1998317D2457BCAE0091E9D5 /* HTZBindMobileViewController.swift in Sources */,
 				195C195A22B24ABB002E8A04 /* HTZPlayViewController.swift in Sources */,
 				19585DB123177B1C009536EE /* HTZNetWorkManager.swift in Sources */,
 				1965FB162355948B00924EF6 /* ZFIJKPlayerManager.m in Sources */,
@@ -1390,6 +1404,7 @@
 				193B866B2334A5C6006D4A3D /* HTZSaveDataModel.swift in Sources */,
 				19510C7D22A798840067AA5D /* Constant.swift in Sources */,
 				193C91A222FC0C6E00E3AA4A /* HTZHomeViewModel.swift in Sources */,
+				1998318124581FCD0091E9D5 /* HTZPersonalProfileShowTableViewCell.swift in Sources */,
 				193E5084231E635B000184EC /* HTZAlbumInfoModel.swift in Sources */,
 				195C194E22B24745002E8A04 /* UIBarButtonItem+Extension.swift in Sources */,
 				1971F391231CB5C0002FFF42 /* HTZAlbumListViewController.swift in Sources */,
@@ -1409,6 +1424,7 @@
 				195DDD2D22AFB0B800C5F04C /* RegexHelper.swift in Sources */,
 				19444CFC22F97B050063EF38 /* HTZCycleView.swift in Sources */,
 				193A8B942318C82000B520B1 /* CurrentViewControllerUtil.swift in Sources */,
+				1998317B2457B94C0091E9D5 /* HTZCountDownTimerButton.swift in Sources */,
 				19982F5B2453344E00EB1938 /* HTZRefreshTool.swift in Sources */,
 				195C195622B24A6F002E8A04 /* HTZProfileViewController.swift in Sources */,
 				193F560523209AFD0037BC70 /* HTZHomeSearchView.swift in Sources */,

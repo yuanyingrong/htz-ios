@@ -48,6 +48,10 @@ extension UIViewController {
         }
     }
     
+    func alertActionTipConfirmAlert(message:String) {
+        self.alertActionAlert(title: "提示", message: message, confirmTitle: "我知道了")
+    }
+    
     func alertActionAlert(title: String, message:String, confirmTitle: String) {
         let attr = NSMutableAttributedString(string: message, attributes: [NSAttributedString.Key.font : UIFont.boldSystemFont(ofSize: 16),NSAttributedString.Key.foregroundColor : RGBHEXCOLOR(rgbValue: 0x334A60)])
         // 初始化提示框

@@ -29,10 +29,10 @@ class HTZLoginManager: NSObject {
                 "birthday_year":loginModel?.birthday_year,
                 "country":loginModel?.wx_login_resp?.country,
                 "unionid":loginModel?.wx_login_resp?.unionid,
-                //                "city":loginModel?.wx_login_resp?.city,
+                "city":loginModel?.wx_login_resp?.city,
+                "province":loginModel?.wx_login_resp?.province,
                 "privilege":loginModel?.wx_login_resp?.privilege,
                 "sex":loginModel?.wx_login_resp?.sex,
-                "province":loginModel?.wx_login_resp?.province,
                 "nickname":loginModel?.wx_login_resp?.nickname,
                 "openid":loginModel?.wx_login_resp?.openid,
                 "headimgurl":loginModel?.wx_login_resp?.headimgurl]
