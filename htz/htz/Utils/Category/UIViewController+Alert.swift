@@ -43,7 +43,7 @@ extension UIViewController {
         let alertContentView = subView!.subviews.first
         alertContentView?.backgroundColor = UIColor.darkGray
         present(alertController, animated: true, completion: nil)
-        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 10) {
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 1) {
             self.dismiss(animated: true, completion: nil)
         }
     }
