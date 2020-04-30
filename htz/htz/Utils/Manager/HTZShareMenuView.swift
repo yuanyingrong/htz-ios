@@ -336,6 +336,18 @@ extension HTZShareMenuView {
                     titles.append("微信收藏")
                 }
                 break
+            case .QQ:
+                if JSHAREService.isQQInstalled() {
+                    images.append("icon_qq")
+                    titles.append("QQ")
+                }
+                break
+            case .qzone:
+                if JSHAREService.isQQInstalled() {
+                    images.append("icon_qq_kongjian")
+                    titles.append("QQ空间")
+                }
+                break
             default:
                 break
             }

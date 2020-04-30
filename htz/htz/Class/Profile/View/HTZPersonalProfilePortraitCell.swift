@@ -21,7 +21,7 @@ class HTZPersonalProfilePortraitCell: UITableViewCell {
     var portraitImage: String? {
         didSet {
             if let portraitImage = portraitImage, portraitImage.length > 0 {
-                portraitImageView.wb_setImageWith(urlStr: portraitImage, placeHolder: "favorite")
+                portraitImageView.wb_setImageWith(urlStr: portraitImage, placeHolder: "头像")
             }
         }
     }
@@ -83,7 +83,7 @@ class HTZPersonalProfilePortraitCell: UITableViewCell {
     
     private lazy var portraitImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = UIImage(named: "li_ji")
+        imageView.image = UIImage(named: "头像")
         return imageView
     }()
     

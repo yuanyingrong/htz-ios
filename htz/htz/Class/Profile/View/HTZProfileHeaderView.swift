@@ -22,7 +22,7 @@ class HTZProfileHeaderView: BaseView {
     var iconImage: String? {
         didSet {
             if let iconImage = iconImage, iconImage.length > 0 {
-                iconImageView.wb_setImageWith(urlStr: iconImage, placeHolder: "favorite")
+                iconImageView.wb_setImageWith(urlStr: iconImage, placeHolder: "头像")
             }
         }
     }
@@ -47,9 +47,9 @@ class HTZProfileHeaderView: BaseView {
         let iconImageView = UIImageView()
         iconImageView.cornerRadius = 44
         if let headimgurl = HTZUserAccount.shared.headimgurl {
-            iconImageView.wb_setImageWith(urlStr: headimgurl, placeHolder: "favorite")
+            iconImageView.wb_setImageWith(urlStr: headimgurl, placeHolder: "头像")
         } else {
-           iconImageView.image = UIImage(named: "favorite")
+           iconImageView.image = UIImage(named: "头像")
         }
         
         return iconImageView

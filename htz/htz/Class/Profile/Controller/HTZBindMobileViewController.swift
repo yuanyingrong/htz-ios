@@ -87,6 +87,7 @@ class HTZBindMobileViewController: HTZBaseViewController {
         textField.keyboardType = .numberPad
         textField.placeholder = "请输入手机号"
         textField.borderStyle = .roundedRect
+        textField.clearButtonMode = .whileEditing
         return textField
     }()
 
@@ -100,6 +101,8 @@ class HTZBindMobileViewController: HTZBaseViewController {
         textField.keyboardType = .default
         textField.placeholder = "输入验证码"
         textField.borderStyle = .roundedRect
+        textField.clearButtonMode = .whileEditing
+        textField.delegate = self
         return textField
     }()
     
@@ -109,6 +112,7 @@ class HTZBindMobileViewController: HTZBaseViewController {
         button.backgroundColor = UIColor.red
         button.setTitleColor(UIColor.white, for: UIControl.State.normal)
         button.cornerRadius = 8
+        button.isUserInteractionEnabled = false
         button.addTarget(self, action: #selector(confirmButtonClickAction), for: UIControl.Event.touchUpInside)
         return button
     }()
@@ -136,4 +140,46 @@ extension HTZBindMobileViewController {
             }
         }
     }
+}
+
+
+extension HTZBindMobileViewController: UITextFieldDelegate {
+    
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        printLog("textFieldDidBeginEditing=\(textField.text ?? "")")
+    }
+    func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
+        printLog("textFieldShouldBeginEditing=\(textField.text ?? "")")
+        return true
+    }
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        printLog("textFieldDidEndEditing=\(textField.text ?? "")")
+    }
+    func textFieldShouldEndEditing(_ textField: UITextField) -> Bool {
+        printLog("textFieldShouldEndEditing=\(textField.text ?? "")")
+        return true
+    }
+    
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        printLog("shouldChangeCharactersIn=\(textField.text ?? "")")
+        printLog("shouldChangeCharactersIn=\(string)")
+        
+        return true
+    }
+    
+    func textFieldShouldClear(_ textField: UITextField) -> Bool {
+        printLog("textFieldShouldClear=\(textField.text ?? "")")
+        return true
+    }
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        printLog("textFieldShouldReturn=\(textField.text ?? "")")
+        return true
+    }
+    
+    func textFieldDidChangeSelection(_ textField: UITextField) {
+        printLog("textFieldDidChangeSelection=\(textField.text ?? "")")
+        self.confirmButton.isUserInteractionEnabled = (mobileTextField.text!.length > 0 && codeTextField.text!.length > 0)
+    }
+    
 }
