@@ -29,6 +29,7 @@ enum API {
     case putNotification // 设置我的通知信息状态为已读 TODO
     case notifications(page_index: NSInteger, page_size: NSInteger)  // 查询所有通知
     
+    case addUserInfo(parameters: [String:Any])
     case getSmsCode(telephone: String)
     case bindTelephone(code: String, telephone: String)
     
@@ -57,7 +58,7 @@ extension API: TargetType {
             return URL(string: search_baseURL)!
         case .download(_,_):
             return URL(string: download_baseURL)!
-        case .getSmsCode(_), .bindTelephone(_,_):
+        case .addUserInfo(_), .getSmsCode(_), .bindTelephone(_,_):
             return URL(string: mobile_baseURL)!
         case .albums, .xingfuneixinchan, .jingxinyangsheng, .mixinxiaoshipin:
             return URL(string: "http://htzshanghai.top/resources/app_json/")!
@@ -98,7 +99,9 @@ extension API: TargetType {
             return "put/user/notifications"
         case .notifications(_,_): // 查询所有通知
             return "get/notifications"
-            
+
+        case .addUserInfo(_):
+            return "userInfo/add"
         case .getSmsCode(_):
             return "telephone/getSmsCode"
         case .bindTelephone(_,_):
@@ -148,7 +151,7 @@ extension API: TargetType {
         switch self {
         case let .login(code):
             return .requestParameters(parameters: ["code": code], encoding: JSONEncoding.default)
-        case let .postListenHistory(parameters):
+        case let .postListenHistory(parameters), let .addUserInfo(parameters):
             return .requestParameters(parameters: parameters, encoding: JSONEncoding.default)
         case let .sutras(page_index, page_size), let .getListenHistorys(page_index, page_size), let .notifications(page_index, page_size):
             return .requestParameters(parameters: ["page_index" : page_index,"page_size":page_size], encoding: JSONEncoding.default)
@@ -202,7 +205,7 @@ extension API: TargetType {
     
     
     var headers: [String : String]? {
-        HTZUserAccount.shared.token = "bb9804a4-fdd1-5497-a153-3698f703e91b"
+//        HTZUserAccount.shared.token = "bb9804a4-fdd1-5497-a153-3698f703e91b"
         if let token = HTZUserAccount.shared.token {
             return ["Content-Type" : "application/x-www-form-urlencoded","token" : token]
         }

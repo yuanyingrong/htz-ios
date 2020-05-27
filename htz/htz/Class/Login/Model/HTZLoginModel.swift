@@ -31,7 +31,7 @@ class wx_login_resp: HandyJSON {
     var unionid: String?
     var city: String?
     var privilege: [String]?
-    var sex: String?
+    var sex: Int?
     var province: String?
     var nickname: String?
     var openid: String?

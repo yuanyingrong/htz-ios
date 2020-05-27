@@ -31,6 +31,7 @@ PODS:
   - ZFPlayer/ControlView (3.3.1):
     - ZFPlayer/Core
   - ZFPlayer/Core (3.3.1)
+  - ZWAlertController (0.3.0)
 
 DEPENDENCIES:
   - FreeStreamer
@@ -50,6 +51,7 @@ DEPENDENCIES:
   - ZFPlayer
   - ZFPlayer/AVPlayer
   - ZFPlayer/ControlView
+  - ZWAlertController
 
 SPEC REPOS:
   https://github.com/CocoaPods/Specs.git:
@@ -70,6 +72,7 @@ SPEC REPOS:
     - TencentOpenAPI-Unofficial
     - WechatOpenSDK
     - ZFPlayer
+    - ZWAlertController
 
 EXTERNAL SOURCES:
   Weibo_SDK:
@@ -99,7 +102,8 @@ SPEC CHECKSUMS:
   WechatOpenSDK: 7cd4d3386fb6ba5595d5fb863e0a3bfd43bc6768
   Weibo_SDK: 5a4d08f7e1fedbb635435e4585c8c0439c7da089
   ZFPlayer: 8a6021a3c45e281f2abd24dca5c88915af770a7e
+  ZWAlertController: 0c2c82e7e06cf3db4496d447397dc8c17f1fb93f
 
-PODFILE CHECKSUM: 3dae845fa643c26415e4c917e9d6eed6a006bc26
+PODFILE CHECKSUM: 2a5e0ddd6f4693f3d661a49734526a9703b8fb78
 
 COCOAPODS: 1.8.4

@@ -12,20 +12,14 @@ class HTZMyNotificationListViewController: HTZBaseViewController {
     
     private var dataArr = [HTZNotificationsModel?]()
     
-    private lazy var tableView: UITableView = {
-        let tableView = UITableView()
-        tableView.delegate = self
-        tableView.dataSource = self
-        tableView.separatorStyle = UITableViewCell.SeparatorStyle.none
-//        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "HTZMyNotificationCellReuseID")
-        return tableView
-    }()
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         NetWorkRequest(API.notifications(page_index: 0, page_size: 10), completion: { (response) -> (Void) in
             printLog(response)
+            self.loginButton.isHidden = response["code"].rawString() == "200"
             if response["code"].rawString() == "200" {
                 self.dataArr = [HTZNotificationsModel].deserialize(from: response["data"].rawString()) ?? []
                 self.tableView.reloadData()
@@ -42,11 +36,15 @@ class HTZMyNotificationListViewController: HTZBaseViewController {
         
     }
     
+    @objc private func loginButtonClickAction() { // 跳转登陆
+        HTZLoginManager.shared.jumpToWechatLogin(controller: self)
+    }
     
     override func configSubView() {
         super.configSubView()
         
         view.addSubview(tableView)
+        view.addSubview(loginButton)
     }
     
     override func configConstraint() {
@@ -55,8 +53,28 @@ class HTZMyNotificationListViewController: HTZBaseViewController {
         tableView.snp.makeConstraints { (make) in
             make.edges.equalTo(view)
         }
+        
+        loginButton.snp.makeConstraints { (make) in
+            make.center.equalTo(view)
+        }
     }
+    private lazy var tableView: UITableView = {
+        let tableView = UITableView()
+        tableView.delegate = self
+        tableView.dataSource = self
+        tableView.separatorStyle = UITableViewCell.SeparatorStyle.none
+        //        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "HTZMyNotificationCellReuseID")
+        return tableView
+    }()
     
+    private lazy var loginButton: UIButton = {
+        let loginButton = UIButton(type: .custom)
+        loginButton.setTitle("登录后查看更多精彩内容", for: .normal)
+        loginButton.setTitleColor(.darkText, for: .normal)
+        loginButton.addTarget(self, action: #selector(loginButtonClickAction), for: .touchUpInside)
+        loginButton.isHidden = true
+        return loginButton
+    }()
     
 }
 

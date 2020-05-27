@@ -15,7 +15,7 @@ class HTZPersonalProfileViewController: HTZBaseViewController {
     
     var dataArr: [SettingCell] = {
         
-        let dataArr = [SettingCell(title: "头像", rightText: HTZUserAccount.shared.headimgurl),SettingCell(title: "地区", rightText: HTZUserAccount.shared.city),SettingCell(title: "性别", rightText: HTZUserAccount.shared.gender),SettingCell(title: "电话", rightText: HTZUserAccount.shared.mobile),SettingCell(title: "昵称", rightText: HTZUserAccount.shared.name)]
+        let dataArr = [SettingCell(title: "头像", rightText: HTZUserAccount.shared.headimgurl),SettingCell(title: "地区", rightText: "\(HTZUserAccount.shared.province ?? "") \(HTZUserAccount.shared.city ?? "")"),SettingCell(title: "性别", rightText: HTZUserAccount.shared.gender),SettingCell(title: "电话", rightText: HTZUserAccount.shared.mobile),SettingCell(title: "昵称", rightText: HTZUserAccount.shared.name)]
             return dataArr
         }()
 

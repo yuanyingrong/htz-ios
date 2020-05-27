@@ -37,11 +37,41 @@ class HTZLoginManager: NSObject {
                 "openid":loginModel?.wx_login_resp?.openid,
                 "headimgurl":loginModel?.wx_login_resp?.headimgurl]
             
+            
+            
             HTZUserAccount.shared.saveUserAcountInfoWithDict(dict: dict as [String : Any])
+            
+            let param:[String : Any?] = [
+                                          "city": loginModel?.wx_login_resp?.city,
+                                          "country": loginModel?.wx_login_resp?.country,
+                                          "createTime": loginModel?.created_at,
+                                          "groupId": 0,
+                                          "headimgurl": loginModel?.wx_login_resp?.headimgurl,
+                                          "id": loginModel?.id,
+                                          "language": "",
+                                          "lastUpdateTime": "",
+                                          "nickname": loginModel?.wx_login_resp?.nickname,
+                                          "note": "",
+                                          "openid": loginModel?.wx_login_resp?.openid,
+                                          "province": loginModel?.wx_login_resp?.province,
+                                          "pwd": "",
+                                          "sex": loginModel?.wx_login_resp?.sex,
+                                          "sign": "",
+                                          "telephone": "",
+                                          "unionid": loginModel?.wx_login_resp?.unionid
+                                        ]
+            
+            NetWorkRequest(API.addUserInfo(parameters: param)) { (response) -> (Void) in
+                printLog(response)
+            }
+
             
             // 发送网络状态改变的通知
             NotificationCenter.default.post(name: NSNotification.Name(kLoginSuccessNotification), object: nil)
         }
+        
+        
+        
     }
     
 }

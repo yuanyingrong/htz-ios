@@ -90,7 +90,7 @@ class HTZPlayViewController: HTZBaseViewController {
     
     @objc func share() {
 //        let shareView = HTZShareMenuView.menuShow()
-        let shareView = HTZShareMenuView.showInView(view: self.view, shareImageURL: "图片url" as AnyObject, shareContent: "分享内容", shareTitle: "分享标题", shareUrl: "www.baidu.com")
+        let shareView = HTZShareMenuView.showInView(view: self.view, shareImageURL: "图片url" as AnyObject, shareContent: "分享内容", shareTitle: "分享标题", shareUrl: "http://www.htzchina.org/redirect.html?id=xxx")
         shareView?.shareTitle = model?.song_name ?? "标题"
         shareView?.shareUrl = "www.baidu.com"
         shareView?.shareContent = "分享text"

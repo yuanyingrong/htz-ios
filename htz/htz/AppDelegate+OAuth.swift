@@ -13,14 +13,14 @@ extension AppDelegate {
     
     // iOS9以上
     func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
-        let urlKey: String = options[UIApplication.OpenURLOptionsKey.sourceApplication] as! String
-        if urlKey == "com.sina.weibo" { // 新浪微博 的回调
+        
+        if url.absoluteString.contains(sinaAppKey) { // 新浪微博 的回调
             return WeiboSDK.handleOpen(url, delegate: HTZAccountThirdLoginUtil.sharedInstance)
         }
-        if urlKey == "com.tencent.xin" { // 微信 的回调
+        if url.absoluteString.contains(wxAppID) { // 微信 的回调
             return WXApi.handleOpen(url, delegate: HTZAccountThirdLoginUtil.sharedInstance)
         }
-        if  urlKey == "com.tencent.mqq" {
+        if  url.absoluteString.contains(qqAppID) {
             TencentOAuth.handleOpen(url)
         }
         return true
