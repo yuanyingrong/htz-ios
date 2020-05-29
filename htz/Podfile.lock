@@ -12,7 +12,7 @@ PODS:
   - Kingfisher (5.13.3):
     - Kingfisher/Core (= 5.13.3)
   - Kingfisher/Core (5.13.3)
-  - MJRefresh (3.4.1)
+  - MJRefresh (3.3.1)
   - Moya (14.0.0):
     - Moya/Core (= 14.0.0)
   - Moya/Core (14.0.0):
@@ -92,7 +92,7 @@ SPEC CHECKSUMS:
   JPush: 9468c84a3809dc3ac2fc1c89c6d1d6c858a91bf5
   JShare: d19013ffb1a095de31b20236fe08e9c74064cfe5
   Kingfisher: d2b3d6a7200c93b34de9afcdf25c8dd9282ec277
-  MJRefresh: 3153c59a363159092c08b2177ec3a7d09f90bfaf
+  MJRefresh: eeda70fbf0ad277f3178cef1cd0c3532591d6237
   Moya: 5b45dacb75adb009f97fde91c204c1e565d31916
   PYSearch: 76dee18eea3309b60921a5d6a69390a63a5dda15
   Reachability: 33e18b67625424e47b6cde6d202dce689ad7af96
@@ -106,4 +106,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 2a5e0ddd6f4693f3d661a49734526a9703b8fb78
 
-COCOAPODS: 1.8.4
+COCOAPODS: 1.9.1

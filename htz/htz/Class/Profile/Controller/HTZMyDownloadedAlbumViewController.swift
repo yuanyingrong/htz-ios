@@ -45,7 +45,8 @@ class HTZMyDownloadedAlbumViewController: HTZBaseViewController {
              musicModel.file_link = obj.fileUrl
              musicModel.album_id = obj.fileAlbumId
              musicModel.file_duration = obj.fileDuration
-             musicModel.lrclink = obj.fileLyric
+             musicModel.originalLyricLink = obj.originalLyricLink
+             musicModel.explanationLyricLink = obj.explanationLyricLink
              
              dataArr.append(musicModel)
          }

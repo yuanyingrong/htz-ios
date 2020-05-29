@@ -91,7 +91,7 @@ let fixedLineTelephone: String = "(\\d{4}-|\\d{3}-)?(\\d{8}|\\d{7})"
 let IdNum: String = "\\d{15}(\\d\\d[0-9xX])?"
 
 /// 手机号
-let isIphoneNum: String = "1\\d{10}"
+let isPhoneNum: String = "1\\d{10}"
 
 /// 邮政编码
 let zipCode: String = "[1-9]\\d{5}"

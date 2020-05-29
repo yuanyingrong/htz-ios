@@ -39,15 +39,15 @@ class HTZLoginManager: NSObject {
             
             
             
-            HTZUserAccount.shared.saveUserAcountInfoWithDict(dict: dict as [String : Any])
+            
             
             let param:[String : Any?] = [
                                           "city": loginModel?.wx_login_resp?.city,
                                           "country": loginModel?.wx_login_resp?.country,
-                                          "createTime": loginModel?.created_at,
+                                          "createTime": Date.getTime(timeStamp: loginModel?.created_at ?? "", format: .dateYMDHMS),
                                           "groupId": 0,
                                           "headimgurl": loginModel?.wx_login_resp?.headimgurl,
-                                          "id": loginModel?.id,
+//                                          "id": loginModel?.id,
                                           "language": "",
                                           "lastUpdateTime": "",
                                           "nickname": loginModel?.wx_login_resp?.nickname,
@@ -61,13 +61,14 @@ class HTZLoginManager: NSObject {
                                           "unionid": loginModel?.wx_login_resp?.unionid
                                         ]
             
-            NetWorkRequest(API.addUserInfo(parameters: param)) { (response) -> (Void) in
-                printLog(response)
+            NetWorkRequest(API.addUserInfo(parameters: param as [String : Any])) { (response) -> (Void) in
+                
+                if response["code"].rawString() == "200" {
+                    HTZUserAccount.shared.saveUserAcountInfoWithDict(dict: dict as [String : Any])
+                    // 发送网络状态改变的通知
+                    NotificationCenter.default.post(name: NSNotification.Name(kLoginSuccessNotification), object: nil)
+                }
             }
-
-            
-            // 发送网络状态改变的通知
-            NotificationCenter.default.post(name: NSNotification.Name(kLoginSuccessNotification), object: nil)
         }
         
         

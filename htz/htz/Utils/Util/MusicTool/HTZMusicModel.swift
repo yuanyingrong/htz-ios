@@ -26,7 +26,12 @@ class HTZMusicModel: NSObject, HandyJSON, NSCoding {
     var singerIcon: String?
     /// 歌词文件名称
     var lrcName: String?
-    var lrclink: String?
+    var originalLyricId: String?
+    var explanationLyricId: String?
+    
+    var originalLyricLink: String?
+    var explanationLyricLink: String?
+    
     /// 歌曲文件名称
     var fileName: String?
     /// 声音时长
@@ -40,8 +45,8 @@ class HTZMusicModel: NSObject, HandyJSON, NSCoding {
     /// 声音播放路径
     var file_link: String?
     
-    var original: String?
-    var explanation: String?
+//    var original: String?
+//    var explanation: String?
     
     
     /// 专辑图片
@@ -100,9 +105,15 @@ class HTZMusicModel: NSObject, HandyJSON, NSCoding {
     }
     
     /// 歌曲的本地歌词
-    var song_lyricPath: String? {
+    var originalLyricPath: String? {
         if let song_id = self.song_id, self.isDownload {
-            return kDownloadManager.modelWithID(fileID: song_id)?.fileLyricPath
+            return kDownloadManager.modelWithID(fileID: song_id)?.originalLyricPath
+        }
+        return nil
+    }
+    var explanationLyricPath: String? {
+        if let song_id = self.song_id, self.isDownload {
+            return kDownloadManager.modelWithID(fileID: song_id)?.explanationLyricPath
         }
         return nil
     }
@@ -134,7 +145,10 @@ class HTZMusicModel: NSObject, HandyJSON, NSCoding {
         aCoder.encode(lrcName, forKey: "lrcName")
         aCoder.encode(icon, forKey: "icon")
         aCoder.encode(fileName, forKey: "fileName")
-        aCoder.encode(lrclink, forKey: "lrclink")
+        aCoder.encode(originalLyricId, forKey: "originalLyricId")
+        aCoder.encode(explanationLyricId, forKey: "explanationLyricId")
+        aCoder.encode(originalLyricLink, forKey: "originalLyricLink")
+        aCoder.encode(explanationLyricLink, forKey: "explanationLyricLink")
         aCoder.encode(file_duration, forKey: "file_duration")
         aCoder.encode(file_extension, forKey: "file_extension")
         aCoder.encode(file_bitrate, forKey: "file_bitrate")
@@ -153,7 +167,8 @@ class HTZMusicModel: NSObject, HandyJSON, NSCoding {
         aCoder.encode(currentLength, forKey: "currentLength")
         
         aCoder.encode(song_localPath, forKey: "song_localPath")
-        aCoder.encode(song_lyricPath, forKey: "song_lyricPath")
+        aCoder.encode(originalLyricPath, forKey: "originalLyricPath")
+        aCoder.encode(explanationLyricPath, forKey: "explanationLyricPath")
         aCoder.encode(song_imagePath, forKey: "song_imagePath")
     }
     
@@ -167,7 +182,10 @@ class HTZMusicModel: NSObject, HandyJSON, NSCoding {
         lrcName = aDecoder.decodeObject(forKey: "lrcName") as? String
         icon = aDecoder.decodeObject(forKey: "icon") as? String
         fileName = aDecoder.decodeObject(forKey: "fileName") as? String
-        lrclink = aDecoder.decodeObject(forKey: "lrclink") as? String
+        originalLyricId = aDecoder.decodeObject(forKey: "originalLyricId") as? String
+        explanationLyricId = aDecoder.decodeObject(forKey: "explanationLyricId") as? String
+        originalLyricLink = aDecoder.decodeObject(forKey: "originalLyricLink") as? String
+        explanationLyricLink = aDecoder.decodeObject(forKey: "explanationLyricLink") as? String
         file_duration = aDecoder.decodeObject(forKey: "file_duration") as? String
         file_extension = aDecoder.decodeObject(forKey: "file_extension") as? String
         file_bitrate = aDecoder.decodeObject(forKey: "file_bitrate") as? String

@@ -56,6 +56,22 @@ class HTZPersonalProfileViewController: HTZBaseViewController {
         }
     }
     
+    override func configData() {
+        super.configData()
+        NetWorkRequest(API.getUserInfo) {[weak self] (response) -> (Void) in
+            if response["code"].rawString() == "200" {
+                if response["data"]["telephone"].stringValue.count > 1 {
+                    HTZUserAccount.shared.update(key: "mobile", value: response["data"]["telephone"].stringValue)
+                    self?.dataArr[3].rightText = HTZUserAccount.shared.mobile
+                }
+                if response["data"]["sign"].stringValue.count > 1 {
+                    HTZUserAccount.shared.update(key: "sign", value: response["data"]["sign"].stringValue)
+                    self?.dataArr[4].rightText = HTZUserAccount.shared.sign
+                }
+                self?.tableView.reloadData()
+            }
+        }
+    }
     
 }
 
@@ -88,11 +104,26 @@ extension HTZPersonalProfileViewController: UITableViewDataSource, UITableViewDe
         if indexPath.row == 0 { // 头像查看
             
         } else if indexPath.row == 3 { // 电话
-            let vc = HTZBindMobileViewController()
-            vc.bindMoblieSuccessBlock = {
-                
+            if (HTZUserAccount.shared.mobile ?? "") =~ isPhoneNum {
+                self.alertConfirmCacellActionAlert(title: "提示", message: "是否修改手机号码？", leftConfirmTitle: "是", rightConfirmTitle: "否", selectLeftBlock: {
+                    let vc = HTZBindMobileViewController()
+                    vc.bindMoblieSuccessBlock = {
+                        self.dataArr[indexPath.row].rightText = HTZUserAccount.shared.mobile
+                        self.tableView.reloadData()
+                    }
+                    self.navigationController?.pushViewController(vc, animated: true)
+                }) {
+                    
+                }
+            } else {
+                let vc = HTZBindMobileViewController()
+                vc.bindMoblieSuccessBlock = {
+                    self.dataArr[indexPath.row].rightText = HTZUserAccount.shared.mobile
+                    self.tableView.reloadData()
+                }
+                navigationController?.pushViewController(vc, animated: true)
             }
-            navigationController?.pushViewController(vc, animated: true)
+            
         } else if indexPath.row == 4 { // 昵称
             showTextEntryAlert(index: indexPath.row, title: "请输入您的昵称")
         }
@@ -126,14 +157,22 @@ extension HTZPersonalProfileViewController: UITableViewDataSource, UITableViewDe
             NSLog("The \"Text Entry\" alert's other action occured.")
             let text = (alertController.textFields![0] as! ZWTextField).text
             if let text = text, text.length > 0 {
-                HTZUserAccount.shared.name = text
-                HTZUserAccount.shared.update(key: "name", value: text)
-                if let changeSuccessBlock = self?.changeSuccessBlock {
-                    changeSuccessBlock()
+                
+                let parameters = ["nickname" : HTZUserAccount.shared.nickname,
+                                  "unionid" : HTZUserAccount.shared.unionid,
+                                  "sign" : text]
+                NetWorkRequest(API.updateUserInfo(parameters: parameters as [String : Any])) { (response) -> (Void) in
+                    if response["code"].rawString() == "200" {
+                        HTZUserAccount.shared.sign = text
+                        HTZUserAccount.shared.update(key: "sign", value: text)
+                        self?.dataArr[index].rightText = HTZUserAccount.shared.sign
+                        self?.tableView.reloadData()
+                        if let changeSuccessBlock = self?.changeSuccessBlock {
+                            changeSuccessBlock()
+                        }
+                    }
                 }
                 
-                self?.dataArr[index].rightText = HTZUserAccount.shared.name
-                self?.tableView.reloadData()
     
             }
             

@@ -189,7 +189,8 @@ extension HTZAlbumListViewController: HTZAlbumListCellDelegate {
                     dModel.fileCover = model.icon
                     dModel.fileUrl = model.file_link
                     dModel.fileDuration = model.file_duration
-                    dModel.fileLyric = model.lrclink
+                    dModel.originalLyricLink = model.originalLyricLink
+                    dModel.explanationLyricLink = model.explanationLyricLink
                     kDownloadManager.pausedDownloadArr(downloadArr: [dModel])
                 }, selectRightBlock: nil)
                 break

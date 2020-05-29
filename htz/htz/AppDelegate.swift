@@ -38,6 +38,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         // 初始化全局播放按钮
 //        initPlayButton()
+    #if targetEnvironment(simulator) // 模拟器下方便调试用
+        HTZUserAccount.shared.unionid = "oJuR607eZwW3LlsaxcAExu1pOVpA"
+        HTZUserAccount.shared.token = "14a1fe40-80be-51fc-92e1-bcfa1c68d978"
+    #endif
+        
         
         // 初始化播放器
         HTZPlayViewController.sharedInstance.initialData()

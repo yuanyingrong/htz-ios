@@ -140,7 +140,7 @@ extension HTZMusicOperationTool {
         // 1.0 当前正在播放的歌曲信息
         // 获取当前播放歌曲的所有歌词信息
 //        let lrcMs = HTZLrcDataTool.getLrcData(fileName: musicMessageModel.musicModel!.fileName!)
-        let lrcMs = HTZLrcDataTool.getLrcModel(lrcContent: musicMessageModel.musicModel!.lrclink!)
+        let lrcMs = HTZLrcDataTool.getLrcModel(lrcContent: musicMessageModel.musicModel!.originalLyricLink!)
         // 获取当前播放的歌词模型
         var lrcM: HTZLrcModel?
         var currentLrcRow = 0

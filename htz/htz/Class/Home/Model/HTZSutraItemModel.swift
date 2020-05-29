@@ -23,11 +23,7 @@ class HTZSutraItemModel: HandyJSON {
     ///
     var original_lyric_id: String?
     ///
-    var original: String?
-    ///
     var explanation_lyric_id: String?
-    ///
-    var explanation: String?
     ///
     var audio_id: String?
     ///
@@ -68,8 +64,6 @@ class HTZSutraItemModel: HandyJSON {
    "sutra_id": "5e381050cd26ff5f17aab239",
    "title": "为何肯为大家吃苦最能养气",
    "description": "为何肯为大家吃苦最能养气",
-   "original": "简介：黄庭禅（即内心禅，微信：黄庭禅），让人们认清世界的乱源只在胸中一方寸上演而已，引导众生找回内心的家，教导社会大众安心之道，望能净化人心，让每个人都能找回本自俱有的那份幸福与自在!",
-   "explanation": "本集讲解《礼运大同篇》“男有分，女有归。货恶其弃于地也不必藏于己，力恶其不出于身也不必为己。”为何说想要公平先要安于本分？一个人凭借自己的实力囤积财富会伤生吗？为何说为大家多做劳苦之事有很大的价值和益处？为远离虚名的陷阱应有怎样的心态？且听解答。",
    "audio_id": "1233",
    "lyric_id": "aaa",
    "lesson": 0,

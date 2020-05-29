@@ -32,20 +32,30 @@ class HTZDownloadModel: NSObject, NSCoding {
     var fileRate: String?
     var fileSize: String?
     var fileCurrentSize: String?
-    var fileLyric: String?
+    var originalLyricId: String?
+    var originalLyricLink: String?
+    var explanationLyricId: String?
+    var explanationLyricLink: String?
     
-    var original: String?
-    var explanation: String?
+//    var original: String?
+//    var explanation: String?
     
     var fileLocalPath: String {
         
-        return kDownloadManager.downloadDataDir(doc: fileAlbumName!) + "/" + fileID!.replacingOccurrences(of: "/", with: "_") + "." + fileFormat!
+        return kDownloadManager.downloadDataDir(doc: fileAlbumName!) + "/" + fileID!.replacingOccurrences(of: "/", with: "_")
+//            + "." + fileFormat!
     }
-    var fileLyricPath: String {
-        return kDownloadManager.downloadDataDir(doc: fileAlbumName!) + "/" + fileID! + ".lrc"
+    var originalLyricPath: String {
+        return kDownloadManager.downloadDataDir(doc: fileAlbumName!) + "/" + originalLyricId!.replacingOccurrences(of: "/", with: "_")
+//            + ".lrc"
+    }
+    var explanationLyricPath: String {
+        return kDownloadManager.downloadDataDir(doc: fileAlbumName!) + "/" + explanationLyricId!.replacingOccurrences(of: "/", with: "_")
+//            + ".lrc"
     }
     var fileImagePath: String {
-        return kDownloadManager.downloadDataDir(doc: fileAlbumName!) + "/" + fileID! + ".jpg"
+        return kDownloadManager.downloadDataDir(doc: fileAlbumName!) + "/" + fileID!
+//            + ".jpg"
     }
     var file_size: String?
     var state: HTZDownloadManagerState?
@@ -67,7 +77,10 @@ class HTZDownloadModel: NSObject, NSCoding {
         aCoder.encode(fileAlbumId, forKey: "fileAlbumId")
         aCoder.encode(fileAlbumName, forKey: "fileAlbumName")
         aCoder.encode(fileUrl, forKey: "fileUrl")
-        aCoder.encode(fileLyric, forKey: "fileLyric")
+        aCoder.encode(originalLyricId, forKey: "originalLyricId")
+        aCoder.encode(explanationLyricId, forKey: "explanationLyricId")
+        aCoder.encode(originalLyricLink, forKey: "originalLyricLink")
+        aCoder.encode(explanationLyricLink, forKey: "explanationLyricLink")
         aCoder.encode(state?.rawValue, forKey: "state")
         aCoder.encode(fileDuration, forKey: "fileDuration")
         aCoder.encode(fileFormat, forKey: "fileFormat")
@@ -89,7 +102,10 @@ class HTZDownloadModel: NSObject, NSCoding {
         fileAlbumId = aDecoder.decodeObject(forKey: "fileAlbumId") as? String
         fileAlbumName = aDecoder.decodeObject(forKey: "fileAlbumName") as? String
         fileUrl = aDecoder.decodeObject(forKey: "fileUrl") as? String
-        fileLyric = aDecoder.decodeObject(forKey: "fileLyric") as? String
+        originalLyricId = aDecoder.decodeObject(forKey: "originalLyricId") as? String
+        explanationLyricId = aDecoder.decodeObject(forKey: "explanationLyricId") as? String
+        originalLyricLink = aDecoder.decodeObject(forKey: "originalLyricLink") as? String
+        explanationLyricLink = aDecoder.decodeObject(forKey: "explanationLyricLink") as? String
         fileDuration = aDecoder.decodeObject(forKey: "fileDuration") as? String
         fileFormat = aDecoder.decodeObject(forKey: "fileFormat") as? String
         fileArtistName = aDecoder.decodeObject(forKey: "fileArtistName") as? String
@@ -102,7 +118,7 @@ class HTZDownloadModel: NSObject, NSCoding {
         }
         resumeData = aDecoder.decodeObject(forKey: "resumeData") as? NSData
         
-        original = aDecoder.decodeObject(forKey: "original") as? String
-        explanation = aDecoder.decodeObject(forKey: "explanation") as? String
+//        original = aDecoder.decodeObject(forKey: "original") as? String
+//        explanation = aDecoder.decodeObject(forKey: "explanation") as? String
     }
 }

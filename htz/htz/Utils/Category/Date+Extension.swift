@@ -24,6 +24,17 @@ extension Date {
         return constants.rawValue
     }
     
+    static func getTime(timeStamp: String, format: DateConstants) -> String {
+        let interval: TimeInterval = TimeInterval(timeStamp)!
+        let date = Date(timeIntervalSince1970: interval)
+        
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: Date.constants(.locationBr))
+        formatter.dateFormat = format.rawValue
+        
+        return formatter.string(from: date)
+    }
+    
     func toString(withFormat format: DateConstants) -> String {
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: Date.constants(.locationBr))

@@ -712,16 +712,20 @@ extension HTZPlayViewController {
                     kPlayer.play()
                 }
             }
-            var lyrics = HTZLyricParser.lyricParser(str: self.model?.original ?? "")
-//            var lyrics = HTZLyricParser.lyricParser(url: (self.model?.song_lyricPath)!, isDelBlank: true)
+//            var lyrics = HTZLyricParser.lyricParser(str: self.model?.original ?? "")
+            var lyrics = HTZLyricParser.lyricParser(url: (self.model?.originalLyricPath)!, isDelBlank: true)
             // FIXME: - 先注释掉不报错
             if lyrics == nil {
-               lyrics = HTZLyricParser.lyricParser(url: (self.model?.lrclink)!, isDelBlank: true)
+               lyrics = HTZLyricParser.lyricParser(url: (self.model?.originalLyricLink)!, isDelBlank: true)
             }
             // 解析歌词
             self.topLyricView.lyrics = lyrics
-            let explanation = HTZLyricParser.lyricParser(str: self.model?.explanation ?? "")
-            self.bottomLyricView.lyrics = explanation
+            var explanationLyrics = HTZLyricParser.lyricParser(url: (self.model?.explanationLyricPath)!, isDelBlank: true)
+            // FIXME: - 先注释掉不报错
+            if lyrics == nil {
+               explanationLyrics = HTZLyricParser.lyricParser(url: (self.model?.explanationLyricPath)!, isDelBlank: true)
+            }
+            self.bottomLyricView.lyrics = explanationLyrics
         } else {
             if HTZMusicTool.networkState() == "none" {
                 alert(message: "网络连接失败")
@@ -748,15 +752,16 @@ extension HTZPlayViewController {
                     }
                 }
                 // 解析歌词
-                if let original = self.model?.lrclink, original.hasPrefix("http") {
-                    self.topLyricView.lyrics = HTZLyricParser.lyricParser(url: (self.model?.lrclink)!, isDelBlank: true)
-                    self.bottomLyricView.lyrics = HTZLyricParser.lyricParser(url: (self.model?.lrclink)!, isDelBlank: true)                } else {
-                    if let original = self.model?.original {
-                        self.topLyricView.lyrics = HTZLyricParser.lyricParser(lyricString: original, isDelBlank: true)
-                    }
-                    if let explanation = self.model?.explanation {
-                        self.bottomLyricView.lyrics = HTZLyricParser.lyricParser(lyricString: explanation, isDelBlank: true)
-                    }
+                if let original = self.model?.originalLyricLink, original.hasPrefix("http") {
+                    self.topLyricView.lyrics = HTZLyricParser.lyricParser(url: (self.model?.originalLyricLink)!, isDelBlank: true)
+                    self.bottomLyricView.lyrics = HTZLyricParser.lyricParser(url: (self.model?.explanationLyricLink)!, isDelBlank: true)
+                } else {
+//                    if let original = self.model?.original {
+//                        self.topLyricView.lyrics = HTZLyricParser.lyricParser(lyricString: original, isDelBlank: true)
+//                    }
+//                    if let explanation = self.model?.explanation {
+//                        self.bottomLyricView.lyrics = HTZLyricParser.lyricParser(lyricString: explanation, isDelBlank: true)
+//                    }
                     
                 }
                 
@@ -971,7 +976,8 @@ extension HTZPlayViewController: HTZMusicControlViewDelegate {
                                     dModel.fileCover = model.icon
                                     dModel.fileUrl = model.file_link
                                     dModel.fileDuration = model.file_duration
-                                    dModel.fileLyric = model.lrclink
+                                    dModel.originalLyricLink = model.originalLyricLink
+                                    dModel.explanationLyricLink = model.explanationLyricLink
                                     kDownloadManager.pausedDownloadArr(downloadArr: [dModel])
                                 }, selectRightBlock: nil)
                                 break

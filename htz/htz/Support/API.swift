@@ -29,7 +29,9 @@ enum API {
     case putNotification // 设置我的通知信息状态为已读 TODO
     case notifications(page_index: NSInteger, page_size: NSInteger)  // 查询所有通知
     
-    case addUserInfo(parameters: [String:Any])
+    case addUserInfo(parameters: [String: Any])
+    case updateUserInfo(parameters: [String: Any])
+    case getUserInfo
     case getSmsCode(telephone: String)
     case bindTelephone(code: String, telephone: String)
     
@@ -58,7 +60,7 @@ extension API: TargetType {
             return URL(string: search_baseURL)!
         case .download(_,_):
             return URL(string: download_baseURL)!
-        case .addUserInfo(_), .getSmsCode(_), .bindTelephone(_,_):
+        case .addUserInfo(_), .updateUserInfo(_), .getUserInfo, .getSmsCode(_), .bindTelephone(_,_):
             return URL(string: mobile_baseURL)!
         case .albums, .xingfuneixinchan, .jingxinyangsheng, .mixinxiaoshipin:
             return URL(string: "http://htzshanghai.top/resources/app_json/")!
@@ -102,6 +104,10 @@ extension API: TargetType {
 
         case .addUserInfo(_):
             return "userInfo/add"
+        case .updateUserInfo(_):
+            return "userInfo/update"
+        case .getUserInfo:
+            return "userInfo/info/\(HTZUserAccount.shared.unionid!)"
         case .getSmsCode(_):
             return "telephone/getSmsCode"
         case .bindTelephone(_,_):
@@ -132,7 +138,7 @@ extension API: TargetType {
     
     var method: Moya.Method {
         switch self {
-        case .easyRequset, .albums, .xingfuneixinchan, .jingxinyangsheng, .mixinxiaoshipin:
+        case .getUserInfo, .easyRequset, .albums, .xingfuneixinchan, .jingxinyangsheng, .mixinxiaoshipin:
             return .get
         default:
             return .post
@@ -151,7 +157,7 @@ extension API: TargetType {
         switch self {
         case let .login(code):
             return .requestParameters(parameters: ["code": code], encoding: JSONEncoding.default)
-        case let .postListenHistory(parameters), let .addUserInfo(parameters):
+        case let .postListenHistory(parameters), let .addUserInfo(parameters), let .updateUserInfo(parameters):
             return .requestParameters(parameters: parameters, encoding: JSONEncoding.default)
         case let .sutras(page_index, page_size), let .getListenHistorys(page_index, page_size), let .notifications(page_index, page_size):
             return .requestParameters(parameters: ["page_index" : page_index,"page_size":page_size], encoding: JSONEncoding.default)
@@ -168,13 +174,13 @@ extension API: TargetType {
             }
 //            return .requestParameters(parameters: ["file_id" : file_id], encoding: JSONEncoding.default)
 
-        case .deleteAllListenHistory, .recommendations, .userNotifications, .putNotification, .albums, .xingfuneixinchan, .jingxinyangsheng, .mixinxiaoshipin, .song(_,_,_), .songDetail(_):
+        case .getUserInfo, .deleteAllListenHistory, .recommendations, .userNotifications, .putNotification, .albums, .xingfuneixinchan, .jingxinyangsheng, .mixinxiaoshipin, .song(_,_,_), .songDetail(_):
             return .requestPlain
             
         case let .getSmsCode(telephone):
-            return .requestParameters(parameters: ["telephone": telephone, "unionid": HTZUserAccount.shared.unionid as Any], encoding: JSONEncoding.default)
+            return .requestParameters(parameters: ["telephone": telephone, "unionid": HTZUserAccount.shared.unionid!], encoding: URLEncoding.queryString)
         case let .bindTelephone(code, telephone):
-            return .requestParameters(parameters: ["code": code, "telephone": telephone, "unionid": HTZUserAccount.shared.unionid as Any], encoding: JSONEncoding.default)
+            return .requestParameters(parameters: ["code": code, "telephone": telephone, "unionid": HTZUserAccount.shared.unionid!], encoding: URLEncoding.queryString)
             
         case let .register(email, password):
             return .requestParameters(parameters: ["email": email, "password": password], encoding: JSONEncoding.default)
@@ -207,9 +213,9 @@ extension API: TargetType {
     var headers: [String : String]? {
 //        HTZUserAccount.shared.token = "bb9804a4-fdd1-5497-a153-3698f703e91b"
         if let token = HTZUserAccount.shared.token {
-            return ["Content-Type" : "application/x-www-form-urlencoded","token" : token]
+            return ["Content-Type" : "application/json","token" : token]
         }
-        return ["Content-Type" : "application/x-www-form-urlencoded"]
+        return ["Content-Type" : "application/json"]
     }
     
 }

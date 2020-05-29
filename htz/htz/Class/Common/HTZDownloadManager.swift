@@ -435,8 +435,10 @@ extension HTZDownloadManager {
 
                     // 歌词
                     // TODO: - 需确定
-//                    let lrcData = NSData(contentsOf: URL(string: model.fileLyric!)!)
-//                    lrcData?.write(toFile: model.fileLyricPath, atomically: true)
+                    let lrcData = NSData(contentsOf: URL(string: model.originalLyricLink!)!)
+                    lrcData?.write(toFile: model.originalLyricPath, atomically: true)
+                    let exlrcData = NSData(contentsOf: URL(string: model.explanationLyricLink!)!)
+                    exlrcData?.write(toFile: model.explanationLyricPath, atomically: true)
 
                     self.updateDownloadModel(model: model)
                     if let delegate = self.delegate, delegate.responds(to: #selector(HTZPlayViewController.downloadChanged(_:downloadModel:state:))) {
@@ -505,8 +507,10 @@ extension HTZDownloadManager {
                     // 下载图片
                     
                     // 歌词
-//                    let lrcData = NSData(contentsOf: URL(string: model.fileLyric!)!)
-//                    lrcData?.write(toFile: model.fileLyricPath, atomically: true)
+                    let lrcData = NSData(contentsOf: URL(string: model.originalLyricLink!)!)
+                    lrcData?.write(toFile: model.originalLyricPath, atomically: true)
+                    let exlrcData = NSData(contentsOf: URL(string: model.explanationLyricLink!)!)
+                    exlrcData?.write(toFile: model.explanationLyricPath, atomically: true)
                     
                     self.updateDownloadModel(model: model)
                     
@@ -683,7 +687,8 @@ extension HTZDownloadManager {
                             // 删除文件
                             if ifPathExist(path: obj.fileLocalPath) {
                                 _ = removeDirWithPath(path: obj.fileLocalPath)
-                                _ = removeDirWithPath(path: obj.fileLyricPath)
+                                _ = removeDirWithPath(path: obj.originalLyricPath)
+                                _ = removeDirWithPath(path: obj.explanationLyricPath)
                                 _ = removeDirWithPath(path: obj.fileImagePath)
                             }
                             // 删除模型

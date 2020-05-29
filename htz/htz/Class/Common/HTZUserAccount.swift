@@ -24,10 +24,12 @@ class HTZUserAccount: NSObject {
     @objc var province: String?
     @objc var city: String?
     @objc var privilege: [String]?
-    @objc var sex: String?
+          var sex: Int?
     @objc var nickname: String?
     @objc var openid: String?
     @objc var headimgurl: String?
+    
+    @objc var sign: String?
     
     static let shared = HTZUserAccount()
     

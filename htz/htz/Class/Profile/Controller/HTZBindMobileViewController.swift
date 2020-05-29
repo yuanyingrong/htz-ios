@@ -33,7 +33,7 @@ class HTZBindMobileViewController: HTZBaseViewController {
                 self?.countDownTimerButton.isCounting = true
                 NetWorkRequest(API.getSmsCode(telephone: mobile)) { (response) -> (Void) in
                     printLog(response)
-                    if response["code"] == "200" {
+                    if response["code"].rawString() == "200" {
                         
                     }
                 }
@@ -132,10 +132,12 @@ extension HTZBindMobileViewController {
         }
         NetWorkRequest(API.bindTelephone(code: code, telephone: mobile)) {[weak self] (response) -> (Void) in
             printLog(response)
-            if response["code"] == "200" {
+            if response["code"].rawString() == "200" {
                 if let bindMoblieSuccessBlock = self?.bindMoblieSuccessBlock {
                     HTZUserAccount.shared.mobile = mobile
+                    HTZUserAccount.shared.update(key: "mobile", value: mobile)
                     bindMoblieSuccessBlock()
+                    self?.navigationController?.popViewController(animated: true)
                 }
             }
         }

@@ -220,9 +220,12 @@ class HTZMusicTool: NSObject {
         dModel.fileCover = musicModel.icon
         dModel.fileUrl = musicModel.file_link
         dModel.fileDuration = musicModel.file_duration
-        dModel.fileLyric = musicModel.lrclink
+        dModel.originalLyricId = musicModel.originalLyricId
+        dModel.explanationLyricId = musicModel.explanationLyricId
+        dModel.originalLyricLink = musicModel.originalLyricLink
+        dModel.explanationLyricLink = musicModel.explanationLyricLink
         
-        dModel.fileFormat = "mp3"
+//        dModel.fileFormat = "mp3"
 //        dModel.fileFormat = musicModel.file_link?.components(separatedBy: ".").last
         
         kDownloadManager.addDownloadArr(downloadArr: [dModel])
