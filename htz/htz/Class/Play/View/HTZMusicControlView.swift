@@ -208,7 +208,7 @@ class HTZMusicControlView: BaseView {
         return button
     }()
 
-    private lazy var sliderView: UIView = {
+    private lazy var progressTipView: UIView = {
         let view = UIView()
         view.backgroundColor = UIColor.clear
         return view
@@ -217,14 +217,16 @@ class HTZMusicControlView: BaseView {
     private lazy var currentLabel: UILabel = {
         let label = UILabel()
         label.textColor = UIColor.red
-        label.font = UIFont.systemFont(ofSize: 16.0)
+        label.font = UIFont.systemFont(ofSize: 14.0)
+        label.textAlignment = .center
         return label
     }()
     
     private lazy var totalLabel: UILabel = {
         let label = UILabel()
         label.textColor = UIColor.red
-        label.font = UIFont.systemFont(ofSize: 16.0)
+        label.font = UIFont.systemFont(ofSize: 14.0)
+        label.textAlignment = .right
         return label
     }()
     
@@ -241,10 +243,11 @@ class HTZMusicControlView: BaseView {
         self.topView.addSubview(self.downloadButton)
         
         // 滑杆
-        self.addSubview(self.sliderView)
-        self.sliderView.addSubview(self.currentLabel)
-        self.sliderView.addSubview(self.slider)
-        self.sliderView.addSubview(self.totalLabel)
+        self.addSubview(self.progressTipView)
+        
+        self.progressTipView.addSubview(self.currentLabel)
+        self.progressTipView.addSubview(self.totalLabel)
+        self.progressTipView.addSubview(self.slider)
         
         // 底部
         
@@ -274,28 +277,28 @@ class HTZMusicControlView: BaseView {
             make.width.equalTo(50)
         }
         
-        self.sliderView.snp.makeConstraints { (make) in
+        self.progressTipView.snp.makeConstraints { (make) in
             make.left.right.equalTo(self)
             make.top.equalTo(self.topView.snp.bottom)
             make.height.equalTo(30)
         }
         
-        self.slider.snp.makeConstraints { (make) in
-            make.top.bottom.equalTo(self.sliderView)
-//            make.left.equalTo(self.sliderView).offset(60)
-//            make.right.equalTo(self.sliderView).offset(-60)
-        }
-        
         self.currentLabel.snp.makeConstraints { (make) in
-            make.left.equalTo(self).offset(kGlobelMargin)
-            make.right.equalTo(self.slider.snp.left).offset(-kGlobelMargin)
-            make.centerY.equalTo(self.sliderView)
+            make.left.equalTo(self.progressTipView).offset(kGlobelMargin)
+            make.width.equalTo(60)
+            make.centerY.equalTo(self.progressTipView)
         }
         
         self.totalLabel.snp.makeConstraints { (make) in
-            make.left.equalTo(self.slider.snp.right).offset(kGlobelMargin)
             make.right.equalTo(self).offset(-kGlobelMargin)
-            make.centerY.equalTo(self.sliderView)
+            
+            make.centerY.equalTo(self.progressTipView)
+        }
+        
+        self.slider.snp.makeConstraints { (make) in
+            make.top.bottom.equalTo(self.progressTipView)
+            make.left.equalTo(self.currentLabel.snp.right)
+            make.right.equalTo(self.totalLabel.snp.left).offset(-kGlobelMargin)
         }
         
         self.playButton.snp.makeConstraints { (make) in
@@ -305,25 +308,25 @@ class HTZMusicControlView: BaseView {
             } else {
                 make.bottom.equalTo(self).offset(-2 * kGlobelMargin)
             }
-            make.size.equalTo(CGSize(width: 60, height: 60))
+            make.size.equalTo(CGSize(width: 45, height: 45))
         }
         
         self.previousButton.snp.makeConstraints { (make) in
             make.centerY.equalTo(playButton)
             make.right.equalTo(playButton.snp.left).offset(-4 * kGlobelMargin)
-            make.size.equalTo(CGSize(width: 40, height: 40))
+            make.size.equalTo(CGSize(width: 25, height: 25))
         }
         
         self.nextButton.snp.makeConstraints { (make) in
             make.centerY.equalTo(playButton)
             make.left.equalTo(playButton.snp.right).offset(4 * kGlobelMargin)
-            make.size.equalTo(CGSize(width: 40, height: 40))
+            make.size.equalTo(CGSize(width: 25, height: 25))
         }
         
         self.listButton.snp.makeConstraints { (make) in
             make.centerY.equalTo(playButton)
             make.right.equalTo(previousButton.snp.left).offset(-4 * kGlobelMargin)
-            make.size.equalTo(CGSize(width: 40, height: 40))
+            make.size.equalTo(CGSize(width: 32, height: 22))
         }
         
 //        self.listButton.snp.makeConstraints { (make) in

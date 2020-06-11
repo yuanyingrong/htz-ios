@@ -27,7 +27,8 @@ class HTZMusicLyricView: BaseView {
                 }
             } else {
                 self.tipsLabel.isHidden = false
-                self.tipsLabel.text = "歌词加载中..."
+//                self.tipsLabel.text = "歌词加载中..."
+                self.tipsLabel.text = "暂无歌词"
                 self.tableView.reloadData()
             }
             
