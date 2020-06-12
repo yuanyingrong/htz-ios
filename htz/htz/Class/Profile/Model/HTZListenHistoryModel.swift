@@ -31,4 +31,6 @@ class HTZListenHistoryModel: HandyJSON {
     var created_at: String?
     
     required init() {}
+    
+
 }

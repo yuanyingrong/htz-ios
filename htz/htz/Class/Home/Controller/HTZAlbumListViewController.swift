@@ -13,6 +13,8 @@ class HTZAlbumListViewController: HTZBaseViewController {
     
     private lazy var albumListViewModel: HTZAlbumListViewModel = HTZAlbumListViewModel()
     
+    private var pageIndex: Int = 0
+    
     var sutraInfoModel: HTZSutraInfoModel? {
     
         didSet {
@@ -70,9 +72,11 @@ class HTZAlbumListViewController: HTZBaseViewController {
         kDownloadManager.delegate = self
         
         HTZRefreshTool.prepareHeaderRefresh(tableView) {
+            self.pageIndex = 0
             self.requestData()
         }
         HTZRefreshTool.prepareFooterRefresh(tableView) {
+            self.pageIndex += 1
             self.requestData()
         }
     }
@@ -95,11 +99,14 @@ class HTZAlbumListViewController: HTZBaseViewController {
                 }
             }
         } else {
-            albumListViewModel.requestData(sutra_id: (sutraInfoModel.id)!, page_index: 0) { [weak self] (success) in
+            albumListViewModel.requestData(sutra_id: (sutraInfoModel.id)!, page_index: pageIndex) { [weak self] (success, isEnd) in
                 if success {
                     self?.countLabel.text = "共\(self?.albumListViewModel.dataArr.count ?? 0)集"
                     self?.tableView.mj_header?.endRefreshing()
-                    self?.tableView.mj_footer?.endRefreshingWithNoMoreData()
+                    self?.tableView.mj_footer?.endRefreshing()
+                    if isEnd {
+                        self?.tableView.mj_footer?.endRefreshingWithNoMoreData()
+                    }
                     self?.tableView.reloadData()
                 }
             }

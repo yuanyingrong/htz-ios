@@ -12,21 +12,20 @@ class HTZMyNotificationListViewController: HTZBaseViewController {
     
     private var dataArr = [HTZNotificationsModel?]()
     
-    
+    private var pageIndex: Int = 0
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        NetWorkRequest(API.notifications(page_index: 0, page_size: 10), completion: { (response) -> (Void) in
-            printLog(response)
-            self.loginButton.isHidden = response["code"].rawString() == "200"
-            if response["code"].rawString() == "200" {
-                self.dataArr = [HTZNotificationsModel].deserialize(from: response["data"].rawString()) ?? []
-                self.tableView.reloadData()
-            }
-        }) { (error) -> (Void) in
-            
+        HTZRefreshTool.prepareHeaderRefresh(tableView) {
+            self.pageIndex = 0
+            self.configData()
         }
+        HTZRefreshTool.prepareFooterRefresh(tableView) {
+            self.pageIndex += 1
+            self.configData()
+        }
+        
         
         // Do any additional setup after loading the view.
     }
@@ -38,6 +37,34 @@ class HTZMyNotificationListViewController: HTZBaseViewController {
     
     @objc private func loginButtonClickAction() { // 跳转登陆
         HTZLoginManager.shared.jumpToWechatLogin(controller: self)
+    }
+    
+    override func configData() {
+        
+        NetWorkRequest(API.notifications(page_index: pageIndex, page_size: 10), completion: {[weak self] (response) -> (Void) in
+            printLog(response)
+            self?.loginButton.isHidden = response["code"].rawString() == "200"
+            if response["code"].rawString() == "200" {
+                let arr = [HTZNotificationsModel].deserialize(from: response["data"].rawString()) ?? []
+                
+                self?.tableView.mj_header?.endRefreshing()
+                self?.tableView.mj_footer?.endRefreshing()
+                
+                if let pageIndex = self?.pageIndex, pageIndex > 0 {
+                    for model in arr {
+                        self?.dataArr.append(model)
+                    }
+                    if arr.count == 0 {
+                        self?.tableView.mj_footer?.endRefreshingWithNoMoreData()
+                    }
+                } else {
+                    self?.dataArr = arr
+                }
+                self?.tableView.reloadData()
+            }
+        }) { (error) -> (Void) in
+            
+        }
     }
     
     override func configSubView() {

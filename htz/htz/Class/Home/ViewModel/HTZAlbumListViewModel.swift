@@ -18,13 +18,13 @@ class HTZAlbumListViewModel: NSObject {
     
     var albumTitle: String?
     
-    func requestData(sutra_id: String, page_index: Int, callBack: @escaping (Bool) -> ()) {
+    func requestData(sutra_id: String, page_index: Int, callBack: @escaping (Bool, Bool) -> ()) {
             
         NetWorkRequest(API.items(sutra_id: sutra_id, page_index: page_index, page_size: 20)) { (response) -> (Void) in
                 if response["code"].rawString() == "200" {
                     let arr = [HTZSutraItemModel].deserialize(from: response["data"].rawString())
                     if let arr = arr {
-                        self.dataArr = arr
+                        
                         var arrM = [HTZMusicModel]()
                         for model in arr {
                             let obj = HTZMusicModel()
@@ -45,8 +45,25 @@ class HTZAlbumListViewModel: NSObject {
                             obj.downloadState = kDownloadManager.checkDownloadState(fileID: obj.song_id!)
                             arrM.append(obj)
                         }
-                        self.dataSongArr = arrM
-                        callBack(true)
+                        if page_index > 0 {
+                            for model in arr {
+                                self.dataArr.append(model)
+                            }
+                            for model in arrM {
+                                self.dataSongArr.append(model)
+                            }
+                        } else {
+                            self.dataArr = arr
+                            self.dataSongArr = arrM
+                        }
+                        if arr.count > 0 {
+                            // 还可以加载更多
+                             callBack(true, false)
+                        } else {
+                            // 没有更多数据
+                             callBack(true, true)
+                        }
+                        
                     }
                     
                 }

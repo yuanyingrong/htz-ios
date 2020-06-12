@@ -12,11 +12,19 @@ class HTZListenHistoryViewController: HTZBaseViewController {
     
     private var dataArr = [HTZListenHistoryModel?]()
     
+    private var pageIndex: Int = 0
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        
+  
+        HTZRefreshTool.prepareHeaderRefresh(tableView) {
+            self.pageIndex = 0
+            self.configData()
+        }
+        HTZRefreshTool.prepareFooterRefresh(tableView) {
+            self.pageIndex += 1
+            self.configData()
+        }
     }
     
     @objc func deleteAll() {
@@ -32,11 +40,27 @@ class HTZListenHistoryViewController: HTZBaseViewController {
     }
     
     override func configData() {
-        NetWorkRequest(API.getListenHistorys(page_index: 0, page_size: 10), completion: { (response) -> (Void) in
+        NetWorkRequest(API.getListenHistorys(page_index: pageIndex, page_size: 10), completion: {[weak self] (response) -> (Void) in
             printLog(response)
             if response["code"].rawString() == "200" {
-                self.dataArr = [HTZListenHistoryModel].deserialize(from: response["data"].rawString()) ?? []
-                self.tableView.reloadData()
+                let arr = [HTZListenHistoryModel].deserialize(from: response["data"].rawString()) ?? []
+                for model in arr {
+                    model?.sutra_cover = "\(ossurl)\(model?.sutra_cover ?? "")"
+                }
+                self?.tableView.mj_header?.endRefreshing()
+                self?.tableView.mj_footer?.endRefreshing()
+               
+                if let pageIndex = self?.pageIndex, pageIndex > 0 {
+                    for model in arr {
+                        self?.dataArr.append(model)
+                    }
+                    if arr.count == 0 {
+                        self?.tableView.mj_footer?.endRefreshingWithNoMoreData()
+                    }
+                } else {
+                    self?.dataArr = arr
+                }
+                self?.tableView.reloadData()
             }
         }) { (error) -> (Void) in
             
