@@ -56,27 +56,47 @@ extension HTZSearchViewController: PYSearchViewControllerDelegate {
     func searchViewController(_ searchViewController: PYSearchViewController!, searchTextDidChange searchBar: UISearchBar!, searchText: String!) {
         
 //        searchViewController.searchSuggestions =
-        
-        NetWorkRequest(API.search(key: searchText, output_offset: 0, max_outputs: 10)) {[weak self] (response) -> (Void) in
-            
-            printLog(response)
-            if response["code"].stringValue == "200" {
-                let dict = response["data"]
-                let items = [HTZSutraItemModel].deserialize(from: dict["items"].rawString())
-                let num_docs = dict["num_docs"]
-                let tokens = dict["tokens"]
-                
-                printLog("items:==\(items!)")
-                printLog("num_docs:==\(num_docs)")
-                printLog("tokens:==\(tokens)")
-                var arr:[String] = []
-                for item in items! {
-                    arr.append(item?.title ?? "--")
-                }
-                self?.searchSuggestions = arr
-            }
-            
-        }
+        NetWorkRequest(API.es_search(key: searchText)) {[weak self] (response) -> (Void) in
+                   
+                   printLog(response)
+            self?.alertActionTipConfirmAlert(message: response.rawString() ?? "xx")
+//                   if response["code"].stringValue == "200" {
+//                       let dict = response["data"]
+//                       let items = [HTZSutraItemModel].deserialize(from: dict["items"].rawString())
+//                       let num_docs = dict["num_docs"]
+//                       let tokens = dict["tokens"]
+//
+//                       printLog("items:==\(items!)")
+//                       printLog("num_docs:==\(num_docs)")
+//                       printLog("tokens:==\(tokens)")
+//                       var arr:[String] = []
+//                       for item in items! {
+//                           arr.append(item?.title ?? "--")
+//                       }
+//                       self?.searchSuggestions = arr
+//                   }
+                   
+               }
+//        NetWorkRequest(API.search(key: searchText, output_offset: 0, max_outputs: 10)) {[weak self] (response) -> (Void) in
+//
+//            printLog(response)
+//            if response["code"].stringValue == "200" {
+//                let dict = response["data"]
+//                let items = [HTZSutraItemModel].deserialize(from: dict["items"].rawString())
+//                let num_docs = dict["num_docs"]
+//                let tokens = dict["tokens"]
+//
+//                printLog("items:==\(items!)")
+//                printLog("num_docs:==\(num_docs)")
+//                printLog("tokens:==\(tokens)")
+//                var arr:[String] = []
+//                for item in items! {
+//                    arr.append(item?.title ?? "--")
+//                }
+//                self?.searchSuggestions = arr
+//            }
+//
+//        }
     }
     
     

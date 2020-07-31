@@ -13,6 +13,7 @@ import Alamofire
 enum API {
     case login(code: String)
     case sutras(page_index: NSInteger, page_size: NSInteger)
+    case es_search(key: String)
     case search(key: String, output_offset: NSInteger, max_outputs: NSInteger)
     case item(id: String) // 查询单个经典信息
     case items(sutra_id: String, page_index: NSInteger, page_size: NSInteger) // 查询多条经典items
@@ -75,6 +76,8 @@ extension API: TargetType {
             return "post/login"
         case .sutras(_,_):
             return "get/sutras"
+        case .es_search(_):
+            return "es/htz-sutra/_search"
         case .search(_,_,_):
             return "get/search"
         case .items(_,_,_):
@@ -138,7 +141,7 @@ extension API: TargetType {
     
     var method: Moya.Method {
         switch self {
-        case .getUserInfo, .easyRequset, .albums, .xingfuneixinchan, .jingxinyangsheng, .mixinxiaoshipin:
+        case .es_search(_), .getUserInfo, .easyRequset, .albums, .xingfuneixinchan, .jingxinyangsheng, .mixinxiaoshipin:
             return .get
         default:
             return .post
@@ -161,6 +164,8 @@ extension API: TargetType {
             return .requestParameters(parameters: parameters, encoding: JSONEncoding.default)
         case let .sutras(page_index, page_size), let .getListenHistorys(page_index, page_size), let .notifications(page_index, page_size):
             return .requestParameters(parameters: ["page_index" : page_index,"page_size":page_size], encoding: JSONEncoding.default)
+        case let .es_search(key):
+            return .requestParameters(parameters: ["query":["wildcard":["explanation":key]]], encoding: JSONEncoding.default)
         case let .search(key, output_offset, max_outputs):
             return .requestParameters(parameters: ["key" : key, "output_offset" : output_offset, "max_outputs":max_outputs], encoding: JSONEncoding.default)
         case let .items(id, page_index, page_size):
