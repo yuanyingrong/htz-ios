@@ -208,7 +208,7 @@ class HTZPlayViewController: HTZBaseViewController {
         
         self.controlView.snp.makeConstraints { (make) in
             make.left.right.equalTo(self.view)
-            make.height.equalTo(170)
+            make.height.equalTo(100)
             if #available(iOS 11.0, *) {
                 make.bottom.equalTo(self.view.safeAreaLayoutGuide)
             } else {

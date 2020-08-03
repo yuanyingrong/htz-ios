@@ -51,14 +51,7 @@ class HTZMusicControlView: BaseView {
             }
         }
     }
-    
-    
-    lazy var topView: UIView = {
-        let view = UIView()
-        view.backgroundColor = UIColor.clear
-        return view
-    }()
-    
+        
     lazy var slider: HTZSliderView = {
         let slider = HTZSliderView()
         
@@ -106,10 +99,10 @@ class HTZMusicControlView: BaseView {
     var is_love: Bool? {
         didSet {
             if let is_love = is_love, is_love {
-                    self.loveButton.setImage(UIImage(named: "liked"), for: UIControl.State.normal)
-                    self.loveButton.setImage(UIImage(named: "liked"), for: UIControl.State.highlighted)
+                    self.loveButton.setImage(UIImage(named: "已收藏"), for: UIControl.State.normal)
+                    self.loveButton.setImage(UIImage(named: "已收藏"), for: UIControl.State.highlighted)
                 } else {
-                    self.loveButton.setImage(UIImage(named: "like"), for: UIControl.State.normal)
+                    self.loveButton.setImage(UIImage(named: "收藏"), for: UIControl.State.normal)
                     
             }
             
@@ -237,10 +230,8 @@ class HTZMusicControlView: BaseView {
         
         self.backgroundColor = UIColor.clear
         
-        // 顶部
-        self.addSubview(self.topView)
-        self.topView.addSubview(self.loveButton)
-        self.topView.addSubview(self.downloadButton)
+        
+//        self.topView.addSubview(self.downloadButton)
         
         // 滑杆
         self.addSubview(self.progressTipView)
@@ -255,31 +246,15 @@ class HTZMusicControlView: BaseView {
         self.addSubview(self.playButton)
         self.addSubview(self.previousButton)
         self.addSubview(self.nextButton)
+        self.addSubview(self.loveButton)
     }
     
     override func configConstraint() {
         super.configConstraint()
         
-        self.topView.snp.makeConstraints { (make) in
-            make.left.top.right.equalTo(self)
-            make.height.equalTo(50)
-        }
-        
-        self.loveButton.snp.makeConstraints { (make) in
-            make.right.equalTo(self.topView.centerX).offset(-2 * kGlobelMargin)
-            make.centerY.equalTo(self.topView)
-            make.width.equalTo(50)
-        }
-        
-        self.downloadButton.snp.makeConstraints { (make) in
-            make.left.equalTo(self.topView.centerX).offset(2 * kGlobelMargin)
-            make.centerY.equalTo(self.topView)
-            make.width.equalTo(50)
-        }
-        
         self.progressTipView.snp.makeConstraints { (make) in
             make.left.right.equalTo(self)
-            make.top.equalTo(self.topView.snp.bottom)
+            make.top.equalTo(self).offset(kGlobelMargin)
             make.height.equalTo(30)
         }
         
@@ -328,6 +303,13 @@ class HTZMusicControlView: BaseView {
             make.right.equalTo(previousButton.snp.left).offset(-4 * kGlobelMargin)
             make.size.equalTo(CGSize(width: 32, height: 22))
         }
+        
+        self.loveButton.snp.makeConstraints { (make) in
+            make.centerY.equalTo(playButton)
+            make.left.equalTo(nextButton.snp.right).offset(4 * kGlobelMargin)
+//            make.width.equalTo(50)
+        }
+
         
 //        self.listButton.snp.makeConstraints { (make) in
 //            make.centerY.equalTo(playButton)
