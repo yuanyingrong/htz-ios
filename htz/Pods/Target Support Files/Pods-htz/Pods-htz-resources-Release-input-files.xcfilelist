@@ -1,0 +1,4 @@
+${PODS_ROOT}/Target Support Files/Pods-htz/Pods-htz-resources.sh
+${PODS_ROOT}/Weibo_SDK/libWeiboSDK/WeiboSDK.bundle
+${PODS_CONFIGURATION_BUILD_DIR}/Weibo_SDK/libWeiboSDK.bundle
+${PODS_ROOT}/ZFPlayer/ZFPlayer/Classes/ControlView/ZFPlayer.bundle

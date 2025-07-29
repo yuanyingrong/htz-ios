@@ -1,42 +1,42 @@
 PODS:
-  - Alamofire (5.1.0)
+  - Alamofire (5.10.2)
   - FreeStreamer (4.0.0):
     - Reachability (~> 3.0)
-  - GKCoverSwift (1.1.0)
-  - HandyJSON (5.0.1)
-  - JCore (2.2.4)
-  - JPush (3.3.2):
-    - JCore (< 3.0.0, >= 2.0.0)
-  - JShare (1.8.1):
-    - JCore (< 3.0.0, >= 1.2.0)
-  - Kingfisher (5.13.3):
-    - Kingfisher/Core (= 5.13.3)
-  - Kingfisher/Core (5.13.3)
-  - MJRefresh (3.3.1)
-  - Moya (14.0.0):
-    - Moya/Core (= 14.0.0)
-  - Moya/Core (14.0.0):
+  - GKCoverSwift (1.0.7)
+  - HandyJSON (5.0.2)
+  - IJKMediaFramework (0.1.5)
+  - JCore (5.0.2)
+  - JPush (5.6.1):
+    - JCore (>= 4.8.0)
+  - JShare (1.9.2):
+    - JCore (>= 2.0.0)
+  - Kingfisher (8.3.3)
+  - MJRefresh (3.7.9)
+  - Moya (15.0.0):
+    - Moya/Core (= 15.0.0)
+  - Moya/Core (15.0.0):
     - Alamofire (~> 5.0)
   - PYSearch (0.9.1)
-  - Reachability (3.2)
-  - SnapKit (5.0.1)
-  - SwiftyJSON (5.0.0)
+  - Reachability (3.7.6)
+  - SnapKit (5.7.1)
+  - SwiftyJSON (5.0.2)
   - TencentOpenAPI-Unofficial (3.3.5)
-  - WechatOpenSDK (1.8.7)
-  - Weibo_SDK (3.2.7)
-  - ZFPlayer (3.3.1):
-    - ZFPlayer/Core (= 3.3.1)
-  - ZFPlayer/AVPlayer (3.3.1):
+  - WechatOpenSDK (2.0.4)
+  - Weibo_SDK (3.3.8)
+  - ZFPlayer (4.1.4):
+    - ZFPlayer/Core (= 4.1.4)
+  - ZFPlayer/AVPlayer (4.1.4):
     - ZFPlayer/Core
-  - ZFPlayer/ControlView (3.3.1):
+  - ZFPlayer/ControlView (4.1.4):
     - ZFPlayer/Core
-  - ZFPlayer/Core (3.3.1)
+  - ZFPlayer/Core (4.1.4)
   - ZWAlertController (0.3.0)
 
 DEPENDENCIES:
   - FreeStreamer
   - GKCoverSwift
   - HandyJSON
+  - IJKMediaFramework
   - JPush
   - JShare
   - Kingfisher
@@ -59,6 +59,7 @@ SPEC REPOS:
     - FreeStreamer
     - GKCoverSwift
     - HandyJSON
+    - IJKMediaFramework
     - JCore
     - JPush
     - JShare
@@ -80,30 +81,31 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   Weibo_SDK:
-    :commit: 90a5cf8d5dfb03ccf62b1c8e1a17fea766dc806b
+    :commit: 8149b7407e5a20469a1e65583e960d5a2ed95851
     :git: https://github.com/sinaweibosdk/weibo_ios_sdk.git
 
 SPEC CHECKSUMS:
-  Alamofire: 9d5c5f602928e512395b30950c5984eca840093c
+  Alamofire: 7193b3b92c74a07f85569e1a6c4f4237291e7496
   FreeStreamer: 7e9c976045701ac2f7e9c14c17245203c37bf2ea
-  GKCoverSwift: 40c387c80c5cc695b77e3f105c04cdfb714a883c
-  HandyJSON: d45b8415c501e3affc59ca9762c1197ff0feb646
-  JCore: b007693f7ac4d12d5c77861660a4184522454eb1
-  JPush: 9468c84a3809dc3ac2fc1c89c6d1d6c858a91bf5
-  JShare: d19013ffb1a095de31b20236fe08e9c74064cfe5
-  Kingfisher: d2b3d6a7200c93b34de9afcdf25c8dd9282ec277
-  MJRefresh: eeda70fbf0ad277f3178cef1cd0c3532591d6237
-  Moya: 5b45dacb75adb009f97fde91c204c1e565d31916
+  GKCoverSwift: 0cecbd4e966df1aa83c23a91885377f30635bfb8
+  HandyJSON: 9e4e236f5d2dbefad5155a77417bbea438201c03
+  IJKMediaFramework: f1119f6324c96bc4654f3045a5beaa95ba0596c0
+  JCore: 3effa468af29935edb53e6460ef81fd3c03ee1a8
+  JPush: fcd20c0b2d6d8206af63b8517fa2d11e0a83dc6b
+  JShare: 43a6384f50093cf2b990b22b03a05e4e01be8b5c
+  Kingfisher: ff82cb91d9266ddb56cbb2f72d32c26f00d3e5be
+  MJRefresh: ff9e531227924c84ce459338414550a05d2aea78
+  Moya: 138f0573e53411fb3dc17016add0b748dfbd78ee
   PYSearch: 76dee18eea3309b60921a5d6a69390a63a5dda15
-  Reachability: 33e18b67625424e47b6cde6d202dce689ad7af96
-  SnapKit: 97b92857e3df3a0c71833cce143274bf6ef8e5eb
-  SwiftyJSON: 36413e04c44ee145039d332b4f4e2d3e8d6c4db7
+  Reachability: fd0ecd23705e2599e4cceeb943222ae02296cbc6
+  SnapKit: d612e99e678a2d3b95bf60b0705ed0a35c03484a
+  SwiftyJSON: f5b1bf1cd8dd53cd25887ac0eabcfd92301c6a5a
   TencentOpenAPI-Unofficial: bb112eb0f173390ea1bb2fd52270a808b0aa0057
-  WechatOpenSDK: 7cd4d3386fb6ba5595d5fb863e0a3bfd43bc6768
-  Weibo_SDK: 5a4d08f7e1fedbb635435e4585c8c0439c7da089
-  ZFPlayer: 8a6021a3c45e281f2abd24dca5c88915af770a7e
+  WechatOpenSDK: 290989072e87b79d52225a01bb4e5e58f6f88593
+  Weibo_SDK: ea4d83cd1b435635c402f73a3c441ee1f35fa87a
+  ZFPlayer: 5cf39e8d9f0c2394a014b0db4767b5b5a6bffe13
   ZWAlertController: 0c2c82e7e06cf3db4496d447397dc8c17f1fb93f
 
-PODFILE CHECKSUM: 2a5e0ddd6f4693f3d661a49734526a9703b8fb78
+PODFILE CHECKSUM: abe6e8cb3497e3a8879e4c8e07ec8ddcabe1218c
 
-COCOAPODS: 1.8.4
+COCOAPODS: 1.16.2

@@ -50,7 +50,7 @@ class HTZVideoPlayViewController: UIViewController {
         
         /// 播放完成
         self.player?.playerDidToEnd = { asset in
-            weakSelf.player?.currentPlayerManager.replay?()
+            weakSelf.player?.currentPlayerManager.replay()
             weakSelf.player?.playTheNext()
             if weakSelf.player?.isLastAssetURL == nil {
                 let title = String(format: "视频标题%zd", weakSelf.player?.currentPlayIndex ?? 0)

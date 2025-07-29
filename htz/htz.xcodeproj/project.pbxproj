@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 51;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -148,9 +148,9 @@
 		19DE3F132431E7F60008AC42 /* AppDelegate+Push.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19DE3F122431E7F60008AC42 /* AppDelegate+Push.swift */; };
 		19EC4C552442ABB60004E698 /* AppDelegate+Share.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19EC4C542442ABB60004E698 /* AppDelegate+Share.swift */; };
 		19EC4C572442CD450004E698 /* HTZShareMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19EC4C562442CD450004E698 /* HTZShareMenuView.swift */; };
-		7499498FC650705EDB86F7A6 /* Pods_htzUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A12A440892FCB15F6F9A7461 /* Pods_htzUITests.framework */; };
-		8873886FAD3016FFFE04BCDB /* Pods_htzTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C6282761BE57BC50497E9304 /* Pods_htzTests.framework */; };
-		CD7D274F1E09B0A74A746E4F /* Pods_htz.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 71BF73B9950DB665562A181D /* Pods_htz.framework */; };
+		B81E54D877D0F60DC3130CE5 /* Pods_htzTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D388F9A47532B69AAADD006F /* Pods_htzTests.framework */; };
+		D31874CF823855C8B4830729 /* Pods_htz.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 42DD8B27EE9BB122436019E5 /* Pods_htz.framework */; };
+		D9DF35AFB631E3047B22EB2A /* Pods_htzUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E81A5C4C18042CB3EC0D474 /* Pods_htzUITests.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -171,7 +171,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		0FCE7CB6951C7E7FCDE953D1 /* Pods-htz.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-htz.debug.xcconfig"; path = "Pods/Target Support Files/Pods-htz/Pods-htz.debug.xcconfig"; sourceTree = "<group>"; };
 		19144873244138B8001355A7 /* HTZAlbumViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZAlbumViewModel.swift; sourceTree = "<group>"; };
 		19333380234DD1A000498D76 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		19333382234DD1AB00498D76 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
@@ -323,14 +322,15 @@
 		19DE3F122431E7F60008AC42 /* AppDelegate+Push.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppDelegate+Push.swift"; sourceTree = "<group>"; };
 		19EC4C542442ABB60004E698 /* AppDelegate+Share.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppDelegate+Share.swift"; sourceTree = "<group>"; };
 		19EC4C562442CD450004E698 /* HTZShareMenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZShareMenuView.swift; sourceTree = "<group>"; };
-		3C768F35F7899594EC38CE14 /* Pods-htzUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-htzUITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-htzUITests/Pods-htzUITests.release.xcconfig"; sourceTree = "<group>"; };
-		549B0A80A97F5545FE963EF9 /* Pods-htzTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-htzTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-htzTests/Pods-htzTests.release.xcconfig"; sourceTree = "<group>"; };
-		71BF73B9950DB665562A181D /* Pods_htz.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_htz.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		8604342CD5FF9885FB33B58D /* Pods-htzTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-htzTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-htzTests/Pods-htzTests.debug.xcconfig"; sourceTree = "<group>"; };
-		A12A440892FCB15F6F9A7461 /* Pods_htzUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_htzUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		C6282761BE57BC50497E9304 /* Pods_htzTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_htzTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		F127EE42E8BDF736AC6D000E /* Pods-htz.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-htz.release.xcconfig"; path = "Pods/Target Support Files/Pods-htz/Pods-htz.release.xcconfig"; sourceTree = "<group>"; };
-		FA46C2838D74846154E8E939 /* Pods-htzUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-htzUITests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-htzUITests/Pods-htzUITests.debug.xcconfig"; sourceTree = "<group>"; };
+		1BBB3982B3233DE41DA97BA0 /* Pods-htzTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-htzTests.release.xcconfig"; path = "Target Support Files/Pods-htzTests/Pods-htzTests.release.xcconfig"; sourceTree = "<group>"; };
+		2883C2526F1FE1756945D73D /* Pods-htzTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-htzTests.debug.xcconfig"; path = "Target Support Files/Pods-htzTests/Pods-htzTests.debug.xcconfig"; sourceTree = "<group>"; };
+		3A63FC3FDB5FE671EA9DD7C3 /* Pods-htz.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-htz.release.xcconfig"; path = "Target Support Files/Pods-htz/Pods-htz.release.xcconfig"; sourceTree = "<group>"; };
+		42DD8B27EE9BB122436019E5 /* Pods_htz.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_htz.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		4BC12678D6E6A33D7037585F /* Pods-htz.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-htz.debug.xcconfig"; path = "Target Support Files/Pods-htz/Pods-htz.debug.xcconfig"; sourceTree = "<group>"; };
+		6E81A5C4C18042CB3EC0D474 /* Pods_htzUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_htzUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		7563278C149DB7BAEC2367EE /* Pods-htzUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-htzUITests.release.xcconfig"; path = "Target Support Files/Pods-htzUITests/Pods-htzUITests.release.xcconfig"; sourceTree = "<group>"; };
+		A15FC9F66830F9C5EFF65A23 /* Pods-htzUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-htzUITests.debug.xcconfig"; path = "Target Support Files/Pods-htzUITests/Pods-htzUITests.debug.xcconfig"; sourceTree = "<group>"; };
+		D388F9A47532B69AAADD006F /* Pods_htzTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_htzTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -350,8 +350,8 @@
 				19333385234DD1B500498D76 /* CoreGraphics.framework in Frameworks */,
 				19333383234DD1AB00498D76 /* AVFoundation.framework in Frameworks */,
 				19333381234DD1A000498D76 /* AudioToolbox.framework in Frameworks */,
-				CD7D274F1E09B0A74A746E4F /* Pods_htz.framework in Frameworks */,
 				194E175B23517FBC008F7BFF /* IJKMediaFramework.framework in Frameworks */,
+				D31874CF823855C8B4830729 /* Pods_htz.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -359,7 +359,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8873886FAD3016FFFE04BCDB /* Pods_htzTests.framework in Frameworks */,
+				B81E54D877D0F60DC3130CE5 /* Pods_htzTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -367,13 +367,26 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7499498FC650705EDB86F7A6 /* Pods_htzUITests.framework in Frameworks */,
+				D9DF35AFB631E3047B22EB2A /* Pods_htzUITests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0EC033E92FC0029217D27BE6 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				4BC12678D6E6A33D7037585F /* Pods-htz.debug.xcconfig */,
+				3A63FC3FDB5FE671EA9DD7C3 /* Pods-htz.release.xcconfig */,
+				2883C2526F1FE1756945D73D /* Pods-htzTests.debug.xcconfig */,
+				1BBB3982B3233DE41DA97BA0 /* Pods-htzTests.release.xcconfig */,
+				A15FC9F66830F9C5EFF65A23 /* Pods-htzUITests.debug.xcconfig */,
+				7563278C149DB7BAEC2367EE /* Pods-htzUITests.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
 		19144875244138C0001355A7 /* ViewModel */ = {
 			isa = PBXGroup;
 			children = (
@@ -562,8 +575,8 @@
 				19A95805229BC718007B48ED /* htzTests */,
 				19A95810229BC718007B48ED /* htzUITests */,
 				19A957EC229BC716007B48ED /* Products */,
-				93ECD0B4138B8220CD7185E8 /* Pods */,
 				A2AD966D30027EB87BA9ABA5 /* Frameworks */,
+				0EC033E92FC0029217D27BE6 /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -1041,19 +1054,6 @@
 			path = View;
 			sourceTree = "<group>";
 		};
-		93ECD0B4138B8220CD7185E8 /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				0FCE7CB6951C7E7FCDE953D1 /* Pods-htz.debug.xcconfig */,
-				F127EE42E8BDF736AC6D000E /* Pods-htz.release.xcconfig */,
-				8604342CD5FF9885FB33B58D /* Pods-htzTests.debug.xcconfig */,
-				549B0A80A97F5545FE963EF9 /* Pods-htzTests.release.xcconfig */,
-				FA46C2838D74846154E8E939 /* Pods-htzUITests.debug.xcconfig */,
-				3C768F35F7899594EC38CE14 /* Pods-htzUITests.release.xcconfig */,
-			);
-			name = Pods;
-			sourceTree = "<group>";
-		};
 		A2AD966D30027EB87BA9ABA5 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -1069,9 +1069,9 @@
 				19333384234DD1B500498D76 /* CoreGraphics.framework */,
 				19333382234DD1AB00498D76 /* AVFoundation.framework */,
 				19333380234DD1A000498D76 /* AudioToolbox.framework */,
-				71BF73B9950DB665562A181D /* Pods_htz.framework */,
-				C6282761BE57BC50497E9304 /* Pods_htzTests.framework */,
-				A12A440892FCB15F6F9A7461 /* Pods_htzUITests.framework */,
+				42DD8B27EE9BB122436019E5 /* Pods_htz.framework */,
+				D388F9A47532B69AAADD006F /* Pods_htzTests.framework */,
+				6E81A5C4C18042CB3EC0D474 /* Pods_htzUITests.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -1083,12 +1083,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 19A95816229BC718007B48ED /* Build configuration list for PBXNativeTarget "htz" */;
 			buildPhases = (
-				5185BCB14D1961C3289016CC /* [CP] Check Pods Manifest.lock */,
+				8692B50745E8487941941373 /* [CP] Check Pods Manifest.lock */,
 				19A957E7229BC716007B48ED /* Sources */,
 				19A957E8229BC716007B48ED /* Frameworks */,
 				19A957E9229BC716007B48ED /* Resources */,
-				4B959508F389F2C358CB925C /* [CP] Embed Pods Frameworks */,
-				DF0187E8AA287AC9AAA03BE2 /* [CP] Copy Pods Resources */,
+				208F7A57A5689BC89FB49469 /* [CP] Embed Pods Frameworks */,
+				E3AC05F9BB7B275A4E40352A /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -1103,7 +1103,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 19A95819229BC718007B48ED /* Build configuration list for PBXNativeTarget "htzTests" */;
 			buildPhases = (
-				06268748D2C4F227D9F66C4A /* [CP] Check Pods Manifest.lock */,
+				6EE585309399860F94FBF242 /* [CP] Check Pods Manifest.lock */,
 				19A957FE229BC718007B48ED /* Sources */,
 				19A957FF229BC718007B48ED /* Frameworks */,
 				19A95800229BC718007B48ED /* Resources */,
@@ -1122,7 +1122,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 19A9581C229BC718007B48ED /* Build configuration list for PBXNativeTarget "htzUITests" */;
 			buildPhases = (
-				79CC6FDA6C457EFFEA116E02 /* [CP] Check Pods Manifest.lock */,
+				ADB749806EE002A2008656EB /* [CP] Check Pods Manifest.lock */,
 				19A95809229BC718007B48ED /* Sources */,
 				19A9580A229BC718007B48ED /* Frameworks */,
 				19A9580B229BC718007B48ED /* Resources */,
@@ -1218,16 +1218,41 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		06268748D2C4F227D9F66C4A /* [CP] Check Pods Manifest.lock */ = {
+		208F7A57A5689BC89FB49469 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-htz/Pods-htz-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-htz/Pods-htz-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-htz/Pods-htz-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		6EE585309399860F94FBF242 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
 			);
 			inputPaths = (
 				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
 				"${PODS_ROOT}/Manifest.lock",
 			);
 			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
 			outputPaths = (
 				"$(DERIVED_FILE_DIR)/Pods-htzTests-checkManifestLockResult.txt",
 			);
@@ -1236,33 +1261,20 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		4B959508F389F2C358CB925C /* [CP] Embed Pods Frameworks */ = {
+		8692B50745E8487941941373 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-htz/Pods-htz-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-htz/Pods-htz-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-htz/Pods-htz-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		5185BCB14D1961C3289016CC /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
 			);
 			inputPaths = (
 				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
 				"${PODS_ROOT}/Manifest.lock",
 			);
 			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
 			outputPaths = (
 				"$(DERIVED_FILE_DIR)/Pods-htz-checkManifestLockResult.txt",
 			);
@@ -1271,16 +1283,20 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		79CC6FDA6C457EFFEA116E02 /* [CP] Check Pods Manifest.lock */ = {
+		ADB749806EE002A2008656EB /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			inputFileListPaths = (
 			);
 			inputPaths = (
 				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
 				"${PODS_ROOT}/Manifest.lock",
 			);
 			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
 			outputPaths = (
 				"$(DERIVED_FILE_DIR)/Pods-htzUITests-checkManifestLockResult.txt",
 			);
@@ -1289,7 +1305,7 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		DF0187E8AA287AC9AAA03BE2 /* [CP] Copy Pods Resources */ = {
+		E3AC05F9BB7B275A4E40352A /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -1297,9 +1313,13 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-htz/Pods-htz-resources-${CONFIGURATION}-input-files.xcfilelist",
 			);
+			inputPaths = (
+			);
 			name = "[CP] Copy Pods Resources";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-htz/Pods-htz-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -1609,21 +1629,22 @@
 		};
 		19A95817229BC718007B48ED /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 0FCE7CB6951C7E7FCDE953D1 /* Pods-htz.debug.xcconfig */;
+			baseConfigurationReference = 4BC12678D6E6A33D7037585F /* Pods-htz.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = htz/htz.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = J63NPN5YS5;
+				DEVELOPMENT_TEAM = QCGC77U855;
 				ENABLE_BITCODE = NO;
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/htz/Vendor",
 				);
 				INFOPLIST_FILE = htz/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1642,21 +1663,22 @@
 		};
 		19A95818229BC718007B48ED /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F127EE42E8BDF736AC6D000E /* Pods-htz.release.xcconfig */;
+			baseConfigurationReference = 3A63FC3FDB5FE671EA9DD7C3 /* Pods-htz.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = htz/htz.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = J63NPN5YS5;
+				DEVELOPMENT_TEAM = QCGC77U855;
 				ENABLE_BITCODE = NO;
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/htz/Vendor",
 				);
 				INFOPLIST_FILE = htz/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1674,7 +1696,7 @@
 		};
 		19A9581A229BC718007B48ED /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 8604342CD5FF9885FB33B58D /* Pods-htzTests.debug.xcconfig */;
+			baseConfigurationReference = 2883C2526F1FE1756945D73D /* Pods-htzTests.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -1695,7 +1717,7 @@
 		};
 		19A9581B229BC718007B48ED /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 549B0A80A97F5545FE963EF9 /* Pods-htzTests.release.xcconfig */;
+			baseConfigurationReference = 1BBB3982B3233DE41DA97BA0 /* Pods-htzTests.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -1716,7 +1738,7 @@
 		};
 		19A9581D229BC718007B48ED /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = FA46C2838D74846154E8E939 /* Pods-htzUITests.debug.xcconfig */;
+			baseConfigurationReference = A15FC9F66830F9C5EFF65A23 /* Pods-htzUITests.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
@@ -1736,7 +1758,7 @@
 		};
 		19A9581E229BC718007B48ED /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3C768F35F7899594EC38CE14 /* Pods-htzUITests.release.xcconfig */;
+			baseConfigurationReference = 7563278C149DB7BAEC2367EE /* Pods-htzUITests.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;

@@ -1,0 +1,6 @@
+framework module Pods_htzTests {
+  umbrella header "Pods-htzTests-umbrella.h"
+
+  export *
+  module * { export * }
+}
