@@ -12,6 +12,7 @@ target 'htz' do
 #  pod 'Alamofire'
   pod 'Moya'
   pod 'SwiftyJSON'
+
   pod 'HandyJSON'
   pod 'GKCoverSwift'
   
