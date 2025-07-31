@@ -15,7 +15,6 @@ target 'htz' do
 
   pod 'HandyJSON'
   pod 'GKCoverSwift'
-  
   pod 'JPush'
   pod 'JShare'
   
