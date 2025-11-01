@@ -9,6 +9,7 @@
 import Foundation
 import Moya
 import Alamofire
+import UIKit
 
 enum API {
     case login(code: String)
@@ -110,7 +111,13 @@ extension API: TargetType {
         case .updateUserInfo(_):
             return "userInfo/update"
         case .getUserInfo:
-            return "userInfo/info/\(HTZUserAccount.shared.unionid!)"
+            if let unionid = HTZUserAccount.shared.unionid {
+                return "userInfo/info/\(unionid)"
+            } else {
+                // 处理unionid为nil的情况，返回无效路径，服务器会返回错误
+                HTZLog.error("API", "User unionid is nil when trying to get user info")
+                return "userInfo/info/"
+            }
         case .getSmsCode(_):
             return "telephone/getSmsCode"
         case .bindTelephone(_,_):
@@ -183,9 +190,19 @@ extension API: TargetType {
             return .requestPlain
             
         case let .getSmsCode(telephone):
-            return .requestParameters(parameters: ["telephone": telephone, "unionid": HTZUserAccount.shared.unionid!], encoding: URLEncoding.queryString)
+            guard let unionid = HTZUserAccount.shared.unionid else {
+                HTZLog.error("API", "User unionid is nil when trying to get SMS code")
+                // 返回一个无效参数，让请求失败
+                return .requestParameters(parameters: ["telephone": telephone, "unionid": ""], encoding: URLEncoding.queryString)
+            }
+            return .requestParameters(parameters: ["telephone": telephone, "unionid": unionid], encoding: URLEncoding.queryString)
         case let .bindTelephone(code, telephone):
-            return .requestParameters(parameters: ["code": code, "telephone": telephone, "unionid": HTZUserAccount.shared.unionid!], encoding: URLEncoding.queryString)
+            guard let unionid = HTZUserAccount.shared.unionid else {
+                HTZLog.error("API", "User unionid is nil when trying to bind telephone")
+                // 返回一个无效参数，让请求失败
+                return .requestParameters(parameters: ["code": code, "telephone": telephone, "unionid": ""], encoding: URLEncoding.queryString)
+            }
+            return .requestParameters(parameters: ["code": code, "telephone": telephone, "unionid": unionid], encoding: URLEncoding.queryString)
             
         case let .register(email, password):
             return .requestParameters(parameters: ["email": email, "password": password], encoding: JSONEncoding.default)
@@ -216,7 +233,7 @@ extension API: TargetType {
     
     
     var headers: [String : String]? {
-        HTZUserAccount.shared.token = "7dcc850e-a97b-5141-b704-c24a77f76664"
+        // 移除硬编码的token赋值，这应该是动态的
         if let token = HTZUserAccount.shared.token {
             return ["Content-Type" : "application/json","token" : token]
         }

@@ -10,6 +10,7 @@ import UIKit
 import CoreData
 import Alamofire
 import AVFoundation
+import Foundation
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -28,6 +29,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }()
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+        HTZLogConfig.setup()
+        HTZLog.info("APP-DELEGATE", "应用启动")
         // Override point for customization after application launch.
         
         // 初始化主窗口
@@ -39,6 +42,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // 初始化全局播放按钮
 //        initPlayButton()
     #if targetEnvironment(simulator) // 模拟器下方便调试用
+        // 在测试时，如果你想测试登录页面，可以注释掉下面两行
+        HTZLog.debug("APP-DELEGATE", "模拟器模式，设置测试用户信息")
         HTZUserAccount.shared.unionid = "oJuR607eZwW3LlsaxcAExu1pOVpA"
         HTZUserAccount.shared.token = "14a1fe40-80be-51fc-92e1-bcfa1c68d978"
     #endif
@@ -56,13 +61,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             try audioSession.setCategory(AVAudioSession.Category.playback)
             try audioSession.setActive(true, options: AVAudioSession.SetActiveOptions.init())
         } catch  {
-            print(error)
+            HTZLog.error("APP-DELEGATE", "设置音频会话失败: \(error)")
         }
        
         // 极光推送
         configPush(launchOptions: launchOptions)
         // 极光分享
         configShare()
+        
+        clearLoginStatus()
                 
 //        #if DEBUG
 //        pgyerCrash()
@@ -71,6 +78,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return true
     }
     
+    func clearLoginStatus() {
+        // 清除用户账户信息
+        HTZUserAccount.shared.token = nil
+        HTZUserAccount.shared.unionid = nil
+        HTZUserAccount.shared.name = nil
+        HTZUserAccount.shared.headimgurl = nil
+        
+        // 清除UserDefaults中的用户数据
+        UserDefaults.Standard.removeObject(forKey: UserDefaults.keyUserAccount)
+        
+        // 也可以清除所有用户数据（谨慎使用）
+        // UserDefaults.Standard.synchronize()
+    }
     ///
     func initPlayButton() {
         self.window?.addSubview(palyButton)

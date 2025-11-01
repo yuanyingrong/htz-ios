@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Foundation
 
 class HTZWechatLoginViewController: HTZBaseViewController {
     
@@ -99,12 +100,28 @@ extension HTZWechatLoginViewController {
     
     // 微信
     @objc func wechatButtonClickAction() {
-        print("微信")
-        HTZAccountThirdLoginUtil.sharedInstance.getUserInfo(loginType: ThirdLoginType.weixin) { (loginResult, error) -> (Void) in
-//            print(loginResult)
-            if let result = self.loginResult {
+        HTZLog.info("WECHAT-LOGIN-VIEW", "微信登录按钮点击")
+        HTZAccountThirdLoginUtil.sharedInstance.getUserInfo(loginType: ThirdLoginType.weixin) { [weak self] (loginResult, error) -> (Void) in
+            HTZLog.info("WECHAT-LOGIN-VIEW", "微信登录回调执行，error: \(error != nil ? String(describing: error) : "nil"), loginResult: \(loginResult != nil ? "存在" : "nil")")
+            if let error = error {
+                HTZLog.error("WECHAT-LOGIN-VIEW", "微信登录失败: \(error)")
+                self?.alert(message: error)
+                // 即使失败也返回上一页
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                    HTZLog.info("WECHAT-LOGIN-VIEW", "延迟2秒后返回上一页")
+                    self?.navigationController?.popViewController(animated: true)
+                }
+            } else if let loginResult = loginResult, let result = self?.loginResult {
+                HTZLog.info("WECHAT-LOGIN-VIEW", "微信登录成功，正在返回上一页")
                 result(loginResult)
-                self.navigationController?.popViewController(animated: true)
+                self?.navigationController?.popViewController(animated: true)
+            } else {
+                HTZLog.warning("WECHAT-LOGIN-VIEW", "微信登录失败或loginResult为nil，返回上一页")
+                self?.alert(message: "登录失败，请重试")
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                    HTZLog.info("WECHAT-LOGIN-VIEW", "延迟2秒后返回上一页")
+                    self?.navigationController?.popViewController(animated: true)
+                }
             }
         }
     }

@@ -10,6 +10,7 @@ import UIKit
 import Moya
 import Alamofire
 import SwiftyJSON
+import Foundation
 
 /// 超时时长
 private var requestTimeOut: Double = 30
@@ -61,6 +62,9 @@ private let myEndpointClosure = { (target: API) -> Endpoint in
         return endpoint
     case .register:
         requestTimeOut = 5
+        return endpoint
+    case .login(_):  // 登录请求可能需要更长时间
+        requestTimeOut = 45  // 增加登录请求的超时时间
         return endpoint
         
     default:
@@ -167,9 +171,10 @@ func NetWorkRequest(_ target: API, completion: @escaping successCallback , faile
 ///   - failed: 失败
 ///   - error: 错误
 func NetWorkRequest(_ target: API, completion: @escaping successCallback , failed:failedCallback?, errorResult:errorCallback?) {
+    HTZLog.debug("NETWORK", "开始网络请求: \(target.path)")
     //先判断网络是否有链接 没有的话直接返回--代码略
     if !isNetworkConnect {
-        print("提示用户网络似乎出现了问题")
+        HTZLog.warning("NETWORK", "网络连接失败，跳过请求")
         return
     }
     
@@ -179,15 +184,15 @@ func NetWorkRequest(_ target: API, completion: @escaping successCallback , faile
         //隐藏hud
         switch result {
         case let .success(response):
-           
+            HTZLog.debug("NETWORK", "网络请求成功: \(target.path)")
             do {
                 let jsonData = try JSON(data: response.data)
-                print(jsonData)
+                HTZLog.debug("NETWORK", "网络请求响应: \(jsonData)")
                 //               这里的completion和failed判断条件依据不同项目来做，为演示demo我把判断条件注释了，直接返回completion。
                 
                 completion(jsonData)
                 
-                print("flag不为1000 HUD显示后台返回message"+"\(jsonData[RESULT_MESSAGE].stringValue)")
+                HTZLog.debug("NETWORK", "flag不为1000 HUD显示后台返回message"+"\(jsonData[RESULT_MESSAGE].stringValue)")
                 
                 //                if jsonData[RESULT_CODE].stringValue == "1000"{
                 //                    completion(String(data: response.data, encoding: String.Encoding.utf8)!)
@@ -198,16 +203,17 @@ func NetWorkRequest(_ target: API, completion: @escaping successCallback , faile
                 //                }
                 
             } catch {
+                HTZLog.error("NETWORK", "解析响应数据失败: \(error)")
             }
         case let .failure(error):
-            guard (error as? CustomStringConvertible) != nil else {
-                //网络连接失败，提示用户
-                print("网络连接失败")
-                break
-            }
-            
-            if errorResult != nil {
-                errorResult!()
+            HTZLog.error("NETWORK", "网络请求失败: \(target.path), 错误: \(error)")
+            // 不需要检查 CustomStringConvertible，直接处理错误
+            HTZLog.error("NETWORK", "网络请求失败: \(error)")
+            if let errorResult = errorResult {
+                errorResult()
+                HTZLog.info("NETWORK", "网络请求失败回调已执行: \(target.path)")
+            } else {
+                HTZLog.warning("NETWORK", "网络请求失败但errorResult为nil: \(target.path)")
             }
         }
     }
@@ -218,6 +224,8 @@ func NetWorkRequest(_ target: API, completion: @escaping successCallback , faile
 var isNetworkConnect: Bool {
     get {
         let network = NetworkReachabilityManager()
-        return network?.isReachable ?? true // 无返回就默认网络已连接
+        let reachable = network?.isReachable ?? true // 无返回就默认网络已连接
+        HTZLog.debug("NETWORK", "网络连接状态检测: \(reachable ? "已连接" : "未连接")")
+        return reachable
     }
 }

@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Foundation
 
 struct ProfileCell {
     
@@ -123,17 +124,27 @@ extension HTZProfileViewController: UITableViewDataSource, UITableViewDelegate {
 extension HTZProfileViewController: HTZProfileHeaderViewDelegate {
     
     @objc func nameButtonClickAction() {
-        if HTZUserAccount.shared.token != nil {
-            let vc = HTZPersonalProfileViewController()
-            vc.changeSuccessBlock = {
-                self.headerView.iconImage =  HTZUserAccount.shared.headimgurl
-                self.headerView.name =  HTZUserAccount.shared.name
+        HTZLog.info("PROFILE-VIEW", "用户点击头像/名称区域")
+        if let token = HTZUserAccount.shared.token, !token.isEmpty {
+            HTZLog.debug("PROFILE-VIEW", "用户已登录，token存在: \(token)")
+            // 检查是否同时有unionid，确保用户信息完整
+            if let unionid = HTZUserAccount.shared.unionid {
+                HTZLog.debug("PROFILE-VIEW", "用户信息完整，unionid: \(unionid)")
+                let vc = HTZPersonalProfileViewController()
+                vc.changeSuccessBlock = {
+                    self.headerView.iconImage =  HTZUserAccount.shared.headimgurl
+                    self.headerView.name =  HTZUserAccount.shared.name
+                }
+                navigationController?.pushViewController(vc, animated: true)
+            } else {
+                HTZLog.warning("PROFILE-VIEW", "用户token存在但unionid不存在，跳转到微信登录")
+                // token存在但unionid不存在，可能需要重新登录
+                HTZLoginManager.shared.jumpToWechatLogin(controller: self)
             }
-            navigationController?.pushViewController(vc, animated: true)
         } else {
+            HTZLog.info("PROFILE-VIEW", "用户未登录，跳转到微信登录")
             HTZLoginManager.shared.jumpToWechatLogin(controller: self)
         }
-        print("点击登录")
     }
     
     

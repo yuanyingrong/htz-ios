@@ -58,6 +58,13 @@ class HTZPersonalProfileViewController: HTZBaseViewController {
     
     override func configData() {
         super.configData()
+        
+        // 检查用户是否已正确登录（unionid存在）
+        guard let _ = HTZUserAccount.shared.unionid else {
+            print("用户未完全登录，缺少unionid，无法获取用户信息")
+            return
+        }
+        
         NetWorkRequest(API.getUserInfo) {[weak self] (response) -> (Void) in
             if response["code"].rawString() == "200" {
                 if response["data"]["telephone"].stringValue.count > 1 {
@@ -69,6 +76,8 @@ class HTZPersonalProfileViewController: HTZBaseViewController {
                     self?.dataArr[4].rightText = HTZUserAccount.shared.sign
                 }
                 self?.tableView.reloadData()
+            } else {
+                print("获取用户信息失败: \(response["message"].stringValue)")
             }
         }
     }

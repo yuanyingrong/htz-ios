@@ -22,6 +22,9 @@ let wxAppID = "wx411fef9024bd3b5b"
 let wxAppSecrect = "01a0b78aeaec432cf778c6a37b40aa9c"
 let wxAppKey = "mubtaqjG8tQ9Clvy"
 
+// MARK: - 导入日志工具
+import Foundation
+
 enum ThirdLoginType {
     case weibo // 新浪微博
     case tencent // QQ
@@ -146,17 +149,45 @@ extension HTZAccountThirdLoginUtil: WXApiDelegate {
         }
     }
     private func getWeiXinUserInfo(code: String) {
-        NetWorkRequest(API.login(code: code)) { (response) -> (Void) in
-            print(response);
+        HTZLog.debug("WECHAT-LOGIN", "开始微信登录请求，Code: \(code)")
+        NetWorkRequest(API.login(code: code), completion: { (response) -> (Void) in
+            HTZLog.debug("WECHAT-LOGIN", "微信登录响应: \(response)")
             if (response["code"].intValue == 200) {
                 let dict = response["data"]
                 let model = HTZLoginModel.deserialize(from: dict.rawString())
-                if self.resultCallback != nil {
-                    self.resultCallback!(model, nil)
+                HTZLog.info("WECHAT-LOGIN", "微信登录成功，用户信息已获取，准备回调")
+                if let resultCallback = self.resultCallback {
+                    resultCallback(model, nil)
+                    HTZLog.info("WECHAT-LOGIN", "微信登录成功回调已执行")
+                } else {
+                    HTZLog.warning("WECHAT-LOGIN", "微信登录成功但resultCallback为nil")
+                }
+            } else {
+                HTZLog.error("WECHAT-LOGIN", "微信登录失败，服务器返回错误: \(response["message"].stringValue)")
+                if let resultCallback = self.resultCallback {
+                    resultCallback(nil, "登录失败: \(response["message"].stringValue)")
+                    HTZLog.info("WECHAT-LOGIN", "微信登录失败回调已执行")
+                } else {
+                    HTZLog.warning("WECHAT-LOGIN", "微信登录失败但resultCallback为nil")
                 }
             }
-            
-        }
+        }, failed: { (error) in
+            HTZLog.error("WECHAT-LOGIN", "微信登录请求失败: \(error)")
+            if let resultCallback = self.resultCallback {
+                resultCallback(nil, "登录请求失败: \(error)")
+                HTZLog.info("WECHAT-LOGIN", "微信登录请求失败回调已执行")
+            } else {
+                HTZLog.warning("WECHAT-LOGIN", "微信登录请求失败但resultCallback为nil")
+            }
+        }, errorResult: {
+            HTZLog.error("WECHAT-LOGIN", "微信登录网络错误")
+            if let resultCallback = self.resultCallback {
+                resultCallback(nil, "网络连接错误")
+                HTZLog.info("WECHAT-LOGIN", "微信登录网络错误回调已执行")
+            } else {
+                HTZLog.warning("WECHAT-LOGIN", "微信登录网络错误但resultCallback为nil")
+            }
+        })
     }
     
     
