@@ -10,8 +10,8 @@ import UIKit
 
 /// 定义基础域名
 let Moya_baseURL = "http://39.105.174.143:9500/"
-let search_baseURL = "http://39.105.174.143:9500/"
-let download_baseURL = "http://39.105.174.143:9500/"
+let search_baseURL = "http://39.105.174.143:9100/"
+let download_baseURL = "http://39.105.174.143:9400/"
 //let Moya_baseURL = "http://htzshanghai.top/resources/app_json/"
 let mobile_baseURL = "http://121.36.173.141:8888/api/"
 
