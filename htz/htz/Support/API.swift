@@ -53,6 +53,7 @@ enum API {
 
 extension API: TargetType {
     var baseURL: URL {
+        HTZLog.debug("API", "Requesting baseURL for case: \(self)")
         switch self {
         case .sinaOAuth:
             return URL.init(string:"https://api.weibo.com/")!

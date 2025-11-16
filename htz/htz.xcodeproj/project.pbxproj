@@ -1666,7 +1666,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 0.0.1;
-				PRODUCT_BUNDLE_IDENTIFIER = com.yyr.www.htz;
+				PRODUCT_BUNDLE_IDENTIFIER = cn.org.htz;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "htz/htz-Bridging-Header.h";
@@ -1700,7 +1700,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 0.0.1;
-				PRODUCT_BUNDLE_IDENTIFIER = com.yyr.www.htz;
+				PRODUCT_BUNDLE_IDENTIFIER = cn.org.htz;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "htz/htz-Bridging-Header.h";

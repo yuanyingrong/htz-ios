@@ -35,6 +35,9 @@ class HTZTabbarViewController: UITabBarController {
         }
         
         for dict in dictArr {
+            if let type = dict["type"] as? String, type == "play" {
+                continue
+            }
             guard let vcName = dict["page"] as? String else {
                 continue
             }
