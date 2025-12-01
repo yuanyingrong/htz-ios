@@ -163,6 +163,60 @@ func NetWorkRequest(_ target: API, completion: @escaping successCallback , faile
 }
 
 
+
+/// 返回用于mock的数据
+private func mockData(for target: API) -> Data? {
+    switch target {
+    case .recommendations:
+        let mockResponse = """
+        {
+          "code": 200,
+          "message": "Success",
+          "data": [
+            {
+              "id": "1",
+              "title": "Mock Recommendation 1",
+              "cover_url": "https://via.placeholder.com/150"
+            },
+            {
+              "id": "2",
+              "title": "Mock Recommendation 2",
+              "cover_url": "https://via.placeholder.com/150"
+            }
+          ]
+        }
+        """
+        return mockResponse.data(using: .utf8)
+    case .sutras(_, _):
+        let mockResponse = """
+        {
+            "code": 200,
+            "message": "Success",
+            "data": {
+                "sutras": [
+                    {
+                        "id": "1",
+                        "name": "Mock Sutra 1",
+                        "description": "This is a mock sutra.",
+                        "cover_url": "https://via.placeholder.com/150"
+                    },
+                    {
+                        "id": "2",
+                        "name": "Mock Sutra 2",
+                        "description": "This is another mock sutra.",
+                        "cover_url": "https://via.placeholder.com/150"
+                    }
+                ],
+                "total_count": 2
+            }
+        }
+        """
+        return mockResponse.data(using: .utf8)
+    default:
+        return nil
+    }
+}
+
 ///  需要知道成功、失败、错误情况回调的网络请求   像结束下拉刷新各种情况都要判断
 ///
 /// - Parameters:
@@ -171,6 +225,19 @@ func NetWorkRequest(_ target: API, completion: @escaping successCallback , faile
 ///   - failed: 失败
 ///   - error: 错误
 func NetWorkRequest(_ target: API, completion: @escaping successCallback , failed:failedCallback?, errorResult:errorCallback?) {
+    
+    if let mockData = mockData(for: target) {
+        do {
+            let json = try JSON(data: mockData)
+            completion(json)
+        } catch {
+            if let failed = failed {
+                failed("Failed to parse mock data")
+            }
+        }
+        return
+    }
+    
     HTZLog.debug("NETWORK", "开始网络请求: \(target.path)")
     //先判断网络是否有链接 没有的话直接返回--代码略
     if !isNetworkConnect {

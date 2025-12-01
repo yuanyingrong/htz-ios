@@ -14,15 +14,15 @@ import Foundation
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
-
+    
     var window: UIWindow?
     
     var blockRotation = Bool()
-
+    
     lazy var palyButton: UIButton = {
         let button = UIButton(type: UIButton.ButtonType.custom)
         button.setBackgroundImage(UIImage(named: "play_normal"), for: UIControl.State.normal)
-//        button.setImage(UIImage(named: "play"), for: UIControl.State.normal)
+        //        button.setImage(UIImage(named: "play"), for: UIControl.State.normal)
         button.addTarget(self, action: #selector(topbarPlayButtonClickAction), for: UIControl.Event.touchUpInside)
         button.isHidden = true
         return button
@@ -40,13 +40,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         window?.makeKeyAndVisible()
         
         // 初始化全局播放按钮
-//        initPlayButton()
-    #if targetEnvironment(simulator) // 模拟器下方便调试用
+        //        initPlayButton()
+#if targetEnvironment(simulator) // 模拟器下方便调试用
         // 在测试时，如果你想测试登录页面，可以注释掉下面两行
         HTZLog.debug("APP-DELEGATE", "模拟器模式，设置测试用户信息")
         HTZUserAccount.shared.unionid = "oJuR607eZwW3LlsaxcAExu1pOVpA"
         HTZUserAccount.shared.token = "14a1fe40-80be-51fc-92e1-bcfa1c68d978"
-    #endif
+#endif
         
         
         // 初始化播放器
@@ -56,24 +56,24 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         networkStateCheck()
         
         // 告诉app支持后台播放
-         let audioSession = AVAudioSession.sharedInstance()
+        let audioSession = AVAudioSession.sharedInstance()
         do {
             try audioSession.setCategory(AVAudioSession.Category.playback)
             try audioSession.setActive(true, options: AVAudioSession.SetActiveOptions.init())
         } catch  {
             HTZLog.error("APP-DELEGATE", "设置音频会话失败: \(error)")
         }
-       
+        
         // 极光推送
         configPush(launchOptions: launchOptions)
         // 极光分享
         configShare()
         
         clearLoginStatus()
-                
-//        #if DEBUG
-//        pgyerCrash()
-//        #endif
+        
+        //        #if DEBUG
+        //        pgyerCrash()
+        //        #endif
         
         return true
     }
@@ -117,7 +117,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         } else {
             HTZMusicTool.visibleViewController()?.alert(message: "暂无播放内容")
         }
-       
+        
     }
     
     @objc private func playStatusChanged(noti: Notification) {
@@ -131,7 +131,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
         }
     }
- 
+    
     /// 网络监测
     func networkStateCheck() {
         
@@ -151,7 +151,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             case .reachable(NetworkReachabilityManager.NetworkReachabilityStatus.ConnectionType.cellular):
                 HTZMusicTool.setNetworkState(state: "wwan")
                 break
-
+                
             }
             // 发送网络状态改变的通知
             NotificationCenter.default.post(name: NSNotification.Name(kNetworkChangeNotification), object: nil)
@@ -177,7 +177,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     
     
-
+    
     func applicationWillResignActive(_ application: UIApplication) {
         // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
         // Use this method to pause ongoing tasks, disable timers, and invalidate graphics rendering callbacks. Games should use this method to pause the game.
@@ -190,19 +190,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         //销毁通知红点
         UIApplication.shared.applicationIconBadgeNumber = 0
         JPUSHService.setBadge(0)
-//        let noti = UNUserNotificationCenter()
+        //        let noti = UNUserNotificationCenter()
         UNUserNotificationCenter.current().removeAllDeliveredNotifications()
         
     }
-
+    
     func applicationWillEnterForeground(_ application: UIApplication) {
         // Called as part of the transition from the background to the active state  here you can undo many of the changes made on entering the background.
     }
-
+    
     func applicationDidBecomeActive(_ application: UIApplication) {
         // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
     }
-
+    
     func applicationWillTerminate(_ application: UIApplication) {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
         // Saves changes in the application's managed object context before the application terminates.
@@ -256,3 +256,28 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 }
 
+extension AppDelegate: WXApiDelegate {
+    
+    // MARK: WXApiDelegate
+    func onReq(_ req: BaseReq) {
+        // Handle requests from WeChat, if any (e.g., share requests)
+        HTZLog.info("WECHAT-DELEGATE", "Received WeChat Request with type: \(req.type)")
+    }
+    
+    func onResp(_ resp: BaseResp) {
+        // Handle responses from WeChat (e.g., login, share results)
+        HTZLog.info("WECHAT-DELEGATE", "Received WeChat Response with code: \(resp.errCode)")
+        // The actual login result is handled in AppDelegate+OAuth.swift via notifications
+    }
+    
+    // MARK: - Universal Link Handling
+    func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
+        // Log the incoming URL to verify Universal Link is working
+        if userActivity.activityType == NSUserActivityTypeBrowsingWeb, let url = userActivity.webpageURL {
+            HTZLog.info("UNIVERSAL-LINK", "Received Universal Link with URL: \(url.absoluteString)")
+            // Pass the Universal Link URL to WeChat SDK
+            return WXApi.handleOpen(url, delegate: self)
+        }
+        return false
+    }
+}

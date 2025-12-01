@@ -143,7 +143,7 @@ class HTZProfileHeaderView: BaseView {
         functionView.snp.makeConstraints { (make) in
             make.left.right.equalTo(self)
             make.top.equalTo(bgImageView.snp.bottom)
-            make.height.equalTo(1) // 66
+            make.height.equalTo(66) // 66
         }
         
         iDownloadsButton.snp.makeConstraints { (make) in

@@ -52,8 +52,7 @@ class HTZHomeSearchView: BaseView {
         
         middleView.snp.makeConstraints { (make) in
             make.left.equalTo(leftImageView.snp.rightMargin).offset(2 * kGlobelMargin)
-            make.top.equalTo(contentView).offset(-0.1 * kGlobelMargin)
-            make.bottom.equalTo(contentView).offset(-0.1 * kGlobelMargin)
+            make.centerY.equalTo(contentView)
             make.height.equalTo(30)
         }
         

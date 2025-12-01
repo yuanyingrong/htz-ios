@@ -50,7 +50,7 @@ class HTZAccountThirdLoginUtil: NSObject {
         // 注册Sina微博
 //        WeiboSDK.registerApp(sinaAppKey)
         // 微信注册
-        let res = WXApi.registerApp(wxAppID, universalLink:"https://39.96.5.46:9500/")
+        let res = WXApi.registerApp(wxAppID, universalLink:"https://app.neixinchan.com:9500/")
         printLog(res)
         #if DEBUG
         WeiboSDK.enableDebugMode(true)
