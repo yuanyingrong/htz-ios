@@ -108,16 +108,16 @@ extension API: TargetType {
             return "get/notifications"
 
         case .addUserInfo(_):
-            return "userInfo/add"
+            return "userinfo/add"
         case .updateUserInfo(_):
-            return "userInfo/update"
+            return "userinfo/update"
         case .getUserInfo:
             if let unionid = HTZUserAccount.shared.unionid {
-                return "userInfo/info/\(unionid)"
+                return "userinfo/info/\(unionid)"
             } else {
                 // 处理unionid为nil的情况，返回无效路径，服务器会返回错误
                 HTZLog.error("API", "User unionid is nil when trying to get user info")
-                return "userInfo/info/"
+                return "userinfo/info/"
             }
         case .getSmsCode(_):
             return "telephone/getSmsCode"
