@@ -105,8 +105,9 @@ extension BaseCollectionViewCell : UICollectionViewDelegate {
 
 extension BaseCollectionViewCell : UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        
-        return CGSize.zero
+        // Warning: sizeForItemAt is not implemented in the subclass of BaseCollectionViewCell. Returning the collectionView's bounds size as a default.
+        HTZLog.warning("BaseCollectionViewCell", "sizeForItemAt is not implemented in the subclass. Returning the collectionView's bounds size as a default.")
+        return collectionView.bounds.size
     }
 }
 
