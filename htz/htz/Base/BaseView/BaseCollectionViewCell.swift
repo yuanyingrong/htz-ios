@@ -66,6 +66,18 @@ class BaseCollectionViewCell: UICollectionViewCell {
         
     }
     
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        // At this point, self.bounds is correctly sized.
+        // Update the item size of the flow layout to match the collection view's current size.
+        // This avoids the chicken-and-egg problem of calculating size before the view is laid out.
+        if let collectionView = self.collectionView, layout.itemSize != collectionView.bounds.size {
+            layout.itemSize = collectionView.bounds.size
+            layout.invalidateLayout() // Ensure the layout updates with the new size.
+        }
+    }
+    
     //让子类去实现
     func configCellData(_ data: AnyObject) -> Void {
         
@@ -100,14 +112,6 @@ extension BaseCollectionViewCell : UICollectionViewDataSource {
 extension BaseCollectionViewCell : UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
-    }
-}
-
-extension BaseCollectionViewCell : UICollectionViewDelegateFlowLayout {
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        // Warning: sizeForItemAt is not implemented in the subclass of BaseCollectionViewCell. Returning the collectionView's bounds size as a default.
-        HTZLog.warning("BaseCollectionViewCell", "sizeForItemAt is not implemented in the subclass. Returning the collectionView's bounds size as a default.")
-        return collectionView.bounds.size
     }
 }
 
