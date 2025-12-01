@@ -256,28 +256,3 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 }
 
-extension AppDelegate: WXApiDelegate {
-    
-    // MARK: WXApiDelegate
-    func onReq(_ req: BaseReq) {
-        // Handle requests from WeChat, if any (e.g., share requests)
-        HTZLog.info("WECHAT-DELEGATE", "Received WeChat Request with type: \(req.type)")
-    }
-    
-    func onResp(_ resp: BaseResp) {
-        // Handle responses from WeChat (e.g., login, share results)
-        HTZLog.info("WECHAT-DELEGATE", "Received WeChat Response with code: \(resp.errCode)")
-        // The actual login result is handled in AppDelegate+OAuth.swift via notifications
-    }
-    
-    // MARK: - Universal Link Handling
-    func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
-        // Log the incoming URL to verify Universal Link is working
-        if userActivity.activityType == NSUserActivityTypeBrowsingWeb, let url = userActivity.webpageURL {
-            HTZLog.info("UNIVERSAL-LINK", "Received Universal Link with URL: \(url.absoluteString)")
-            // Pass the Universal Link URL to WeChat SDK
-            return WXApi.handleOpen(url, delegate: self)
-        }
-        return false
-    }
-}
