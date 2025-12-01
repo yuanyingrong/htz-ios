@@ -13,7 +13,7 @@ let Moya_baseURL = "http://39.105.174.143:9100/"
 let search_baseURL = "http://39.105.174.143:9100/"
 let download_baseURL = "http://39.105.174.143:9400/"
 //let Moya_baseURL = "http://htzshanghai.top/resources/app_json/"
-let mobile_baseURL = "http://121.36.173.141:8888/api/"
+let mobile_baseURL = "http://121.36.173.141:8082/htz-api-pyservice/api/v1/"
 
 let ossurl = "https://htz-sutra.oss-cn-shanghai.aliyuncs.com/"
 
