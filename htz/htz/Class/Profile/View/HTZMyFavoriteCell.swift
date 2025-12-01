@@ -23,7 +23,11 @@ class HTZMyFavoriteCell: UITableViewCell {
                 if let albumIcon = saveDataModel.albumIcon, albumIcon.hasPrefix("http") {
                     albumImageView.wb_setImageWith(urlStr: albumIcon)
                 } else {
-                    albumImageView.image = UIImage(named: saveDataModel.albumIcon ?? "")
+                    if let albumIcon = saveDataModel.albumIcon, !albumIcon.isEmpty {
+                        albumImageView.image = UIImage(named: albumIcon)
+                    } else {
+                        albumImageView.image = UIImage(named: "default_cover") // 使用默认图片
+                    }
                 }
                 deleteButton.isHidden = true
                 fileCountButton.setTitle("\(saveDataModel.fileCount!)集", for: UIControl.State.normal)

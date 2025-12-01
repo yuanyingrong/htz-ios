@@ -342,9 +342,14 @@ class HTZCycleViewCell: UICollectionViewCell {
         if picture.hasPrefix("http") {
             imgView.kf.setImage(with: URL(string: picture), placeholder: placeholderImage)
         } else {
-            imgView.image = UIImage(named: picture) ?? placeholderImage
+            // 安全加载图片，避免空字符串导致的错误
+            if !picture.isEmpty {
+                imgView.image = UIImage(named: picture) ?? placeholderImage
+            } else {
+                imgView.image = placeholderImage
+            }
         }
-        
+
         self.imgViewWidth = imgViewWidth
     }
 }

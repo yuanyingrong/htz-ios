@@ -23,7 +23,11 @@ class HTZListenHistoryCell: UITableViewCell {
                 if let sutra_cover = listenHistoryModel.sutra_cover, sutra_cover.hasPrefix("http") {
                     albumImageView.wb_setImageWith(urlStr: sutra_cover)
                 } else {
-                    albumImageView.image = UIImage(named: listenHistoryModel.sutra_cover ?? "")
+                    if let sutraCover = listenHistoryModel.sutra_cover, !sutraCover.isEmpty {
+                        albumImageView.image = UIImage(named: sutraCover)
+                    } else {
+                        albumImageView.image = UIImage(named: "default_cover") // 使用默认图片
+                    }
                 }
             }
         }

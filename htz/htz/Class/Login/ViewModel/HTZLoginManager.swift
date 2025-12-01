@@ -45,30 +45,30 @@ class HTZLoginManager: NSObject {
                 
                 
                 
-                let param:[String : Any?] = [
-                                              "city": loginModel.wx_login_resp?.city,
-                                              "country": loginModel.wx_login_resp?.country,
+                let param:[String : Any] = [
+                                              "city": loginModel.wx_login_resp?.city ?? "",
+                                              "country": loginModel.wx_login_resp?.country ?? "",
                                               "createTime": Date.getTime(timeStamp: loginModel.created_at ?? "", format: .dateYMDHMS),
-                                              "groupId": 0,
-                                              "headimgurl": loginModel.wx_login_resp?.headimgurl,
-    //                                          "id": loginModel?.id,
+                                              "group_id": "0", // Changed from groupId: 0 to group_id: "0"
+                                              "headimgurl": loginModel.wx_login_resp?.headimgurl ?? "",
                                               "language": "",
                                               "lastUpdateTime": "",
-                                              "nickname": loginModel.wx_login_resp?.nickname,
+                                              "nickname": loginModel.wx_login_resp?.nickname ?? "",
                                               "note": "",
-                                              "openid": loginModel.wx_login_resp?.openid,
-                                              "province": loginModel.wx_login_resp?.province,
+                                              "openid": loginModel.wx_login_resp?.openid ?? "",
+                                              "province": loginModel.wx_login_resp?.province ?? "",
                                               "pwd": "",
-                                              "sex": loginModel.wx_login_resp?.sex,
+                                              "sex": String(loginModel.wx_login_resp?.sex ?? 0), // Converted to String
                                               "sign": "",
                                               "telephone": "",
-                                              "unionid": loginModel.wx_login_resp?.unionid
+                                              "unionid": loginModel.wx_login_resp?.unionid ?? ""
                                             ]
                 
                 HTZLog.debug("LOGIN-MANAGER", "正在上传用户信息到服务器")
-                NetWorkRequest(API.addUserInfo(parameters: param as [String : Any])) { (response) -> (Void) in
+                NetWorkRequest(API.addUserInfo(parameters: param)) { (response) -> (Void) in
                     
-                    if response["code"].rawString() == "200" {
+                    let responseCode = response["code"].rawString()
+                    if responseCode == "200" || responseCode == "0" {
                         HTZLog.info("LOGIN-MANAGER", "用户信息上传成功，保存到本地")
                         HTZUserAccount.shared.saveUserAcountInfoWithDict(dict: dict as [String : Any])
                         // 发送网络状态改变的通知

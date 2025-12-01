@@ -54,11 +54,15 @@ class HTZProfileViewController: HTZBaseViewController {
         view.addSubview(tableView)
         headerView.frame = CGRect(x: 0, y: -44, width: kScreenWidth, height: 340)
         tableView.tableHeaderView = headerView
-        
-        self.headerView.iconImage =  HTZUserAccount.shared.headimgurl
+
+        if let headimgurl = HTZUserAccount.shared.headimgurl, !headimgurl.isEmpty {
+            self.headerView.iconImage = headimgurl
+        } else {
+            self.headerView.iconImage = nil
+        }
         self.headerView.name =  HTZUserAccount.shared.name
     }
-    
+
     override func configData() {
         super.configData()
         
@@ -77,7 +81,11 @@ class HTZProfileViewController: HTZBaseViewController {
     }
     
     @objc private func loginSuccess(noti: Notification) {
-        self.headerView.iconImage =  HTZUserAccount.shared.headimgurl
+        if let headimgurl = HTZUserAccount.shared.headimgurl, !headimgurl.isEmpty {
+            self.headerView.iconImage = headimgurl
+        } else {
+            self.headerView.iconImage = nil
+        }
         self.headerView.name =  HTZUserAccount.shared.name
     }
     
@@ -132,7 +140,11 @@ extension HTZProfileViewController: HTZProfileHeaderViewDelegate {
                 HTZLog.debug("PROFILE-VIEW", "用户信息完整，unionid: \(unionid)")
                 let vc = HTZPersonalProfileViewController()
                 vc.changeSuccessBlock = {
-                    self.headerView.iconImage =  HTZUserAccount.shared.headimgurl
+                    if let headimgurl = HTZUserAccount.shared.headimgurl, !headimgurl.isEmpty {
+                        self.headerView.iconImage = headimgurl
+                    } else {
+                        self.headerView.iconImage = nil
+                    }
                     self.headerView.name =  HTZUserAccount.shared.name
                 }
                 navigationController?.pushViewController(vc, animated: true)

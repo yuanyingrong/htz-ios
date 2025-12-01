@@ -46,7 +46,7 @@ class HTZProfileHeaderView: BaseView {
     private lazy var iconImageView: UIImageView = {
         let iconImageView = UIImageView()
         iconImageView.cornerRadius = 44
-        if let headimgurl = HTZUserAccount.shared.headimgurl {
+        if let headimgurl = HTZUserAccount.shared.headimgurl, !headimgurl.isEmpty {
             iconImageView.wb_setImageWith(urlStr: headimgurl, placeHolder: "头像")
         } else {
            iconImageView.image = UIImage(named: "头像")

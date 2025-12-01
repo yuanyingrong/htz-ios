@@ -15,7 +15,11 @@ class HTZProfileTableViewCell: BaseTableViewCell {
             if imageName!.hasPrefix("http") {
                 leftImageView.wb_setImageWith(urlStr: imageName!)
             } else {
-                leftImageView.image = UIImage(named: imageName ?? "")
+                if let imageName = imageName, !imageName.isEmpty {
+                    leftImageView.image = UIImage(named: imageName)
+                } else {
+                    leftImageView.image = nil // 或使用默认图片
+                }
             }
         }
     }

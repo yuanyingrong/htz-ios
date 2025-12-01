@@ -67,7 +67,11 @@ class HTZMyFavoriteAlbumCell: BaseTableViewCell {
             if imageName!.hasPrefix("http") {
                 albumImageView.wb_setImageWith(urlStr: imageName!)
             } else {
-                albumImageView.image = UIImage(named: imageName ?? "")
+                if let imageName = imageName, !imageName.isEmpty {
+                    albumImageView.image = UIImage(named: imageName)
+                } else {
+                    albumImageView.image = UIImage(named: "default_cover") // 使用默认图片
+                }
             }
         }
     }

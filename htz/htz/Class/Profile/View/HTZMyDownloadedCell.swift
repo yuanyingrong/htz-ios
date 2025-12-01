@@ -23,7 +23,11 @@ class HTZMyDownloadedCell: UITableViewCell {
                 if let albumIcon = saveDataModel.albumIcon, albumIcon.hasPrefix("http") {
                     albumImageView.wb_setImageWith(urlStr: albumIcon)
                 } else {
-                    albumImageView.image = UIImage(named: saveDataModel.albumIcon ?? "")
+                    if let albumIcon = saveDataModel.albumIcon, !albumIcon.isEmpty {
+                        albumImageView.image = UIImage(named: albumIcon)
+                    } else {
+                        albumImageView.image = UIImage(named: "default_cover") // 使用默认图片
+                    }
                 }
                 fileSizeCountButton.setTitle(saveDataModel.fileSizeCount!, for: UIControl.State.normal)
                 fileCountButton.setTitle("\(saveDataModel.downloadFiles!.count)集", for: UIControl.State.normal)

@@ -15,7 +15,11 @@ class HTZHomeTitleCollectionViewCell: UICollectionViewCell {
             if let imageName = imageName,imageName.hasPrefix("http") {
                 imageView.wb_setImageWith(urlStr: imageName)
             } else {
-                imageView.image = UIImage(named: imageName ?? "htz_no_title")
+                if let imageName = imageName, !imageName.isEmpty {
+                    imageView.image = UIImage(named: imageName)
+                } else {
+                    imageView.image = UIImage(named: "htz_no_title")
+                }
             }
 //            if let imageName = imageName, imageName.starts(with: "tests") {
 //                imageView.htz_setImage(fileId: imageName)
