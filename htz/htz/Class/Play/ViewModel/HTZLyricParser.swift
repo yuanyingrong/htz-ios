@@ -133,7 +133,10 @@ class HTZLyricParser: NSObject {
                     let mseStr = timeStr.substring(fromIndex: 6)
                     
                     // 转换成以毫秒秒为单位的时间 1秒 = 1000毫秒
-                    let time = TimeInterval(minStr)! * 60 * 1000 + TimeInterval(secStr)! * 1000 + TimeInterval(mseStr)!
+                    let minTime = TimeInterval(minStr) ?? 0
+                    let secTime = TimeInterval(secStr) ?? 0
+                    let msecTime = TimeInterval(mseStr) ?? 0
+                    let time = minTime * 60 * 1000 + secTime * 1000 + msecTime
                     
                     // 创建模型，赋值
                     let lyricModel = HTZLyricModel()

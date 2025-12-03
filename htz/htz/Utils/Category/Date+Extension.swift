@@ -25,13 +25,13 @@ extension Date {
     }
     
     static func getTime(timeStamp: String, format: DateConstants) -> String {
-        let interval: TimeInterval = TimeInterval(timeStamp)!
+        let interval: TimeInterval = TimeInterval(timeStamp) ?? 0
         let date = Date(timeIntervalSince1970: interval)
-        
+
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: Date.constants(.locationBr))
         formatter.dateFormat = format.rawValue
-        
+
         return formatter.string(from: date)
     }
     
@@ -48,10 +48,10 @@ extension Date {
         let minAndSec = formatTime .components(separatedBy: ":")
         if minAndSec.count == 2 {
             // 分钟
-            let min = TimeInterval(minAndSec[0])!
+            let min = TimeInterval(minAndSec[0]) ?? 0
             // 秒数
-            let sec = TimeInterval(minAndSec[1])!
-            
+            let sec = TimeInterval(minAndSec[1]) ?? 0
+
             return min * 60 + sec
         }
         return 0

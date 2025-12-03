@@ -69,15 +69,17 @@ class HTZAudioPlayer: NSObject {
 
                 _playUrlStr = newValue
 
-                if _playUrlStr!.hasPrefix("http") {
-                    
+                if let urlStr = _playUrlStr, urlStr.hasPrefix("http") {
+
                     DispatchQueue.main.async {
-                        self.audioStream.url = NSURL(string: self._playUrlStr!)
-                        
+                        if let url = URL(string: urlStr) {
+                            self.audioStream.url = url as NSURL
+                        }
                     }
-                } else {
+
+                } else if let urlStr = _playUrlStr {
                     DispatchQueue.main.async {
-                        self.audioStream.url = NSURL(fileURLWithPath: self._playUrlStr!)
+                        self.audioStream.url = URL(fileURLWithPath: urlStr) as NSURL
                     }
                 }
             }
@@ -91,8 +93,9 @@ class HTZAudioPlayer: NSObject {
     private var bufferTimer: Timer?
     
     lazy var ijkPlayer: IJKFFMoviePlayerController = {
-        let playerController = IJKFFMoviePlayerController(contentURL: URL(string: "http://htzshanghai.top/resources/audios/xingfuneixinchan/radio-01-20130122.mp3"), with: IJKFFOptions.byDefault())
-        return playerController!
+        let url = URL(string: "http://htzshanghai.top/resources/audios/xingfuneixinchan/radio-01-20130122.mp3")
+        let playerController = IJKFFMoviePlayerController(contentURL: url, with: IJKFFOptions.byDefault())
+        return playerController ?? IJKFFMoviePlayerController()
     }()
     
     private lazy var audioStream: FSAudioStream = { [unowned self] in
@@ -175,9 +178,11 @@ class HTZAudioPlayer: NSObject {
             @unknown default: break
                 
             }
-            self.setupPlayerState(state: weakSelf!.playerState!)
+            if let weakSelf = weakSelf, let state = weakSelf.playerState {
+                self.setupPlayerState(state: state)
+            }
         }
-        return audioStream!
+        return audioStream ?? FSAudioStream()
     }()
     
     override init() {
@@ -263,7 +268,9 @@ class HTZAudioPlayer: NSObject {
         if self.playerState == HTZAudioPlayerState.paused { return }
         
         self.playerState = HTZAudioPlayerState.paused
-        self.setupPlayerState(state: self.playerState!)
+        if let state = self.playerState {
+            self.setupPlayerState(state: state)
+        }
         
         DispatchQueue.main.async {
             self.audioStream.pause()
@@ -289,7 +296,9 @@ class HTZAudioPlayer: NSObject {
         if self.playerState == HTZAudioPlayerState.stopped { return }
         
         self.playerState = HTZAudioPlayerState.stoppedBy
-        self.setupPlayerState(state: self.playerState!)
+        if let state = self.playerState {
+            self.setupPlayerState(state: state)
+        }
         
         DispatchQueue.main.async {
             self.audioStream.stop()

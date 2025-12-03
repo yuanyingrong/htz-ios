@@ -26,17 +26,17 @@ class HTZShareMenuView: UIView {
             return _thumbImage
         }
         set {
-            
+
             if newValue.isKind(of: NSString.self) {
-                _thumbImage = UIImage(named: newValue as! String)!
+                _thumbImage = UIImage(named: newValue as! String) ?? UIImage()
             } else if newValue.isKind(of: NSData.self) {
-                _thumbImage = UIImage(data: newValue as! Data)!
+                _thumbImage = UIImage(data: newValue as! Data) ?? UIImage()
             } else if newValue.isKind(of: UIImage.self) {
                 _thumbImage = newValue
             }  else {
 //                _thumbImage = kAppIcon
             }
-            
+
         }
     }
     

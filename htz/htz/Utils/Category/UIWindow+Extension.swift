@@ -11,8 +11,9 @@ import Foundation
 extension UIWindow {
     
     static func yyr_currentViewController() -> UIViewController? {
-        let window: UIWindow? = (UIApplication.shared.delegate?.window)!
-        var topViewController = window?.rootViewController
+        let window: UIWindow? = (UIApplication.shared.delegate as? AppDelegate)?.window
+        guard let validWindow = window else { return nil }
+        var topViewController = validWindow.rootViewController
         while true {
             if let viewController = topViewController?.presentingViewController {
                 topViewController = viewController

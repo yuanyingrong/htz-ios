@@ -56,19 +56,19 @@ extension API: TargetType {
         HTZLog.debug("API", "Requesting baseURL for case: \(self)")
         switch self {
         case .sinaOAuth:
-            return URL.init(string:"https://api.weibo.com/")!
+            return URL.init(string:"https://api.weibo.com/") ?? URL(string: "https://default.example.com")!
 //        case .song(_), .songDetail(_):
 //            return URL.init(string:"https://musicapi.qianqian.com/v1/restserver/ting?format=json&from=ios&channel=appstore&method=")!
         case .search(_,_,_):
-            return URL(string: search_baseURL)!
+            return URL(string: search_baseURL) ?? URL(string: "https://default.example.com")!
         case .download(_,_):
-            return URL(string: download_baseURL)!
+            return URL(string: download_baseURL) ?? URL(string: "https://default.example.com")!
         case .addUserInfo(_), .updateUserInfo(_), .getUserInfo, .getSmsCode(_), .bindTelephone(_,_):
-            return URL(string: mobile_baseURL)!
+            return URL(string: mobile_baseURL) ?? URL(string: "https://default.example.com")!
         case .albums, .xingfuneixinchan, .jingxinyangsheng, .mixinxiaoshipin:
-            return URL(string: "http://htzshanghai.top/resources/app_json/")!
+            return URL(string: "http://htzshanghai.top/resources/app_json/") ?? URL(string: "https://default.example.com")!
         default:
-            return URL.init(string:(Moya_baseURL))!
+            return URL.init(string:(Moya_baseURL)) ?? URL(string: "https://default.example.com")!
         }
     }
     
@@ -159,7 +159,7 @@ extension API: TargetType {
     
     // 这个是做单元测试模拟的数据，必须要实现，只在单元测试文件中有作用
     var sampleData: Data {
-        return "".data(using: String.Encoding.utf8)!
+        return "".data(using: String.Encoding.utf8) ?? Data()
     }
     
     // 该条请API求的方式,把参数之类的传进来

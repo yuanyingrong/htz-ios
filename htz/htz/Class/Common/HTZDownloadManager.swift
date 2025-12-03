@@ -76,7 +76,7 @@ class HTZDownloadManager: NSObject {
     func checkDownloadWithID(fileID: String) -> Bool {
         var isDownload = false
         for saveModel in downloadFileList() {
-            for obj in saveModel.downloadFiles! {
+            for obj in saveModel.downloadFiles ?? [] {
                 if fileID == obj.fileID && obj.state == HTZDownloadManagerState.finished {
                     isDownload = true
                 }
@@ -88,7 +88,7 @@ class HTZDownloadManager: NSObject {
     func checkDownloadState(fileID: String) -> HTZDownloadManagerState {
         var state = HTZDownloadManagerState.none
            for saveModel in downloadFileList() {
-               for obj in saveModel.downloadFiles! {
+               for obj in saveModel.downloadFiles ?? [] {
                    if fileID == obj.fileID {
 //                    if obj.resumeData == nil {
 //                        obj.state = HTZDownloadManagerState.none
@@ -105,7 +105,7 @@ class HTZDownloadManager: NSObject {
         if checkDownloadWithID(fileID: fileID) {
             var model: HTZDownloadModel? = nil
             for saveModel in downloadFileList() {
-                for obj in saveModel.downloadFiles! {
+                for obj in saveModel.downloadFiles ?? [] {
                     if fileID == obj.fileID {
                         model = obj
                     }
@@ -143,7 +143,7 @@ class HTZDownloadManager: NSObject {
         for item in downloadedFileList() {
             if item.albumID == albumId {
                 // 删除下载的文件
-                self.deleteDownloadModelArr(modelArr: item.downloadFiles!)
+                self.deleteDownloadModelArr(modelArr: item.downloadFiles ?? [])
             }
         }
     }
@@ -199,7 +199,7 @@ class HTZDownloadManager: NSObject {
         
         // 遍历数据，暂停当前下载
         for saveModel in downloadFileList() {
-            for model in saveModel.downloadFiles! {
+            for model in saveModel.downloadFiles ?? [] {
                 for obj in downloadArr {
                     // 文件未下载完成，并且是需要暂停的文件
                     if model.fileAlbumId == obj.fileAlbumId && model.fileID == obj.fileID && model.state != HTZDownloadManagerState.finished {
@@ -227,7 +227,7 @@ class HTZDownloadManager: NSObject {
     func resumeDownloadArr(downloadArr: [HTZDownloadModel]) -> Void {
         self.setCanBreakpoint(isCan: true)
         for saveModel in downloadFileList() {
-            for model in saveModel.downloadFiles! {
+            for model in saveModel.downloadFiles ?? [] {
                 for obj in downloadArr {
                     // 文件未下载完成并且是需要恢复下载的文件
                     if model.fileAlbumId == obj.fileAlbumId && model.fileID == obj.fileID && model.state != HTZDownloadManagerState.finished {
@@ -255,7 +255,7 @@ class HTZDownloadManager: NSObject {
         
         var toClearArr = [HTZDownloadModel]()
         for saveModel in downloadFileList() {
-            for obj in saveModel.downloadFiles! {
+            for obj in saveModel.downloadFiles ?? [] {
                 if obj.state != HTZDownloadManagerState.finished {
                     toClearArr.append(obj)
                 }
@@ -283,7 +283,7 @@ class HTZDownloadManager: NSObject {
             var saveArr = [HTZSaveDataModel]()
             for saveModel in downloadFileList() {
                 var downloadedArr = [HTZDownloadModel]()
-                for obj in saveModel.downloadFiles! {
+                for obj in saveModel.downloadFiles ?? [] {
                     if obj.state == HTZDownloadManagerState.finished {
                         downloadedArr.append(obj)
                     }
@@ -305,7 +305,7 @@ class HTZDownloadManager: NSObject {
         if ifPathExist(path: downloadDataFilePath()) {
             var toDownloadArr = [HTZDownloadModel]()
             for saveModel in downloadFileList() {
-                for obj in saveModel.downloadFiles! {
+                for obj in saveModel.downloadFiles ?? [] {
                     if obj.state != HTZDownloadManagerState.finished {
                         toDownloadArr.append(obj)
                     }
@@ -386,7 +386,7 @@ extension HTZDownloadManager {
         } else {
             var model: HTZDownloadModel?
             for saveModel in downloadFileList() {
-                for obj in saveModel.downloadFiles! {
+                for obj in saveModel.downloadFiles ?? [] {
                     if obj.state == HTZDownloadManagerState.waiting || obj.state == HTZDownloadManagerState.downloading || obj.state == HTZDownloadManagerState.paused {
                         model = obj
                         break
@@ -394,8 +394,8 @@ extension HTZDownloadManager {
                 }
             }
             
-            if let model = model {
-                self.currentDownloadFileID = model.fileID!
+            if let model = model, let fileId = model.fileID {
+                self.currentDownloadFileID = fileId
                 model.state = HTZDownloadManagerState.downloading
                 
                 self.updateDownloadModel(model: model)
@@ -591,8 +591,8 @@ extension HTZDownloadManager {
         var saveIndex: Int?
         var arr = [HTZDownloadModel]()
         for (idx, model) in saveArr.enumerated() {
-            if modelArr.first!.fileAlbumId == model.albumID {
-                arr = model.downloadFiles!
+            if let firstModel = modelArr.first, firstModel.fileAlbumId == model.albumID {
+                arr = model.downloadFiles ?? []
                 saveIndex = idx
             }
         }
@@ -636,7 +636,7 @@ extension HTZDownloadManager {
             var downloadArr = [HTZDownloadModel]()
             for (idx, obj) in saveArr.enumerated() {
                 if model.fileAlbumId == obj.albumID {
-                    downloadArr = obj.downloadFiles!
+                    downloadArr = obj.downloadFiles ?? []
                     saveIndex = idx
                 }
             }
@@ -670,7 +670,7 @@ extension HTZDownloadManager {
                     guard model.fileAlbumId == saveModel.albumID else {
                         continue
                     }
-                    var arr = saveModel.downloadFiles!
+                    var arr = saveModel.downloadFiles ?? []
                     for (idx, obj) in arr.enumerated() {
                         if model.fileID == obj.fileID {
                             // 状态改变

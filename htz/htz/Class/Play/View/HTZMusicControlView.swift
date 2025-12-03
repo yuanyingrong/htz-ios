@@ -85,14 +85,18 @@ class HTZMusicControlView: BaseView {
     }
     var progress: CGFloat?{
         didSet {
-            self.slider.value = progress!
-            self.slider.layoutIfNeeded()
+            if let progressValue = progress {
+                self.slider.value = progressValue
+                self.slider.layoutIfNeeded()
+            }
         }
     }
     var bufferProgress: CGFloat?{
         didSet {
-            self.slider.bufferValue = bufferProgress!
-            self.slider.layoutIfNeeded()
+            if let bufferProgressValue = bufferProgress {
+                self.slider.bufferValue = bufferProgressValue
+                self.slider.layoutIfNeeded()
+            }
         }
     }
     

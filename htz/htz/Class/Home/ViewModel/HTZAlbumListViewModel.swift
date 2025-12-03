@@ -33,15 +33,26 @@ class HTZAlbumListViewModel: NSObject {
                             obj.album_id = model?.sutra_id
                             obj.icon = self.icon
                             obj.album_title = self.albumTitle
-                            //                        obj.file_link = "http://htzshanghai.top/resources/audios/\(album)/" + model!.audio!
+                            if let audio = model?.audio {
+                                obj.file_link = "http://htzshanghai.top/resources/audios/\(sutra_id)/" + audio
+                            } else {
+                                obj.file_link = "http://htzshanghai.top/resources/audios/\(sutra_id)/"
+                            }
                             //                                            obj.lrclink = model!.original
-                            obj.file_link = "\(ossurl)\(model?.audio_id ?? "")"
                             obj.originalLyricId = model?.original_lyric_id
                             obj.explanationLyricId = model?.explanation_lyric_id
-                            obj.originalLyricLink = "\(ossurl)\(model?.original_lyric_id ?? "")"
-                            obj.explanationLyricLink = "\(ossurl)\(model?.explanation_lyric_id ?? "")"
+                            if let originalLyricId = model?.original_lyric_id {
+                                obj.originalLyricLink = "http://htzshanghai.top/resources/lyrics/\(sutra_id)/" + originalLyricId
+                            } else {
+                                obj.originalLyricLink = "http://htzshanghai.top/resources/lyrics/\(sutra_id)/"
+                            }
+                            if let explanationLyricId = model?.explanation_lyric_id {
+                                obj.explanationLyricLink = "http://htzshanghai.top/resources/lyrics/\(sutra_id)/" + explanationLyricId
+                            } else {
+                                obj.explanationLyricLink = "http://htzshanghai.top/resources/lyrics/\(sutra_id)/"
+                            }
                             obj.file_duration = model?.duration
-                            
+
                             obj.downloadState = kDownloadManager.checkDownloadState(fileID: obj.song_id!)
                             arrM.append(obj)
                         }
@@ -117,11 +128,23 @@ class HTZAlbumListViewModel: NSObject {
                     obj.album_id = self.icon
                     obj.icon = self.icon
                     obj.album_title = self.albumTitle
-                    obj.file_link = "http://htzshanghai.top/resources/audios/\(album)/" + model!.audio!
+                    if let audio = model?.audio {
+                        obj.file_link = "http://htzshanghai.top/resources/audios/\(album)/" + audio
+                    } else {
+                        obj.file_link = "http://htzshanghai.top/resources/audios/\(album)/"
+                    }
                     obj.originalLyricId = model?.original_lyric_id
                     obj.explanationLyricId = model?.explanation_lyric_id
-                    obj.originalLyricLink = "http://htzshanghai.top/resources/lyrics/\(album)/" + model!.original_lyric_id!
-                    obj.explanationLyricLink = "http://htzshanghai.top/resources/lyrics/\(album)/" + model!.explanation_lyric_id!
+                    if let originalLyricId = model?.original_lyric_id {
+                        obj.originalLyricLink = "http://htzshanghai.top/resources/lyrics/\(album)/" + originalLyricId
+                    } else {
+                        obj.originalLyricLink = "http://htzshanghai.top/resources/lyrics/\(album)/"
+                    }
+                    if let explanationLyricId = model?.explanation_lyric_id {
+                        obj.explanationLyricLink = "http://htzshanghai.top/resources/lyrics/\(album)/" + explanationLyricId
+                    } else {
+                        obj.explanationLyricLink = "http://htzshanghai.top/resources/lyrics/\(album)/"
+                    }
                     obj.file_duration = model?.duration
 
                     obj.downloadState = kDownloadManager.checkDownloadState(fileID: obj.song_id!)
@@ -141,8 +164,16 @@ class HTZAlbumListViewModel: NSObject {
                     obj.album_id = self.icon
                     obj.icon = self.icon
                     obj.album_title = model?.title
-                    obj.file_link = "http://htzshanghai.top/resources/videos/" + model!.videoUrl!
-                    obj.icon = "http://htzshanghai.top/resources/videos/" + model!.coverUrl!
+                    if let videoUrl = model?.videoUrl {
+                        obj.file_link = "http://htzshanghai.top/resources/videos/" + videoUrl
+                    } else {
+                        obj.file_link = "http://htzshanghai.top/resources/videos/"
+                    }
+                    if let coverUrl = model?.coverUrl {
+                        obj.icon = "http://htzshanghai.top/resources/videos/" + coverUrl
+                    } else {
+                        obj.icon = "http://htzshanghai.top/resources/videos/"
+                    }
 
                     arrM.append(obj)
 

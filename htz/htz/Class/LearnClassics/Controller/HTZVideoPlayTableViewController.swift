@@ -198,13 +198,27 @@ extension HTZVideoPlayTableViewController {
             let videos = [HTZVideoModel].deserialize(from: response["videos"].rawString())
             if let videos = videos {
                 for model in videos {
-                    model?.videoUrl = "http://htzshanghai.top/resources/videos/" + model!.videoUrl!
-                    model?.coverUrl = "http://htzshanghai.top/resources/videos/" + model!.coverUrl!
+                    if let videoUrl = model?.videoUrl {
+                        model?.videoUrl = "http://htzshanghai.top/resources/videos/" + videoUrl
+                    } else {
+                        model?.videoUrl = "http://htzshanghai.top/resources/videos/"
+                    }
+                    if let coverUrl = model?.coverUrl {
+                        model?.coverUrl = "http://htzshanghai.top/resources/videos/" + coverUrl
+                    } else {
+                        model?.coverUrl = "http://htzshanghai.top/resources/videos/"
+                    }
                     var charSet = CharacterSet.urlQueryAllowed
                     charSet.insert(charactersIn: "#")
-                    let urlStr = model?.videoUrl?.addingPercentEncoding(withAllowedCharacters: charSet)
-                    let url = URL(string: urlStr!)
-                    self.urls.append(url!)
+                    if let videoUrl = model?.videoUrl {
+                        if let encodedUrlStr = videoUrl.addingPercentEncoding(withAllowedCharacters: charSet),
+                           let url = URL(string: encodedUrlStr) {
+                            self.urls.append(url)
+                        } else {
+                            // 如果URL创建失败，跳过此条目
+                        }
+                    }
+                    // 如果videoUrl为nil，跳过此条目
                 }
                 self.player?.assetURLs = self.urls
                 self.dataSource = videos

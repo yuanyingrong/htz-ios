@@ -26,6 +26,11 @@ class HTZVideoPlayViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        guard let videoUrl = videoUrl, !videoUrl.isEmpty else {
+            print("ERROR: videoUrl is nil or empty. Cannot play video.")
+            return
+        }
+        
         self.view.addSubview(self.containerView)
         self.containerView.addSubview(self.playButton)
 
@@ -36,6 +41,7 @@ class HTZVideoPlayViewController: UIViewController {
         /// 播放器相关
         self.player = ZFPlayerController(playerManager: playerManager, containerView: self.containerView)
         self.player?.controlView = self.controlView
+        self.controlView.coverImageView.wb_setImageWith(urlStr: self.coverImageUrl ?? self.kVideoCover)
         /// 设置退到后台继续播放
         self.player?.pauseWhenAppResignActive = false
         
@@ -59,7 +65,7 @@ class HTZVideoPlayViewController: UIViewController {
                 weakSelf.player?.stop()
             }
         }
-        self.player?.assetURL = URL(string: videoUrl!)!
+        self.player?.assetURL = URL(string: videoUrl)!
         
     }
     
@@ -144,7 +150,6 @@ class HTZVideoPlayViewController: UIViewController {
         controlView.autoFadeTimeInterval = 0.5
         controlView.prepareShowLoading = true
         controlView.prepareShowControlView = true
-        controlView.coverImageView.wb_setImageWith(urlStr: self.coverImageUrl ?? self.kVideoCover)
         return controlView
     }()
 
