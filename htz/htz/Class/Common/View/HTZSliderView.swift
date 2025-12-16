@@ -204,9 +204,9 @@ extension HTZSliderView {
     }
     
     @objc private func sliderBtnTouchEnded() {
-        if let delegate = self.delegate, delegate.responds(to: #selector(ZFSliderViewDelegate.sliderTouchEnded(_:))) {
-            delegate.sliderTouchEnded(self.value!)
-        }
+//        if let delegate = self.delegate, delegate.responds(to: #selector(ZFSliderViewDelegate.sliderTouchEnded(_:))) {
+//            delegate.sliderTouchEnded(self.value!)
+//        }
     }
     
     @objc private func sliderBtnDragMoving(button: UIButton, event: UIEvent) {
@@ -222,9 +222,9 @@ extension HTZSliderView {
         value = value >= 1.0 ? 1.0 : value <= 0.0 ? 0.0 : value
         self.value = value
         
-        if let delegate = self.delegate, delegate.responds(to: #selector(ZFSliderViewDelegate.sliderValueChanged(_:))) {
-            delegate.sliderValueChanged(self.value!)
-        }
+//        if let delegate = self.delegate, delegate.responds(to: #selector(ZFSliderViewDelegate.sliderValueChanged(_:))) {
+//            delegate.sliderValueChanged(self.value!)
+//        }
     }
     
     @objc private func tapped(tap: UITapGestureRecognizer) {
@@ -236,9 +236,9 @@ extension HTZSliderView {
         
         self.value = value
         
-        if let delegate = self.delegate, delegate.responds(to: #selector(ZFSliderViewDelegate.sliderTapped(_:))) {
-            delegate.sliderTapped(self.value!)
-        }
+//        if let delegate = self.delegate, delegate.responds(to: #selector(ZFSliderViewDelegate.sliderTapped(_:))) {
+//            delegate.sliderTapped(self.value!)
+//        }
     }
 }
 

@@ -77,26 +77,22 @@ extension HTZSearchViewController: PYSearchViewControllerDelegate {
 //                   }
                    
                }
-//        NetWorkRequest(API.search(key: searchText, output_offset: 0, max_outputs: 10)) {[weak self] (response) -> (Void) in
-//
-//            printLog(response)
-//            if response["code"].stringValue == "200" {
-//                let dict = response["data"]
-//                let items = [HTZSutraItemModel].deserialize(from: dict["items"].rawString())
-//                let num_docs = dict["num_docs"]
-//                let tokens = dict["tokens"]
-//
-//                printLog("items:==\(items!)")
-//                printLog("num_docs:==\(num_docs)")
-//                printLog("tokens:==\(tokens)")
-//                var arr:[String] = []
-//                for item in items! {
-//                    arr.append(item?.title ?? "--")
-//                }
-//                self?.searchSuggestions = arr
-//            }
-//
-//        }
+        // 临时使用albums接口作为搜索结果显示，因为主搜索服务器可能无效
+        // 原来的搜索引擎API: API.es_search(key: searchText)
+        NetWorkRequest(API.albums) { [weak self] (response) -> (Void) in
+
+            let arr = [HTZSutraInfoModel].deserialize(from: response["sutra_items"].rawString())
+            if let arr = arr {
+                var suggestionArr: [String] = []
+                for model in arr {
+                    if let name = model?.name, name.localizedCaseInsensitiveContains(searchText) {
+                        suggestionArr.append(name)
+                    }
+                }
+                self?.searchSuggestions = suggestionArr
+            }
+
+        }
     }
     
     

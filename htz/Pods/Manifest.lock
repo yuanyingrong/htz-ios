@@ -4,7 +4,6 @@ PODS:
     - Reachability (~> 3.0)
   - GKCoverSwift (1.0.7)
   - HandyJSON (5.0.2)
-  - IJKMediaFramework (0.1.5)
   - JCore (5.0.2)
   - JPush (5.6.1):
     - JCore (>= 4.8.0)
@@ -23,20 +22,12 @@ PODS:
   - TencentOpenAPI-Unofficial (3.3.5)
   - WechatOpenSDK (2.0.4)
   - Weibo_SDK (3.3.8)
-  - ZFPlayer (4.1.4):
-    - ZFPlayer/Core (= 4.1.4)
-  - ZFPlayer/AVPlayer (4.1.4):
-    - ZFPlayer/Core
-  - ZFPlayer/ControlView (4.1.4):
-    - ZFPlayer/Core
-  - ZFPlayer/Core (4.1.4)
   - ZWAlertController (0.3.0)
 
 DEPENDENCIES:
   - FreeStreamer
   - GKCoverSwift
   - HandyJSON
-  - IJKMediaFramework
   - JPush
   - JShare
   - Kingfisher
@@ -48,9 +39,6 @@ DEPENDENCIES:
   - TencentOpenAPI-Unofficial
   - WechatOpenSDK
   - Weibo_SDK (from `https://github.com/sinaweibosdk/weibo_ios_sdk.git`)
-  - ZFPlayer
-  - ZFPlayer/AVPlayer
-  - ZFPlayer/ControlView
   - ZWAlertController
 
 SPEC REPOS:
@@ -59,7 +47,6 @@ SPEC REPOS:
     - FreeStreamer
     - GKCoverSwift
     - HandyJSON
-    - IJKMediaFramework
     - JCore
     - JPush
     - JShare
@@ -72,7 +59,6 @@ SPEC REPOS:
     - SwiftyJSON
     - TencentOpenAPI-Unofficial
     - WechatOpenSDK
-    - ZFPlayer
     - ZWAlertController
 
 EXTERNAL SOURCES:
@@ -89,7 +75,6 @@ SPEC CHECKSUMS:
   FreeStreamer: 7e9c976045701ac2f7e9c14c17245203c37bf2ea
   GKCoverSwift: 0cecbd4e966df1aa83c23a91885377f30635bfb8
   HandyJSON: 9e4e236f5d2dbefad5155a77417bbea438201c03
-  IJKMediaFramework: f1119f6324c96bc4654f3045a5beaa95ba0596c0
   JCore: 3effa468af29935edb53e6460ef81fd3c03ee1a8
   JPush: fcd20c0b2d6d8206af63b8517fa2d11e0a83dc6b
   JShare: 43a6384f50093cf2b990b22b03a05e4e01be8b5c
@@ -103,9 +88,8 @@ SPEC CHECKSUMS:
   TencentOpenAPI-Unofficial: bb112eb0f173390ea1bb2fd52270a808b0aa0057
   WechatOpenSDK: 290989072e87b79d52225a01bb4e5e58f6f88593
   Weibo_SDK: ea4d83cd1b435635c402f73a3c441ee1f35fa87a
-  ZFPlayer: 5cf39e8d9f0c2394a014b0db4767b5b5a6bffe13
   ZWAlertController: 0c2c82e7e06cf3db4496d447397dc8c17f1fb93f
 
-PODFILE CHECKSUM: f9a6da79bee15cdf66a9fe27ae58bd66f990d65f
+PODFILE CHECKSUM: c10f0f85eafe6af49354c9fd4d8195935cc5c541
 
 COCOAPODS: 1.16.2

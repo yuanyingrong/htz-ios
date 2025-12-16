@@ -25,16 +25,11 @@ target 'htz' do
   
 #  pod 'NicooPlayer'
 #  pod 'SJVideoPlayer'
-  pod 'ZFPlayer'
-  pod 'ZFPlayer/ControlView'
-  pod 'ZFPlayer/AVPlayer'
-#  pod 'ZFPlayer/ijkplayer'
   pod "Weibo_SDK", :git => "https://github.com/sinaweibosdk/weibo_ios_sdk.git"
   pod 'WechatOpenSDK'
   pod 'TencentOpenAPI-Unofficial'
   
   pod 'FreeStreamer'
-  pod 'IJKMediaFramework'
   
 #  pod 'Pgyer'
 #  pod 'PgyUpdate'

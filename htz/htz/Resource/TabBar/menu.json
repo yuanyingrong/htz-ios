@@ -19,12 +19,6 @@
                      "title": "",
                      "normal_icon": " ",
                      "normal_icon_select": " "
-                     },                     {
-                     "page": "HTZVideoPlayTableViewController",
-                     "type": "video",
-                     "title": "视频",
-                     "normal_icon": "video_icon_normal",
-                     "normal_icon_select": "video_icon_select"
                      },
                      {
                      "page": "HTZProfileViewController",

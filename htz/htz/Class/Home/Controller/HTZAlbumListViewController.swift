@@ -139,14 +139,7 @@ extension HTZAlbumListViewController: UITableViewDataSource, UITableViewDelegate
         tableView.deselectRow(at: indexPath, animated: true)
     
         if let isVideo = sutraInfoModel!.isVideo, isVideo {
-            let vc = HTZVideoPlayViewController()
-            vc.videoUrl = self.albumListViewModel.dataSongArr[indexPath.row]!.file_link
-            vc.coverImageUrl = self.albumListViewModel.dataSongArr[indexPath.row]!.icon
-            vc.title = self.albumListViewModel.dataSongArr[indexPath.row]?.album_title
-            navigationController?.pushViewController(vc, animated: true)
-//            let nav = UINavigationController(rootViewController: vc)
-//            nav.modalPresentationStyle = .fullScreen
-//            self.present(nav, animated: true, completion: nil)
+            alert(message: "视频功能暂未开放")
         } else {
             let vc = HTZPlayViewController.sharedInstance
             //        let music = HTZMusicModel()

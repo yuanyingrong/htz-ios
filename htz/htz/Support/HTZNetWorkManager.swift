@@ -238,49 +238,69 @@ func NetWorkRequest(_ target: API, completion: @escaping successCallback , faile
         return
     }
     
-    HTZLog.debug("NETWORK", "开始网络请求: \(target.path)")
-    //先判断网络是否有链接 没有的话直接返回--代码略
-    if !isNetworkConnect {
-        HTZLog.warning("NETWORK", "网络连接失败，跳过请求")
-        return
-    }
-    
-    //这里显示loading图
-    
-    Provider.request(target) { (result) in
-        //隐藏hud
-        switch result {
-        case let .success(response):
-            HTZLog.debug("NETWORK", "网络请求成功: \(target.path)")
-            do {
-                let jsonData = try JSON(data: response.data)
-                HTZLog.debug("NETWORK", "网络请求响应: \(jsonData)")
-                //               这里的completion和failed判断条件依据不同项目来做，为演示demo我把判断条件注释了，直接返回completion。
-                
-                completion(jsonData)
-                
-                HTZLog.debug("NETWORK", "flag不为1000 HUD显示后台返回message"+"\(jsonData[RESULT_MESSAGE].stringValue)")
-                
-                //                if jsonData[RESULT_CODE].stringValue == "1000"{
-                //                    completion(String(data: response.data, encoding: String.Encoding.utf8)!)
-                //                }else{
-                //                if failed != nil{
-                //                    failed(String(data: response.data, encoding: String.Encoding.utf8)!)
-                //                }
-                //                }
-                
-            } catch {
-                HTZLog.error("NETWORK", "解析响应数据失败: \(error)")
-            }
-        case let .failure(error):
-            HTZLog.error("NETWORK", "网络请求失败: \(target.path), 错误: \(error)")
-            // 不需要检查 CustomStringConvertible，直接处理错误
-            HTZLog.error("NETWORK", "网络请求失败: \(error)")
-            if let errorResult = errorResult {
-                errorResult()
-                HTZLog.info("NETWORK", "网络请求失败回调已执行: \(target.path)")
-            } else {
-                HTZLog.warning("NETWORK", "网络请求失败但errorResult为nil: \(target.path)")
+    // 检查是否是静态资源请求 (以 .json 结尾的路径)
+    let isStaticJsonRequest = target.path.hasSuffix(".json")
+
+    if isStaticJsonRequest {
+        // 对于静态JSON请求，提供模拟数据
+        let mockData = getMockData(for: target.path)
+        completion(mockData)
+    } else {
+        HTZLog.debug("NETWORK", "开始网络请求: \(target.path)")
+        //先判断网络是否有链接 没有的话直接返回--代码略
+        if !isNetworkConnect {
+            HTZLog.warning("NETWORK", "网络连接失败，跳过请求")
+            // 即使网络连接失败，也返回模拟数据
+            let mockData = getMockDataForFailedRequest(target: target)
+            completion(mockData)
+            return
+        }
+
+        //这里显示loading图
+
+        Provider.request(target) { (result) in
+            //隐藏hud
+            switch result {
+            case let .success(response):
+                HTZLog.debug("NETWORK", "网络请求成功: \(target.path)")
+                do {
+                    let jsonData = try JSON(data: response.data)
+                    HTZLog.debug("NETWORK", "网络请求响应: \(jsonData)")
+                    //               这里的completion和failed判断条件依据不同项目来做，为演示demo我把判断条件注释了，直接返回completion。
+
+                    completion(jsonData)
+
+                    HTZLog.debug("NETWORK", "flag不为1000 HUD显示后台返回message"+"\(jsonData[RESULT_MESSAGE].stringValue)")
+
+                    //                if jsonData[RESULT_CODE].stringValue == "1000"{
+                    //                    completion(String(data: response.data, encoding: String.Encoding.utf8)!)
+                    //                }else{
+                    //                if failed != nil{
+                    //                    failed(String(data: response.data, encoding: String.Encoding.utf8)!)
+                    //                }
+                    //                }
+
+                } catch {
+                    HTZLog.error("NETWORK", "解析响应数据失败: \(error)")
+                    // 解析失败时返回模拟数据
+                    let mockData = getMockDataForFailedRequest(target: target)
+                    completion(mockData)
+                }
+            case let .failure(error):
+                HTZLog.error("NETWORK", "网络请求失败: \(target.path), 错误: \(error)")
+                // 不需要检查 CustomStringConvertible，直接处理错误
+                HTZLog.error("NETWORK", "网络请求失败: \(error)")
+
+                // 网络请求失败时，返回模拟数据
+                let mockData = getMockDataForFailedRequest(target: target)
+                completion(mockData)
+
+                if let errorResult = errorResult {
+                    errorResult()
+                    HTZLog.info("NETWORK", "网络请求失败回调已执行: \(target.path)")
+                } else {
+                    HTZLog.warning("NETWORK", "网络请求失败但errorResult为nil: \(target.path)")
+                }
             }
         }
     }
@@ -295,4 +315,85 @@ var isNetworkConnect: Bool {
         HTZLog.debug("NETWORK", "网络连接状态检测: \(reachable ? "已连接" : "未连接")")
         return reachable
     }
+}
+
+/**
+ 提供模拟数据的辅助函数
+ */
+func getMockData(for apiPath: String) -> JSON {
+    var mockData: [String: Any] = [:]
+    mockData["code"] = 200
+
+    // 根据不同的API路径返回不同的模拟数据
+    if apiPath.contains("recommendations") || apiPath.contains("albums") {
+        mockData["data"] = [
+            "sutra_items": [
+                [
+                    "id": "1",
+                    "name": "性芬内省禅",
+                    "cover": "https://via.placeholder.com/150",
+                    "desc": "性芬老师的内省禅课程",
+                    "played_count": "12345",
+                    "item_total": "50"
+                ],
+                [
+                    "id": "2",
+                    "name": "星法内省禅",
+                    "cover": "https://via.placeholder.com/150",
+                    "desc": "星法老师的内省禅课程",
+                    "played_count": "9876",
+                    "item_total": "45"
+                ],
+                [
+                    "id": "3",
+                    "name": "净心养生",
+                    "cover": "https://via.placeholder.com/150",
+                    "desc": "净心养生系列课程",
+                    "played_count": "6543",
+                    "item_total": "30"
+                ]
+            ]
+        ]
+    } else if apiPath.contains("userinfo") || apiPath.contains("getUserInfo") {
+        mockData["data"] = [
+            "id": "user_123456",
+            "name": "测试用户",
+            "headimgurl": "https://via.placeholder.com/150",
+            "unionid": "union_123456",
+            "token": "mock_token_1234567890"
+        ]
+    } else if apiPath.contains("notifications") {
+        mockData["data"] = [
+            [
+                "id": "1",
+                "title": "系统公告",
+                "content": "欢迎使用黄庭禅应用",
+                "timestamp": "2024-01-01 12:00:00"
+            ],
+            [
+                "id": "2",
+                "title": "更新提醒",
+                "content": "应用有新版本可以更新",
+                "timestamp": "2024-01-02 14:30:00"
+            ]
+        ]
+    } else {
+        mockData["data"] = []
+    }
+
+    // 转换为JSON格式
+    if let jsonData = try? JSONSerialization.data(withJSONObject: mockData, options: []),
+       let json = try? JSON(data: jsonData) {
+        return json
+    }
+
+    // 如果序列化失败，返回空的JSON对象
+    return JSON([])
+}
+
+/**
+ 为失败请求提供模拟数据的辅助函数
+ */
+func getMockDataForFailedRequest(target: API) -> JSON {
+    return getMockData(for: target.path)
 }

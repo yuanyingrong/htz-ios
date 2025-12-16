@@ -60,12 +60,17 @@ extension API: TargetType {
 //        case .song(_), .songDetail(_):
 //            return URL.init(string:"https://musicapi.qianqian.com/v1/restserver/ting?format=json&from=ios&channel=appstore&method=")!
         case .search(_,_,_):
-            return URL(string: search_baseURL) ?? URL(string: "https://default.example.com")!
+            // 使用静态资源服务器的专辑搜索功能
+            return URL(string: "http://htzshanghai.top/resources/app_json/") ?? URL(string: "https://default.example.com")!
         case .download(_,_):
             return URL(string: download_baseURL) ?? URL(string: "https://default.example.com")!
         case .addUserInfo(_), .updateUserInfo(_), .getUserInfo, .getSmsCode(_), .bindTelephone(_,_):
-            return URL(string: mobile_baseURL) ?? URL(string: "https://default.example.com")!
+            // 使用静态资源服务器代替无效的移动服务器
+            return URL(string: "http://htzshanghai.top/resources/app_json/") ?? URL(string: "https://default.example.com")!
         case .albums, .xingfuneixinchan, .jingxinyangsheng, .mixinxiaoshipin:
+            return URL(string: "http://htzshanghai.top/resources/app_json/") ?? URL(string: "https://default.example.com")!
+        case .recommendations:
+            // 使用静态资源作为推荐列表的替代
             return URL(string: "http://htzshanghai.top/resources/app_json/") ?? URL(string: "https://default.example.com")!
         default:
             return URL.init(string:(Moya_baseURL)) ?? URL(string: "https://default.example.com")!
@@ -99,30 +104,24 @@ extension API: TargetType {
         case .getListenHistorys(_,_): // 获取收听记录
             return "get/listen/histories"
         case .recommendations: // 经典推荐列表
-            return "get/recommendations"
+            return "recommendations.json"
         case .userNotifications: // 获取我的通知信息 TODO
-            return "get/user/notifications"
+            return "notifications/user_notifications.json"
         case .putNotification: // 设置我的通知信息状态为已读 TODO
-            return "put/user/notifications"
+            return "notifications/put_notification.json"
         case .notifications(_,_): // 查询所有通知
-            return "get/notifications"
+            return "notifications/notifications.json"
 
         case .addUserInfo(_):
-            return "userinfo/add"
+            return "userinfo/add.json"  // 模拟添加用户信息的响应
         case .updateUserInfo(_):
-            return "userinfo/update"
+            return "userinfo/update.json"  // 模拟更新用户信息的响应
         case .getUserInfo:
-            if let unionid = HTZUserAccount.shared.unionid {
-                return "userinfo/info/\(unionid)"
-            } else {
-                // 处理unionid为nil的情况，返回无效路径，服务器会返回错误
-                HTZLog.error("API", "User unionid is nil when trying to get user info")
-                return "userinfo/info/"
-            }
+            return "userinfo/info.json"  // 模拟获取用户信息的响应
         case .getSmsCode(_):
-            return "telephone/getSmsCode"
+            return "telephone/getSmsCode.json"  // 模拟获取短信验证码的响应
         case .bindTelephone(_,_):
-            return "telephone/bindTelephone"
+            return "telephone/bindTelephone.json"  // 模拟绑定电话的响应
             
         case .albums:
          return "albums.json"
@@ -149,7 +148,7 @@ extension API: TargetType {
     
     var method: Moya.Method {
         switch self {
-        case .es_search(_), .getUserInfo, .easyRequset, .albums, .xingfuneixinchan, .jingxinyangsheng, .mixinxiaoshipin:
+        case .es_search(_), .getUserInfo, .easyRequset, .albums, .xingfuneixinchan, .jingxinyangsheng, .mixinxiaoshipin, .recommendations, .search(_,_,_), .addUserInfo(_), .updateUserInfo(_), .getSmsCode(_), .bindTelephone(_,_):
             return .get
         default:
             return .post

@@ -122,17 +122,7 @@ extension HTZHomeViewController: HTZCycleViewDelegate {
     
     internal func htzCycleView(cycleView: HTZCycleView, didSelectItemAt index: Int) {
         print(index)
-//        let vc = HTZVideoPlayViewController(urlStr: "http://htzshanghai.top/resources/videos/others/never_give_up.mp4")
-        
-        if index != 2 {
-            let vc = HTZVideoPlayViewController()
-            let str = index == 0 ? "never_give_up.mp4" : (index == 1 ? "steven_jobs.flv" : "SteveVai_Tender_Surrender.mp4")
-            vc.videoUrl = "http://htzshanghai.top/resources/videos/others/"+str
-            navigationController?.pushViewController(vc, animated: true)
-        } else {
-            let vc = HTZVideoPlayTableViewController()
-            navigationController?.pushViewController(vc, animated: true)
-        }
+        alert(message: "该功能暂未开放")
     }
 }
 

@@ -92,12 +92,6 @@ class HTZAudioPlayer: NSObject {
     private var playTimer: Timer?
     private var bufferTimer: Timer?
     
-    lazy var ijkPlayer: IJKFFMoviePlayerController = {
-        let url = URL(string: "http://htzshanghai.top/resources/audios/xingfuneixinchan/radio-01-20130122.mp3")
-        let playerController = IJKFFMoviePlayerController(contentURL: url, with: IJKFFOptions.byDefault())
-        return playerController ?? IJKFFMoviePlayerController()
-    }()
-    
     private lazy var audioStream: FSAudioStream = { [unowned self] in
         let configuration = FSStreamConfiguration()
 //        configuration.cacheDirectory = kDocumentDirectory
