@@ -21,6 +21,13 @@
                      "normal_icon_select": " "
                      },
                      {
+                     "page": "HTZAIViewController",
+                     "type": "ai",
+                     "title": "AI",
+                     "normal_icon": "video_icon_normal",
+                     "normal_icon_select": "video_icon_select"
+                     },
+                     {
                      "page": "HTZProfileViewController",
                      "type": "profile",
                      "title": "我",

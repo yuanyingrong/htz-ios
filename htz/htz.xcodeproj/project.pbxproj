@@ -68,7 +68,6 @@
 		1947F4F822FA5A9500B57813 /* HTZHomeTitleCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1947F4F722FA5A9500B57813 /* HTZHomeTitleCollectionView.swift */; };
 		1947F4FA22FA5E9E00B57813 /* LeftTitleRightImageButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1947F4F922FA5E9E00B57813 /* LeftTitleRightImageButton.swift */; };
 		19492EE92356AD6E00D24278 /* HTZSearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19492EE82356AD6E00D24278 /* HTZSearchViewController.swift */; };
-		
 		194E175E23518824008F7BFF /* DeviceTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 194E175D23518824008F7BFF /* DeviceTool.m */; };
 		194E215E22B0E9F2000F96D4 /* PhotoManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 194E215D22B0E9F2000F96D4 /* PhotoManager.swift */; };
 		19507C692328F156005FE7BD /* HTZMusicLyricView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19507C682328F156005FE7BD /* HTZMusicLyricView.swift */; };
@@ -146,6 +145,7 @@
 		19EC4C572442CD450004E698 /* HTZShareMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19EC4C562442CD450004E698 /* HTZShareMenuView.swift */; };
 		77565A6A2EB61EF800156329 /* HTZLogConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77565A672EB61EF800156329 /* HTZLogConfig.swift */; };
 		77565A6B2EB61EF800156329 /* HTZLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77565A682EB61EF800156329 /* HTZLogger.swift */; };
+		77BE664F2EF10AAB001105A8 /* HTZAIViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77BE664E2EF10AAB001105A8 /* HTZAIViewController.swift */; };
 		B81E54D877D0F60DC3130CE5 /* Pods_htzTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D388F9A47532B69AAADD006F /* Pods_htzTests.framework */; };
 		D31874CF823855C8B4830729 /* Pods_htz.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 42DD8B27EE9BB122436019E5 /* Pods_htz.framework */; };
 		D9DF35AFB631E3047B22EB2A /* Pods_htzUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E81A5C4C18042CB3EC0D474 /* Pods_htzUITests.framework */; };
@@ -230,7 +230,6 @@
 		1947F4F722FA5A9500B57813 /* HTZHomeTitleCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZHomeTitleCollectionView.swift; sourceTree = "<group>"; };
 		1947F4F922FA5E9E00B57813 /* LeftTitleRightImageButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeftTitleRightImageButton.swift; sourceTree = "<group>"; };
 		19492EE82356AD6E00D24278 /* HTZSearchViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZSearchViewController.swift; sourceTree = "<group>"; };
-		
 		194E175C23518824008F7BFF /* DeviceTool.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DeviceTool.h; sourceTree = "<group>"; };
 		194E175D23518824008F7BFF /* DeviceTool.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DeviceTool.m; sourceTree = "<group>"; };
 		194E215D22B0E9F2000F96D4 /* PhotoManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoManager.swift; sourceTree = "<group>"; };
@@ -324,6 +323,7 @@
 		7563278C149DB7BAEC2367EE /* Pods-htzUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-htzUITests.release.xcconfig"; path = "Target Support Files/Pods-htzUITests/Pods-htzUITests.release.xcconfig"; sourceTree = "<group>"; };
 		77565A672EB61EF800156329 /* HTZLogConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZLogConfig.swift; sourceTree = "<group>"; };
 		77565A682EB61EF800156329 /* HTZLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZLogger.swift; sourceTree = "<group>"; };
+		77BE664E2EF10AAB001105A8 /* HTZAIViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZAIViewController.swift; sourceTree = "<group>"; };
 		A15FC9F66830F9C5EFF65A23 /* Pods-htzUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-htzUITests.debug.xcconfig"; path = "Target Support Files/Pods-htzUITests/Pods-htzUITests.debug.xcconfig"; sourceTree = "<group>"; };
 		D388F9A47532B69AAADD006F /* Pods_htzTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_htzTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -345,7 +345,6 @@
 				19333385234DD1B500498D76 /* CoreGraphics.framework in Frameworks */,
 				19333383234DD1AB00498D76 /* AVFoundation.framework in Frameworks */,
 				19333381234DD1A000498D76 /* AudioToolbox.framework in Frameworks */,
-				
 				D31874CF823855C8B4830729 /* Pods_htz.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -403,6 +402,7 @@
 				193D7D8B23277090001A5F21 /* HTZMusicTool.swift */,
 				193B866A2334A5C6006D4A3D /* HTZSaveDataModel.swift */,
 				1995469C2417209B0044C892 /* HTZUserAccount.swift */,
+				77BE664E2EF10AAB001105A8 /* HTZAIViewController.swift */,
 			);
 			path = Common;
 			sourceTree = "<group>";
@@ -687,7 +687,6 @@
 		19A95824229BDAF5007B48ED /* Vendor */ = {
 			isa = PBXGroup;
 			children = (
-				
 			);
 			path = Vendor;
 			sourceTree = "<group>";
@@ -1347,6 +1346,7 @@
 				1965FB1A23559DC900924EF6 /* HTZVideoModel.swift in Sources */,
 				193A8B922318C62C00B520B1 /* UIViewController+Alert.swift in Sources */,
 				195DDD3922AFB30700C5F04C /* BaseViewModel.swift in Sources */,
+				77BE664F2EF10AAB001105A8 /* HTZAIViewController.swift in Sources */,
 				196A6F6C244D53EB00484F9A /* HTZListenHistoryModel.swift in Sources */,
 				1942E1692329D575007E7C36 /* HTZLyricParser.swift in Sources */,
 				19A957F1229BC716007B48ED /* ViewController.swift in Sources */,

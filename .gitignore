@@ -81,3 +81,6 @@ htz/htz/Vendor/IJKMediaFramework.framework/Headers/IJKMPMoviePlayerController.h
 htz/htz/Vendor/IJKMediaFramework.framework/Headers/IJKNotificationManager.h
 htz/htz/Vendor/IJKMediaFramework.framework/Headers/IJKSDLGLViewProtocol.h
 htz/htz/Vendor/IJKMediaFramework.framework/Modules/module.modulemap
+
+# Generated Pods files
+htz/Pods/resources-to-copy-htz.txt
