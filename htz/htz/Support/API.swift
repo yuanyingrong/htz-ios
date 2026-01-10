@@ -67,7 +67,10 @@ extension API: TargetType {
         case .addUserInfo(_), .updateUserInfo(_), .getUserInfo, .getSmsCode(_), .bindTelephone(_,_):
             // 使用静态资源服务器代替无效的移动服务器
             return URL(string: "http://htzshanghai.top/resources/app_json/") ?? URL(string: "https://default.example.com")!
-        case .albums, .xingfuneixinchan, .jingxinyangsheng, .mixinxiaoshipin:
+        case .albums:
+            // 使用正确的 API 服务器地址
+            return URL.init(string:(Moya_baseURL)) ?? URL(string: "https://default.example.com")!
+        case .xingfuneixinchan, .jingxinyangsheng, .mixinxiaoshipin:
             return URL(string: "http://htzshanghai.top/resources/app_json/") ?? URL(string: "https://default.example.com")!
         case .recommendations:
             // 使用静态资源作为推荐列表的替代
@@ -124,13 +127,13 @@ extension API: TargetType {
             return "telephone/bindTelephone.json"  // 模拟绑定电话的响应
             
         case .albums:
-         return "albums.json"
+         return "get/sutras"
         case .xingfuneixinchan:
             return "xingfuneixinchan/xingfuneixinchan.json"
         case .jingxinyangsheng:
             return "jingxinyangsheng/jingxinyangsheng.json"
         case .mixinxiaoshipin:
-            return "mixinxiaoshipin/mixinxiaoshipin_old.json"
+            return "mixinxiaoshipin/mixinxiaoshipin.json"
         case .sinaOAuth(_):
             return "OAuth2/authorize"
         case let .song(type, size, offset):
@@ -148,7 +151,7 @@ extension API: TargetType {
     
     var method: Moya.Method {
         switch self {
-        case .es_search(_), .getUserInfo, .easyRequset, .albums, .xingfuneixinchan, .jingxinyangsheng, .mixinxiaoshipin, .recommendations, .search(_,_,_), .addUserInfo(_), .updateUserInfo(_), .getSmsCode(_), .bindTelephone(_,_):
+        case .es_search(_), .getUserInfo, .easyRequset, .xingfuneixinchan, .jingxinyangsheng, .mixinxiaoshipin, .recommendations, .search(_,_,_), .addUserInfo(_), .updateUserInfo(_), .getSmsCode(_), .bindTelephone(_,_):
             return .get
         default:
             return .post
@@ -186,8 +189,10 @@ extension API: TargetType {
             }
 //            return .requestParameters(parameters: ["file_id" : file_id], encoding: JSONEncoding.default)
 
-        case .getUserInfo, .deleteAllListenHistory, .recommendations, .userNotifications, .putNotification, .albums, .xingfuneixinchan, .jingxinyangsheng, .mixinxiaoshipin, .song(_,_,_), .songDetail(_):
+        case .getUserInfo, .deleteAllListenHistory, .recommendations, .userNotifications, .putNotification, .xingfuneixinchan, .jingxinyangsheng, .mixinxiaoshipin, .song(_,_,_), .songDetail(_):
             return .requestPlain
+        case .albums:
+            return .requestParameters(parameters: ["page_index": 0, "page_size": 500], encoding: JSONEncoding.default)
             
         case let .getSmsCode(telephone):
             guard let unionid = HTZUserAccount.shared.unionid else {
