@@ -28,7 +28,7 @@ class HTZAlbumListViewController: HTZBaseViewController {
                     }
                 }
                 descContentLabel.text = sutraInfoModel.desc
-                countLabel.text = "共\(sutraInfoModel.item_total ?? "0")集"
+                countLabel.text = "共\(sutraInfoModel.item_total ?? 0)集"
                 
                 albumListViewModel.icon = sutraInfoModel.cover
                 albumListViewModel.albumTitle = sutraInfoModel.name

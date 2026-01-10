@@ -133,10 +133,6 @@ extension HTZHomeViewController: HTZHomeTitleCollectionViewDelegate {
     }
     
     @objc internal func collectionViewdidSelectItemAt(_ indexPath: IndexPath) {
-        if indexPath.row > 2 {
-             alert(message: "暂未上架")
-            return
-        }
         let vc = HTZAlbumListViewController()
         vc.title = homeViewModel.dataArr[indexPath.row]?.name
         homeViewModel.dataArr[indexPath.row]!.index = indexPath.row

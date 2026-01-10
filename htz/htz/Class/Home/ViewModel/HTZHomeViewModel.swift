@@ -31,15 +31,19 @@ class HTZHomeViewModel: NSObject {
     func requestData(callBack: @escaping (Bool, _ code:String) -> ())  {
         NetWorkRequest(API.albums) { [weak self] (response) -> (Void) in
 
-            let arr = [HTZSutraInfoModel].deserialize(from: response["sutra_items"].rawString())
+            let arr = [HTZSutraInfoModel].deserialize(from: response["data"].rawString())
             if let arr = arr {
+                // 拼接 OSS URL，与专辑 Tab 保持一致
+                for sutra in arr {
+                    sutra?.cover = "\(ossurl)\(sutra?.cover ?? "")"
+                }
                 self?.dataArr = arr
 
                 let model = HTZSutraInfoModel()
                 model.name = "觅心小视频(视频)"
                 model.cover = "play_normal"
-                model.played_count = "0"
-                model.item_total = "11"
+                model.played_count = 0
+                model.item_total = 11
                 model.desc = "1111111111111111111"
                 model.isVideo = true
                 self?.dataArr.insert(model, at: 0)
@@ -56,25 +60,27 @@ class HTZHomeViewModel: NSObject {
     func requestData(isPullDown: Bool, callBack: @escaping (Bool) -> ()) {
         // recommendations
         NetWorkRequest(API.albums) { (response) -> (Void) in
-            
-            
-//            let arr = [HTZSutraInfoModel].deserialize(from: response["data"].rawString())
-            let arr = [HTZSutraInfoModel].deserialize(from: response["sutra_items"].rawString())
+
+            let arr = [HTZSutraInfoModel].deserialize(from: response["data"].rawString())
             if let arr = arr {
+                // 拼接 OSS URL，与专辑 Tab 保持一致
+                for sutra in arr {
+                    sutra?.cover = "\(ossurl)\(sutra?.cover ?? "")"
+                }
                 self.dataArr = arr
-                
+
                 let model = HTZSutraInfoModel()
                 model.name = "觅心小视频(视频)"
                 model.cover = "play_normal"
-                model.played_count = "0"
-                model.item_total = "11"
+                model.played_count = 0
+                model.item_total = 11
                 model.desc = "1111111111111111111"
                 model.isVideo = true
                 self.dataArr.insert(model, at: 0)
-                
+
                 callBack(true)
             }
-            print(response["sutra_items"])
+            print(response["data"])
         }
     }
 }

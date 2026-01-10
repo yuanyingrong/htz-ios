@@ -45,7 +45,7 @@ class HTZAlbumListCell: BaseTableViewCell {
     //                } else {
     //                    albumImageView.image = UIImage(named: albumModel.icon ?? "")
     //                }
-                    playCountButton.setTitle(sutraItemModel.played_count!, for: UIControl.State.normal)
+                    playCountButton.setTitle("\(sutraItemModel.played_count ?? 0)", for: UIControl.State.normal)
                     playTimeLabel.text = ""
                     downloadButton.isHidden = sutraItemModel.isVideo ?? false
                     

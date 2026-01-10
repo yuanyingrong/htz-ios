@@ -10,8 +10,8 @@ import UIKit
 import HandyJSON
 
 class HTZSutraInfoModel: HandyJSON {
-    
-    
+
+
     /// 唯一标识符
     var id: String?
     /// 经典名称
@@ -21,9 +21,9 @@ class HTZSutraInfoModel: HandyJSON {
     /// 经典简介
     var desc: String?
     /// 总共播放次数
-    var played_count: String?
+    var played_count: Int?
     /// 一共有多少集
-    var item_total: String?
+    var item_total: Int?
     /// 创建时间
     var created_at: String?
     

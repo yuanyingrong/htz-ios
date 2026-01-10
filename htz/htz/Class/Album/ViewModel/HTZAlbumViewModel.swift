@@ -21,8 +21,8 @@ class HTZAlbumViewModel: NSObject {
 //    }
     
     func requestData(page_index: Int, callBack: @escaping (Bool, _ code:String) -> ()) {
-        NetWorkRequest(API.sutras(page_index: page_index, page_size: 20)) { (response) -> (Void) in
-            
+        NetWorkRequest(API.sutras(page_index: page_index, page_size: 500)) { (response) -> (Void) in
+
             if response["code"].rawString() == "200" {
                 let arr = [HTZSutraInfoModel].deserialize(from: response["data"].rawString())
                 if let arr = arr {
@@ -30,14 +30,14 @@ class HTZAlbumViewModel: NSObject {
                         sutra?.cover = "\(ossurl)\(sutra?.cover ?? "")"
                     }
                     self.dataArr = arr
-                    
+
                     callBack(true, "200")
                 }
             } else if response["code"].rawString() == "20100" {
                 // token invalid 重新登录
                 callBack(false, "20100")
             }
-            
+
         }
     }
 }

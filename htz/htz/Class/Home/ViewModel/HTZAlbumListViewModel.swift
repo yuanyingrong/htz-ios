@@ -181,7 +181,7 @@ class HTZAlbumListViewModel: NSObject {
                     let m = HTZSutraItemModel()
                     m.title = model?.content
                     m.isVideo = true
-                    m.played_count = "0"
+                    m.played_count = 0
                     self.dataArr.append(m)
                 }
                 self.dataSongArr = arrM

@@ -29,7 +29,7 @@ class HTZSutraItemModel: HandyJSON {
     ///
     var lesson: String?
     /// 总共播放次数
-    var played_count: String?
+    var played_count: Int?
     ///
     var duration: String?
     /// 创建时间
