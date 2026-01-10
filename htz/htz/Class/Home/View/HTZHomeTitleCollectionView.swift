@@ -98,16 +98,30 @@ class HTZHomeTitleCollectionView: BaseView {
     }()
     
     private lazy var collectionView: UICollectionView = {
-        let flowLayout = UICollectionViewFlowLayout();
-        flowLayout.itemSize = CGSize(width: (UIScreen.main.bounds.size.width - 5 * 10) / 3, height: UIScreen.main.bounds.size.width/3)
+        let flowLayout = UICollectionViewFlowLayout()
         flowLayout.scrollDirection = UICollectionView.ScrollDirection.vertical
-        flowLayout.sectionInset = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 10)
-        flowLayout.minimumLineSpacing = 10
+
+        // 计算单元格尺寸（3列）
+        let screenWidth = UIScreen.main.bounds.size.width
+        let horizontalMargin: CGFloat = 20
+        let spacing: CGFloat = 5
+        let columnCount = 3
+
+        let availableWidth = screenWidth - (horizontalMargin * 2)
+        let itemWidth = (availableWidth - (spacing * CGFloat(columnCount - 1))) / CGFloat(columnCount)
+
+        // Cell 高度 = 封面图片宽度（正方形）+ 间距 + 标题高度 + 底部间距
+        let itemHeight = itemWidth + 5 + 20 + 5  // 封面 + 间距 + 标题 + 底部间距
+
+        flowLayout.itemSize = CGSize(width: itemWidth, height: itemHeight)
+        flowLayout.minimumInteritemSpacing = 0  // 水平间距
+        flowLayout.minimumLineSpacing = spacing   // 垂直间距
+        flowLayout.sectionInset = UIEdgeInsets(top: 5, left: horizontalMargin, bottom: 0, right: horizontalMargin)
+
         let collectionView = UICollectionView(frame: bounds, collectionViewLayout: flowLayout)
         collectionView.backgroundColor = .clear
         collectionView.showsHorizontalScrollIndicator = false
         collectionView.showsVerticalScrollIndicator = false
-        collectionView.isPagingEnabled = true
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.register(HTZHomeTitleCollectionViewCell.self, forCellWithReuseIdentifier: "HTZHomeTitleCollectionViewCell")

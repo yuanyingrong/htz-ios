@@ -36,8 +36,16 @@ class HTZHomeTitleCollectionViewCell: UICollectionViewCell {
         }
     }
     
-    private let imageView = UIImageView()
-    private let label = UILabel(text: "", font: 16, textColor: .darkText)
+    private let imageView: UIImageView = {
+        let iv = UIImageView()
+        iv.contentMode = .scaleAspectFill
+        iv.clipsToBounds = true
+        iv.layer.cornerRadius = 10
+        iv.layer.masksToBounds = true
+        return iv
+    }()
+
+    private let label = UILabel(text: "", font: 13, textColor: .darkText)
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -65,17 +73,22 @@ class HTZHomeTitleCollectionViewCell: UICollectionViewCell {
     }
     
      func configConstraint() {
-        
-        
-        imageView.snp.makeConstraints { (make) in
-            make.top.left.right.equalTo(self.contentView)
-        }
-        
+        // 只设置 label 的约束
         label.snp.makeConstraints { (make) in
-            make.top.equalTo(imageView.snp.bottom)
-            make.centerX.equalTo(self.contentView)
-            make.height.equalTo(24)
-            make.bottom.equalTo(self.contentView).offset(-8)
+            make.left.right.equalTo(self.contentView)
+            make.height.equalTo(20)
+            make.bottom.equalTo(self.contentView).offset(-5)
         }
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+
+        // 手动设置 ImageView 的 frame
+        let imageViewHeight = contentView.bounds.width  // 正方形，高度等于宽度
+        imageView.frame = CGRect(x: 0, y: 0, width: contentView.bounds.width, height: imageViewHeight)
+
+        // 设置 label 的位置
+        label.frame = CGRect(x: 0, y: imageViewHeight + 5, width: contentView.bounds.width, height: 20)
     }
 }
