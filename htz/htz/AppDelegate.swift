@@ -69,7 +69,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // 极光分享
         configShare()
         
-        clearLoginStatus()
+        // 注释掉 clearLoginStatus()，避免每次启动都清除登录状态
+        // clearLoginStatus()
         
         //        #if DEBUG
         //        pgyerCrash()

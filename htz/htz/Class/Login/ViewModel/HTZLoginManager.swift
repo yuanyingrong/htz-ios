@@ -36,7 +36,6 @@ class HTZLoginManager: NSObject {
                     "city":loginModel.wx_login_resp?.city,
                     "province":loginModel.wx_login_resp?.province,
                     "privilege":loginModel.wx_login_resp?.privilege,
-                    "sex":loginModel.wx_login_resp?.sex,
                     "nickname":loginModel.wx_login_resp?.nickname,
                     "openid":loginModel.wx_login_resp?.openid,
                     "headimgurl":loginModel.wx_login_resp?.headimgurl]
