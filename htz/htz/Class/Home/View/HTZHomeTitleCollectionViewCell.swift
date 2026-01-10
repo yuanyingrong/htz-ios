@@ -47,6 +47,9 @@ class HTZHomeTitleCollectionViewCell: UICollectionViewCell {
 
     private let label = UILabel(text: "", font: 13, textColor: .darkText)
     
+    // Frame layout setup flag
+    private var didSetupFrameLayout = false
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         configSubViews()
@@ -61,34 +64,69 @@ class HTZHomeTitleCollectionViewCell: UICollectionViewCell {
     
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
+        setupForFrameLayoutOnce()
         //        fatalError("init(coder:) has not been implemented")
     }
     
-     func configSubViews() {
+    private func setupForFrameLayoutOnce() {
+        guard !didSetupFrameLayout else { return }
+        didSetupFrameLayout = true
+        
+        imageView.translatesAutoresizingMaskIntoConstraints = true
+        label.translatesAutoresizingMaskIntoConstraints = true
+        
+        // 精准清理残留约束：只移除与 imageView 或 label 相关的约束
+        self.constraints.forEach { constraint in
+            if constraint.firstItem as? UIView == imageView || 
+               constraint.secondItem as? UIView == imageView ||
+               constraint.firstItem as? UIView == label || 
+               constraint.secondItem as? UIView == label {
+                constraint.isActive = false
+            }
+        }
+        contentView.constraints.forEach { constraint in
+            if constraint.firstItem as? UIView == imageView || 
+               constraint.secondItem as? UIView == imageView ||
+               constraint.firstItem as? UIView == label || 
+               constraint.secondItem as? UIView == label {
+                constraint.isActive = false
+            }
+        }
+    }
+    
+    func configSubViews() {
+        setupForFrameLayoutOnce()
         
         backgroundColor = .white
-        addSubview(imageView)
-        addSubview(label)
+        contentView.backgroundColor = .white
+        
+        contentView.addSubview(imageView)
+        contentView.addSubview(label)
         
     }
     
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        // 只 reset UI，不触发 didSet
+        imageView.image = nil
+        label.text = nil
+    }
+    
      func configConstraint() {
-        // 只设置 label 的约束
-        label.snp.makeConstraints { (make) in
-            make.left.right.equalTo(self.contentView)
-            make.height.equalTo(20)
-            make.bottom.equalTo(self.contentView).offset(-5)
-        }
+        // 已移除 SnapKit 约束，改用纯 frame 布局
     }
 
     override func layoutSubviews() {
         super.layoutSubviews()
 
         // 手动设置 ImageView 的 frame
-        let imageViewHeight = contentView.bounds.width  // 正方形，高度等于宽度
-        imageView.frame = CGRect(x: 0, y: 0, width: contentView.bounds.width, height: imageViewHeight)
+        let imageViewSize = contentView.bounds.width
+        imageView.frame = CGRect(x: 0, y: 0, width: imageViewSize, height: imageViewSize)
 
         // 设置 label 的位置
-        label.frame = CGRect(x: 0, y: imageViewHeight + 5, width: contentView.bounds.width, height: 20)
+        let labelSpacing: CGFloat = 5
+        let labelHeight: CGFloat = 20
+        let labelY = imageView.frame.maxY + labelSpacing
+        label.frame = CGRect(x: 0, y: labelY, width: imageViewSize, height: labelHeight)
     }
 }
