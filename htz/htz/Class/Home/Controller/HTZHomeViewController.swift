@@ -70,10 +70,21 @@ class HTZHomeViewController: HTZBaseViewController {
 
     override func configData() {
         super.configData()
+        
+        // 打印 HTZUserAccount 的所有属性
+        print("🔐 [LOGIN] HTZUserAccount.shared.token: \(HTZUserAccount.shared.token ?? "nil")")
+        print("🔐 [LOGIN] HTZUserAccount.shared.name: \(HTZUserAccount.shared.name ?? "nil")")
+        print("🔐 [LOGIN] HTZUserAccount.shared.unionid: \(HTZUserAccount.shared.unionid ?? "nil")")
+        print("🔐 [LOGIN] HTZUserAccount.shared.headimgurl: \(HTZUserAccount.shared.headimgurl ?? "nil")")
+        
         homeViewModel.requestData { (success, code) in
+            print("🔐 [LOGIN] HomeViewController configData callback - success: \(success), code: \(code)")
             self.bottomView.dataArr = self.homeViewModel.dataArr
-            
-            self.loginButton.isHidden = code == "200"
+
+            // 基于本地是否有 token 来决定是否显示登录按钮
+            let hasToken = HTZUserAccount.shared.token != nil && !HTZUserAccount.shared.token!.isEmpty
+            print("🔐 [LOGIN] hasToken: \(hasToken), token: \(HTZUserAccount.shared.token ?? "nil")")
+            self.loginButton.isHidden = hasToken
         }
         //        homeViewModel.requestData(isPullDown: true) { (success) in
 //            self.bottomView.dataArr = self.homeViewModel.dataArr

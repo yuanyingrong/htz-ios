@@ -45,8 +45,13 @@ class HTZUserAccount: NSObject {
     
     func readUserAccountInfo() {
        let obj = UserDefaults.Standard.value(forKey: UserDefaults.keyUserAccount)
+        print("🔐 [USER_ACCOUNT] readUserAccountInfo called, obj: \(obj ?? "nil")")
         if let obj = obj {
-            setValuesForKeys(obj as! [String : Any])
+            let dict = obj as! [String : Any]
+            print("🔐 [USER_ACCOUNT] dict keys: \(dict.keys)")
+            print("🔐 [USER_ACCOUNT] dict['token']: \(dict["token"] ?? "nil")")
+            setValuesForKeys(dict)
+            print("🔐 [USER_ACCOUNT] After setValuesForKeys, token: \(self.token ?? "nil")")
         }
     }
     

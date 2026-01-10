@@ -31,7 +31,14 @@ class HTZHomeViewModel: NSObject {
     func requestData(callBack: @escaping (Bool, _ code:String) -> ())  {
         NetWorkRequest(API.albums) { [weak self] (response) -> (Void) in
 
+            print("🔐 [LOGIN] requestData response: \(response)")
+            print("🔐 [LOGIN] response[\"code\"]: \(response["code"].rawString())")
+            print("🔐 [LOGIN] response[\"data\"]: \(response["data"])")
+
             let arr = [HTZSutraInfoModel].deserialize(from: response["data"].rawString())
+            print("🔐 [LOGIN] deserialized arr: \(arr)")
+            print("🔐 [LOGIN] arr count: \(arr?.count ?? 0)")
+
             if let arr = arr {
                 // 拼接 OSS URL，与专辑 Tab 保持一致
                 for sutra in arr {
@@ -48,10 +55,14 @@ class HTZHomeViewModel: NSObject {
                 model.isVideo = true
                 self?.dataArr.insert(model, at: 0)
 
+                print("🔐 [LOGIN] Calling callBack with code: 200")
                 callBack(true, "200")
             } else if response["code"].rawString() == "20100" {
                 // token invalid 重新登录
+                print("🔐 [LOGIN] Token invalid, calling callBack with code: 20100")
                 callBack(false, "20100")
+            } else {
+                print("🔐 [LOGIN] Data parsing failed and code is not 20100, no callback will be called!")
             }
 
         }
