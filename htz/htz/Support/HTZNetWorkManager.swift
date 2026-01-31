@@ -258,6 +258,10 @@ func NetWorkRequest(_ target: API, completion: @escaping successCallback , faile
 
         //这里显示loading图
 
+        // 设置超时时间
+        Provider.session.sessionConfiguration.timeoutIntervalForRequest = 15.0
+        Provider.session.sessionConfiguration.timeoutIntervalForResource = 30.0
+        
         Provider.request(target) { (result) in
             //隐藏hud
             switch result {

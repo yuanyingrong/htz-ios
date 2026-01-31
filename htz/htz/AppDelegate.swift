@@ -21,7 +21,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     lazy var palyButton: UIButton = {
         let button = UIButton(type: UIButton.ButtonType.custom)
-        button.setBackgroundImage(UIImage(named: "play_normal"), for: UIControl.State.normal)
+        if let playNormalImage = UIImage(named: "play_normal") {
+            button.setBackgroundImage(playNormalImage, for: UIControl.State.normal)
+        }
         //        button.setImage(UIImage(named: "play"), for: UIControl.State.normal)
         button.addTarget(self, action: #selector(topbarPlayButtonClickAction), for: UIControl.Event.touchUpInside)
         button.isHidden = true
@@ -34,7 +36,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Override point for customization after application launch.
         
         // 初始化主窗口
-        window = UIWindow(frame: UIScreen.main.bounds)
+        if window == nil {
+            window = UIWindow(frame: UIScreen.main.bounds)
+        }
         window?.backgroundColor = UIColor.white
         window?.rootViewController = HTZTabbarViewController()
         window?.makeKeyAndVisible()
@@ -124,11 +128,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     @objc private func playStatusChanged(noti: Notification) {
         DispatchQueue.main.async {
             if let isPlaying = HTZPlayViewController.sharedInstance.isPlaying, isPlaying {
-                self.palyButton.setBackgroundImage(UIImage(named: "play_normal"), for: UIControl.State.normal)
-                self.palyButton.setImage(UIImage(named: "tabbar_play"), for: UIControl.State.normal)
+                if let playNormalImage = UIImage(named: "play_normal") {
+                    self.palyButton.setBackgroundImage(playNormalImage, for: UIControl.State.normal)
+                }
+                if let tabbarPlayImage = UIImage(named: "tabbar_play") {
+                    self.palyButton.setImage(tabbarPlayImage, for: UIControl.State.normal)
+                }
             } else {
-                self.palyButton.setBackgroundImage(UIImage(named: "play_normal"), for: UIControl.State.normal)
-                self.palyButton.setImage(UIImage(named: "tabbar_play"), for: UIControl.State.normal)
+                if let playNormalImage = UIImage(named: "play_normal") {
+                    self.palyButton.setBackgroundImage(playNormalImage, for: UIControl.State.normal)
+                }
+                if let tabbarPlayImage = UIImage(named: "tabbar_play") {
+                    self.palyButton.setImage(tabbarPlayImage, for: UIControl.State.normal)
+                }
             }
         }
     }

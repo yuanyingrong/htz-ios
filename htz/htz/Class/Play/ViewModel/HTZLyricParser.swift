@@ -10,18 +10,54 @@ import UIKit
 
 class HTZLyricParser: NSObject {
 
-    /// 歌词解析
+    /// 歌词解析 - 异步版本
+    ///
+    /// - Parameters:
+    ///   - url: 歌词的url
+    ///   - completion: 完成回调
+    static func lyricParser(url: String, completion: @escaping ([HTZLyricModel]?) -> Void) {
+        
+        // 根据歌词文件的url获取歌词内容
+        guard let urlObj = URL(string: url) else {
+            completion(nil)
+            return
+        }
+        
+        URLSession.shared.dataTask(with: urlObj) { data, response, error in
+            if let error = error {
+                HTZLog.error("LYRIC", "下载歌词失败: \(error)")
+                DispatchQueue.main.async { completion(nil) }
+                return
+            }
+            
+            guard let data = data, let lyricStr = String(data: data, encoding: .utf8) else {
+                DispatchQueue.main.async { completion(nil) }
+                return
+            }
+            
+            let result = self.lyricParser(lyricString: lyricStr, isDelBlank: false)
+            DispatchQueue.main.async { completion(result) }
+        }.resume()
+    }
+    
+    /// 歌词解析 - 同步版本（仅供本地文件使用）
     ///
     /// - Parameter url: 歌词的url
     /// - Returns: 包含歌词模型的数组
     static func lyricParser(url: String) -> [HTZLyricModel]? {
         
+        // 仅支持本地文件，网络请求请使用异步版本
+        if url.hasPrefix("http") {
+            HTZLog.warning("LYRIC", "网络歌词请使用异步方法 lyricParser(url:completion:)")
+            return nil
+        }
+        
         // 根据歌词文件的url获取歌词内容
         do {
-            let lyricStr = try String(contentsOf: URL(string: url)!, encoding: String.Encoding.utf8)
+            let lyricStr = try String(contentsOfFile: url, encoding: String.Encoding.utf8)
             return self.lyricParser(lyricString: lyricStr, isDelBlank: false)
         } catch  {
-            print(error)
+            HTZLog.error("LYRIC", "读取本地歌词失败: \(error)")
         }
         return nil
     }
@@ -32,20 +68,59 @@ class HTZLyricParser: NSObject {
     ///   - url: 歌词的url
     ///   - isDelBlank: 是否去掉空白行歌词
     /// - Returns: 包含歌词模型的数组
-    static func lyricParser(url: String, isDelBlank: Bool) -> [HTZLyricModel]? {
-        // 根据歌词文件的url获取歌词内容
-        
-        do {
-            if url.hasPrefix("http") { // 网络路径
-                let lyricStr = try String(contentsOf: URL(string: url)!, encoding: String.Encoding.utf8)
-                return self.lyricParser(lyricString: lyricStr, isDelBlank: isDelBlank)
-            } else { // 本地路径
-                let lyricStr = try String(contentsOfFile: url, encoding: String.Encoding.utf8)
-                return self.lyricParser(lyricString: lyricStr, isDelBlank: isDelBlank)
+    /// 歌词解析 - 异步版本
+    ///
+    /// - Parameters:
+    ///   - url: 歌词的url
+    ///   - isDelBlank: 是否去掉空白行歌词
+    ///   - completion: 完成回调
+    static func lyricParser(url: String, isDelBlank: Bool, completion: @escaping ([HTZLyricModel]?) -> Void) {
+        if url.hasPrefix("http") { // 网络路径
+            guard let urlObj = URL(string: url) else {
+                completion(nil)
+                return
             }
             
+            URLSession.shared.dataTask(with: urlObj) { data, response, error in
+                if let error = error {
+                    HTZLog.error("LYRIC", "下载歌词失败: \(error)")
+                    DispatchQueue.main.async { completion(nil) }
+                    return
+                }
+                
+                guard let data = data, let lyricStr = String(data: data, encoding: .utf8) else {
+                    DispatchQueue.main.async { completion(nil) }
+                    return
+                }
+                
+                let result = self.lyricParser(lyricString: lyricStr, isDelBlank: isDelBlank)
+                DispatchQueue.main.async { completion(result) }
+            }.resume()
+        } else { // 本地路径
+            do {
+                let lyricStr = try String(contentsOfFile: url, encoding: String.Encoding.utf8)
+                let result = self.lyricParser(lyricString: lyricStr, isDelBlank: isDelBlank)
+                completion(result)
+            } catch {
+                HTZLog.error("LYRIC", "读取本地歌词失败: \(error)")
+                completion(nil)
+            }
+        }
+    }
+    
+    static func lyricParser(url: String, isDelBlank: Bool) -> [HTZLyricModel]? {
+        // 仅支持本地文件，网络请求请使用异步版本
+        if url.hasPrefix("http") {
+            HTZLog.warning("LYRIC", "网络歌词请使用异步方法 lyricParser(url:isDelBlank:completion:)")
+            return nil
+        }
+        
+        // 根据歌词文件的url获取歌词内容
+        do {
+            let lyricStr = try String(contentsOfFile: url, encoding: String.Encoding.utf8)
+            return self.lyricParser(lyricString: lyricStr, isDelBlank: isDelBlank)
         } catch  {
-            print(error)
+            HTZLog.error("LYRIC", "读取本地歌词失败: \(error)")
         }
         return nil
     }
@@ -57,12 +132,12 @@ class HTZLyricParser: NSObject {
     ///   - isDelBlank: 是否去掉空白行歌词
     /// - Returns: 包含歌词模型的数组
     static func lyricParser(localPath: String, isDelBlank: Bool) -> [HTZLyricModel]? {
-        // 根据歌词文件的url获取歌词内容
+        // 根据歌词文件的本地路径获取歌词内容
         do {
-            let lyricStr = try String(contentsOf: URL(fileURLWithPath: localPath), encoding: String.Encoding.utf8)
+            let lyricStr = try String(contentsOfFile: localPath, encoding: String.Encoding.utf8)
             return self.lyricParser(lyricString: lyricStr, isDelBlank: isDelBlank)
         } catch  {
-            print(error)
+            HTZLog.error("LYRIC", "读取本地歌词失败: \(error)")
         }
         return nil
     }

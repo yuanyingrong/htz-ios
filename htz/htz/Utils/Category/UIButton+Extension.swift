@@ -71,10 +71,14 @@ extension UIButton {
      */
     convenience init(setImage:String,setBackgroundImage:String,target:Any?,action:Selector) {
         self.init()
-        self.setImage(UIImage(named:setImage), for: UIControl.State.normal)
-        self.setImage(UIImage(named:"\(setImage)_highighted"), for: UIControl.State.highlighted)
-        self.setBackgroundImage(UIImage(named:setBackgroundImage), for: UIControl.State.normal)
-        self.setBackgroundImage(UIImage(named:"\(setBackgroundImage)_highlighted"), for: UIControl.State.highlighted)
+        if !setImage.isEmpty {
+            self.setImage(UIImage(named:setImage), for: UIControl.State.normal)
+            self.setImage(UIImage(named:"\(setImage)_highighted"), for: UIControl.State.highlighted)
+        }
+        if !setBackgroundImage.isEmpty {
+            self.setBackgroundImage(UIImage(named:setBackgroundImage), for: UIControl.State.normal)
+            self.setBackgroundImage(UIImage(named:"\(setBackgroundImage)_highlighted"), for: UIControl.State.highlighted)
+        }
         self.addTarget(target, action: action, for: UIControl.Event.touchUpInside)
         self.sizeToFit()
     }
@@ -91,7 +95,7 @@ extension UIButton {
         //        let Btn = UIButton()
         self.init()
         
-        if let img = setHighlightImage {
+        if let img = setHighlightImage, !img.isEmpty {
             self.setImage(UIImage(named:img), for: UIControl.State.normal)
             
             self.setImage(UIImage(named:"\(img)_highlighted"), for: UIControl.State.highlighted)
@@ -135,13 +139,13 @@ extension UIButton {
         }
         
         // 设置图片
-        if let image = image {
+        if let image = image, !image.isEmpty {
             self.setImage(UIImage(named: image), for: .normal)
             self.setImage(UIImage(named: "\(image)_highlighted"), for: .highlighted)
         }
         
         // 设置背景图片
-        if let bgImage = bgImage {
+        if let bgImage = bgImage, !bgImage.isEmpty {
             self.setBackgroundImage(UIImage(named: bgImage), for: .normal)
             self.setBackgroundImage(UIImage(named: "\(bgImage)_highlighted"), for: .highlighted)
         }

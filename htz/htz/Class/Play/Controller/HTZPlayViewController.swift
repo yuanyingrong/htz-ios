@@ -713,19 +713,16 @@ extension HTZPlayViewController {
                 }
             }
 //            var lyrics = HTZLyricParser.lyricParser(str: self.model?.original ?? "")
-            var lyrics = HTZLyricParser.lyricParser(url: (self.model?.originalLyricPath)!, isDelBlank: true)
-            // FIXME: - 先注释掉不报错
-            if lyrics == nil {
-               lyrics = HTZLyricParser.lyricParser(url: (self.model?.originalLyricLink)!, isDelBlank: true)
+            // 解析本地歌词
+            if let originalPath = self.model?.originalLyricPath {
+                let lyrics = HTZLyricParser.lyricParser(localPath: originalPath, isDelBlank: true)
+                self.topLyricView.lyrics = lyrics
             }
-            // 解析歌词
-            self.topLyricView.lyrics = lyrics
-            var explanationLyrics = HTZLyricParser.lyricParser(url: (self.model?.explanationLyricPath)!, isDelBlank: true)
-            // FIXME: - 先注释掉不报错
-            if lyrics == nil {
-               explanationLyrics = HTZLyricParser.lyricParser(url: (self.model?.explanationLyricPath)!, isDelBlank: true)
+            
+            if let explanationPath = self.model?.explanationLyricPath {
+                let explanationLyrics = HTZLyricParser.lyricParser(localPath: explanationPath, isDelBlank: true)
+                self.bottomLyricView.lyrics = explanationLyrics
             }
-            self.bottomLyricView.lyrics = explanationLyrics
         } else {
             if HTZMusicTool.networkState() == "none" {
                 alert(message: "网络连接失败")
@@ -751,10 +748,19 @@ extension HTZPlayViewController {
                         kPlayer.play()
                     }
                 }
-                // 解析歌词
-                if let original = self.model?.originalLyricLink, original.hasPrefix("http") {
-                    self.topLyricView.lyrics = HTZLyricParser.lyricParser(url: (self.model?.originalLyricLink)!, isDelBlank: true)
-                    self.bottomLyricView.lyrics = HTZLyricParser.lyricParser(url: (self.model?.explanationLyricLink)!, isDelBlank: true)
+                // 解析歌词 - 使用异步方法
+                if let originalLink = self.model?.originalLyricLink, originalLink.hasPrefix("http") {
+                    // 异步加载原版歌词
+                    HTZLyricParser.lyricParser(url: originalLink, isDelBlank: true) { [weak self] lyrics in
+                        self?.topLyricView.lyrics = lyrics
+                    }
+                    
+                    // 异步加载解释版歌词
+                    if let explanationLink = self.model?.explanationLyricLink {
+                        HTZLyricParser.lyricParser(url: explanationLink, isDelBlank: true) { [weak self] lyrics in
+                            self?.bottomLyricView.lyrics = lyrics
+                        }
+                    }
                 } else {
 //                    if let original = self.model?.original {
 //                        self.topLyricView.lyrics = HTZLyricParser.lyricParser(lyricString: original, isDelBlank: true)

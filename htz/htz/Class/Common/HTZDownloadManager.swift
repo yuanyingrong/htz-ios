@@ -433,12 +433,8 @@ extension HTZDownloadManager {
                     model.state = HTZDownloadManagerState.finished
                     // 下载图片
 
-                    // 歌词
-                    // TODO: - 需确定
-                    let lrcData = NSData(contentsOf: URL(string: model.originalLyricLink!)!)
-                    lrcData?.write(toFile: model.originalLyricPath, atomically: true)
-                    let exlrcData = NSData(contentsOf: URL(string: model.explanationLyricLink!)!)
-                    exlrcData?.write(toFile: model.explanationLyricPath, atomically: true)
+                    // 歌词 - 异步下载
+                    self.downloadLyricsAsync(model: model)
 
                     self.updateDownloadModel(model: model)
                     if let delegate = self.delegate, delegate.responds(to: #selector(HTZPlayViewController.downloadChanged(_:downloadModel:state:))) {
@@ -507,10 +503,8 @@ extension HTZDownloadManager {
                     // 下载图片
                     
                     // 歌词
-                    let lrcData = NSData(contentsOf: URL(string: model.originalLyricLink!)!)
-                    lrcData?.write(toFile: model.originalLyricPath, atomically: true)
-                    let exlrcData = NSData(contentsOf: URL(string: model.explanationLyricLink!)!)
-                    exlrcData?.write(toFile: model.explanationLyricPath, atomically: true)
+                    // 歌词 - 异步下载
+                    self.downloadLyricsAsync(model: model)
                     
                     self.updateDownloadModel(model: model)
                     
@@ -560,6 +554,63 @@ extension HTZDownloadManager {
         
         if self.downloadRequest?.task?.state == URLSessionTask.State.suspended {
             self.downloadRequest?.resume()
+        }
+    }
+    
+    /// 异步下载歌词文件
+    private func downloadLyricsAsync(model: HTZDownloadModel) {
+        guard let originalLyricLink = model.originalLyricLink,
+              let explanationLyricLink = model.explanationLyricLink,
+              let originalURL = URL(string: originalLyricLink),
+              let explanationURL = URL(string: explanationLyricLink) else {
+            HTZLog.warning("DOWNLOAD", "歌词链接无效，跳过下载")
+            return
+        }
+        
+        let downloadGroup = DispatchGroup()
+        
+        // 下载原版歌词
+        downloadGroup.enter()
+        URLSession.shared.dataTask(with: originalURL) { [weak self] data, response, error in
+            defer { downloadGroup.leave() }
+            
+            if let error = error {
+                HTZLog.error("DOWNLOAD", "下载原版歌词失败: \(error)")
+                return
+            }
+            
+            if let data = data {
+                do {
+                    try data.write(to: URL(fileURLWithPath: model.originalLyricPath))
+                    HTZLog.info("DOWNLOAD", "原版歌词下载成功")
+                } catch {
+                    HTZLog.error("DOWNLOAD", "保存原版歌词失败: \(error)")
+                }
+            }
+        }.resume()
+        
+        // 下载解释版歌词
+        downloadGroup.enter()
+        URLSession.shared.dataTask(with: explanationURL) { [weak self] data, response, error in
+            defer { downloadGroup.leave() }
+            
+            if let error = error {
+                HTZLog.error("DOWNLOAD", "下载解释版歌词失败: \(error)")
+                return
+            }
+            
+            if let data = data {
+                do {
+                    try data.write(to: URL(fileURLWithPath: model.explanationLyricPath))
+                    HTZLog.info("DOWNLOAD", "解释版歌词下载成功")
+                } catch {
+                    HTZLog.error("DOWNLOAD", "保存解释版歌词失败: \(error)")
+                }
+            }
+        }.resume()
+        
+        downloadGroup.notify(queue: .main) {
+            HTZLog.info("DOWNLOAD", "歌词下载完成: \(model.fileID ?? "未知")")
         }
     }
 
