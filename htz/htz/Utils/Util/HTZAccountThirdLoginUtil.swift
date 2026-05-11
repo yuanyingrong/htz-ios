@@ -50,8 +50,10 @@ class HTZAccountThirdLoginUtil: NSObject {
         // 注册Sina微博
 //        WeiboSDK.registerApp(sinaAppKey)
         // 微信注册
+        #if !targetEnvironment(simulator)
         let res = WXApi.registerApp(wxAppID, universalLink:"https://app.neixinchan.com:9500/")
         printLog(res)
+        #endif
         #if DEBUG
         WeiboSDK.enableDebugMode(true)
         #endif
@@ -64,12 +66,19 @@ class HTZAccountThirdLoginUtil: NSObject {
         resultCallback = result
         
         if loginType == ThirdLoginType.weibo {
+            #if targetEnvironment(simulator)
+            resultCallback?(nil, "模拟器不支持微博登录，请在真机上测试")
+            #else
             let request = WBAuthorizeRequest.request() as? WBAuthorizeRequest
             request?.redirectURI = sinaRedirectURI
             WeiboSDK.send(request)
+            #endif
         } else if loginType == ThirdLoginType.tencent {
             tencentOAuth?.authorize([kOPEN_PERMISSION_GET_USER_INFO, kOPEN_PERMISSION_GET_SIMPLE_USER_INFO, kOPEN_PERMISSION_GET_INFO])
         } else if loginType == ThirdLoginType.weixin {
+            #if targetEnvironment(simulator)
+            resultCallback?(nil, "模拟器不支持微信登录，请在真机上测试")
+            #else
             // 先判断有无安装微信
             if WXApi.isWXAppInstalled() {
                 let req = SendAuthReq()
@@ -80,6 +89,7 @@ class HTZAccountThirdLoginUtil: NSObject {
             } else { CurrentViewControllerUtil.sharedInstance.getCurrentViewController()?.alert(message: "您的设备未安装微信")
                 print("您的设备未安装微信")
             }
+            #endif
         }
     }
     
@@ -123,6 +133,7 @@ extension HTZAccountThirdLoginUtil: TencentSessionDelegate {
 }
 
 // MARK: WXApiDelegate
+#if !targetEnvironment(simulator)
 extension HTZAccountThirdLoginUtil: WXApiDelegate {
     
     internal func onReq(_ req: BaseReq) {
@@ -235,8 +246,10 @@ extension HTZAccountThirdLoginUtil: WXApiDelegate {
 //        queue.addOperation(getUserInfoOperation)
 //    }
 }
+#endif
 
 // MARK: WeiboSDKDelegate
+#if !targetEnvironment(simulator)
 extension HTZAccountThirdLoginUtil: WeiboSDKDelegate,URLSessionDelegate {
     
     internal func didReceiveWeiboRequest(_ request: WBBaseRequest!) {
@@ -283,4 +296,4 @@ extension HTZAccountThirdLoginUtil: WeiboSDKDelegate,URLSessionDelegate {
         tast.resume()
     }
 }
-
+#endif

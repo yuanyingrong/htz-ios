@@ -15,10 +15,18 @@ extension AppDelegate {
     func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
         
         if url.absoluteString.contains(sinaAppKey) { // 新浪微博 的回调
+            #if targetEnvironment(simulator)
+            return false
+            #else
             return WeiboSDK.handleOpen(url, delegate: HTZAccountThirdLoginUtil.sharedInstance)
+            #endif
         }
         if url.absoluteString.contains(wxAppID) { // 微信 的回调
+            #if targetEnvironment(simulator)
+            return false
+            #else
             return WXApi.handleOpen(url, delegate: HTZAccountThirdLoginUtil.sharedInstance)
+            #endif
         }
         if  url.absoluteString.contains(qqAppID) {
             TencentOAuth.handleOpen(url)
@@ -29,10 +37,18 @@ extension AppDelegate {
     // iOS9以下
     func application(_ application: UIApplication, open url: URL, sourceApplication: String?, annotation: Any) -> Bool {
         if sourceApplication == "com.sina.weibo" { // 新浪微博 的回调
+            #if targetEnvironment(simulator)
+            return false
+            #else
             return WeiboSDK.handleOpen(url, delegate: HTZAccountThirdLoginUtil.sharedInstance)
+            #endif
         }
         if sourceApplication == "com.tencent.xin" { // 微信 的回调
+            #if targetEnvironment(simulator)
+            return false
+            #else
             return WXApi.handleOpen(url, delegate: HTZAccountThirdLoginUtil.sharedInstance)
+            #endif
         }
         if  sourceApplication == "com.tencent.mqq" {
             TencentOAuth.handleOpen(url)
@@ -40,5 +56,3 @@ extension AppDelegate {
         return true
     }
 }
-
-

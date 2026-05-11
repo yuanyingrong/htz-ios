@@ -10,6 +10,10 @@ import UIKit
 import Foundation
 
 class HTZWechatLoginViewController: HTZBaseViewController {
+
+    override var pageTraceName: String? {
+        return "WechatLogin"
+    }
     
     var loginResult: ((HTZLoginModel?) -> (Void))?
 

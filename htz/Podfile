@@ -55,4 +55,67 @@ post_install do |installer|
       end
     end
   end
+
+  # Patch Reachability to remove private header import that fails on modern iOS SDK
+  reachability_m = File.join(installer.sandbox.root, 'Reachability', 'Reachability.m')
+  if File.exist?(reachability_m)
+    content = File.read(reachability_m)
+    if content.include?('#import <netinet6/in6.h>')
+      File.write(reachability_m, content.gsub('#import <netinet6/in6.h>', ''))
+      puts "Patched Reachability.m: removed private header import"
+    end
+  end
+
+  # Fix JPush xcframework bridging header issue by appending raw header paths.
+  jpush_sim_headers = File.join(installer.sandbox.root, 'JPush', 'jpush-ios-5.6.1.xcframework', 'ios-arm64_x86_64-simulator', 'Headers')
+  jpush_device_headers = File.join(installer.sandbox.root, 'JPush', 'jpush-ios-5.6.1.xcframework', 'ios-arm64', 'Headers')
+  jshare_headers = File.join(installer.sandbox.root, 'JShare')
+  jcore_sim_libs = File.join(installer.sandbox.root, 'JCore', 'jcore-ios-5.0.2.xcframework', 'ios-arm64_x86_64-simulator')
+  jcore_device_libs = File.join(installer.sandbox.root, 'JCore', 'jcore-ios-5.0.2.xcframework', 'ios-arm64')
+  jpush_sim_libs = File.join(installer.sandbox.root, 'JPush', 'jpush-ios-5.6.1.xcframework', 'ios-arm64_x86_64-simulator')
+  jpush_device_libs = File.join(installer.sandbox.root, 'JPush', 'jpush-ios-5.6.1.xcframework', 'ios-arm64')
+
+  installer.aggregate_targets.each do |aggregate_target|
+    aggregate_target.xcconfigs.each do |config_name, xcconfig|
+      xcconfig_path = aggregate_target.xcconfig_path(config_name)
+      if File.exist?(xcconfig_path)
+        content = File.read(xcconfig_path)
+        new_paths = "\"#{jpush_sim_headers}\" \"#{jpush_device_headers}\" \"#{jshare_headers}\""
+        new_library_paths = "\"#{jcore_sim_libs}\" \"#{jcore_device_libs}\" \"#{jpush_sim_libs}\" \"#{jpush_device_libs}\""
+        if content.include?('HEADER_SEARCH_PATHS')
+          content = content.gsub(/(HEADER_SEARCH_PATHS\s*=)([^\n]*)/) do
+            match = Regexp.last_match
+            existing_paths = match[2].strip.gsub(/-I(?=\/)/, '')
+            "#{match[1]} #{existing_paths} #{new_paths}"
+          end
+        else
+          content += "\nHEADER_SEARCH_PATHS = #{new_paths}\n"
+        end
+        if content.include?('LIBRARY_SEARCH_PATHS')
+          content = content.gsub(/(LIBRARY_SEARCH_PATHS\s*=)([^\n]*)/) do
+            match = Regexp.last_match
+            "#{match[1]} #{match[2].strip} #{new_library_paths}"
+          end
+        else
+          content += "\nLIBRARY_SEARCH_PATHS = #{new_library_paths}\n"
+        end
+        if content.include?('OTHER_LDFLAGS =')
+          original_ldflags = content[/OTHER_LDFLAGS\s*=\s*([^\n]*)/, 1]
+          simulator_ldflags = original_ldflags
+            &.gsub('-l"WechatOpenSDK"', '')
+            &.gsub('-l"WeiboSDK"', '')
+            &.squeeze(' ')
+            &.strip
+          if original_ldflags && simulator_ldflags
+            content = content.gsub(/OTHER_LDFLAGS\s*=\s*[^\n]*/, "OTHER_LDFLAGS = #{simulator_ldflags}")
+            if !content.include?('OTHER_LDFLAGS[sdk=iphoneos*]')
+              content += "\nOTHER_LDFLAGS[sdk=iphoneos*] = #{original_ldflags.strip}\n"
+            end
+          end
+        end
+        File.write(xcconfig_path, content)
+        puts "Updated xcconfig: #{xcconfig_path}"
+      end
+    end
+  end
 end

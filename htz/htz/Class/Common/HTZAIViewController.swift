@@ -9,6 +9,10 @@ import UIKit
 
 class HTZAIViewController: HTZBaseViewController {
 
+    override var pageTraceName: String? {
+        return "AI"
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
         self.title = "AI"

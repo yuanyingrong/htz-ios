@@ -10,6 +10,10 @@ import UIKit
 import Alamofire
 
 class HTZAlbumListViewController: HTZBaseViewController {
+
+    override var pageTraceName: String? {
+        return "AlbumList"
+    }
     
     private lazy var albumListViewModel: HTZAlbumListViewModel = HTZAlbumListViewModel()
     

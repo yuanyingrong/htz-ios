@@ -33,7 +33,9 @@ class HTZAlbumListViewModel: NSObject {
                             obj.album_id = model?.sutra_id
                             obj.icon = self.icon
                             obj.album_title = self.albumTitle
-                            if let audio = model?.audio {
+                            if let audioId = model?.audio_id, !audioId.isEmpty {
+                                obj.file_link = ossurl + audioId
+                            } else if let audio = model?.audio, !audio.isEmpty {
                                 obj.file_link = "http://htzshanghai.top/resources/audios/\(sutra_id)/" + audio
                             } else {
                                 obj.file_link = "http://htzshanghai.top/resources/audios/\(sutra_id)/"

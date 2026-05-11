@@ -10,11 +10,24 @@ import UIKit
 
 class HTZBaseViewController: UIViewController {
 
+    var pageTraceName: String? {
+        return nil
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
         // Do any additional setup after loading the view.
         self.configInterface()
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+
+        guard let pageTraceName = pageTraceName, !pageTraceName.isEmpty else {
+            return
+        }
+        HTZLog.info("PAGE-TRACE", "ENTER \(pageTraceName)")
     }
     
     override func didReceiveMemoryWarning() {

@@ -10,6 +10,10 @@ import UIKit
 
 class HTZLearnClassicsViewController: HTZBaseViewController {
 
+    override var pageTraceName: String? {
+        return "LearnClassics"
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
 

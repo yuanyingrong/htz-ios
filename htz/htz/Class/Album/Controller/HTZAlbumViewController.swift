@@ -9,6 +9,10 @@
 import UIKit
 
 class HTZAlbumViewController: HTZBaseViewController {
+
+    override var pageTraceName: String? {
+        return "Album"
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()

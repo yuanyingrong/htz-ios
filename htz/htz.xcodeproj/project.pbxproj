@@ -146,9 +146,6 @@
 		77565A6A2EB61EF800156329 /* HTZLogConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77565A672EB61EF800156329 /* HTZLogConfig.swift */; };
 		77565A6B2EB61EF800156329 /* HTZLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77565A682EB61EF800156329 /* HTZLogger.swift */; };
 		77BE664F2EF10AAB001105A8 /* HTZAIViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77BE664E2EF10AAB001105A8 /* HTZAIViewController.swift */; };
-		B81E54D877D0F60DC3130CE5 /* Pods_htzTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D388F9A47532B69AAADD006F /* Pods_htzTests.framework */; };
-		D31874CF823855C8B4830729 /* Pods_htz.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 42DD8B27EE9BB122436019E5 /* Pods_htz.framework */; };
-		D9DF35AFB631E3047B22EB2A /* Pods_htzUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E81A5C4C18042CB3EC0D474 /* Pods_htzUITests.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -345,7 +342,6 @@
 				19333385234DD1B500498D76 /* CoreGraphics.framework in Frameworks */,
 				19333383234DD1AB00498D76 /* AVFoundation.framework in Frameworks */,
 				19333381234DD1A000498D76 /* AudioToolbox.framework in Frameworks */,
-				D31874CF823855C8B4830729 /* Pods_htz.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -353,7 +349,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B81E54D877D0F60DC3130CE5 /* Pods_htzTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -361,7 +356,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D9DF35AFB631E3047B22EB2A /* Pods_htzUITests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1225,13 +1219,9 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-htz/Pods-htz-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
-			inputPaths = (
-			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-htz/Pods-htz-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -1312,13 +1302,9 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-htz/Pods-htz-resources-${CONFIGURATION}-input-files.xcfilelist",
 			);
-			inputPaths = (
-			);
 			name = "[CP] Copy Pods Resources";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-htz/Pods-htz-resources-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;

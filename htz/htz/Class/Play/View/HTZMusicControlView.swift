@@ -183,6 +183,11 @@ class HTZMusicControlView: BaseView {
         button.addTarget(self, action: #selector(playOrPauseMusic), for: UIControl.Event.touchUpInside)
         return button
     }()
+
+    /// Returns true if the play button is currently selected (showing "stop" icon, meaning audio is playing)
+    var isPlayButtonSelected: Bool {
+        return playButton.isSelected
+    }
    
     private lazy var previousButton: UIButton = {
         let button = UIButton(type: UIButton.ButtonType.custom)
@@ -353,7 +358,7 @@ extension HTZMusicControlView {
         } else {
             self.setupPauseButton()
         }
-        
+
         if let delegate = self.delegate, delegate.responds(to: Selector(("controlViewDidClickPlay:"))) {
             delegate.controlViewDidClickPlay(self)
         }

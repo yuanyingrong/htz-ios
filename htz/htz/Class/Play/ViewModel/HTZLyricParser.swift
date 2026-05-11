@@ -132,6 +132,12 @@ class HTZLyricParser: NSObject {
     ///   - isDelBlank: 是否去掉空白行歌词
     /// - Returns: 包含歌词模型的数组
     static func lyricParser(localPath: String, isDelBlank: Bool) -> [HTZLyricModel]? {
+        // 检查路径是否有效（不是目录且文件存在）
+        var isDirectory: ObjCBool = false
+        if !FileManager.default.fileExists(atPath: localPath, isDirectory: &isDirectory) || isDirectory.boolValue {
+            HTZLog.warning("LYRIC", "歌词文件不存在或是目录: \(localPath)")
+            return nil
+        }
         // 根据歌词文件的本地路径获取歌词内容
         do {
             let lyricStr = try String(contentsOfFile: localPath, encoding: String.Encoding.utf8)

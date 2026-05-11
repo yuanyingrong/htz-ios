@@ -18,6 +18,10 @@ enum HTZPlayerPlayStyle: NSInteger {
 }
 
 class HTZPlayViewController: HTZBaseViewController {
+
+    override var pageTraceName: String? {
+        return "Play"
+    }
     
     /// 循环类型
     var playStyle: HTZPlayerPlayStyle?
@@ -485,6 +489,7 @@ extension HTZPlayViewController {
     
     /// 播放
     func playMusic() {
+        let currentState = kPlayer.playerState ?? HTZAudioPlayerState.stopped
         // 首先检查网络状态
         let networkState = HTZMusicTool.networkState()
         if networkState == "none" {
@@ -497,15 +502,15 @@ extension HTZPlayViewController {
                 // 需要重新请求
                 getMusicInfo()
             } else {
-                if kPlayer.playerState == HTZAudioPlayerState.stopped {
+                if currentState == HTZAudioPlayerState.stopped {
                     kPlayer.play()
-                } else if kPlayer.playerState == HTZAudioPlayerState.paused {
+                } else if currentState == HTZAudioPlayerState.paused {
                     kPlayer.resume()
                 } else {
                     kPlayer.play()
                 }
             }
-            
+
         }
     }
     
@@ -1039,8 +1044,8 @@ extension HTZPlayViewController: HTZMusicControlViewDelegate {
     }
     
     @objc func controlViewDidClickPlay(_ controlView: HTZMusicControlView) {
-        
-        if let isPlaying = self.isPlaying, isPlaying {
+        // Use button's isSelected to determine action: true means "stop" is showing (currently playing), false means "play" is showing (paused)
+        if controlView.isPlayButtonSelected {
             self.pauseMusic()
         } else {
             self.playMusic()
@@ -1048,24 +1053,26 @@ extension HTZPlayViewController: HTZMusicControlViewDelegate {
     }
     
     @objc func controlViewDidClickPrev(_ controlView: HTZMusicControlView) {
-        
+
         self.isChanged = true
-        if self.isPlaying! {
+        let currentState = kPlayer.playerState ?? HTZAudioPlayerState.stopped
+        if currentState == HTZAudioPlayerState.playing || currentState == HTZAudioPlayerState.paused {
             self.stopMusic()
         }
-        
+
         DispatchQueue.main.async {
             self.playPrevMusic()
         }
     }
     
     @objc func controlViewDidClickNext(_ controlView: HTZMusicControlView) {
-        
+
         self.isAutoPlay = false
-        if self.isPlaying! {
+        let currentState = kPlayer.playerState ?? HTZAudioPlayerState.stopped
+        if currentState == HTZAudioPlayerState.playing || currentState == HTZAudioPlayerState.paused {
             self.stopMusic()
         }
-        
+
         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now()) {
             self.isChanged = true
             self.playNextMusic()
@@ -1108,8 +1115,9 @@ extension HTZPlayViewController: HTZMusicControlViewDelegate {
     
     @objc func controlView(_ controlView: HTZMusicControlView, didSliderTapped value: CGFloat) {
         self.controlView.currentTime = HTZMusicTool.timeStr(msTime: self.duration! * TimeInterval(value))
-        
-        if self.isPlaying! {
+
+        let currentState = kPlayer.playerState ?? HTZAudioPlayerState.stopped
+        if currentState == HTZAudioPlayerState.playing {
             kPlayer.setPlayerProgress(progress: Float(value))
         } else {
             self.toSeekProgress = value
@@ -1443,4 +1451,3 @@ extension HTZPlayViewController: HTZDownloadManagerDelegate {
     }
     
 }
-

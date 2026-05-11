@@ -26,6 +26,11 @@ class HTZSearchViewController: PYSearchViewController {
 //        navigationItem.backBarButtonItem = backItem
         navigationItem.leftBarButtonItem = backItem
     }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        HTZLog.info("PAGE-TRACE", "ENTER Search")
+    }
     
     
     private func addSearchController() {
