@@ -1,8 +1,13 @@
-# Tasks: Infrastructure Setup
+# Tasks: Infrastructure Setup (Skeleton)
 
 - [ ] Create `Packages` folder at the project root.
-- [ ] Initialize `Package.swift` with basic structure and TCA dependency.
-- [ ] Create skeleton modules: `DesignSystem`, `NetworkKit`, `CoreAudio`.
-- [ ] Add the `Packages` folder to the Xcode workspace.
-- [ ] Verify that the project compiles with the new dependency.
-- [ ] (Optional) Create `HTZApp.swift` as a SwiftUI entry point, but keep it inactive for now.
+- [ ] Create subdirectory skeletons: `Packages/DesignSystem`, `Packages/NetworkKit`, `Packages/CoreAudio`.
+- [ ] Initialize `Package.swift` in `Packages/` with TCA dependency and module definitions.
+- [ ] Drag the `Packages` folder into the `htz` Xcode Workspace.
+- [ ] Link an empty module (e.g., `DesignSystem`) to the main `htz` target to verify integration.
+- [ ] Build and run the legacy App to ensure zero regression in the existing UIKit environment.
+
+### ⛔ Out of Scope for this Change
+- No creation of `HTZApp.swift` or SwiftUI `@main`.
+- No implementation of Design Tokens or Network logic.
+- No modification of `AppDelegate` or existing business code.
