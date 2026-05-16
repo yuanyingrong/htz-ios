@@ -5,9 +5,22 @@ A unified design system based on Apple's modern visual language (Apple Music sty
 
 ### 1. Design Tokens
 - **Colors**: Named semantic colors supporting Dark Mode (htzAccent, htzBackground, htzLabel, etc.).
+  - **Requirement**: The DesignSystem module SHALL provide semantic color tokens that support both Light and Dark modes.
+  - **Scenario: Accessing a semantic color**
+    - **WHEN** a view requests `Color.htzAccent`
+    - **THEN** the system returns the correct accent color based on the current user interface style.
 - **Typography**: Responsive font styles using SF Pro and SF Pro Rounded (htzLargeTitle, htzBody, htzLyric, etc.).
-- **Spacing**: Fixed-scale grid system (xs: 4pt, sm: 8pt, md: 16pt, etc.).
-- **Radius**: Consistent corner radii (sm: 8pt, md: 12pt, lg: 16pt, xl: 24pt).
+  - **Requirement**: The DesignSystem module SHALL provide standard typography styles using SF Pro and SF Pro Rounded fonts.
+  - **Scenario: Applying a title style**
+    - **WHEN** a view applies the `htzTitle` font style
+    - **THEN** the text is rendered with the correct weight, size, and design (Rounded) as defined in the specification.
+- **Spacing & Radius**: Standardized grid and corner values.
+  - **Spacing**: Fixed-scale grid system (xs: 4pt, sm: 8pt, md: 16pt, etc.).
+  - **Radius**: Consistent corner radii (sm: 8pt, md: 12pt, lg: 16pt, xl: 24pt).
+  - **Requirement**: The DesignSystem module SHALL provide a standardized set of spacing and corner radius values.
+  - **Scenario: Applying consistent padding**
+    - **WHEN** a view uses `HTZSpacing.md`
+    - **THEN** it applies exactly 16pt of spacing as defined in the layout grid.
 
 ### 2. Visual Language
 - **Materials**: Extensive use of SwiftUI `.ultraThinMaterial` and `.regularMaterial` for blurs.
