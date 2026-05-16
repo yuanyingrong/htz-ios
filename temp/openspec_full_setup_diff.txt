@@ -1,0 +1,286 @@
+diff --git a/openspec/ai-handoff/active-risks.md b/openspec/ai-handoff/active-risks.md
+new file mode 100644
+index 0000000..6dd8bd5
+--- /dev/null
++++ b/openspec/ai-handoff/active-risks.md
+@@ -0,0 +1,30 @@
++# Active Risks
++
++## 🔴 Critical Risks
++
++### 1. FreeStreamer Lifecycle Risk
++- **Description**: `FreeStreamer` is an Objective-C/C library with manual memory management.
++- **Risk**: Wrapping it in a Swift Actor might lead to race conditions if the C-callbacks interact with Main Thread objects inappropriately, or memory leaks if closures capture the streamer incorrectly.
++- **Mitigation**: Use `CheckedContinuation` carefully and ensure all UI updates from the actor are dispatched via `MainActor`.
++
++### 2. HTZPlayViewController Complexity
++- **Description**: This class is deeply intertwined with almost all app systems (Audio, UI, Network, Share).
++- **Risk**: Attempting to refactor it too early or all at once will break core App functionality.
++- **Mitigation**: This must be the **last** page migrated. We will extract its logic into TCA actions gradually, first as dependencies.
++
++## 🟠 High Risks
++
++### 3. TCA Scope Creep
++- **Description**: TCA can become overly complex if state is shared unnecessarily across deep trees.
++- **Risk**: Creating a monolithic "Global State" that makes the App sluggish or hard to maintain.
++- **Mitigation**: Keep features scoped. Use `Shared` state only where absolutely necessary (e.g., Now Playing).
++
++### 4. SwiftUI/UIKit Navigation Hybrid Risk
++- **Description**: Managing a stack that mixes `UINavigationController` and `NavigationStack`.
++- **Risk**: Broken back buttons, navigation bar double-headers, or memory leaks from unreleased View Controllers.
++- **Mitigation**: Strictly use `UIHostingController` and `UIViewControllerRepresentable` with clean deinit logic.
++
++### 5. Design System Inconsistency
++- **Description**: The team might bypass tokens for "quick fixes."
++- **Risk**: UI becoming fragmented again, defeating the purpose of the refactor.
++- **Mitigation**: Code reviews must enforce token usage. No raw `Color` or `Font` initializers in Features.
+diff --git a/openspec/ai-handoff/current-state.md b/openspec/ai-handoff/current-state.md
+new file mode 100644
+index 0000000..87ca6e2
+--- /dev/null
++++ b/openspec/ai-handoff/current-state.md
+@@ -0,0 +1,41 @@
++# Current State
++
++## Summary
++The project has just completed the **OpenSpec Architecture Initialization** phase. The blueprint for refactoring is defined, but implementation has not yet begun.
++
++## Status Breakdown
++
++### ✅ Completed (Architecture Design)
++- [x] OpenSpec Project Vision (`project.md`).
++- [x] Core Technical Specifications (`specs/`).
++- [x] Initial Phase 1 Change Roadmap (`changes/`).
++- [x] Architecture Decision Records (`decisions/ADR-xxx.md`).
++- [x] AI Operational Handoff Framework (`ai-handoff/`).
++
++### ❌ Uncompleted (Implementation)
++- [ ] Swift Package Manager (SPM) Infrastructure setup.
++- [ ] TCA (The Composable Architecture) integration.
++- [ ] Design System Tokens implementation.
++- [ ] Model migration to `Codable`.
++- [ ] Audio Player Actor wrapper.
++- [ ] Any SwiftUI page migration.
++
++## Current Real Architecture
++- **Language**: Swift 5 (Mixed with legacy patterns).
++- **UI Framework**: 100% UIKit with SnapKit.
++- **State Management**: Fragments of singletons and closure-based callbacks.
++- **JSON Parsing**: `HandyJSON` and `SwiftyJSON`.
++- **Audio**: `FreeStreamer` (Objective-C) with global shared instance.
++- **Navigation**: Traditional `UITabBarController` and `UINavigationController`.
++
++## Technical Debt (Legacy)
++- **God Classes**: `HTZPlayViewController` (too much responsibility).
++- **Singletons**: `HTZNetWorkManager`, `HTZPlayerManager`, `HTZDownloadManager`.
++- **Mixing Styles**: Multiple JSON parsing libraries.
++- **No Tests**: Zero unit or UI tests.
++
++## ⛔ Strictly Prohibited Areas (DO NOT TOUCH)
++- **Legacy Business Logic**: Do not modify existing logic in `htz/htz/Class/` unless explicitly requested.
++- **Audio Core**: Do not modify `FreeStreamer` source code or headers.
++- **Social SDKs**: Do not touch WeChat, QQ, or Weibo SDK integration logic.
++- **Core Data Schema**: Do not change the existing model definitions.
+diff --git a/openspec/ai-handoff/next-priority.md b/openspec/ai-handoff/next-priority.md
+new file mode 100644
+index 0000000..d02c349
+--- /dev/null
++++ b/openspec/ai-handoff/next-priority.md
+@@ -0,0 +1,20 @@
++# Next Priority
++
++## Immediate Goal
++The next step is to establish the **Modern Infrastructure (Phase 1, Step 1)**.
++
++## Active Change
++- **ID**: `01-infrastructure-setup`
++- **Location**: `openspec/changes/01-infrastructure-setup/`
++
++## Objective
++Create the `Packages/` directory and initialize the `Package.swift` manifest with TCA dependencies.
++
++## Why this one?
++This is a prerequisite for all subsequent refactoring steps. We cannot implement the Design System or new Features without the modular SPM infrastructure and the TCA framework in place.
++
++## Success Criteria
++1. `Packages/` folder exists.
++2. `Package.swift` is valid and includes TCA.
++3. The project compiles with the new SPM dependency.
++4. No legacy business code has been modified.
+diff --git a/openspec/ai-handoff/onboarding.md b/openspec/ai-handoff/onboarding.md
+new file mode 100644
+index 0000000..cce31c4
+--- /dev/null
++++ b/openspec/ai-handoff/onboarding.md
+@@ -0,0 +1,36 @@
++# AI Onboarding Guide
++
++## 🚀 Welcome, AI Engineer
++You are here to modernize the HTZ iOS application. This is a high-stakes refactor of a media-heavy App.
++
++## 1. Essential Reading Order
++1. `openspec/project.md`: Understand the vision and principles.
++2. `openspec/ai-handoff/current-state.md`: Know what is real and what is planned.
++3. `openspec/ai-handoff/next-priority.md`: Find out exactly what to do next.
++4. `openspec/ai-handoff/active-risks.md`: Understand where you might break things.
++5. `openspec/specs/`: Read the relevant technical specification for your task.
++
++## 2. Hard Constraints (What you CANNOT do)
++- **Do NOT** refactor the audio engine core (`FreeStreamer`). Only wrap it.
++- **Do NOT** change existing business logic in legacy files (`htz/htz/Class/`).
++- **Do NOT** add new external dependencies to `Podfile` without user approval.
++- **Do NOT** bypass the Design System tokens.
++- **Do NOT** perform "Big Bang" refactors. Keep each `change` small and testable.
++
++## 3. Standard Execution Workflow
++Every time you perform a `change` from `openspec/changes/`:
++
++1. **Review**: Read the `proposal.md`, `design.md`, and `tasks.md` in the change folder.
++2. **Strategy**: Propose a step-by-step plan based on the tasks.
++3. **Implementation**: Modify files in small, logical chunks.
++4. **Validation**:
++   - Ensure the project builds.
++   - Run relevant unit tests (or add new ones for the change).
++   - If UI, verify in Simulator if possible.
++5. **Update Handoff**: Update `openspec/ai-handoff/current-state.md` and `next-priority.md` after completion.
++
++## 4. Architectural Guardrails
++- **TCA v1.10+**: Always use `@Reducer` and `@ObservableState`.
++- **SPM**: New logic belongs in `Packages/`.
++- **SwiftUI**: Use iOS 16+ APIs.
++- **Async/Await**: Prefer over completion handlers.
+diff --git a/openspec/decisions/ADR-001-use-tca.md b/openspec/decisions/ADR-001-use-tca.md
+new file mode 100644
+index 0000000..7b70293
+--- /dev/null
++++ b/openspec/decisions/ADR-001-use-tca.md
+@@ -0,0 +1,22 @@
++# ADR-001: Use The Composable Architecture (TCA)
++
++## Status
++Accepted
++
++## Context
++The legacy application suffers from "God Views" (e.g., `HTZPlayViewController`), heavy use of singletons, and fragmented communication patterns (Delegates, Notifications, didSet). This makes state synchronization difficult and testing nearly impossible.
++
++## Decision
++Adopt **The Composable Architecture (TCA)** as the primary state management framework for the modernized application.
++
++## Rationale
++1. **Unidirectional Data Flow**: Ensures state changes are predictable and easy to debug.
++2. **Testability**: Provides `TestStore` for exhaustive unit testing of business logic.
++3. **Modularity**: Naturally supports feature decomposition and composition.
++4. **SwiftUI First**: Deeply integrated with SwiftUI's state management primitives.
++5. **Standardization**: Reduces developer cognitive load by providing a consistent pattern for all features.
++
++## Consequences
++- Requires a learning curve for developers unfamiliar with functional programming or Redux-like patterns.
++- Adds boilerplate for simple features.
++- Tight coupling with the TCA library (mitigated by its widespread adoption and stability).
+diff --git a/openspec/decisions/ADR-002-use-spm-modularization.md b/openspec/decisions/ADR-002-use-spm-modularization.md
+new file mode 100644
+index 0000000..97a8408
+--- /dev/null
++++ b/openspec/decisions/ADR-002-use-spm-modularization.md
+@@ -0,0 +1,21 @@
++# ADR-002: Use SPM for Internal Modularization
++
++## Status
++Accepted
++
++## Context
++The legacy project is a monolithic Xcode target using CocoaPods for all dependencies. This leads to slow build times, tight coupling, and difficulty in isolating feature-specific logic.
++
++## Decision
++Use **Swift Package Manager (SPM)** to create internal modules for business logic, UI components, and core services.
++
++## Rationale
++1. **Compilation Isolation**: Faster incremental builds as unchanged packages aren't recompiled.
++2. **Clear Boundaries**: Forces developers to define explicit interfaces between modules.
++3. **Swift Native**: No extra tools required for internal dependency management.
++4. **Testing**: Easier to write and run unit tests for isolated modules.
++
++## Consequences
++- Requires maintaining a root `Package.swift`.
++- Coexistence with CocoaPods for legacy external SDKs (JPush, JShare) is necessary during the transition.
++- Need to manage visibility (`public` vs `internal`) across module boundaries.
+diff --git a/openspec/decisions/ADR-003-swiftui-migration-strategy.md b/openspec/decisions/ADR-003-swiftui-migration-strategy.md
+new file mode 100644
+index 0000000..d3f18c2
+--- /dev/null
++++ b/openspec/decisions/ADR-003-swiftui-migration-strategy.md
+@@ -0,0 +1,21 @@
++# ADR-003: SwiftUI Incremental Migration Strategy
++
++## Status
++Accepted
++
++## Context
++The App is 100% UIKit with SnapKit. A full "big bang" rewrite is too risky.
++
++## Decision
++Adopt an **"Inside-Out" Incremental Migration Strategy**.
++
++## Rationale
++1. **Low Risk**: Start with simple leaf pages (Profile, Login) to establish the pattern.
++2. **Hybrid State**: Use `UIViewControllerRepresentable` and `UIHostingController` to bridge legacy and modern components.
++3. **Iterative Value**: Deliver modernized features while keeping the rest of the App functional.
++4. **Learning Loop**: Refine the design system and TCA patterns on simpler pages before tackling the complex Player page.
++
++## Consequences
++- Requires temporary "bridge" code (converters, wrappers).
++- Navigation logic will be complex during the hybrid phase (UIKit Nav vs SwiftUI NavigationStack).
++- UI inconsistency might occur if the design system isn't strictly followed in hybrid views.
+diff --git a/openspec/decisions/ADR-004-player-actor-wrapper.md b/openspec/decisions/ADR-004-player-actor-wrapper.md
+new file mode 100644
+index 0000000..db1f1cd
+--- /dev/null
++++ b/openspec/decisions/ADR-004-player-actor-wrapper.md
+@@ -0,0 +1,21 @@
++# ADR-004: Player Actor Wrapper
++
++## Status
++Accepted
++
++## Context
++The core audio engine uses `FreeStreamer` (Objective-C/C), which is not thread-safe and is accessed via global singletons. This causes race conditions and UI freezing.
++
++## Decision
++Wrap the legacy `FreeStreamer` engine in a **Swift Actor** (specifically a `@globalActor`).
++
++## Rationale
++1. **Concurrency Safety**: Actors provide compiler-guaranteed data isolation.
++2. **Modern API**: Exposes an async/await interface to the rest of the App.
++3. **Decoupling**: Decouples audio logic from UIKit view controllers.
++4. **Preservation**: Avoids the massive effort and risk of rewriting the low-level C/OC streaming logic.
++
++## Consequences
++- Requires bridging C-callbacks to Swift async continuations.
++- UI must observe state via `AsyncStream` or `MainActor`-safe publishers.
++- Potential performance overhead for high-frequency progress updates (mitigated by throttling).
+diff --git a/openspec/decisions/ADR-005-design-system-token-strategy.md b/openspec/decisions/ADR-005-design-system-token-strategy.md
+new file mode 100644
+index 0000000..501e6bb
+--- /dev/null
++++ b/openspec/decisions/ADR-005-design-system-token-strategy.md
+@@ -0,0 +1,20 @@
++# ADR-005: Design System Token Strategy
++
++## Status
++Accepted
++
++## Context
++UI styling is currently hardcoded in ViewControllers using raw colors and magic numbers for spacing/radius.
++
++## Decision
++Implement a **Centralized Token System** within a dedicated `DesignSystem` SPM module.
++
++## Rationale
++1. **Consistency**: Ensures all new SwiftUI views use the same colors, fonts, and spacing.
++2. **Maintenance**: Allows project-wide style changes (e.g., brand color update) by editing a single file.
++3. **Dark Mode**: Simplifies Dark Mode support through semantic color naming.
++4. **Developer Experience**: Auto-completion for tokens reduces errors and speeds up UI development.
++
++## Consequences
++- Requires a one-time effort to define and map all tokens.
++- Legacy UIKit views won't automatically benefit unless manually refactored to use the tokens (via bridge extensions).

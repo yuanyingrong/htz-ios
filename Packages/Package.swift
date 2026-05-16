@@ -23,7 +23,8 @@ let package = Package(
         .target(
             name: "DesignSystem",
             dependencies: [],
-            path: "DesignSystem/Sources/DesignSystem"
+            path: "DesignSystem/Sources/DesignSystem",
+            resources: [.process("Resources")]
         ),
         .target(
             name: "NetworkKit",

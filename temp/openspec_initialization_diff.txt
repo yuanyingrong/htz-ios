@@ -1,0 +1,312 @@
+diff --git a/openspec/changes/01-infrastructure-setup/design.md b/openspec/changes/01-infrastructure-setup/design.md
+new file mode 100644
+index 0000000..c91f22c
+--- /dev/null
++++ b/openspec/changes/01-infrastructure-setup/design.md
+@@ -0,0 +1,21 @@
++# Design: Infrastructure Setup
++
++## Directory Structure
++```text
++htz/
++├── Packages/
++│   ├── Package.swift (Manifest)
++│   ├── Features/ (Home, Album, etc.)
++│   ├── CoreAudio/
++│   ├── DesignSystem/
++│   ├── NetworkKit/
++│   └── SharedModels/
++```
++
++## Integration Strategy
++- **CocoaPods**: Continue using for external SDKs (JPush, JShare, FreeStreamer).
++- **SPM**: Use for all new internal business logic and UI components.
++- **Bridging**: Ensure SPM modules can be imported by the main Xcode project.
++
++## Dependency Management
++Add `swift-composable-architecture` to the SPM manifest.
+diff --git a/openspec/changes/01-infrastructure-setup/proposal.md b/openspec/changes/01-infrastructure-setup/proposal.md
+new file mode 100644
+index 0000000..c393bbd
+--- /dev/null
++++ b/openspec/changes/01-infrastructure-setup/proposal.md
+@@ -0,0 +1,15 @@
++# Proposal: Infrastructure Setup
++
++## Problem
++The current project is a monolithic UIKit app using CocoaPods only. To enable modern refactoring, we need a modular structure and a modern state management framework.
++
++## Proposed Change
++- Create a `Packages/` directory for internal Swift Package Manager (SPM) modules.
++- Initialize the SPM structure with a root `Package.swift`.
++- Integrate `The Composable Architecture` (TCA) as the primary state management framework.
++- Prepare the ground for a SwiftUI `@main` entry point while maintaining the legacy `AppDelegate` for compatibility.
++
++## Expected Impact
++- Enables modular development.
++- Allows using TCA in new/refactored features.
++- No immediate impact on existing UIKit code (side-by-side coexistence).
+diff --git a/openspec/changes/01-infrastructure-setup/tasks.md b/openspec/changes/01-infrastructure-setup/tasks.md
+new file mode 100644
+index 0000000..784aa0a
+--- /dev/null
++++ b/openspec/changes/01-infrastructure-setup/tasks.md
+@@ -0,0 +1,8 @@
++# Tasks: Infrastructure Setup
++
++- [ ] Create `Packages` folder at the project root.
++- [ ] Initialize `Package.swift` with basic structure and TCA dependency.
++- [ ] Create skeleton modules: `DesignSystem`, `NetworkKit`, `CoreAudio`.
++- [ ] Add the `Packages` folder to the Xcode workspace.
++- [ ] Verify that the project compiles with the new dependency.
++- [ ] (Optional) Create `HTZApp.swift` as a SwiftUI entry point, but keep it inactive for now.
+diff --git a/openspec/changes/02-design-system-tokens/proposal.md b/openspec/changes/02-design-system-tokens/proposal.md
+new file mode 100644
+index 0000000..5824e1e
+--- /dev/null
++++ b/openspec/changes/02-design-system-tokens/proposal.md
+@@ -0,0 +1,9 @@
++# Proposal: Design System Tokens
++
++## Goal
++Establish a unified visual language by defining design tokens (Color, Typography, Spacing, Radius) in the `DesignSystem` module.
++
++## Change
++- Add `Tokens/` directory in `DesignSystem` SPM package.
++- Define SwiftUI extensions for `Color` and `Font`.
++- Implement basic `Spacing` and `Radius` enums.
+diff --git a/openspec/changes/03-network-kit-codable/proposal.md b/openspec/changes/03-network-kit-codable/proposal.md
+new file mode 100644
+index 0000000..89e1a39
+--- /dev/null
++++ b/openspec/changes/03-network-kit-codable/proposal.md
+@@ -0,0 +1,9 @@
++# Proposal: NetworkKit & Codable Migration
++
++## Goal
++Replace `HandyJSON` and `SwiftyJSON` with native `Codable` and unify network requests under a new `NetworkKit` module.
++
++## Change
++- Create `NetworkKit` module.
++- Define `AudioTrack`, `Album`, `Banner` models as `Codable` structs.
++- Implement a `NetworkManager` using Moya that returns `Codable` results.
+diff --git a/openspec/changes/04-home-feature-tca-core/proposal.md b/openspec/changes/04-home-feature-tca-core/proposal.md
+new file mode 100644
+index 0000000..7ce2603
+--- /dev/null
++++ b/openspec/changes/04-home-feature-tca-core/proposal.md
+@@ -0,0 +1,9 @@
++# Proposal: Home Feature TCA Core
++
++## Goal
++Implement the core logic for the Home screen using TCA, decoupled from the legacy `HTZHomeViewController`.
++
++## Change
++- Create `Features/Home` module.
++- Implement `HomeFeature` Reducer with `onAppear`, `bannersLoaded`, and `albumsLoaded` actions.
++- Write unit tests for the `HomeFeature` using `TestStore`.
+diff --git a/openspec/project.md b/openspec/project.md
+new file mode 100644
+index 0000000..c24dc03
+--- /dev/null
++++ b/openspec/project.md
+@@ -0,0 +1,40 @@
++# Project OpenSpec: HTZ iOS Modernization
++
++## 1. Vision & Core Principles
++This project aims to refactor the "黄庭禅" (HTZ) iOS application from a legacy UIKit/Singleton-heavy codebase into a modern, modular, and highly testable SwiftUI application using The Composable Architecture (TCA).
++
++### Core Principles
++- **Safety First**: The App must remain runnable at every phase.
++- **Incrementalism**: Refactor one feature at a time; avoid "Big Bang" rewrites.
++- **Modern Standards**: Target iOS 16+, Swift 5.9+, and SwiftUI 4.
++- **Testability**: Every feature must be verifiable via unit tests (TCA TestStore).
++- **Design Excellence**: Adhere to Apple's modern design language (Apple Music style).
++
++## 2. Refactoring Goals
++- **Architecture**: Transition to TCA for state management and SPM for modularity.
++- **UI Framework**: Complete migration from UIKit/SnapKit to SwiftUI.
++- **Data Layer**: Replace HandyJSON/SwiftyJSON with Swift `Codable`.
++- **Media Core**: Encapsulate legacy C/OC audio engines (FreeStreamer) into safe Swift Actors.
++- **User Experience**: Implement Dark Mode, Dynamic Type, and high-fidelity animations.
++
++## 3. Technical Constraints & Targets
++- **Target OS**: iOS 16.0+
++- **Primary Language**: Swift 5.9+
++- **State Management**: The Composable Architecture (TCA) v1.10+
++- **Reactive Framework**: Combine (Native)
++- **Dependency Management**: CocoaPods (External) + SPM (Internal Modules)
++- **Networking**: Moya + Codable
++- **Persistence**: Core Data (Wrapped)
++
++## 4. Non-Negotiable Capabilities (Preservation)
++- **Audio Integrity**: The core playback logic (FreeStreamer) must remain stable and performant.
++- **Social Integration**: WeChat/QQ/Weibo login and sharing must remain fully functional.
++- **Push Notifications**: JPush integration must be preserved.
++- **Offline Access**: Download and cache management must not be broken during migration.
++
++## 5. Definition of Done (DoD)
++- Feature is 100% SwiftUI (except for unavoidable low-level bridges).
++- Business logic is managed by TCA Reducers with associated unit tests.
++- UI adheres to the `DesignSystem` token specifications.
++- No memory leaks or performance regressions compared to legacy implementation.
++- Zero warnings in target modules.
+diff --git a/openspec/specs/architecture/spec.md b/openspec/specs/architecture/spec.md
+new file mode 100644
+index 0000000..2b49c79
+--- /dev/null
++++ b/openspec/specs/architecture/spec.md
+@@ -0,0 +1,27 @@
++# Architecture Specification
++
++## Target State
++The application shall be structured as a modular system using Swift Package Manager (SPM) for internal business logic and The Composable Architecture (TCA) for state management.
++
++### 1. Modularity (SPM)
++- **App Layer**: Entry point, assembly of features, and global navigation.
++- **Packages/Features**: Domain-specific UI and logic (Home, Album, Player, etc.).
++- **Packages/CoreAudio**: Audio engine and queue management.
++- **Packages/DesignSystem**: Shared UI components and tokens.
++- **Packages/NetworkKit**: Unified networking layer (Moya + Codable).
++- **Packages/CoreData**: Persistence services.
++
++### 2. State Management (TCA)
++- Every feature must implement `Reducer`, `State`, and `Action`.
++- Dependencies must be registered via `DependencyKey` and injected into Reducers.
++- Data flow must be strictly unidirectional (Action -> Reducer -> State -> View).
++- Shared state (e.g., Now Playing) shall be propagated using TCA's state sharing mechanisms.
++
++### 3. Data Flow & Communication
++- **Networking**: All models must implement `Codable`. Legacy `HandyJSON` and `SwiftyJSON` are strictly prohibited in the target state.
++- **Reactive**: Use `Combine` and `Async/Await` for asynchronous operations.
++- **Navigation**: Use SwiftUI `NavigationStack` managed by TCA state.
++
++### 4. Dependency Injection
++- Use TCA's `@Dependency` system to decouple features from side-effects (Network, AudioPlayer, LocalStorage).
++- Provide `liveValue` for production and `testValue`/`previewValue` for isolation.
+diff --git a/openspec/specs/design-system/spec.md b/openspec/specs/design-system/spec.md
+new file mode 100644
+index 0000000..6bbe7d6
+--- /dev/null
++++ b/openspec/specs/design-system/spec.md
+@@ -0,0 +1,27 @@
++# Design System Specification
++
++## Target State
++A unified design system based on Apple's modern visual language (Apple Music style), implemented using design tokens and reusable SwiftUI components.
++
++### 1. Design Tokens
++- **Colors**: Named semantic colors supporting Dark Mode (htzAccent, htzBackground, htzLabel, etc.).
++- **Typography**: Responsive font styles using SF Pro and SF Pro Rounded (htzLargeTitle, htzBody, htzLyric, etc.).
++- **Spacing**: Fixed-scale grid system (xs: 4pt, sm: 8pt, md: 16pt, etc.).
++- **Radius**: Consistent corner radii (sm: 8pt, md: 12pt, lg: 16pt, xl: 24pt).
++
++### 2. Visual Language
++- **Materials**: Extensive use of SwiftUI `.ultraThinMaterial` and `.regularMaterial` for blurs.
++- **Iconography**: 100% migration to SF Symbols with hierarchical or multicolor rendering.
++- **Shadows**: Soft, diffused shadows (low opacity) or no shadows (rely on depth/materials).
++- **Motion**: High-quality spring animations for all transitions (`.spring(response: 0.4, dampingFraction: 0.8)`).
++
++### 3. Core Components
++- **Player Card**: Dynamic cover art with scale animation (1.0 when playing, 0.92 when paused).
++- **Dynamic Background**: Full-screen blurred background using colors extracted from current album art.
++- **Lyric Component**: Smoothly scrolling lyrics with current line highlighting and scaling.
++- **Global Now Playing Bar**: A persistent, compact bar with a progress line and basic controls.
++
++### 4. Accessibility
++- Full support for **Dynamic Type** (all layouts must respond to font size changes).
++- **Dark Mode** support by default using semantic colors.
++- Proper accessibility labels for all interactive elements.
+diff --git a/openspec/specs/player/spec.md b/openspec/specs/player/spec.md
+new file mode 100644
+index 0000000..c153e4e
+--- /dev/null
++++ b/openspec/specs/player/spec.md
+@@ -0,0 +1,24 @@
++# Player Core Specification
++
++## Target State
++The audio playback system shall be a robust, thread-safe engine encapsulated in a Swift Actor, decoupled from UI logic, and accessible via TCA dependencies.
++
++### 1. Audio Engine (CoreAudio)
++- **Safe Encapsulation**: The legacy `FreeStreamer` (OC/C) must be wrapped in a `globalActor` or `Actor` to ensure concurrency safety.
++- **State Machine**: The player shall maintain a clear `PlaybackState` (idle, loading, playing, paused, error).
++- **Progress Tracking**: Real-time progress (0.0 - 1.0) and duration shall be published via `AsyncStream` or `Combine`.
++
++### 2. Queue Management
++- Supports multiple play modes: `sequential`, `shuffle`, `repeatOne`, `repeatAll`.
++- Handles dynamic queue updates without interrupting current playback.
++- Efficiently manages local cache vs. remote streaming.
++
++### 3. Remote Control & Info
++- Full integration with `MPNowPlayingInfoCenter`.
++- Handles `MPRemoteCommandCenter` events (Play, Pause, Seek, Next, Previous).
++- Audio session management for background playback and interruptions (calls, other apps).
++
++### 4. Integration
++- Exposed to TCA via `AudioPlayerClient`.
++- Features (Home, Album, Player) interact with the engine only through the injected client.
++- Supports "Now Playing Bar" as a persistent global component.
+diff --git a/openspec/specs/quality/spec.md b/openspec/specs/quality/spec.md
+new file mode 100644
+index 0000000..aeb79ec
+--- /dev/null
++++ b/openspec/specs/quality/spec.md
+@@ -0,0 +1,23 @@
++# Quality Assurance Specification
++
++## Target State
++The refactored codebase shall have high test coverage, zero architectural regressions, and a automated validation pipeline.
++
++### 1. Unit Testing (TCA)
++- Every `Reducer` MUST have a corresponding test file using `TestStore`.
++- All `Action` consequences (State changes and Effects) must be verified.
++- Dependency mocking is mandatory for all network and side-effect calls.
++
++### 2. Performance & Stability
++- **Zero Memory Leaks**: Regular audits using Xcode Instruments.
++- **Main Thread Hygiene**: All UI updates must occur on the Main Thread (MainActor); all heavy processing must be offloaded to Actors or background queues.
++- **Error Handling**: Graceful degradation for network failures or audio streaming issues; user-friendly alerts using SwiftUI `.alert`.
++
++### 3. Code Standards
++- **Linter**: Strict adherence to SwiftLint (or similar tool) rules established for the project.
++- **Warnings**: The project must build with zero compiler warnings in the refactored modules.
++- **Documentation**: All public APIs in internal SPM modules must have DocC comments.
++
++### 4. Regression Policy
++- "Never break the build": The App must be runnable and testable at every commit.
++- Manual verification is required for low-level audio logic (e.g., background audio session, lock screen controls) until automated UI tests are implemented.
+diff --git a/openspec/specs/swiftui-migration/spec.md b/openspec/specs/swiftui-migration/spec.md
+new file mode 100644
+index 0000000..9ef02f8
+--- /dev/null
++++ b/openspec/specs/swiftui-migration/spec.md
+@@ -0,0 +1,28 @@
++# SwiftUI Migration Specification
++
++## Target State
++The application shall be 100% SwiftUI (for the UI layer), utilizing iOS 16+ features like `NavigationStack` and `TabView` with custom styling.
++
++### 1. Migration Strategy
++- **Outside-In vs. Inside-Out**: Generally "Inside-Out" (leaf pages first) to minimize navigation complexity during transition.
++- **Interoperability**: Use `UIViewControllerRepresentable` to bridge legacy UIKit pages into the new SwiftUI shell temporarily.
++- **Entry Point**: The App must transition to `@main` and a `RootView` using `AppFeature` (TCA).
++
++### 2. Navigation Architecture
++- **Root**: `TabView` with system-styled tabs but custom overlays (Now Playing Bar).
++- **Stacks**: Each tab maintains its own `NavigationStack` managed by TCA state.
++- **Deep Linking**: Type-safe navigation destinations using TCA's navigation system.
++
++### 3. Component Replacement
++- **UITableView/UICollectionView** -> `List`, `LazyVStack`, `LazyVGrid`.
++- **MJRefresh** -> Native `.refreshable`.
++- **PYSearch** -> Native `.searchable`.
++- **SnapKit** -> SwiftUI layout primitives (`VStack`, `HStack`, `ZStack`, `padding`, `frame`).
++
++### 4. Transition Order (Priority)
++1. **Profile**: Simple state, low risk.
++2. **Search/Login**: Decoupled features.
++3. **Album List**: Grid/List transition.
++4. **Home**: High complexity layout.
++5. **Player**: Most critical page, high-fidelity requirement.
++6. **Navigation/TabBar**: Final unification.
