@@ -40,6 +40,7 @@ let package = Package(
             name: "Home",
             dependencies: [
                 "NetworkKit",
+                "DesignSystem",
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
             ],
             path: "Features/Home/Sources/Home"

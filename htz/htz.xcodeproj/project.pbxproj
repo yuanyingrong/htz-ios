@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+                77AF00000000000000000001 /* HomeBridgeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77BF00000000000000000001 /* HomeBridgeViewController.swift */; };
 		096053B67F4625251037E546 /* Pods_htzUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E81A5C4C18042CB3EC0D474 /* Pods_htzUITests.framework */; };
 		19144874244138B8001355A7 /* HTZAlbumViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19144873244138B8001355A7 /* HTZAlbumViewModel.swift */; };
 		19333381234DD1A000498D76 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 19333380234DD1A000498D76 /* AudioToolbox.framework */; };
@@ -170,6 +171,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+                77BF00000000000000000001 /* HomeBridgeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeBridgeViewController.swift; sourceTree = "<group>"; };
 		19144873244138B8001355A7 /* HTZAlbumViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZAlbumViewModel.swift; sourceTree = "<group>"; };
 		19333380234DD1A000498D76 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		19333382234DD1AB00498D76 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
@@ -809,6 +811,7 @@
 		19A95831229BDCFF007B48ED /* Controller */ = {
 			isa = PBXGroup;
 			children = (
+                                77BF00000000000000000001 /* HomeBridgeViewController.swift */,
 				195C195D22B24ADC002E8A04 /* HTZHomeViewController.swift */,
 				1971F390231CB5C0002FFF42 /* HTZAlbumListViewController.swift */,
 				19492EE82356AD6E00D24278 /* HTZSearchViewController.swift */,

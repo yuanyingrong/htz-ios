@@ -1,7 +1,7 @@
 {
     "tabbar_items": [
                      {
-                     "page": "HTZHomeViewController",
+                     "page": "HomeBridgeViewController",
                      "type": "home",
                      "title": "首页",
                      "normal_icon": "home_icon_normal",
