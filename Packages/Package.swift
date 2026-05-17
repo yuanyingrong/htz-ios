@@ -13,6 +13,7 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/pointfreeco/swift-composable-architecture", from: "1.10.0"),
+        .package(url: "https://github.com/Moya/Moya.git", from: "15.0.0"),
     ],
     targets: [
         .target(
@@ -28,8 +29,16 @@ let package = Package(
         ),
         .target(
             name: "NetworkKit",
-            dependencies: [],
+            dependencies: [
+                .product(name: "Moya", package: "Moya"),
+                .product(name: "CombineMoya", package: "Moya"),
+            ],
             path: "NetworkKit/Sources/NetworkKit"
+        ),
+        .testTarget(
+            name: "NetworkKitTests",
+            dependencies: ["NetworkKit"],
+            path: "NetworkKit/Tests/NetworkKitTests"
         ),
     ]
 )
