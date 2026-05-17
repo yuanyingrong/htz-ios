@@ -10,6 +10,7 @@ let package = Package(
         .library(name: "CoreAudio", targets: ["CoreAudio"]),
         .library(name: "DesignSystem", targets: ["DesignSystem"]),
         .library(name: "NetworkKit", targets: ["NetworkKit"]),
+        .library(name: "Home", targets: ["Home"]),
     ],
     dependencies: [
         .package(url: "https://github.com/pointfreeco/swift-composable-architecture", from: "1.10.0"),
@@ -35,10 +36,23 @@ let package = Package(
             ],
             path: "NetworkKit/Sources/NetworkKit"
         ),
+        .target(
+            name: "Home",
+            dependencies: [
+                "NetworkKit",
+                .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
+            ],
+            path: "Features/Home/Sources/Home"
+        ),
         .testTarget(
             name: "NetworkKitTests",
             dependencies: ["NetworkKit"],
             path: "NetworkKit/Tests/NetworkKitTests"
+        ),
+        .testTarget(
+            name: "HomeTests",
+            dependencies: ["Home"],
+            path: "Features/Home/Tests/HomeTests"
         ),
     ]
 )
