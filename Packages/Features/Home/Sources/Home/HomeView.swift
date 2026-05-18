@@ -64,14 +64,3 @@ public struct HomeView: View {
         }
     }
 }
-
-#Preview {
-    HomeView(store: Store(initialState: HomeFeature.State()) {
-        HomeFeature()
-    } withDependencies: {
-        $0.homeClient = HomeClient(
-            getBanners: { [Banner(id: "1", name: "Banner 1", imageUrl: "")] },
-            getAlbums: { [Album(id: "a1", name: "Album 1", imageUrl: "")] }
-        )
-    })
-}

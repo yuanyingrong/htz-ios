@@ -44,7 +44,3 @@ public struct AlbumRowView: View {
         .background(Color.htzBackground)
     }
 }
-
-#Preview {
-    AlbumRowView(album: Album(id: "1", name: "Sample Album", imageUrl: "https://example.com/a1.jpg"))
-}

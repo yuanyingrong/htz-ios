@@ -7,8 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-                77AF00000000000000000001 /* HomeBridgeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77BF00000000000000000001 /* HomeBridgeViewController.swift */; };
-		096053B67F4625251037E546 /* Pods_htzUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E81A5C4C18042CB3EC0D474 /* Pods_htzUITests.framework */; };
 		19144874244138B8001355A7 /* HTZAlbumViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19144873244138B8001355A7 /* HTZAlbumViewModel.swift */; };
 		19333381234DD1A000498D76 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 19333380234DD1A000498D76 /* AudioToolbox.framework */; };
 		19333383234DD1AB00498D76 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 19333382234DD1AB00498D76 /* AVFoundation.framework */; };
@@ -145,12 +143,12 @@
 		19DE3F132431E7F60008AC42 /* AppDelegate+Push.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19DE3F122431E7F60008AC42 /* AppDelegate+Push.swift */; };
 		19EC4C552442ABB60004E698 /* AppDelegate+Share.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19EC4C542442ABB60004E698 /* AppDelegate+Share.swift */; };
 		19EC4C572442CD450004E698 /* HTZShareMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19EC4C562442CD450004E698 /* HTZShareMenuView.swift */; };
-		1EC37867BD0F0674EAF0360D /* Pods_htzTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D388F9A47532B69AAADD006F /* Pods_htzTests.framework */; };
+		367C83AB4EDAB3BA67581E6B /* Pods_htzTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D388F9A47532B69AAADD006F /* Pods_htzTests.framework */; };
+		61ABF8AAB2EA8B80E95A6717 /* Pods_htz.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 42DD8B27EE9BB122436019E5 /* Pods_htz.framework */; };
+		69AC0FE604852C5044FA77CF /* Pods_htzUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E81A5C4C18042CB3EC0D474 /* Pods_htzUITests.framework */; };
 		77565A6A2EB61EF800156329 /* HTZLogConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77565A672EB61EF800156329 /* HTZLogConfig.swift */; };
 		77565A6B2EB61EF800156329 /* HTZLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77565A682EB61EF800156329 /* HTZLogger.swift */; };
 		77BE664F2EF10AAB001105A8 /* HTZAIViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77BE664E2EF10AAB001105A8 /* HTZAIViewController.swift */; };
-		77DCFE952FB768EA00CDD153 /* DesignSystem in Frameworks */ = {isa = PBXBuildFile; productRef = 77DCFE942FB768EA00CDD153 /* DesignSystem */; };
-		C7AC1E33D6DBD9AD357E692C /* Pods_htz.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 42DD8B27EE9BB122436019E5 /* Pods_htz.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -171,7 +169,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-                77BF00000000000000000001 /* HomeBridgeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeBridgeViewController.swift; sourceTree = "<group>"; };
 		19144873244138B8001355A7 /* HTZAlbumViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTZAlbumViewModel.swift; sourceTree = "<group>"; };
 		19333380234DD1A000498D76 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		19333382234DD1AB00498D76 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
@@ -348,8 +345,7 @@
 				19333385234DD1B500498D76 /* CoreGraphics.framework in Frameworks */,
 				19333383234DD1AB00498D76 /* AVFoundation.framework in Frameworks */,
 				19333381234DD1A000498D76 /* AudioToolbox.framework in Frameworks */,
-				77DCFE952FB768EA00CDD153 /* DesignSystem in Frameworks */,
-				C7AC1E33D6DBD9AD357E692C /* Pods_htz.framework in Frameworks */,
+				61ABF8AAB2EA8B80E95A6717 /* Pods_htz.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -357,7 +353,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1EC37867BD0F0674EAF0360D /* Pods_htzTests.framework in Frameworks */,
+				367C83AB4EDAB3BA67581E6B /* Pods_htzTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -365,7 +361,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				096053B67F4625251037E546 /* Pods_htzUITests.framework in Frameworks */,
+				69AC0FE604852C5044FA77CF /* Pods_htzUITests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -811,7 +807,6 @@
 		19A95831229BDCFF007B48ED /* Controller */ = {
 			isa = PBXGroup;
 			children = (
-                                77BF00000000000000000001 /* HomeBridgeViewController.swift */,
 				195C195D22B24ADC002E8A04 /* HTZHomeViewController.swift */,
 				1971F390231CB5C0002FFF42 /* HTZAlbumListViewController.swift */,
 				19492EE82356AD6E00D24278 /* HTZSearchViewController.swift */,
@@ -1230,9 +1225,13 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-htz/Pods-htz-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
+			inputPaths = (
+			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-htz/Pods-htz-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -1313,9 +1312,13 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-htz/Pods-htz-resources-${CONFIGURATION}-input-files.xcfilelist",
 			);
+			inputPaths = (
+			);
 			name = "[CP] Copy Pods Resources";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-htz/Pods-htz-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -1633,7 +1636,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = QCGC77U855;
 				ENABLE_BITCODE = NO;
-				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/htz/Vendor",
@@ -1667,7 +1670,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = QCGC77U855;
 				ENABLE_BITCODE = NO;
-				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/htz/Vendor",
@@ -1811,13 +1814,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCSwiftPackageProductDependency section */
-		77DCFE942FB768EA00CDD153 /* DesignSystem */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = DesignSystem;
-		};
-/* End XCSwiftPackageProductDependency section */
 
 /* Begin XCVersionGroup section */
 		19A957F5229BC716007B48ED /* htz.xcdatamodeld */ = {

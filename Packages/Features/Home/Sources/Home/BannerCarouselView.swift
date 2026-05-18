@@ -43,11 +43,3 @@ public struct BannerCarouselView: View {
         .tabViewStyle(.page(indexDisplayMode: .always))
     }
 }
-
-#Preview {
-    BannerCarouselView(banners: [
-        Banner(id: "1", name: "Banner 1", imageUrl: "https://example.com/b1.jpg"),
-        Banner(id: "2", name: "Banner 2", imageUrl: "https://example.com/b2.jpg")
-    ])
-    .background(Color.htzBackground)
-}

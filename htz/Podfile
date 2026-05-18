@@ -50,13 +50,6 @@ post_install do |installer|
   installer.pods_project.targets.each do |target|
     target.build_configurations.each do |config|
       config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.0'
-      config.build_settings["EXCLUDED_ARCHS[sdk=iphonesimulator*]"] = "arm64"
-      
-      # Fix for Weibo_SDK resource bundle
-      if target.name == 'Weibo_SDK-libWeiboSDK'
-        config.build_settings['SDKROOT'] = 'iphoneos'
-      end
-
       if target.name == 'HandyJSON' && config.name == 'Release'
         config.build_settings['SWIFT_OPTIMIZATION_LEVEL'] = '-Onone'
       end

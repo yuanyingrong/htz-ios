@@ -7,7 +7,7 @@ let package = Package(
         .iOS(.v16)
     ],
     products: [
-        .library(name: "CoreAudio", targets: ["CoreAudio"]),
+        .library(name: "HTZAudio", targets: ["HTZAudio"]),
         .library(name: "DesignSystem", targets: ["DesignSystem"]),
         .library(name: "NetworkKit", targets: ["NetworkKit"]),
         .library(name: "Home", targets: ["Home"]),
@@ -18,9 +18,9 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "CoreAudio",
+            name: "HTZAudio",
             dependencies: [],
-            path: "CoreAudio/Sources/CoreAudio"
+            path: "HTZAudio/Sources/HTZAudio"
         ),
         .target(
             name: "DesignSystem",

@@ -11,8 +11,6 @@ public struct HomeClient {
 extension HomeClient: DependencyKey {
     public static let liveValue = Self(
         getBanners: {
-            // Using a simple mock or actual network call if NetworkManager supports async/await
-            // For now, let's assume we bridge the Combine publisher to async
             let manager = NetworkManager<HTZAPI>()
             return try await manager.request(.recommendations)
                 .map { (banners: [Banner]) in banners }
