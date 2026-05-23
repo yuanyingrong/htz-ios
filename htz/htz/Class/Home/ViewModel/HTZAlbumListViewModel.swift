@@ -22,8 +22,15 @@ class HTZAlbumListViewModel: NSObject {
             
         NetWorkRequest(API.items(sutra_id: sutra_id, page_index: page_index, page_size: 20)) { (response) -> (Void) in
                 if response["code"].rawString() == "200" {
+                    print("[HTZ RAW JSON] \(response.rawString() ?? "nil")")
                     let arr = [HTZSutraItemModel].deserialize(from: response["data"].rawString())
                     if let arr = arr {
+                        if let first = arr.first, let model = first {
+                            print("[HTZ MODEL] id=\(model.id ?? "nil")")
+                            print("[HTZ MODEL] audio_id=\(model.audio_id ?? "nil")")
+                            print("[HTZ MODEL] audio=\(model.audio ?? "nil")")
+                            print("[HTZ MODEL] title=\(model.title ?? "nil")")
+                        }
                         
                         var arrM = [HTZMusicModel]()
                         for model in arr {

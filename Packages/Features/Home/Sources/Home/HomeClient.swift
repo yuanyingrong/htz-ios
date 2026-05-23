@@ -62,13 +62,15 @@ extension HomeClient: DependencyKey {
                     createdAt: item.createdAt,
                     isVideo: item.isVideo,
                     audio: {
-                        if let a = item.audio {
-                            return a.hasPrefix("http") ? a : "\(ossBaseUrl)\(a)"
-                        }
-                        if let aid = item.audioId {
+                        // Priority 1: OSS + audio_id (original HTZ project pattern)
+                        if let aid = item.audioId, !aid.isEmpty {
                             return "\(ossBaseUrl)\(aid)"
                         }
-                        // FIXME: API doesn't return audio URLs yet; sample audio for MVP
+                        // Priority 2: legacy server + sutra_id + audio filename
+                        if let audio = item.audio, !audio.isEmpty {
+                            return "http://htzshanghai.top/resources/audios/\(sutraId)/\(audio)"
+                        }
+                        // FIXME: API returns neither audio_id nor audio for this sutra
                         return "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
                     }()
                 )
