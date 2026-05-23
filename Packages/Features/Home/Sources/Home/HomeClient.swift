@@ -6,21 +6,20 @@ import Combine
 public struct HomeClient {
     public var getBanners: @Sendable () async throws -> [Banner]
     public var getAlbums: @Sendable () async throws -> [Album]
+    public var getSutraItems: @Sendable (String) async throws -> [SutraItem]
 }
 
 extension HomeClient: DependencyKey {
+    private static let ossBaseUrl = "https://htz-sutra.oss-cn-shanghai.aliyuncs.com/"
+    
     public static let liveValue = Self(
         getBanners: {
             let manager = NetworkManager<HTZAPI>()
-            // The legacy app mocks banners by taking from the albums request.
-            // We fetch the albums and take the first few to act as banners.
             let response: APIResponse<[Album]> = try await manager.request(.albums)
                 .eraseToAnyPublisher()
                 .async()
             let albums = response.data ?? []
-            let ossBaseUrl = "https://htz-sutra.oss-cn-shanghai.aliyuncs.com/"
             
-            // Map the first 3 albums to Banners for the carousel
             return albums.prefix(3).map { album in
                 let imageUrl = album.imageUrl.map { "\(ossBaseUrl)\($0)" }
                 return Banner(id: album.id, name: album.name, description: "", imageUrl: imageUrl, sort: "0")
@@ -32,15 +31,37 @@ extension HomeClient: DependencyKey {
                 .eraseToAnyPublisher()
                 .async()
             let albums = response.data ?? []
-            let ossBaseUrl = "https://htz-sutra.oss-cn-shanghai.aliyuncs.com/"
             
             return albums.map { album in
-                var formattedAlbum = album
-                // We need to recreate the struct to modify it or use a mapping logic
-                return Album(
+                Album(
                     id: album.id,
                     name: album.name,
                     imageUrl: album.imageUrl.map { "\(ossBaseUrl)\($0)" }
+                )
+            }
+        },
+        getSutraItems: { sutraId in
+            let manager = NetworkManager<HTZAPI>()
+            let response: APIResponse<[SutraItem]> = try await manager.request(.items(sutraId: sutraId, pageIndex: 0, pageSize: 500))
+                .eraseToAnyPublisher()
+                .async()
+            let items = response.data ?? []
+            
+            return items.map { item in
+                SutraItem(
+                    id: item.id,
+                    sutraId: item.sutraId,
+                    title: item.title,
+                    description: item.description,
+                    originalLyricId: item.originalLyricId,
+                    explanationLyricId: item.explanationLyricId,
+                    audioId: item.audioId,
+                    lesson: item.lesson,
+                    playedCount: item.playedCount,
+                    duration: item.duration,
+                    createdAt: item.createdAt,
+                    isVideo: item.isVideo,
+                    audio: item.audio.map { $0.hasPrefix("http") ? $0 : "\(ossBaseUrl)\($0)" }
                 )
             }
         }

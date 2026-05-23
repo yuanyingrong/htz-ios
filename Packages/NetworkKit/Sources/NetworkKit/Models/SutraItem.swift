@@ -8,10 +8,10 @@ public struct SutraItem: Codable, Identifiable, Equatable {
     public let originalLyricId: String?
     public let explanationLyricId: String?
     public let audioId: String?
-    public let lesson: String?
+    public let lesson: Int? // Changed from String? to Int?
     public let playedCount: Int?
-    public let duration: String?
-    public let createdAt: String?
+    public let duration: Int? // Changed from String? to Int?
+    public let createdAt: Int? // Changed from String? to Int?
     public let isVideo: Bool?
     public let audio: String?
     
@@ -19,7 +19,7 @@ public struct SutraItem: Codable, Identifiable, Equatable {
         case id
         case sutraId = "sutra_id"
         case title
-        case description = "desc" // Match the original mapping in HandyJSON
+        case description = "desc"
         case originalLyricId = "original_lyric_id"
         case explanationLyricId = "explanation_lyric_id"
         case audioId = "audio_id"
@@ -39,10 +39,10 @@ public struct SutraItem: Codable, Identifiable, Equatable {
         originalLyricId: String? = nil,
         explanationLyricId: String? = nil,
         audioId: String? = nil,
-        lesson: String? = nil,
+        lesson: Int? = nil,
         playedCount: Int? = nil,
-        duration: String? = nil,
-        createdAt: String? = nil,
+        duration: Int? = nil,
+        createdAt: Int? = nil,
         isVideo: Bool? = nil,
         audio: String? = nil
     ) {

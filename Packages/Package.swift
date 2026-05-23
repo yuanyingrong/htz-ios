@@ -11,6 +11,7 @@ let package = Package(
         .library(name: "DesignSystem", targets: ["DesignSystem"]),
         .library(name: "NetworkKit", targets: ["NetworkKit"]),
         .library(name: "Home", targets: ["Home"]),
+        .library(name: "PlayerFeature", targets: ["PlayerFeature"]),
     ],
     dependencies: [
         .package(url: "https://github.com/pointfreeco/swift-composable-architecture", from: "1.10.0"),
@@ -21,6 +22,15 @@ let package = Package(
             name: "HTZAudio",
             dependencies: [],
             path: "HTZAudio/Sources/HTZAudio"
+        ),
+        .target(
+            name: "PlayerFeature",
+            dependencies: [
+                "HTZAudio",
+                "DesignSystem",
+                .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
+            ],
+            path: "Features/Player/Sources/PlayerFeature"
         ),
         .target(
             name: "DesignSystem",
@@ -41,6 +51,7 @@ let package = Package(
             dependencies: [
                 "NetworkKit",
                 "DesignSystem",
+                "PlayerFeature", // Add PlayerFeature dependency
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
             ],
             path: "Features/Home/Sources/Home"

@@ -23,7 +23,18 @@ To build and run this project, you will need Xcode and CocoaPods installed.
 
 ## Development Conventions
 
-*   **UI:** The UI is built programmatically using SnapKit for Auto Layout.
+*   **Design Constitution (Modern Apple Aesthetic):**
+    *   **Core Principle:** All new UI must follow Apple's modern visual language, prioritizing materials, large titles, and fluid motion.
+    *   **Primary References:**
+        *   **Apple Podcasts**: Card-based discovery, program hierarchy, and cover-driven layouts.
+        *   **Voice Memos**: Minimalist recording interfaces, low distraction, and direct functionality.
+        *   **Apple Music Classical**: High-end aesthetic, powerful search, and organized dense information.
+        *   **Pocket Casts**: Refined playback controls, theme switching, and clear content management.
+        *   **Apple TV App**: Large hero covers, immersive media browsing, and modular sections.
+        *   **GarageBand**: Creative tool density and parameter organization.
+    *   **Implementation Targets:** Extensive use of `UltraThinMaterial`, SF Pro Rounded typography, and system-standard transitions.
+
+*   **UI:** The UI is built programmatically using SnapKit for Auto Layout (Legacy) or **SwiftUI (HTZNext)**.
 *   **Networking:** Moya is used for networking, built on top of Alamofire.
 *   **JSON Parsing:** SwiftyJSON and HandyJSON are used for parsing JSON data.
 *   **Image Handling:** Kingfisher is used for downloading and caching images.

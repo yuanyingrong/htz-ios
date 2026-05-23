@@ -10,6 +10,7 @@ public struct HomeFeature {
         public var albums: [Album] = []
         public var isLoading: Bool = false
         public var errorMessage: String?
+        public var path = StackState<Path.State>()
         
         public init() {}
     }
@@ -18,6 +19,8 @@ public struct HomeFeature {
         case onAppear
         case bannersResponse(Result<[Banner], NetworkError>)
         case albumsResponse(Result<[Album], NetworkError>)
+        case albumTapped(Album)
+        case path(StackAction<Path.State, Path.Action>)
     }
     
     @Dependency(\.homeClient) var homeClient
@@ -65,7 +68,20 @@ public struct HomeFeature {
                 state.isLoading = false
                 state.errorMessage = "Failed to load albums"
                 return .none
+                
+            case let .albumTapped(album):
+                state.path.append(.albumDetail(AlbumDetailFeature.State(album: album)))
+                return .none
+                
+            case .path:
+                return .none
             }
         }
+        .forEach(\.path, action: \.path)
+    }
+    
+    @Reducer(state: .equatable)
+    public enum Path {
+        case albumDetail(AlbumDetailFeature)
     }
 }

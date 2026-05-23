@@ -23,10 +23,16 @@ A unified design system based on Apple's modern visual language (Apple Music sty
     - **THEN** it applies exactly 16pt of spacing as defined in the layout grid.
 
 ### 2. Visual Language
-- **Materials**: Extensive use of SwiftUI `.ultraThinMaterial` and `.regularMaterial` for blurs.
+- **Materials**: Extensive use of SwiftUI `.ultraThinMaterial` and `.regularMaterial` for blurs (inspired by Apple Music and Podcasts).
 - **Iconography**: 100% migration to SF Symbols with hierarchical or multicolor rendering.
 - **Shadows**: Soft, diffused shadows (low opacity) or no shadows (rely on depth/materials).
 - **Motion**: High-quality spring animations for all transitions (`.spring(response: 0.4, dampingFraction: 0.8)`).
+- **App-Specific References**:
+  - **Program Hierarchy**: Card-based content discovery and hierarchical layouts (Podcasts).
+  - **Distraction-Free**: Minimalist UI for functional tools like recording or simple playback (Voice Memos).
+  - **Dense Clarity**: High information density that remains clean through typography and grid (Classical).
+  - **Immersive Media**: Large-scale cover art and immersive browsing modules (Apple TV).
+  - **Parameter Density**: Effective organization of multiple controls and parameters (GarageBand).
 
 ### 3. Core Components
 - **Player Card**: Dynamic cover art with scale animation (1.0 when playing, 0.92 when paused).
