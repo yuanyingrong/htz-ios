@@ -2,8 +2,12 @@ import SwiftUI
 import ComposableArchitecture
 import DesignSystem
 import NetworkKit
+import PlayerFeature
+import HTZAudio
+
 public struct AlbumDetailView: View {
     let store: StoreOf<AlbumDetailFeature>
+    @Environment(\.playerStore) var playerStore
     @State private var scrollOffset: CGFloat = 0
 
     public init(store: StoreOf<AlbumDetailFeature>) {
@@ -36,6 +40,17 @@ public struct AlbumDetailView: View {
                             } else {
                                 ForEach(Array(store.items.enumerated()), id: \.element.id) { index, item in
                                     SutraItemRowView(index: index + 1, item: item)
+                                        .onTapGesture {
+                                            guard let audioURLString = item.audio,
+                                                  let audioURL = URL(string: audioURLString) else { return }
+                                            playerStore.send(.play(PlayerItem(
+                                                id: item.id,
+                                                url: audioURL,
+                                                title: item.title ?? "Unknown Title",
+                                                artist: store.album.name,
+                                                imageUrl: store.album.imageUrl.flatMap(URL.init)
+                                            )))
+                                        }
                                     Divider()
                                         .padding(.leading, HTZSpacing.md + 30 + HTZSpacing.md)
                                 }

@@ -92,7 +92,6 @@ public actor AudioEngine {
     }
 
     private func addPeriodicTimeObserver() {
-        if let token = timeObserverToken { player.removeTimeObserver(token) }
         let interval = CMTime(seconds: 0.25, preferredTimescale: CMTimeScale(NSEC_PER_SEC))
         timeObserverToken = player.addPeriodicTimeObserver(forInterval: interval, queue: .main) { [weak self] time in
             Task { await self?.updatePlaybackProgress(time: time) }
@@ -141,7 +140,10 @@ public actor AudioEngine {
     private func removeObservers() {
         playerItemStatusObserver?.cancel()
         didPlayToEndObserver?.cancel()
-        if let token = timeObserverToken { player.removeTimeObserver(token) }
+        if let token = timeObserverToken {
+            player.removeTimeObserver(token)
+            timeObserverToken = nil
+        }
     }
 
     deinit {

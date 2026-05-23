@@ -61,7 +61,16 @@ extension HomeClient: DependencyKey {
                     duration: item.duration,
                     createdAt: item.createdAt,
                     isVideo: item.isVideo,
-                    audio: item.audio.map { $0.hasPrefix("http") ? $0 : "\(ossBaseUrl)\($0)" }
+                    audio: {
+                        if let a = item.audio {
+                            return a.hasPrefix("http") ? a : "\(ossBaseUrl)\(a)"
+                        }
+                        if let aid = item.audioId {
+                            return "\(ossBaseUrl)\(aid)"
+                        }
+                        // FIXME: API doesn't return audio URLs yet; sample audio for MVP
+                        return "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
+                    }()
                 )
             }
         }
