@@ -4,50 +4,48 @@ import Moya
 public enum HTZAPI {
     case albums
     case items(sutraId: String, pageIndex: Int, pageSize: Int)
-    case recommendations
 }
 
 extension HTZAPI: TargetType {
     public var baseURL: URL {
-        // In a real scenario, this would come from a configuration object
-        return URL(string: "http://htzshanghai.top/get") ?? URL(string: "http://localhost")!
+        return URL(string: "http://39.105.174.143:9100/")!
     }
     
     public var path: String {
         switch self {
         case .albums:
-            return "/sutras"
+            return "get/sutras"
         case .items:
-            return "/sutra/items"
-        case .recommendations:
-            return "/recommendations" // Simplified for now
+            return "get/sutra/items"
         }
     }
     
     public var method: Moya.Method {
         switch self {
-        case .albums, .items, .recommendations:
-            return .get
+        case .albums, .items:
+            return .post
         }
     }
     
     public var task: Task {
         switch self {
         case .albums:
-            return .requestParameters(parameters: ["page_index": 0, "page_size": 500], encoding: URLEncoding.default)
+            return .requestParameters(parameters: ["page_index": 0, "page_size": 500], encoding: JSONEncoding.default)
         case let .items(sutraId, pageIndex, pageSize):
             return .requestParameters(parameters: [
                 "sutra_id": sutraId,
                 "page_index": pageIndex,
                 "page_size": pageSize
-            ], encoding: URLEncoding.default)
-        case .recommendations:
-            return .requestPlain
+            ], encoding: JSONEncoding.default)
         }
     }
     
     public var headers: [String: String]? {
-        return ["Content-Type": "application/json"]
+        var headers = ["Content-Type": "application/json"]
+        if let token = AuthManager.shared.token {
+            headers["token"] = token
+        }
+        return headers
     }
     
     public var sampleData: Data {

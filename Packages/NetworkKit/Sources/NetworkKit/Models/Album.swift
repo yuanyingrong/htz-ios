@@ -6,9 +6,9 @@ public struct Album: Codable, Identifiable, Equatable {
     public let imageUrl: String?
     
     public enum CodingKeys: String, CodingKey {
-        case id = "albumId"
-        case name = "albumName"
-        case imageUrl
+        case id
+        case name
+        case imageUrl = "cover"
     }
     
     public init(id: String, name: String, imageUrl: String?) {

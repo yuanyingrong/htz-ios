@@ -51,20 +51,17 @@ public struct HomeFeature {
                 
             case let .bannersResponse(.success(banners)):
                 state.banners = banners
-                state.isLoading = state.albums.isEmpty
                 return .none
                 
-            case let .bannersResponse(.failure):
-                state.isLoading = false
-                state.errorMessage = "Failed to load banners"
+            case let .bannersResponse(.failure(error)):
                 return .none
                 
             case let .albumsResponse(.success(albums)):
                 state.albums = albums
-                state.isLoading = state.banners.isEmpty
+                state.isLoading = false
                 return .none
                 
-            case let .albumsResponse(.failure):
+            case let .albumsResponse(.failure(error)):
                 state.isLoading = false
                 state.errorMessage = "Failed to load albums"
                 return .none

@@ -36,9 +36,22 @@
 		77DCFECC2FBA03AC00CDD153 /* HTZNextUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HTZNextUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		774F8F1B2FBAF4B5006EF439 /* Exceptions for "HTZNext" folder in "HTZNext" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 77DCFEB42FBA03AB00CDD153 /* HTZNext */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		77DCFEB72FBA03AB00CDD153 /* HTZNext */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				774F8F1B2FBAF4B5006EF439 /* Exceptions for "HTZNext" folder in "HTZNext" target */,
+			);
 			path = HTZNext;
 			sourceTree = "<group>";
 		};
@@ -418,6 +431,7 @@
 				DEVELOPMENT_TEAM = 934KKYZ9Q2;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = HTZNext/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -451,6 +465,7 @@
 				DEVELOPMENT_TEAM = 934KKYZ9Q2;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = HTZNext/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

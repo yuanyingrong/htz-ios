@@ -25,13 +25,15 @@ public class NetworkManager<Target: TargetType> {
     public func request<T: Codable>(_ target: Target) -> AnyPublisher<T, NetworkError> {
         return provider.requestPublisher(target)
             .filterSuccessfulStatusCodes()
-            .map(\.data)
+            .map { (response: Response) -> Data in
+                return response.data
+            }
             .decode(type: T.self, decoder: decoder)
-            .mapError { error in
+            .mapError { error -> NetworkError in
                 if let decodingError = error as? DecodingError {
-                    return .decodingError(decodingError)
+                    return NetworkError.decodingError(decodingError)
                 }
-                return .unknown
+                return NetworkError.unknown
             }
             .eraseToAnyPublisher()
     }

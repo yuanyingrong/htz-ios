@@ -12,17 +12,37 @@ extension HomeClient: DependencyKey {
     public static let liveValue = Self(
         getBanners: {
             let manager = NetworkManager<HTZAPI>()
-            return try await manager.request(.recommendations)
-                .map { (banners: [Banner]) in banners }
+            // The legacy app mocks banners by taking from the albums request.
+            // We fetch the albums and take the first few to act as banners.
+            let response: APIResponse<[Album]> = try await manager.request(.albums)
                 .eraseToAnyPublisher()
                 .async()
+            let albums = response.data ?? []
+            let ossBaseUrl = "https://htz-sutra.oss-cn-shanghai.aliyuncs.com/"
+            
+            // Map the first 3 albums to Banners for the carousel
+            return albums.prefix(3).map { album in
+                let imageUrl = album.imageUrl.map { "\(ossBaseUrl)\($0)" }
+                return Banner(id: album.id, name: album.name, description: "", imageUrl: imageUrl, sort: "0")
+            }
         },
         getAlbums: {
             let manager = NetworkManager<HTZAPI>()
-            return try await manager.request(.albums)
-                .map { (albums: [Album]) in albums }
+            let response: APIResponse<[Album]> = try await manager.request(.albums)
                 .eraseToAnyPublisher()
                 .async()
+            let albums = response.data ?? []
+            let ossBaseUrl = "https://htz-sutra.oss-cn-shanghai.aliyuncs.com/"
+            
+            return albums.map { album in
+                var formattedAlbum = album
+                // We need to recreate the struct to modify it or use a mapping logic
+                return Album(
+                    id: album.id,
+                    name: album.name,
+                    imageUrl: album.imageUrl.map { "\(ossBaseUrl)\($0)" }
+                )
+            }
         }
     )
 }
