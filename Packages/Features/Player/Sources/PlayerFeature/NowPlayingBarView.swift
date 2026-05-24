@@ -5,11 +5,11 @@ import HTZAudio
 
 public struct NowPlayingBarView: View {
     let store: StoreOf<PlayerFeature>
-    
+
     public init(store: StoreOf<PlayerFeature>) {
         self.store = store
     }
-    
+
     public var body: some View {
         WithPerceptionTracking {
             if let item = store.currentItem {
@@ -18,8 +18,8 @@ public struct NowPlayingBarView: View {
                     ProgressView(value: store.progress)
                         .progressViewStyle(.linear)
                         .tint(.htzAccent)
-                        .padding(.bottom, -6) // Overlap a bit
-                    
+                        .padding(.bottom, -6)
+
                     HStack(spacing: HTZSpacing.sm) {
                         // Artwork
                         AsyncImage(url: item.imageUrl) { image in
@@ -33,15 +33,15 @@ public struct NowPlayingBarView: View {
                         .frame(width: 48, height: 48)
                         .clipShape(RoundedRectangle(cornerRadius: 6))
                         .shadow(radius: 4)
-                        
+
                         // Title
                         Text(item.title)
                             .font(.htzBody)
                             .foregroundColor(.htzLabel)
                             .lineLimit(1)
-                        
+
                         Spacer()
-                        
+
                         // Play/Pause Button
                         Button {
                             if store.isPlaying {
@@ -55,7 +55,7 @@ public struct NowPlayingBarView: View {
                                 .foregroundColor(.htzLabel)
                         }
                         .frame(width: 44, height: 44)
-                        
+
                         // Forward Button (placeholder)
                         Button {
                             // Forward action
@@ -71,6 +71,8 @@ public struct NowPlayingBarView: View {
                 }
                 .frame(height: 64)
                 .background(.ultraThinMaterial)
+                .clipShape(RoundedRectangle(cornerRadius: 16))
+                .shadow(color: .black.opacity(0.1), radius: 10, y: -2)
                 .transition(.move(edge: .bottom).combined(with: .opacity))
             }
         }

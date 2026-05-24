@@ -47,7 +47,8 @@ struct RootView: View {
                 // Player Bar Overlay
                 if playerStore.currentItem != nil {
                     NowPlayingBarView(store: playerStore)
-                        .padding(.bottom, 49) // Height of the TabBar
+                        .padding(.horizontal, HTZSpacing.sm)
+                        .padding(.bottom, 56)
                 }
             }
         }
