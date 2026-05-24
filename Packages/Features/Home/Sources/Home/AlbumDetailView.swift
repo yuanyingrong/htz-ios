@@ -56,14 +56,19 @@ public struct AlbumDetailView: View {
                                 }
                             }
                         }
-                        .background(Color.htzBackground.opacity(0.8))
+                        .background(.ultraThinMaterial)
                         .padding(.bottom, 100)
                     }
                     .scrollOffsetTracker($scrollOffset)
                 }
             }
+            .ignoresSafeArea(edges: .bottom)
             .onAppear {
                 store.send(.onAppear)
+                print("[AlbumDetailView] onAppear")
+            }
+            .onChange(of: store.items.count) { newValue in
+                print("[AlbumDetailView] items loaded: \(newValue)")
             }
             .navigationBarTitleDisplayMode(.inline)
             .toolbarBackground(.ultraThinMaterial, for: .navigationBar)

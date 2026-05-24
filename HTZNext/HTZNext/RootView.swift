@@ -5,55 +5,61 @@ import DesignSystem
 import PlayerFeature
 
 struct RootView: View {
-    // Shared store for the App
     private let homeStore = Store(initialState: HomeFeature.State()) {
         HomeFeature()
     }
     private let playerStore = Store(initialState: PlayerFeature.State()) {
         PlayerFeature()
     }
-    
+
+    @State private var selectedTab = 0
+
+    private let tabs = [
+        TabConfig(id: 0, title: "Home", icon: "house.fill"),
+        TabConfig(id: 1, title: "Album", icon: "square.stack.fill"),
+        TabConfig(id: 2, title: "Profile", icon: "person.fill"),
+    ]
+
     var body: some View {
         WithPerceptionTracking {
-            ZStack(alignment: .bottom) {
-                TabView {
-                    // Home Tab
-                    HomeView(store: homeStore)
-                        .tabItem {
-                            Label("Home", systemImage: "house.fill")
+            CustomTabView(
+                selection: $selectedTab,
+                tabs: tabs,
+                fadeHeight: 60,
+                tabBarHeight: 52,
+                selectedColor: .htzAccent
+            ) { id in
+                Group {
+                    switch id {
+                    case 0:
+                        HomeView(store: homeStore)
+                    case 1:
+                        NavigationStack {
+                            Text("Album Feature Coming Soon")
+                                .font(.htzLargeTitle)
                         }
-
-                    // Album Tab (Placeholder)
-                    NavigationStack {
-                        Text("Album Feature Coming Soon")
-                            .font(.htzLargeTitle)
-                    }
-                    .tabItem {
-                        Label("Album", systemImage: "square.stack.fill")
-                    }
-
-                    // Profile Tab (Placeholder)
-                    NavigationStack {
-                        Text("Profile Feature Coming Soon")
-                            .font(.htzLargeTitle)
-                    }
-                    .tabItem {
-                        Label("Profile", systemImage: "person.fill")
+                    case 2:
+                        NavigationStack {
+                            Text("Profile Feature Coming Soon")
+                                .font(.htzLargeTitle)
+                        }
+                    default:
+                        Color.clear
                     }
                 }
-                .accentColor(.htzAccent)
-                .environment(\.playerStore, playerStore) // Provide playerStore as environment value
-
-                // Player Bar Overlay
+            }
+            .overlay(alignment: .bottom) {
                 if playerStore.currentItem != nil {
                     NowPlayingBarView(store: playerStore)
                         .padding(.horizontal, HTZSpacing.sm)
-                        .padding(.bottom, 56)
+                        .padding(.bottom, 60)
                 }
             }
-        }
-        .onAppear {
-            playerStore.send(.subscribeToPlayerState)
+            .ignoresSafeArea(.keyboard)
+            .environment(\.playerStore, playerStore)
+            .onAppear {
+                playerStore.send(.subscribeToPlayerState)
+            }
         }
     }
 }

@@ -85,7 +85,19 @@ public struct HomeView: View {
                 }
                 .onAppear {
                     store.send(.onAppear)
+                    print("[HomeView] onAppear")
                 }
+                .onChange(of: store.albums.count) { newValue in
+                    print("[HomeView] albums loaded: \(newValue), banners: \(store.banners.count)")
+                }
+                .ignoresSafeArea(edges: .bottom)
+                .background(
+                    GeometryReader { geo in
+                        Color.clear.onAppear {
+                            print("[HomeView] ScrollView safeArea: \(geo.safeAreaInsets)")
+                        }
+                    }
+                )
                 .navigationTitle("Huáng Tíng Chán")
                 .toolbarBackground(.ultraThinMaterial, for: .navigationBar)
                 .toolbarBackground(.visible, for: .navigationBar)

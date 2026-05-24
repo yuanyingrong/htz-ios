@@ -69,8 +69,8 @@ public struct NowPlayingBarView: View {
                     .padding(.horizontal, HTZSpacing.md)
                     .padding(.vertical, HTZSpacing.sm)
                 }
-                .frame(height: 64)
-                .background(.ultraThinMaterial)
+                .frame(height: 56)
+                .background(.regularMaterial)
                 .clipShape(RoundedRectangle(cornerRadius: 16))
                 .shadow(color: .black.opacity(0.1), radius: 10, y: -2)
                 .transition(.move(edge: .bottom).combined(with: .opacity))
