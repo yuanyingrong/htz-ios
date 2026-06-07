@@ -9,9 +9,11 @@ The `NetworkKit` SHALL provide support for fetching sutra items for a specific a
 - **AND** include the `sutra_id` and pagination parameters in the request body.
 
 ### Requirement: Audio URL Formatting
-The `NetworkKit` SHALL ensure that audio URLs returned for Sutra Items are fully qualified with the Aliyun OSS base URL.
+The `NetworkKit` SHALL resolve the audio URL for Sutra Items using a prioritized strategy.
 
-#### Scenario: Processing SutraItem audio URL
-- **WHEN** a `SutraItem` is received from the API
-- **THEN** its `audio` URL property SHALL be prepended with `https://htz-sutra.oss-cn-shanghai.aliyuncs.com/`
-- **UNLESS** the `audio` URL already contains an `http` or `https` prefix.
+#### Scenario: Resolving SutraItem audio URL
+- **WHEN** a `SutraItem` is processed
+- **THEN** the system SHALL attempt to resolve the URL in the following order:
+  - **Priority 1**: If `audio_id` (OSS ID) is present and not empty, it SHALL be prepended with `https://htz-sutra.oss-cn-shanghai.aliyuncs.com/`.
+  - **Priority 2**: If `audio` (filename) is present and not empty, it SHALL be constructed as `http://htzshanghai.top/resources/audios/{sutraId}/{audio}`.
+  - **Priority 3**: Otherwise, the audio URL SHALL be `nil`.

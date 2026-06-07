@@ -17,16 +17,16 @@ public struct SutraItem: Codable, Identifiable, Equatable {
     
     public enum CodingKeys: String, CodingKey {
         case id
-        case sutraId = "sutra_id"
+        case sutraId
         case title
-        case description = "desc"
-        case originalLyricId = "original_lyric_id"
-        case explanationLyricId = "explanation_lyric_id"
-        case audioId = "audio_id"
+        case description
+        case originalLyricId
+        case explanationLyricId
+        case audioId
         case lesson
-        case playedCount = "played_count"
+        case playedCount
         case duration
-        case createdAt = "created_at"
+        case createdAt
         case isVideo
         case audio
     }

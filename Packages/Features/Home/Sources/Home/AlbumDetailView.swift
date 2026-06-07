@@ -42,7 +42,9 @@ public struct AlbumDetailView: View {
                                     SutraItemRowView(index: index + 1, item: item)
                                         .onTapGesture {
                                             guard let audioURLString = item.audio,
-                                                  let audioURL = URL(string: audioURLString) else { return }
+                                                  let audioURL = URL(string: audioURLString) else {
+                                                return
+                                            }
                                             playerStore.send(.play(PlayerItem(
                                                 id: item.id,
                                                 url: audioURL,

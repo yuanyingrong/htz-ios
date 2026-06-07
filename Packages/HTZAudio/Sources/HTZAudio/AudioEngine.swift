@@ -114,7 +114,8 @@ public actor AudioEngine {
             }
             currentPlayerState.error = nil
         case .failed:
-            currentPlayerState.error = playerItem?.error?.localizedDescription ?? "Unknown playback error"
+            let errorDescription = playerItem?.error?.localizedDescription ?? "Unknown playback error"
+            currentPlayerState.error = errorDescription
             currentPlayerState.isPlaying = false
         default: break
         }

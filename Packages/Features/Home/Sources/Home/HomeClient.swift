@@ -48,7 +48,18 @@ extension HomeClient: DependencyKey {
             let items = response.data ?? []
             
             return items.map { item in
-                SutraItem(
+                let resolvedAudio: String? = {
+                    // Priority 1: OSS + audio_id (original HTZ project pattern)
+                    if let aid = item.audioId, !aid.isEmpty {
+                        return "\(ossBaseUrl)\(aid)"
+                    }
+                    // Priority 2: legacy server + sutra_id + audio filename
+                    if let audio = item.audio, !audio.isEmpty {
+                        return "http://htzshanghai.top/resources/audios/\(sutraId)/\(audio)"
+                    }
+                    return nil
+                }()
+                return SutraItem(
                     id: item.id,
                     sutraId: item.sutraId,
                     title: item.title,
@@ -61,18 +72,7 @@ extension HomeClient: DependencyKey {
                     duration: item.duration,
                     createdAt: item.createdAt,
                     isVideo: item.isVideo,
-                    audio: {
-                        // Priority 1: OSS + audio_id (original HTZ project pattern)
-                        if let aid = item.audioId, !aid.isEmpty {
-                            return "\(ossBaseUrl)\(aid)"
-                        }
-                        // Priority 2: legacy server + sutra_id + audio filename
-                        if let audio = item.audio, !audio.isEmpty {
-                            return "http://htzshanghai.top/resources/audios/\(sutraId)/\(audio)"
-                        }
-                        // FIXME: API returns neither audio_id nor audio for this sutra
-                        return "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
-                    }()
+                    audio: resolvedAudio
                 )
             }
         }

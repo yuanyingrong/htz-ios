@@ -1,11 +1,11 @@
 ## 1. Project & Background Setup
 
-- [ ] 1.1 In the `HTZNext` target, enable the "Audio, AirPlay, and Picture in Picture" background mode.
+- [x] 1.1 In the `HTZNext` target, enable the "Audio, AirPlay, and Picture in Picture" background mode.
 
 ## 2. Audio Engine Core (MVP)
 
-- [ ] 2.1 Create `PlayerState.swift` to define the published player state (including `currentTime`, `duration`, `isPlaying`, `error`, `currentItem`).
-- [ ] 2.2 Create `AudioEngine.swift` in `HTZAudio` module as a Swift `Actor` wrapping a single `AVPlayer`.
+- [x] 2.1 Create `PlayerState.swift` to define the published player state (including `currentTime`, `duration`, `isPlaying`, `error`, `currentItem`).
+- [x] 2.2 Create `AudioEngine.swift` in `HTZAudio` module as a Swift `Actor` wrapping a single `AVPlayer`.
 - [x] 2.3 Implement `play(url: URL)` and `pause()` methods.
 - [x] 2.4 Manage the `AVAudioSession` configuration lazily within `play(url:)`.
 - [x] 2.5 Expose a single, managed `AsyncStream<PlayerState>` for publishing state, using `AsyncStream.makeStream(bufferingPolicy: .unbounded)`.
@@ -17,7 +17,7 @@
 ## 3. Player Logic & UI (MVP)
 
 - [x] 3.1 Create a new SPM module: `PlayerFeature`.
-- [ ] 3.2 Define `PlayerFeature` (TCA) with state and actions for the MVP scope.
+- [x] 3.2 Define `PlayerFeature` (TCA) with state and actions for the MVP scope.
 - [x] 3.3 Create `PlayerClient` as a dependency to subscribe to the `AudioEngine`'s `AsyncStream` and bridge it to TCA.
 - [x] 3.4 Create `NowPlayingBarView.swift` in the `PlayerFeature` module, styled with `.ultraThinMaterial` and SF Pro Rounded fonts, showing current item title, play/pause, and progress.
 
