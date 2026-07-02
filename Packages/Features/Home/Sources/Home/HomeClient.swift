@@ -86,25 +86,4 @@ extension DependencyValues {
     }
 }
 
-// Helper to bridge AnyPublisher to async/await
-extension AnyPublisher {
-    func async() async throws -> Output {
-        try await withCheckedThrowingContinuation { continuation in
-            var cancellable: AnyCancellable?
-            cancellable = self.sink(
-                receiveCompletion: { completion in
-                    switch completion {
-                    case .finished:
-                        break
-                    case let .failure(error):
-                        continuation.resume(throwing: error)
-                    }
-                    cancellable?.cancel()
-                },
-                receiveValue: { value in
-                    continuation.resume(returning: value)
-                }
-            )
-        }
-    }
-}
+

@@ -12,6 +12,7 @@ let package = Package(
         .library(name: "NetworkKit", targets: ["NetworkKit"]),
         .library(name: "Home", targets: ["Home"]),
         .library(name: "PlayerFeature", targets: ["PlayerFeature"]),
+        .library(name: "AuthFeature", targets: ["AuthFeature"]),
     ],
     dependencies: [
         .package(url: "https://github.com/pointfreeco/swift-composable-architecture", from: "1.10.0"),
@@ -65,6 +66,20 @@ let package = Package(
             name: "HomeTests",
             dependencies: ["Home"],
             path: "Features/Home/Tests/HomeTests"
+        ),
+        .target(
+            name: "AuthFeature",
+            dependencies: [
+                "NetworkKit",
+                "DesignSystem",
+                .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
+            ],
+            path: "Features/Auth/Sources/AuthFeature"
+        ),
+        .testTarget(
+            name: "AuthTests",
+            dependencies: ["AuthFeature"],
+            path: "Features/Auth/Tests/AuthTests"
         ),
     ]
 )

@@ -58,3 +58,25 @@ The authentication sequence will execute sequentially:
 
 - **[Risk] WeChat SDK in Simulator** → **[Mitigation]** The app will gracefully display a "WeChat not installed" alert or log a warning on simulator execution. Simulator testing will be deferred to phase 2 or rely on pre-inserted tokens during compilation for debugging.
 - **[Risk] Sync API Failure** → **[Mitigation]** If `/api/v1/userinfo/add` fails, we will display an error message and refuse to log the user in, aligning with the legacy app's dependency on complete user profile records.
+
+## Local Development Signing Bypass
+
+To allow developers to compile and test on real devices using a Personal Free Developer Account (which does not support the Associated Domains capability and cannot register the official bundle ID), a temporary signing bypass is configured for local development.
+
+### Local Development Configuration (Current):
+- **Development Team**: `934KKYZ9Q2` (YingRong Yuan - Personal Team)
+- **Bundle Identifier**: `cn.org.htz.next.HTZNext`
+- **Entitlements**: `HTZNext.entitlements` is kept empty (Associated Domains disabled).
+
+### Production Release Checklist (To Restore WeChat OAuth):
+Before packaging the App Store release or conducting final WeChat integration tests on a company-provisioned device:
+1. Change **Development Team** back to `QCGC77U855` (Paid Company Team).
+2. Change **Bundle Identifier** back to `cn.org.htz` (to match WeChat Open Platform registry).
+3. Re-add the Associated Domains entitlement to `HTZNext.entitlements`:
+   ```xml
+   <key>com.apple.developer.associated-domains</key>
+   <array>
+       <string>applinks:app.neixinchan.com:9500</string>
+   </array>
+   ```
+

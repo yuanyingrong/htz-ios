@@ -3,8 +3,12 @@ import ComposableArchitecture
 import Home
 import DesignSystem
 import PlayerFeature
+import AuthFeature
 
 struct RootView: View {
+    private let authStore = Store(initialState: AuthFeature.State()) {
+        AuthFeature()
+    }
     private let homeStore = Store(initialState: HomeFeature.State()) {
         HomeFeature()
     }
@@ -22,43 +26,62 @@ struct RootView: View {
 
     var body: some View {
         WithPerceptionTracking {
-            CustomTabView(
-                selection: $selectedTab,
-                tabs: tabs,
-                fadeHeight: 60,
-                tabBarHeight: 52,
-                selectedColor: .htzAccent
-            ) { id in
-                Group {
-                    switch id {
-                    case 0:
-                        HomeView(store: homeStore)
-                    case 1:
-                        NavigationStack {
-                            Text("Album Feature Coming Soon")
-                                .font(.htzLargeTitle)
+            if authStore.isLoggedIn {
+                CustomTabView(
+                    selection: $selectedTab,
+                    tabs: tabs,
+                    fadeHeight: 60,
+                    tabBarHeight: 52,
+                    selectedColor: .htzAccent
+                ) { id in
+                    Group {
+                        switch id {
+                        case 0:
+                            HomeView(store: homeStore)
+                        case 1:
+                            NavigationStack {
+                                Text("Album Feature Coming Soon")
+                                    .font(.htzLargeTitle)
+                            }
+                        case 2:
+                            NavigationStack {
+                                VStack(spacing: 20) {
+                                    Text("Profile Feature Coming Soon")
+                                        .font(.htzHeadline)
+                                        .foregroundStyle(Color.secondary)
+                                    
+                                    Button(action: {
+                                        authStore.send(.logout)
+                                    }) {
+                                        Text("退出登录")
+                                            .font(.htzHeadline)
+                                            .foregroundColor(.white)
+                                            .frame(width: 160, height: 44)
+                                            .background(Color.red)
+                                            .cornerRadius(22)
+                                    }
+                                }
+                                .navigationTitle("Profile")
+                            }
+                        default:
+                            Color.clear
                         }
-                    case 2:
-                        NavigationStack {
-                            Text("Profile Feature Coming Soon")
-                                .font(.htzLargeTitle)
-                        }
-                    default:
-                        Color.clear
                     }
                 }
-            }
-            .overlay(alignment: .bottom) {
-                if playerStore.currentItem != nil {
-                    NowPlayingBarView(store: playerStore)
-                        .padding(.horizontal, HTZSpacing.sm)
-                        .padding(.bottom, 60)
+                .overlay(alignment: .bottom) {
+                    if playerStore.currentItem != nil {
+                        NowPlayingBarView(store: playerStore)
+                            .padding(.horizontal, HTZSpacing.sm)
+                            .padding(.bottom, 60)
+                    }
                 }
-            }
-            .ignoresSafeArea(.keyboard)
-            .environment(\.playerStore, playerStore)
-            .onAppear {
-                playerStore.send(.subscribeToPlayerState)
+                .ignoresSafeArea(.keyboard)
+                .environment(\.playerStore, playerStore)
+                .onAppear {
+                    playerStore.send(.subscribeToPlayerState)
+                }
+            } else {
+                LoginView(store: authStore)
             }
         }
     }
