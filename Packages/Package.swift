@@ -52,6 +52,7 @@ let package = Package(
             dependencies: [
                 "NetworkKit",
                 "DesignSystem",
+                "HTZAudio",
                 "PlayerFeature", // Add PlayerFeature dependency
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
             ],

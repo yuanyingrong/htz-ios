@@ -110,27 +110,28 @@ public struct AuthFeature {
         
         if weChatClient.isInstalled() {
             return .run { send in
-                let listenerTask = Task {
-                    for await notification in NotificationCenter.default.notifications(named: NSNotification.Name("WeChatAuthCodeNotification")) {
-                        if let code = notification.userInfo?["code"] as? String {
-                            await send(.receiveAuthCode(code))
-                            break
-                        } else if let error = notification.userInfo?["error"] as? String {
-                            await send(.tokenResponse(Swift.Result<LoginModel, NetworkError>.failure(.apiError(error))))
-                            break
-                        }
-                    }
-                }
+                // Start listening for auth response notification
+                let notifications = NotificationCenter.default.notifications(named: NSNotification.Name("WeChatAuthCodeNotification"))
                 
                 do {
                     let success = try await weChatClient.sendAuthRequest()
                     if !success {
-                        listenerTask.cancel()
                         await send(.tokenResponse(Swift.Result<LoginModel, NetworkError>.failure(.apiError("无法唤起微信"))))
+                        return
                     }
                 } catch {
-                    listenerTask.cancel()
                     await send(.tokenResponse(Swift.Result<LoginModel, NetworkError>.failure(.apiError(error.localizedDescription))))
+                    return
+                }
+                
+                for await notification in notifications {
+                    if let code = notification.userInfo?["code"] as? String {
+                        await send(.receiveAuthCode(code))
+                        break
+                    } else if let error = notification.userInfo?["error"] as? String {
+                        await send(.tokenResponse(Swift.Result<LoginModel, NetworkError>.failure(.apiError(error))))
+                        break
+                    }
                 }
             }
         } else {

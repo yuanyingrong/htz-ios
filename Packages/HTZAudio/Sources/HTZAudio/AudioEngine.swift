@@ -35,6 +35,9 @@ public actor AudioEngine {
     }
 
     public func play(item: PlayerItem) async {
+        #if DEBUG
+        print("[HTZDebug] AudioEngine play requested: url=\(item.url)")
+        #endif
         configureAudioSessionIfNeeded()
         player.pause()
         removeObservers()
@@ -78,6 +81,9 @@ public actor AudioEngine {
                     Task { await self?.handleAudioSessionInterruption(notification: notification) }
                 }
         } catch {
+            #if DEBUG
+            print("[HTZDebug] AudioSession configuration failed: \(error)")
+            #endif
             currentPlayerState.error = error.localizedDescription
         }
     }
@@ -107,6 +113,9 @@ public actor AudioEngine {
     }
 
     private func handlePlayerItemStatusChange(status: AVPlayerItem.Status) {
+        #if DEBUG
+        print("[HTZDebug] AVPlayerItem status changed: status=\(status.rawValue), error=\(String(describing: playerItem?.error))")
+        #endif
         switch status {
         case .readyToPlay:
             if let duration = playerItem?.duration.seconds, duration.isFinite, !duration.isNaN {
@@ -115,6 +124,9 @@ public actor AudioEngine {
             currentPlayerState.error = nil
         case .failed:
             let errorDescription = playerItem?.error?.localizedDescription ?? "Unknown playback error"
+            #if DEBUG
+            print("[HTZDebug] AVPlayerItem playback failed: \(errorDescription)")
+            #endif
             currentPlayerState.error = errorDescription
             currentPlayerState.isPlaying = false
         default: break

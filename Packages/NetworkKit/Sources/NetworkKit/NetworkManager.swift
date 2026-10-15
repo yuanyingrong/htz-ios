@@ -6,6 +6,7 @@ import CombineMoya
 public enum NetworkError: Error, Equatable {
     case decodingError(Error)
     case apiError(String)
+    case accessDenied
     case unknown
 
     public static func == (lhs: NetworkError, rhs: NetworkError) -> Bool {
@@ -14,6 +15,8 @@ public enum NetworkError: Error, Equatable {
             return lhsError.localizedDescription == rhsError.localizedDescription
         case let (.apiError(lhsMsg), .apiError(rhsMsg)):
             return lhsMsg == rhsMsg
+        case (.accessDenied, .accessDenied):
+            return true
         case (.unknown, .unknown):
             return true
         default:
@@ -38,13 +41,32 @@ public class NetworkManager<Target: TargetType> {
     
     public func request<T: Codable>(_ target: Target) -> AnyPublisher<T, NetworkError> {
         return provider.requestPublisher(target)
-            .filterSuccessfulStatusCodes()
-            .map { (response: Response) -> Data in
+            .tryMap { (response: Response) -> Data in
+                if response.statusCode == 403 {
+                    throw NetworkError.accessDenied
+                }
+                
+                // Inspect response for API error code 90001
+                if let json = try? JSONSerialization.jsonObject(with: response.data) as? [String: Any],
+                   let code = json["code"] as? Int {
+                    if code == 90001 {
+                        throw NetworkError.accessDenied
+                    } else if code != 200 && code != 0 {
+                        let msg = json["data"] as? String ?? json["msg"] as? String ?? "Request failed"
+                        throw NetworkError.apiError(msg)
+                    }
+                }
+                
+                guard (200...299).contains(response.statusCode) else {
+                    throw NetworkError.apiError("HTTP status \(response.statusCode)")
+                }
                 return response.data
             }
             .decode(type: T.self, decoder: decoder)
             .mapError { error -> NetworkError in
-                if let decodingError = error as? DecodingError {
+                if let netErr = error as? NetworkError {
+                    return netErr
+                } else if let decodingError = error as? DecodingError {
                     return NetworkError.decodingError(decodingError)
                 }
                 return NetworkError.unknown

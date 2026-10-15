@@ -4,7 +4,7 @@ import Home
 import NetworkKit
 import AuthFeature
 
-class AppDelegate: NSObject, UIApplicationDelegate, WXApiDelegate {
+class AppDelegate: NSObject, UIApplicationDelegate {
     func application(
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil
@@ -74,7 +74,10 @@ class AppDelegate: NSObject, UIApplicationDelegate, WXApiDelegate {
         return false
         #endif
     }
-    
+}
+
+#if !targetEnvironment(simulator)
+extension AppDelegate: WXApiDelegate {
     func onReq(_ req: BaseReq) {}
     
     func onResp(_ resp: BaseResp) {
@@ -96,6 +99,7 @@ class AppDelegate: NSObject, UIApplicationDelegate, WXApiDelegate {
         }
     }
 }
+#endif
 
 @main
 struct HTZApp: App {

@@ -99,8 +99,8 @@ public struct HomeView: View {
                     }
                 )
                 .navigationTitle("Huáng Tíng Chán")
+                .navigationBarTitleDisplayMode(.large)
                 .toolbarBackground(.ultraThinMaterial, for: .navigationBar)
-                .toolbarBackground(.visible, for: .navigationBar)
             } destination: { store in
                 switch store.case {
                 case let .albumDetail(store):

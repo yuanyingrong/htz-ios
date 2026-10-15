@@ -1,6 +1,7 @@
 import Foundation
 import ComposableArchitecture
 import NetworkKit
+import PlayerFeature
 
 @Reducer
 public struct HomeFeature {

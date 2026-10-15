@@ -32,14 +32,27 @@ public struct AlbumDetailHeaderView: View {
     public var body: some View {
         VStack(spacing: HTZSpacing.lg) {
             // Hero Artwork
-            AsyncImage(url: album.imageUrl.flatMap(URL.init)) { image in
-                image
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-            } placeholder: {
-                RoundedRectangle(cornerRadius: HTZRadius.md)
-                    .fill(Color.htzBackground.opacity(0.3))
-                    .overlay(ProgressView())
+            AsyncImage(url: album.imageUrl.flatMap(URL.init)) { phase in
+                switch phase {
+                case .empty:
+                    RoundedRectangle(cornerRadius: HTZRadius.md)
+                        .fill(Color.htzBackground.opacity(0.3))
+                        .overlay(ProgressView())
+                case let .success(image):
+                    image
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                case .failure:
+                    RoundedRectangle(cornerRadius: HTZRadius.md)
+                        .fill(Color.htzBackground.opacity(0.3))
+                        .overlay(
+                            Image(systemName: "music.note.list")
+                                .font(.system(size: 48))
+                                .foregroundColor(.htzLabel.opacity(0.4))
+                        )
+                @unknown default:
+                    EmptyView()
+                }
             }
             .frame(width: 240, height: 240)
             .clipShape(RoundedRectangle(cornerRadius: HTZRadius.md))

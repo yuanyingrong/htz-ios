@@ -20,10 +20,21 @@ public struct SutraItemRowView: View {
                 .frame(width: 30, alignment: .leading)
             
             VStack(alignment: .leading, spacing: 2) {
-                Text(item.title ?? "Unknown Title")
-                    .font(.htzHeadline)
-                    .foregroundColor(.htzLabel)
-                    .lineLimit(1)
+                HStack(spacing: HTZSpacing.xs) {
+                    Text(item.title ?? "Unknown Title")
+                        .font(.htzHeadline)
+                        .foregroundColor(.htzLabel)
+                        .lineLimit(1)
+                    
+                    if item.isTrial == 1 {
+                        Text("试听")
+                            .font(.system(size: 10, weight: .semibold))
+                            .foregroundColor(.white)
+                            .padding(.horizontal, 6)
+                            .padding(.vertical, 2)
+                            .background(Capsule().fill(Color.orange))
+                    }
+                }
                 
                 if let lesson = item.lesson {
                     Text("Lesson \(lesson)")
@@ -33,6 +44,12 @@ public struct SutraItemRowView: View {
             }
             
             Spacer()
+            
+            if item.isTrial == 0 {
+                Image(systemName: "lock.fill")
+                    .font(.caption2)
+                    .foregroundColor(.htzLabel.opacity(0.3))
+            }
             
             // Duration or Play Icon
             if let durationMs = item.duration {

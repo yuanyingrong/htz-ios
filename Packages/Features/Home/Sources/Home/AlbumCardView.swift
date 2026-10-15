@@ -12,14 +12,28 @@ public struct AlbumCardView: View {
     public var body: some View {
         VStack(alignment: .leading, spacing: HTZSpacing.xs) {
             // Artwork
-            AsyncImage(url: album.imageUrl.flatMap(URL.init)) { image in
-                image
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-            } placeholder: {
-                RoundedRectangle(cornerRadius: HTZRadius.md)
-                    .fill(Color.htzBackground.opacity(0.3))
-                    .overlay(ProgressView())
+            AsyncImage(url: album.imageUrl.flatMap(URL.init)) { phase in
+                switch phase {
+                case .empty:
+                    RoundedRectangle(cornerRadius: HTZRadius.md)
+                        .fill(Color.htzBackground.opacity(0.3))
+                        .overlay(ProgressView())
+                case let .success(image):
+                    image
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                case let .failure(error):
+                    let _ = print("[HTZDebug] AlbumCardView image failed: album=\(album.name), url=\(album.imageUrl ?? "nil"), error=\(error)")
+                    RoundedRectangle(cornerRadius: HTZRadius.md)
+                        .fill(Color.htzBackground.opacity(0.3))
+                        .overlay(
+                            Image(systemName: "music.note.list")
+                                .font(.system(size: 32))
+                                .foregroundColor(.htzLabel.opacity(0.4))
+                        )
+                @unknown default:
+                    EmptyView()
+                }
             }
             .frame(maxWidth: .infinity)
             .aspectRatio(1, contentMode: .fit)

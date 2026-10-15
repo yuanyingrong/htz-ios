@@ -41,17 +41,7 @@ public struct AlbumDetailView: View {
                                 ForEach(Array(store.items.enumerated()), id: \.element.id) { index, item in
                                     SutraItemRowView(index: index + 1, item: item)
                                         .onTapGesture {
-                                            guard let audioURLString = item.audio,
-                                                  let audioURL = URL(string: audioURLString) else {
-                                                return
-                                            }
-                                            playerStore.send(.play(PlayerItem(
-                                                id: item.id,
-                                                url: audioURL,
-                                                title: item.title ?? "Unknown Title",
-                                                artist: store.album.name,
-                                                imageUrl: store.album.imageUrl.flatMap(URL.init)
-                                            )))
+                                            store.send(.trackTapped(item))
                                         }
                                     Divider()
                                         .padding(.leading, HTZSpacing.md + 30 + HTZSpacing.md)
@@ -63,11 +53,40 @@ public struct AlbumDetailView: View {
                     }
                     .scrollOffsetTracker($scrollOffset)
                 }
+                
+                if store.isResolvingAudio {
+                    ProgressView()
+                        .padding(HTZSpacing.lg)
+                        .background(.ultraThinMaterial)
+                        .cornerRadius(HTZRadius.md)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                }
             }
             .ignoresSafeArea(edges: .bottom)
+            .alert(
+                "提示",
+                isPresented: Binding(
+                    get: { store.alertMessage != nil },
+                    set: { if !$0 { store.send(.clearAlert) } }
+                ),
+                actions: {
+                    Button("好的", role: .cancel) {
+                        store.send(.clearAlert)
+                    }
+                },
+                message: {
+                    Text(store.alertMessage ?? "")
+                }
+            )
             .onAppear {
                 store.send(.onAppear)
                 print("[AlbumDetailView] onAppear")
+            }
+            .onChange(of: store.pendingPlayItem) { playItem in
+                if let item = playItem {
+                    playerStore.send(.play(item))
+                    store.send(.clearPendingPlayItem)
+                }
             }
             .onChange(of: store.items.count) { newValue in
                 print("[AlbumDetailView] items loaded: \(newValue)")

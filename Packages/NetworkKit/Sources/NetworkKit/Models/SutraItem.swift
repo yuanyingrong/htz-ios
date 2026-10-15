@@ -13,6 +13,7 @@ public struct SutraItem: Codable, Identifiable, Equatable {
     public let duration: Int? // Changed from String? to Int?
     public let createdAt: Int? // Changed from String? to Int?
     public let isVideo: Bool?
+    public let isTrial: Int?
     public let audio: String?
     
     public enum CodingKeys: String, CodingKey {
@@ -28,6 +29,7 @@ public struct SutraItem: Codable, Identifiable, Equatable {
         case duration
         case createdAt
         case isVideo
+        case isTrial
         case audio
     }
     
@@ -44,6 +46,7 @@ public struct SutraItem: Codable, Identifiable, Equatable {
         duration: Int? = nil,
         createdAt: Int? = nil,
         isVideo: Bool? = nil,
+        isTrial: Int? = nil,
         audio: String? = nil
     ) {
         self.id = id
@@ -58,6 +61,7 @@ public struct SutraItem: Codable, Identifiable, Equatable {
         self.duration = duration
         self.createdAt = createdAt
         self.isVideo = isVideo
+        self.isTrial = isTrial
         self.audio = audio
     }
 }

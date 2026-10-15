@@ -77,14 +77,14 @@ final class AuthFeatureTests: XCTestCase {
         await store.send(.receiveAuthCode("wechat_code_abc"))
         
         // 3. Receive token and login model response
-        await store.receive(\.tokenResponse(.success(mockLoginModel)))
+        await store.receive(.tokenResponse(.success(mockLoginModel)))
         
         // Check that tokens were saved
         XCTAssertEqual(AuthManager.shared.token, "test_token_999")
         XCTAssertEqual(AuthManager.shared.unionid, "union_555")
         
         // 4. Sync profile information
-        await store.receive(\.syncResponse(.success(true))) {
+        await store.receive(.syncResponse(.success(true))) {
             $0.isLoading = false
             $0.isLoggedIn = true
         }

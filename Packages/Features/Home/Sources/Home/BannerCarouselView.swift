@@ -13,14 +13,27 @@ public struct BannerCarouselView: View {
         TabView {
             ForEach(banners) { banner in
                 ZStack(alignment: .bottomLeading) {
-                    AsyncImage(url: banner.imageUrl.flatMap(URL.init)) { image in
-                        image
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                    } placeholder: {
-                        Rectangle()
-                            .fill(Color.htzBackground.opacity(0.3))
-                            .overlay(ProgressView())
+                    AsyncImage(url: banner.imageUrl.flatMap(URL.init)) { phase in
+                        switch phase {
+                        case .empty:
+                            Rectangle()
+                                .fill(Color.htzBackground.opacity(0.3))
+                                .overlay(ProgressView())
+                        case let .success(image):
+                            image
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                        case .failure:
+                            Rectangle()
+                                .fill(Color.htzBackground.opacity(0.3))
+                                .overlay(
+                                    Image(systemName: "photo")
+                                        .font(.system(size: 36))
+                                        .foregroundColor(.htzLabel.opacity(0.4))
+                                )
+                        @unknown default:
+                            EmptyView()
+                        }
                     }
                     .frame(maxWidth: .infinity)
                     .frame(height: 200)

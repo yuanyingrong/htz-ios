@@ -6,6 +6,8 @@ public enum HTZAPI {
     case items(sutraId: String, pageIndex: Int, pageSize: Int)
     case login(code: String)
     case addUserInfo(parameters: [String: Any])
+    case sutraCoverURL(sutraId: String, expireSeconds: Int?)
+    case sutraItemFileURL(sutraId: String, sutraItemId: String, expireSeconds: Int?)
 }
 
 extension HTZAPI: TargetType {
@@ -28,6 +30,10 @@ extension HTZAPI: TargetType {
             return "post/login"
         case .addUserInfo:
             return "userinfo/add.json"
+        case .sutraCoverURL:
+            return "get/sutra/cover_url"
+        case .sutraItemFileURL:
+            return "get/sutra/item/file_url"
         }
     }
     
@@ -54,6 +60,21 @@ extension HTZAPI: TargetType {
             return .requestParameters(parameters: ["code": code], encoding: JSONEncoding.default)
         case let .addUserInfo(parameters):
             return .requestParameters(parameters: parameters, encoding: URLEncoding.queryString)
+        case let .sutraCoverURL(sutraId, expireSeconds):
+            var params: [String: Any] = ["sutra_id": sutraId]
+            if let expire = expireSeconds {
+                params["expire_seconds"] = expire
+            }
+            return .requestParameters(parameters: params, encoding: JSONEncoding.default)
+        case let .sutraItemFileURL(sutraId, sutraItemId, expireSeconds):
+            var params: [String: Any] = [
+                "sutra_id": sutraId,
+                "sutra_item_id": sutraItemId
+            ]
+            if let expire = expireSeconds {
+                params["expire_seconds"] = expire
+            }
+            return .requestParameters(parameters: params, encoding: JSONEncoding.default)
         }
     }
     

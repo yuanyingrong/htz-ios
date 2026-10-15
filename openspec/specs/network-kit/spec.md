@@ -9,11 +9,18 @@ The `NetworkKit` SHALL provide support for fetching sutra items for a specific a
 - **AND** include the `sutra_id` and pagination parameters in the request body.
 
 ### Requirement: Audio URL Formatting
-The `NetworkKit` SHALL resolve the audio URL for Sutra Items using a prioritized strategy.
+The `NetworkKit` SHALL support retrieving pre-signed URLs for Sutra Items instead of relying solely on static URL string formatting.
 
-#### Scenario: Resolving SutraItem audio URL
-- **WHEN** a `SutraItem` is processed
-- **THEN** the system SHALL attempt to resolve the URL in the following order:
-  - **Priority 1**: If `audio_id` (OSS ID) is present and not empty, it SHALL be prepended with `https://htz-sutra.oss-cn-shanghai.aliyuncs.com/`.
-  - **Priority 2**: If `audio` (filename) is present and not empty, it SHALL be constructed as `http://htzshanghai.top/resources/audios/{sutraId}/{audio}`.
-  - **Priority 3**: Otherwise, the audio URL SHALL be `nil`.
+#### Scenario: Requesting SutraItem file URL
+- **WHEN** a request for `HTZAPI.sutraItemFileURL(sutraId: String, sutraItemId: String, expireSeconds: Int?)` is initiated
+- **THEN** the system SHALL construct a POST request to the `/get/sutra/item/file_url` endpoint
+- **AND** include `sutra_id`, `sutra_item_id`, and `expire_seconds` in the request body
+- **AND** include the user's `token` in the request headers.
+
+### Requirement: Sutra Cover URL Endpoint Support
+The `NetworkKit` SHALL support fetching a temporary signed URL for album cover images.
+
+#### Scenario: Requesting sutra cover signed URL
+- **WHEN** a request for `HTZAPI.sutraCoverURL(sutraId: String, expireSeconds: Int?)` is initiated
+- **THEN** the system SHALL construct a POST request to the `/get/sutra/cover_url` endpoint
+- **AND** parse the returned `signed_url` string upon code 200.

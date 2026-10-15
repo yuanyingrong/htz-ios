@@ -432,26 +432,12 @@
 				CODE_SIGN_ENTITLEMENTS = HTZNext/HTZNext.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 934KKYZ9Q2;
+				DEVELOPMENT_TEAM = SMX3CVFBS4;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/../htz/Pods/WechatOpenSDK/OpenSDK2.0.4",
-				);
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(SRCROOT)/../htz/Pods/WechatOpenSDK/OpenSDK2.0.4",
-				);
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					"-ObjC",
-					"-lWechatOpenSDK",
-					"-lsqlite3",
-					"-lz",
-					"-lc++",
-					"-framework",
-					"WebKit",
 				);
 				INFOPLIST_FILE = HTZNext/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -464,7 +450,30 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/../htz/Pods/WechatOpenSDK/OpenSDK2.0.4",
+				);
 				MARKETING_VERSION = 1.0;
+				"OTHER_LDFLAGS[sdk=iphoneos*]" = (
+					"$(inherited)",
+					"-ObjC",
+					"-lWechatOpenSDK",
+					"-lsqlite3",
+					"-lz",
+					"-lc++",
+					"-framework",
+					WebKit,
+				);
+				"OTHER_LDFLAGS[sdk=iphonesimulator*]" = (
+					"$(inherited)",
+					"-ObjC",
+					"-lsqlite3",
+					"-lz",
+					"-lc++",
+					"-framework",
+					WebKit,
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = cn.org.htz.next.HTZNext;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -486,26 +495,12 @@
 				CODE_SIGN_ENTITLEMENTS = HTZNext/HTZNext.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 934KKYZ9Q2;
+				DEVELOPMENT_TEAM = SMX3CVFBS4;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/../htz/Pods/WechatOpenSDK/OpenSDK2.0.4",
-				);
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(SRCROOT)/../htz/Pods/WechatOpenSDK/OpenSDK2.0.4",
-				);
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					"-ObjC",
-					"-lWechatOpenSDK",
-					"-lsqlite3",
-					"-lz",
-					"-lc++",
-					"-framework",
-					"WebKit",
 				);
 				INFOPLIST_FILE = HTZNext/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -518,7 +513,30 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/../htz/Pods/WechatOpenSDK/OpenSDK2.0.4",
+				);
 				MARKETING_VERSION = 1.0;
+				"OTHER_LDFLAGS[sdk=iphoneos*]" = (
+					"$(inherited)",
+					"-ObjC",
+					"-lWechatOpenSDK",
+					"-lsqlite3",
+					"-lz",
+					"-lc++",
+					"-framework",
+					WebKit,
+				);
+				"OTHER_LDFLAGS[sdk=iphonesimulator*]" = (
+					"$(inherited)",
+					"-ObjC",
+					"-lsqlite3",
+					"-lz",
+					"-lc++",
+					"-framework",
+					WebKit,
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = cn.org.htz.next.HTZNext;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;

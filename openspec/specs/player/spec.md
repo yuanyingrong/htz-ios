@@ -22,3 +22,11 @@ The audio playback system shall be a robust, thread-safe engine encapsulated in 
 - Exposed to TCA via `AudioPlayerClient`.
 - Features (Home, Album, Player) interact with the engine only through the injected client.
 - Supports "Now Playing Bar" as a persistent global component.
+
+### 5. Signed URL Playback Support
+The `PlayerFeature` SHALL support playback of media items using signed streaming URLs.
+
+#### Scenario: Initiating playback with signed URL
+- **WHEN** a `.play(item)` action is dispatched containing a valid signed `URL`
+- **THEN** the audio engine SHALL stream and play the audio via `AVPlayer`
+- **AND** update `PlayerState.isPlaying` to true.
