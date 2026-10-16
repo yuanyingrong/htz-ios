@@ -84,3 +84,8 @@ htz/htz/Vendor/IJKMediaFramework.framework/Modules/module.modulemap
 
 # Generated Pods files
 htz/Pods/resources-to-copy-htz.txt
+
+# Local tools & git artifacts
+.workbuddy/
+.git-rewrite/
+
