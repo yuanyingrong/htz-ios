@@ -66,6 +66,7 @@ public struct AuthFeature {
     
     public enum Action: Equatable {
         case wechatLoginTapped
+        case appleLoginTapped
         case receiveAuthCode(String)
         case tokenResponse(Swift.Result<LoginModel, NetworkError>)
         case syncResponse(Swift.Result<Bool, NetworkError>)
@@ -83,7 +84,11 @@ public struct AuthFeature {
             switch action {
             case .wechatLoginTapped:
                 return handleWechatLoginTapped(state: &state)
-                
+
+            case .appleLoginTapped:
+                state.errorMessage = "通过 Apple 登录即将开放，请先使用微信登录。"
+                return .none
+
             case let .receiveAuthCode(code):
                 return handleReceiveAuthCode(state: &state, code: code)
                 

@@ -3,6 +3,7 @@ import ComposableArchitecture
 import Home
 import NetworkKit
 import AuthFeature
+import PlayerFeature
 
 class AppDelegate: NSObject, UIApplicationDelegate {
     func application(
@@ -58,6 +59,16 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         
         return true
     }
+
+    func application(
+        _ application: UIApplication,
+        handleEventsForBackgroundURLSession identifier: String,
+        completionHandler: @escaping () -> Void
+    ) {
+        if identifier == "cn.org.htz.next.downloads" {
+            DownloadCenter.shared.backgroundCompletion = completionHandler
+        }
+    }
     
     func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
         #if !targetEnvironment(simulator)
@@ -106,10 +117,11 @@ struct HTZApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     
     init() {
-        // By default, we do NOT set up the test account, forcing the login gate.
-        // If the developer wants to test list/playback directly without WeChat,
-        // they can uncomment the line below:
-        // AuthManager.shared.setupTestAccount()
+        #if targetEnvironment(simulator)
+        if ProcessInfo.processInfo.arguments.contains("-HTZTestAccount") {
+            AuthManager.shared.setupTestAccount()
+        }
+        #endif
     }
     
     var body: some Scene {

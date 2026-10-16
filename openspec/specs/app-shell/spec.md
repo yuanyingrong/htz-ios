@@ -17,12 +17,20 @@ The main App Target SHALL act as a lightweight shell that imports and integrates
 - **AND** provide it with a correctly configured TCA `Store`.
 
 ### Requirement: Apple Music Style Global Navigation
-The app SHALL implement a global `TabView` (TabBar) that follows Apple Music's design patterns, including support for a persistent "Now Playing" bar overlay in the future.
+The app SHALL show three tabs named 首页, 专辑, and 我的, and host the now-playing bar above the tab bar.
 
-#### Scenario: Switching Tabs
-- **WHEN** the user taps a TabBar item
-- **THEN** the system SHALL switch to the corresponding feature view (e.g., Home, Album, Profile)
-- **AND** maintain the navigation state of each tab.
+#### Scenario: Switching tabs
+- **WHEN** the user selects a tab
+- **THEN** the app SHALL show the home, album list, or profile feature for that tab
+- **AND** the now-playing bar SHALL stay visible when a track is loaded.
+
+### Requirement: Now Playing Opens Full Player
+The now-playing bar SHALL open the full-screen player.
+
+#### Scenario: Tap the bar
+- **WHEN** the user taps the now-playing bar
+- **THEN** the full-screen player sheet SHALL be presented
+- **AND** dismissing it SHALL leave playback unchanged.
 
 ### Requirement: High-Version Target
 The project SHALL be configured with a minimum deployment target of iOS 16.0 to support modern SwiftUI and TCA features.

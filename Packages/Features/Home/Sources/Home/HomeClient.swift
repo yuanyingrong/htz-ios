@@ -95,23 +95,28 @@ extension HomeClient: DependencyKey {
                 .async()
             let albums = response.data ?? []
             
-            return try await withThrowingTaskGroup(of: Album.self) { group in
-                for album in albums {
+            return try await withThrowingTaskGroup(of: (Int, Album).self) { group in
+                for (index, album) in albums.enumerated() {
                     group.addTask {
                         let signedCover = await fetchCoverURL(for: album.id)
                         let resolved = signedCover ?? resolveImageUrl(album.imageUrl)
-                        return Album(
+                        return (index, Album(
                             id: album.id,
                             name: album.name,
-                            imageUrl: resolved
-                        )
+                            imageUrl: resolved,
+                            description: album.description,
+                            isPaid: album.isPaid,
+                            price: album.price,
+                            isPurchased: album.isPurchased,
+                            paidUrl: album.paidUrl
+                        ))
                     }
                 }
-                var results: [Album] = []
+                var results: [(Int, Album)] = []
                 for try await alb in group {
                     results.append(alb)
                 }
-                return results
+                return results.sorted { $0.0 < $1.0 }.map(\.1)
             }
         },
         getSutraItems: { sutraId in

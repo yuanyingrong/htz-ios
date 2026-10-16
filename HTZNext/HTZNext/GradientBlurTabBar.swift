@@ -70,6 +70,8 @@ struct CustomTabView<Content: View>: View {
                     ForEach(tabs) { tab in
                         content(tab.id)
                             .opacity(selection == tab.id ? 1 : 0)
+                            .allowsHitTesting(selection == tab.id)
+                            .zIndex(selection == tab.id ? 1 : 0)
                     }
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)

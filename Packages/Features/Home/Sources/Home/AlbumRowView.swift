@@ -28,10 +28,11 @@ public struct AlbumRowView: View {
                     .font(.htzHeadline)
                     .foregroundColor(.htzLabel)
                     .lineLimit(2)
-                
-                Text("Album ID: \(album.id)")
-                    .font(.htzCaption)
-                    .foregroundColor(.htzLabel.opacity(0.6))
+                if album.isPaid {
+                    Text(album.isPurchased ? "已购" : "付费")
+                        .font(.htzCaption)
+                        .foregroundColor(album.isPurchased ? .green : .orange)
+                }
             }
             
             Spacer()

@@ -5,6 +5,7 @@ public class AuthManager {
     
     private let tokenKey = "auth_token"
     private let unionidKey = "auth_unionid"
+    private let appleUserIdKey = "auth_apple_user_id"
     
     public var token: String? {
         get {
@@ -32,6 +33,18 @@ public class AuthManager {
         }
     }
     
+    /// Reserved for Sign in with Apple. The login button is present; the certificate flow is not connected yet.
+    public var appleUserId: String? {
+        get { UserDefaults.standard.string(forKey: appleUserIdKey) }
+        set {
+            if let newValue {
+                UserDefaults.standard.set(newValue, forKey: appleUserIdKey)
+            } else {
+                UserDefaults.standard.removeObject(forKey: appleUserIdKey)
+            }
+        }
+    }
+
     public var isLoggedIn: Bool {
         return token != nil
     }
@@ -46,5 +59,6 @@ public class AuthManager {
     public func logout() {
         self.token = nil
         self.unionid = nil
+        self.appleUserId = nil
     }
 }

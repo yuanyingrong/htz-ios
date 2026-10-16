@@ -11,7 +11,8 @@ public struct LoginModel: Codable, Equatable {
     public let avatar: String?
     public let birthdayYear: String?
     public let wxLoginResp: WeChatLoginResponse?
-    
+    public let appleUserId: String?
+
     public init(
         token: String?,
         name: String?,
@@ -22,7 +23,8 @@ public struct LoginModel: Codable, Equatable {
         createdAt: String?,
         avatar: String?,
         birthdayYear: String?,
-        wxLoginResp: WeChatLoginResponse?
+        wxLoginResp: WeChatLoginResponse?,
+        appleUserId: String? = nil
     ) {
         self.token = token
         self.name = name
@@ -34,6 +36,7 @@ public struct LoginModel: Codable, Equatable {
         self.avatar = avatar
         self.birthdayYear = birthdayYear
         self.wxLoginResp = wxLoginResp
+        self.appleUserId = appleUserId
     }
     
     public enum CodingKeys: String, CodingKey {
@@ -47,6 +50,7 @@ public struct LoginModel: Codable, Equatable {
         case avatar
         case birthdayYear = "birthday_year"
         case wxLoginResp = "wx_login_resp"
+        case appleUserId = "apple_user_id"
     }
 }
 

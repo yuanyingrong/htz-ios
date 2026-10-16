@@ -12,6 +12,12 @@ struct RootView: View {
     private let homeStore = Store(initialState: HomeFeature.State()) {
         HomeFeature()
     }
+    private let albumStore = Store(initialState: HomeFeature.State()) {
+        HomeFeature()
+    }
+    private let profileStore = Store(initialState: ProfileFeature.State()) {
+        ProfileFeature()
+    }
     private let playerStore = Store(initialState: PlayerFeature.State()) {
         PlayerFeature()
     }
@@ -19,9 +25,9 @@ struct RootView: View {
     @State private var selectedTab = 0
 
     private let tabs = [
-        TabConfig(id: 0, title: "Home", icon: "house.fill"),
-        TabConfig(id: 1, title: "Album", icon: "square.stack.fill"),
-        TabConfig(id: 2, title: "Profile", icon: "person.fill"),
+        TabConfig(id: 0, title: "首页", icon: "house.fill"),
+        TabConfig(id: 1, title: "专辑", icon: "square.stack.fill"),
+        TabConfig(id: 2, title: "我的", icon: "person.fill"),
     ]
 
     var body: some View {
@@ -37,31 +43,12 @@ struct RootView: View {
                     Group {
                         switch id {
                         case 0:
-                            HomeView(store: homeStore)
+                            HomeView(store: homeStore, onShowAlbums: { selectedTab = 1 })
                         case 1:
-                            NavigationStack {
-                                Text("Album Feature Coming Soon")
-                                    .font(.htzLargeTitle)
-                            }
+                            AlbumTabView(store: albumStore)
                         case 2:
-                            NavigationStack {
-                                VStack(spacing: 20) {
-                                    Text("Profile Feature Coming Soon")
-                                        .font(.htzHeadline)
-                                        .foregroundStyle(Color.secondary)
-                                    
-                                    Button(action: {
-                                        authStore.send(.logout)
-                                    }) {
-                                        Text("退出登录")
-                                            .font(.htzHeadline)
-                                            .foregroundColor(.white)
-                                            .frame(width: 160, height: 44)
-                                            .background(Color.red)
-                                            .cornerRadius(22)
-                                    }
-                                }
-                                .navigationTitle("Profile")
+                            ProfileView(store: profileStore) {
+                                authStore.send(.logout)
                             }
                         default:
                             Color.clear
@@ -75,10 +62,32 @@ struct RootView: View {
                             .padding(.bottom, 60)
                     }
                 }
+                .fullScreenCover(isPresented: Binding(
+                    get: { playerStore.showFullPlayer },
+                    set: { if !$0 { playerStore.send(.closeFullPlayer) } }
+                )) {
+                    FullPlayerView(store: playerStore)
+                }
+                .alert("提示", isPresented: Binding(
+                    get: { playerStore.alertMessage != nil },
+                    set: { if !$0 { playerStore.send(.clearAlert) } }
+                )) {
+                    Button("好的", role: .cancel) { playerStore.send(.clearAlert) }
+                } message: {
+                    Text(playerStore.alertMessage ?? "")
+                }
                 .ignoresSafeArea(.keyboard)
                 .environment(\.playerStore, playerStore)
                 .onAppear {
                     playerStore.send(.subscribeToPlayerState)
+                    #if targetEnvironment(simulator)
+                    if ProcessInfo.processInfo.arguments.contains("-HTZPlaySample") {
+                        let url = SampleTone.write()
+                        playerStore.send(.playQueue(tracks: [
+                            QueueTrack(id: "sample", sutraId: "sample", title: "测试音", audioURL: url)
+                        ], startIndex: 0))
+                    }
+                    #endif
                 }
             } else {
                 LoginView(store: authStore)
@@ -90,3 +99,48 @@ struct RootView: View {
 #Preview {
     RootView()
 }
+
+#if targetEnvironment(simulator)
+private enum SampleTone {
+    static func write() -> URL {
+        let sampleRate = 44_100
+        let seconds = 3
+        let count = sampleRate * seconds
+        var samples = Data(count: count * 2)
+        samples.withUnsafeMutableBytes { raw in
+            let ptr = raw.bindMemory(to: Int16.self)
+            for index in 0..<count {
+                let angle = 2 * Double.pi * 440 * Double(index) / Double(sampleRate)
+                ptr[index] = Int16(sin(angle) * 8000)
+            }
+        }
+        var data = Data()
+        data.append(contentsOf: "RIFF".utf8)
+        data.append(uint32(UInt32(36 + samples.count)))
+        data.append(contentsOf: "WAVEfmt ".utf8)
+        data.append(uint32(16))
+        data.append(uint16(1))
+        data.append(uint16(1))
+        data.append(uint32(UInt32(sampleRate)))
+        data.append(uint32(UInt32(sampleRate * 2)))
+        data.append(uint16(2))
+        data.append(uint16(16))
+        data.append(contentsOf: "data".utf8)
+        data.append(uint32(UInt32(samples.count)))
+        data.append(samples)
+        let url = FileManager.default.temporaryDirectory.appendingPathComponent("htz-sample.wav")
+        try? data.write(to: url)
+        return url
+    }
+
+    private static func uint16(_ value: UInt16) -> Data {
+        var value = value.littleEndian
+        return Data(bytes: &value, count: 2)
+    }
+
+    private static func uint32(_ value: UInt32) -> Data {
+        var value = value.littleEndian
+        return Data(bytes: &value, count: 4)
+    }
+}
+#endif

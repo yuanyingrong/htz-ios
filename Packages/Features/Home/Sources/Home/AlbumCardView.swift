@@ -46,10 +46,18 @@ public struct AlbumCardView: View {
                     .font(.htzHeadline)
                     .foregroundColor(.htzLabel)
                     .lineLimit(1)
-                
-                Text("Album") // Could be category if available
-                    .font(.htzCaption)
-                    .foregroundColor(.htzLabel.opacity(0.6))
+                if album.isPaid {
+                    Text(album.isPurchased ? "已购" : "付费")
+                        .font(.system(size: 10, weight: .semibold))
+                        .foregroundColor(.white)
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 2)
+                        .background(Capsule().fill(album.isPurchased ? Color.green : Color.orange))
+                } else {
+                    Text("专辑")
+                        .font(.htzCaption)
+                        .foregroundColor(.htzLabel.opacity(0.6))
+                }
             }
             .padding(.horizontal, 2)
             .padding(.top, 4)

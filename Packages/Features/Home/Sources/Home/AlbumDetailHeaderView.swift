@@ -67,14 +67,21 @@ public struct AlbumDetailHeaderView: View {
                     .foregroundColor(.htzLabel)
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, HTZSpacing.xl)
-                
-                Text("张庆祥讲师") // Legacy data has this prominently
-                    .font(.htzHeadline)
-                    .foregroundColor(.htzAccent)
-                
-                Text("Album • 2024")
-                    .font(.htzCaption)
-                    .foregroundColor(.htzLabel.opacity(0.6))
+                if album.isPaid {
+                    Text(album.isPurchased ? "已购" : "付费 \(String(format: "%.0f", album.price)) 元")
+                        .font(.htzCaption)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(Capsule().fill(album.isPurchased ? Color.green : Color.orange))
+                        .foregroundColor(.white)
+                }
+                if let description = album.description, !description.isEmpty {
+                    Text(description)
+                        .font(.htzCaption)
+                        .foregroundColor(.htzLabel.opacity(0.7))
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal, HTZSpacing.lg)
+                }
             }
             .opacity(max(0, 1 + (scrollOffset / 150)))
         }

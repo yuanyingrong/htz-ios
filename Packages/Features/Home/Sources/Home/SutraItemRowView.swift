@@ -5,10 +5,22 @@ import DesignSystem
 public struct SutraItemRowView: View {
     let index: Int
     let item: SutraItem
+    var isDownloaded: Bool
+    var onDownload: () -> Void
+    var onFavorite: () -> Void
     
-    public init(index: Int, item: SutraItem) {
+    public init(
+        index: Int,
+        item: SutraItem,
+        isDownloaded: Bool = false,
+        onDownload: @escaping () -> Void = {},
+        onFavorite: @escaping () -> Void = {}
+    ) {
         self.index = index
         self.item = item
+        self.isDownloaded = isDownloaded
+        self.onDownload = onDownload
+        self.onFavorite = onFavorite
     }
     
     public var body: some View {
@@ -61,11 +73,13 @@ public struct SutraItemRowView: View {
                     .foregroundColor(.htzLabel.opacity(0.4))
             }
             
-            Button(action: {
-                // Play action
-            }) {
-                Image(systemName: "ellipsis")
+            Button(action: onFavorite) {
+                Image(systemName: "star")
                     .foregroundColor(.htzLabel.opacity(0.6))
+            }
+            Button(action: onDownload) {
+                Image(systemName: isDownloaded ? "checkmark.circle.fill" : "arrow.down.circle")
+                    .foregroundColor(isDownloaded ? .htzAccent : .htzLabel.opacity(0.6))
             }
         }
         .padding(.vertical, HTZSpacing.sm)

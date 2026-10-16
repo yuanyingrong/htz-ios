@@ -7,8 +7,7 @@ import HTZAudio
 
 public struct AlbumDetailView: View {
     let store: StoreOf<AlbumDetailFeature>
-    @Environment(\.playerStore) var playerStore
-    @State private var scrollOffset: CGFloat = 0
+    @State private var showPicker = false
 
     public init(store: StoreOf<AlbumDetailFeature>) {
         self.store = store
@@ -16,183 +15,265 @@ public struct AlbumDetailView: View {
 
     public var body: some View {
         WithPerceptionTracking {
-            ZStack(alignment: .top) {
-                // 1. Immersive Background (Synced with Home)
-                ImmersiveBackgroundView(imageUrl: store.album.imageUrl.flatMap(URL.init))
-                    .contentTransition(.opacity)
-
-                // 2. Main Content
+            ScrollViewReader { proxy in
                 ScrollView {
-                    VStack(spacing: 0) {
-                        // Hero Header
-                        AlbumDetailHeaderView(album: store.album, scrollOffset: scrollOffset)
-
-                        // Items List
-                        VStack(alignment: .leading, spacing: 0) {
-                            if store.isLoading && store.items.isEmpty {
-                                ProgressView()
-                                    .frame(maxWidth: .infinity)
-                                    .padding(.vertical, HTZSpacing.xxl)
-                            } else if let error = store.errorMessage {
-                                Text(error)
-                                    .foregroundColor(.red)
-                                    .padding()
-                            } else {
-                                ForEach(Array(store.items.enumerated()), id: \.element.id) { index, item in
-                                    SutraItemRowView(index: index + 1, item: item)
-                                        .onTapGesture {
-                                            store.send(.trackTapped(item))
-                                        }
-                                    Divider()
-                                        .padding(.leading, HTZSpacing.md + 30 + HTZSpacing.md)
-                                }
-                            }
+                    VStack(spacing: 8) {
+                        header
+                        actionBar
+                        if let title = store.resumeTitle, !title.isEmpty {
+                            resumeBar(title)
                         }
-                        .background(.ultraThinMaterial)
-                        .padding(.bottom, 100)
+                        episodeList
                     }
-                    .scrollOffsetTracker($scrollOffset)
+                    .padding(.bottom, 120)
                 }
-                
+                .background(AlbumPalette.page)
+                .sheet(isPresented: $showPicker) {
+                    EpisodePicker(items: store.items) { id in
+                        showPicker = false
+                        proxy.scrollTo(id, anchor: .top)
+                    }
+                    .presentationDetents([.medium])
+                }
+            }
+            .navigationTitle(store.album.name)
+            .navigationBarTitleDisplayMode(.inline)
+            .navigationBarHidden(false)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    HStack(spacing: 16) {
+                        NavigationLink {
+                            SearchView()
+                        } label: {
+                            Image(systemName: "magnifyingglass")
+                        }
+                        ShareLink(item: store.album.name) {
+                            Image(systemName: "square.and.arrow.up")
+                        }
+                    }
+                }
+            }
+            .alert("提示", isPresented: Binding(
+                get: { store.alertMessage != nil },
+                set: { if !$0 { store.send(.clearAlert) } }
+            )) {
+                Button("好的", role: .cancel) { store.send(.clearAlert) }
+            } message: {
+                Text(store.alertMessage ?? "")
+            }
+            .onAppear { store.send(.onAppear) }
+            .overlay {
                 if store.isResolvingAudio {
                     ProgressView()
-                        .padding(HTZSpacing.lg)
-                        .background(.ultraThinMaterial)
-                        .cornerRadius(HTZRadius.md)
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                }
-            }
-            .ignoresSafeArea(edges: .bottom)
-            .alert(
-                "提示",
-                isPresented: Binding(
-                    get: { store.alertMessage != nil },
-                    set: { if !$0 { store.send(.clearAlert) } }
-                ),
-                actions: {
-                    Button("好的", role: .cancel) {
-                        store.send(.clearAlert)
-                    }
-                },
-                message: {
-                    Text(store.alertMessage ?? "")
-                }
-            )
-            .onAppear {
-                store.send(.onAppear)
-                print("[AlbumDetailView] onAppear")
-            }
-            .onChange(of: store.pendingPlayItem) { playItem in
-                if let item = playItem {
-                    playerStore.send(.play(item))
-                    store.send(.clearPendingPlayItem)
-                }
-            }
-            .onChange(of: store.items.count) { newValue in
-                print("[AlbumDetailView] items loaded: \(newValue)")
-            }
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbarBackground(.ultraThinMaterial, for: .navigationBar)
-            .toolbar {
-                ToolbarItem(placement: .principal) {
-                    Text(store.album.name)
-                        .font(.htzHeadline)
-                        .opacity(scrollOffset < -120 ? 1 : 0)
-                        .animation(.easeInOut, value: scrollOffset)
+                        .padding(20)
+                        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 12))
                 }
             }
         }
     }
-}
 
-// MARK: - Scroll Offset Tracker
-
-extension View {
-    /// Tracks the nearest ScrollView's contentOffset.y and writes the negated
-    /// value to the binding.  iOS 18+ uses onScrollGeometryChange; older
-    /// versions bridge through UIScrollView KVO.
-    func scrollOffsetTracker(_ offset: Binding<CGFloat>) -> some View {
-        modifier(ScrollOffsetModifier(offset: offset))
-    }
-}
-
-private struct ScrollOffsetModifier: ViewModifier {
-    @Binding var offset: CGFloat
-
-    func body(content: Content) -> some View {
-        if #available(iOS 18.0, *) {
-            content
-                .onScrollGeometryChange(for: CGFloat.self) { geometry in
-                    geometry.contentOffset.y
-                } action: { _, newValue in
-                    offset = -newValue
+    private var header: some View {
+        HStack(alignment: .top, spacing: 16) {
+            AsyncImage(url: store.album.imageUrl.flatMap(URL.init)) { phase in
+                switch phase {
+                case let .success(image):
+                    image.resizable().scaledToFill()
+                default:
+                    AlbumPalette.banner
                 }
+            }
+            .frame(width: 90, height: 90)
+            .clipShape(RoundedRectangle(cornerRadius: 4))
+
+            Text(store.album.description ?? "")
+                .font(.system(size: 13))
+                .foregroundColor(AlbumPalette.label)
+                .lineSpacing(4)
+                .lineLimit(4)
+                .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        .padding(16)
+        .frame(maxWidth: .infinity)
+        .background(Color.white)
+    }
+
+    private var actionBar: some View {
+        HStack(spacing: 0) {
+            actionButton("arrow.up.arrow.down", "排序") { store.send(.toggleSort) }
+            divider
+            actionButton("list.bullet", "选集") { showPicker = true }
+            divider
+            actionButton("arrow.down", "下载") { store.send(.downloadAlbum) }
+        }
+        .frame(height: 48)
+        .background(Color.white)
+    }
+
+    private var divider: some View {
+        Rectangle().fill(Color(white: 0.9)).frame(width: 1, height: 20)
+    }
+
+    private func actionButton(_ icon: String, _ title: String, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            HStack(spacing: 6) {
+                Image(systemName: icon)
+                Text(title)
+            }
+            .font(.system(size: 14))
+            .foregroundColor(AlbumPalette.title)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+        }
+        .buttonStyle(.plain)
+    }
+
+    private func resumeBar(_ title: String) -> some View {
+        HStack(spacing: 8) {
+            Image(systemName: "play.circle")
+                .foregroundColor(AlbumPalette.title)
+            Text(resumeText(title))
+                .font(.system(size: 14))
+                .foregroundColor(AlbumPalette.title)
+                .lineLimit(1)
+            Spacer()
+            Button {
+                playResume()
+            } label: {
+                Text("续播")
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 6)
+                    .background(AlbumPalette.orange, in: Capsule())
+            }
+            .buttonStyle(.plain)
+        }
+        .padding(.horizontal, 16)
+        .frame(height: 48)
+        .background(Color.white)
+    }
+
+    private func resumeText(_ title: String) -> String {
+        let clock = AlbumTime.clock(store.resumePosition)
+        return clock == "00:00" ? "续播 \(title)" : "续播 \(title) · \(clock)"
+    }
+
+    private func playResume() {
+        guard let id = store.resumeItemId, let item = store.items.first(where: { $0.id == id }) else { return }
+        store.send(.trackTapped(item))
+    }
+
+    @ViewBuilder
+    private var episodeList: some View {
+        if store.isLoading && store.items.isEmpty {
+            ProgressView().frame(maxWidth: .infinity).padding(.vertical, 40)
+        } else if let error = store.errorMessage, store.items.isEmpty {
+            Text(error).foregroundColor(.red).padding()
         } else {
-            content
-                .overlay(
-                    ScrollOffsetObserver { contentOffsetY in
-                        offset = -contentOffsetY
+            LazyVStack(spacing: 0) {
+                ForEach(store.items) { item in
+                    Button {
+                        store.send(.trackTapped(item))
+                    } label: {
+                        EpisodeRow(item: item, cover: store.album.imageUrl, progress: item.id == store.resumeItemId ? store.resumePosition : nil)
                     }
-                    .frame(width: 0, height: 0)
-                    .allowsHitTesting(false)
-                )
+                    .buttonStyle(.plain)
+                    .id(item.id)
+                    Divider().padding(.leading, 76)
+                }
+            }
+            .background(Color.white)
         }
     }
 }
 
-// MARK: - iOS 16/17: UIScrollView KVO Bridge
+private struct EpisodeRow: View {
+    let item: SutraItem
+    let cover: String?
+    let progress: Int?
 
-private struct ScrollOffsetObserver: UIViewRepresentable {
-    let action: (CGFloat) -> Void
+    var body: some View {
+        HStack(alignment: .center, spacing: 12) {
+            AsyncImage(url: cover.flatMap(URL.init)) { phase in
+                switch phase {
+                case let .success(image):
+                    image.resizable().scaledToFill()
+                default:
+                    AlbumPalette.banner
+                }
+            }
+            .frame(width: 48, height: 48)
+            .clipShape(RoundedRectangle(cornerRadius: 4))
 
-    func makeUIView(context: Context) -> ScrollObserverView {
-        ScrollObserverView(action: action)
-    }
-
-    func updateUIView(_ uiView: ScrollObserverView, context: Context) {
-        uiView.action = action
+            VStack(alignment: .leading, spacing: 6) {
+                Text(item.title ?? "未命名")
+                    .font(.system(size: 15))
+                    .foregroundColor(AlbumPalette.title)
+                    .lineLimit(1)
+                HStack(spacing: 10) {
+                    Label("\(item.playedCount ?? 0)", systemImage: "play.fill")
+                    Label(AlbumTime.clock(item.duration ?? 0), systemImage: "clock")
+                    if let remain = AlbumTime.remaining(duration: item.duration ?? 0, progress: progress) {
+                        Text(remain)
+                    }
+                }
+                .font(.system(size: 12))
+                .foregroundColor(AlbumPalette.label)
+            }
+            Spacer(minLength: 0)
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 10)
+        .contentShape(Rectangle())
     }
 }
 
-private final class ScrollObserverView: UIView {
-    var action: (CGFloat) -> Void
-    private var observation: NSKeyValueObservation?
+private struct EpisodePicker: View {
+    let items: [SutraItem]
+    let onPick: (String) -> Void
+    @Environment(\.dismiss) private var dismiss
 
-    init(action: @escaping (CGFloat) -> Void) {
-        self.action = action
-        super.init(frame: .zero)
-        isHidden = true
-        isUserInteractionEnabled = false
-    }
-
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
-    override func didMoveToSuperview() {
-        super.didMoveToSuperview()
-        observation?.invalidate()
-        observation = nil
-
-        guard superview != nil else { return }
-
-        // Walk up to find the host UIScrollView — SwiftUI uses one internally
-        if let scrollView = findScrollView() {
-            observation = scrollView.observe(\.contentOffset, options: [.new]) { [weak self] _, change in
-                guard let self, let offsetY = change.newValue?.y else { return }
-                self.action(offsetY)
+    var body: some View {
+        NavigationStack {
+            List(groups, id: \.start) { group in
+                Button("\(group.start + 1)-\(group.end)") {
+                    if items.indices.contains(group.start) {
+                        onPick(items[group.start].id)
+                    }
+                    dismiss()
+                }
             }
+            .navigationTitle("选集")
+            .navigationBarTitleDisplayMode(.inline)
         }
     }
 
-    private func findScrollView() -> UIScrollView? {
-        var view: UIView? = superview
-        while let v = view {
-            if let scrollView = v as? UIScrollView {
-                return scrollView
-            }
-            view = v.superview
+    private var groups: [(start: Int, end: Int)] {
+        stride(from: 0, to: items.count, by: 50).map { start in
+            (start, min(start + 50, items.count))
         }
-        return nil
+    }
+}
+
+enum AlbumTime {
+    static func clock(_ value: Int) -> String {
+        let seconds = value >= 100_000 ? value / 1000 : value
+        guard seconds > 0 else { return "00:00" }
+        let hours = seconds / 3600
+        let minutes = (seconds % 3600) / 60
+        let remain = seconds % 60
+        if hours > 0 {
+            return String(format: "%02d:%02d:%02d", hours, minutes, remain)
+        }
+        return String(format: "%02d:%02d", minutes, remain)
+    }
+
+    static func remaining(duration: Int, progress: Int?) -> String? {
+        guard let progress, progress > 0, duration > 0 else { return nil }
+        let durationMs = duration >= 100_000 ? duration : duration * 1000
+        let progressMs = progress >= 100_000 ? progress : progress * 1000
+        let left = durationMs - progressMs
+        guard left > 5000 else { return nil }
+        let minutes = (left + 59_999) / 60_000
+        return "剩余\(minutes)分钟"
     }
 }

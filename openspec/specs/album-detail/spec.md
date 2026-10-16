@@ -30,25 +30,39 @@ The `AlbumDetailFeature` SHALL request a signed file URL before sending audio it
 - **AND** `AlbumDetailFeature` displays an alert indicating payment/subscription is required
 - **AND** playback is not initiated.
 
-### Requirement: Immersive Hero Header
-The `AlbumDetailView` SHALL feature a prominent hero header that reacts to scroll gestures.
+### Requirement: Android-Style Album Detail
+Album detail SHALL show the cover and description, sort, episode picker, and download actions, a resume row when this album has listening history, and a chapter list. Tapping a chapter SHALL open the full player.
 
-#### Scenario: Scrolling up
-- **WHEN** the user scrolls the content upwards
-- **THEN** the album cover image SHALL scale down smoothly
-- **AND** the navigation bar SHALL transition to an `.ultraThinMaterial` appearance.
+#### Scenario: Open a chapter
+- **WHEN** the user taps a chapter
+- **THEN** playback of that chapter SHALL start
+- **AND** the full player SHALL be presented with the chapter title, lyrics, and transport controls.
 
-### Requirement: High-Density Track List
-The list of sutra items SHALL be rendered using a clear typographic hierarchy inspired by Apple Music Classical.
+#### Scenario: Resume row
+- **WHEN** listening history contains a chapter from this album
+- **THEN** the detail screen SHALL show a 续播 row for that chapter.
 
-#### Scenario: Rendering track rows
-- **WHEN** the album items are loaded
-- **THEN** each row SHALL display a sequential index number, a primary title, and secondary metadata (e.g., duration).
-- **AND** use SF Pro Rounded font with weight variations to distinguish information levels.
+### Requirement: Album Tab Grid
+The album tab SHALL list albums in a three-column grid and show the most recently listened album above the grid.
 
-### Requirement: Context-Aware Immersive Background
-The `AlbumDetailView` SHALL use the `ImmersiveBackgroundView` logic to create a full-screen blurred background derived from the album artwork.
+#### Scenario: Continue listening
+- **WHEN** the user has a listening history and taps 继续收听
+- **THEN** that album's detail SHALL open.
 
-#### Scenario: Initializing detail view
-- **WHEN** the view appears
-- **THEN** the background SHALL be set to a blurred version of the album cover to provide visual depth.
+### Requirement: Album Queue Handoff
+Opening a track from album detail SHALL give the player the whole chapter list, not only the tapped item.
+
+#### Scenario: Tap a playable chapter
+- **WHEN** the signed audio URL for the tapped chapter is returned
+- **THEN** album detail SHALL send that chapter plus the current chapter list to the player.
+
+### Requirement: Paid Album Badge
+Album detail SHALL show whether the album is paid and whether the current user has purchased it.
+
+#### Scenario: Unpurchased paid album
+- **WHEN** the album is paid and not purchased
+- **THEN** the detail header SHALL show 付费.
+
+#### Scenario: Purchased paid album
+- **WHEN** the album is paid and purchased
+- **THEN** the detail header SHALL show 已购.

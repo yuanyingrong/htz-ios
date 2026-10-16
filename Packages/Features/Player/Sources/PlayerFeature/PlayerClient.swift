@@ -6,27 +6,28 @@ public struct PlayerClient {
     public var play: @Sendable (PlayerItem) async -> Void
     public var resume: @Sendable () async -> Void
     public var pause: @Sendable () async -> Void
+    public var seek: @Sendable (Double) async -> Void
+    public var setRate: @Sendable (Double) async -> Void
     public var playerStateStream: @Sendable () -> AsyncStream<PlayerState>
 }
 
 extension PlayerClient: DependencyKey {
-    public static let liveValue: Self = {
-        let engine = AudioEngine.shared
-        let sharedStream = engine.stateStream
-        return Self(
-            play: { item in await engine.play(item: item) },
-            resume: { await engine.resume() },
-            pause: { await engine.pause() },
-            playerStateStream: { sharedStream }
-        )
-    }()
+    public static let liveValue = Self(
+        play: { item in await AudioEngine.shared.play(item: item) },
+        resume: { await AudioEngine.shared.resume() },
+        pause: { await AudioEngine.shared.pause() },
+        seek: { seconds in await AudioEngine.shared.seek(to: seconds) },
+        setRate: { rate in await AudioEngine.shared.setRate(rate) },
+        playerStateStream: { PlaybackBroadcaster.shared.makeStream() }
+    )
     
-    // Provide a test value that does nothing
     public static let testValue = Self(
         play: { _ in },
         resume: {},
         pause: {},
-        playerStateStream: { AsyncStream { _ in } }
+        seek: { _ in },
+        setRate: { _ in },
+        playerStateStream: { AsyncStream { $0.finish() } }
     )
 }
 

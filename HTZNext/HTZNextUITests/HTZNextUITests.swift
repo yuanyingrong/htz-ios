@@ -23,14 +23,18 @@ final class HTZNextUITests: XCTestCase {
     }
 
     @MainActor
-    func testExample() throws {
-        // UI tests must launch the application that they test.
+    func testSampleToneAudiblyAdvances() throws {
         let app = XCUIApplication()
+        app.launchArguments = ["-HTZTestAccount", "-HTZPlaySample"]
         app.launch()
 
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-        // XCUIAutomation Documentation
-        // https://developer.apple.com/documentation/xcuiautomation
+        let bar = app.otherElements["now-playing-bar"]
+        XCTAssertTrue(bar.waitForExistence(timeout: 15), "迷你条没有出现：\(app.debugDescription)")
+
+        let playing = NSPredicate(format: "value == 'playing'")
+        let expectation = XCTNSPredicateExpectation(predicate: playing, object: bar)
+        let result = XCTWaiter.wait(for: [expectation], timeout: 12)
+        XCTAssertEqual(result, .completed, "音频没有往前走，当前状态：\(bar.value ?? "nil")")
     }
 
     @MainActor

@@ -39,6 +39,30 @@ public class NetworkManager<Target: TargetType> {
         self.decoder.keyDecodingStrategy = .convertFromSnakeCase
     }
     
+    public func requestData(_ target: Target) -> AnyPublisher<Data, NetworkError> {
+        provider.requestPublisher(target)
+            .tryMap { (response: Response) -> Data in
+                if response.statusCode == 403 {
+                    throw NetworkError.accessDenied
+                }
+                if let json = try? JSONSerialization.jsonObject(with: response.data) as? [String: Any] {
+                    let code = (json["code"] as? Int) ?? Int(json["code"] as? String ?? "")
+                    if code == 90001 {
+                        throw NetworkError.accessDenied
+                    }
+                }
+                guard (200...299).contains(response.statusCode) else {
+                    throw NetworkError.apiError("HTTP status \(response.statusCode)")
+                }
+                return response.data
+            }
+            .mapError { error -> NetworkError in
+                if let netErr = error as? NetworkError { return netErr }
+                return NetworkError.unknown
+            }
+            .eraseToAnyPublisher()
+    }
+
     public func request<T: Codable>(_ target: Target) -> AnyPublisher<T, NetworkError> {
         return provider.requestPublisher(target)
             .tryMap { (response: Response) -> Data in

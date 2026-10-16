@@ -29,6 +29,7 @@ let package = Package(
             dependencies: [
                 "HTZAudio",
                 "DesignSystem",
+                "NetworkKit",
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
             ],
             path: "Features/Player/Sources/PlayerFeature"
@@ -81,6 +82,11 @@ let package = Package(
             name: "AuthTests",
             dependencies: ["AuthFeature"],
             path: "Features/Auth/Tests/AuthTests"
+        ),
+        .testTarget(
+            name: "PlayerFeatureTests",
+            dependencies: ["PlayerFeature"],
+            path: "Features/Player/Tests/PlayerFeatureTests"
         ),
     ]
 )

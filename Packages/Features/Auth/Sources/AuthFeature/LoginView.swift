@@ -97,6 +97,14 @@ public struct LoginView: View {
                         .buttonStyle(PremiumButtonStyle())
                         .disabled(store.isLoading)
                         .padding(.horizontal, 40)
+
+                        Button("通过 Apple 登录") {
+                            store.send(.appleLoginTapped)
+                        }
+                        .font(.htzSubheadline)
+                        .foregroundStyle(Color.secondary)
+                        .padding(.top, HTZSpacing.md)
+                        .disabled(store.isLoading)
                     }
                     .opacity(showButton ? 1.0 : 0.0)
                     .offset(y: showButton ? 0 : 10)
