@@ -85,7 +85,7 @@ struct RootView: View {
                         let url = SampleTone.write()
                         playerStore.send(.playQueue(tracks: [
                             QueueTrack(id: "sample", sutraId: "sample", title: "测试音", audioURL: url)
-                        ], startIndex: 0))
+                        ], startIndex: 0, startPosition: 0))
                     }
                     #endif
                 }

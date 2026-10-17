@@ -1,17 +1,17 @@
 # Player Core Specification
 
 ## Target State
-The audio playback system shall be a robust, thread-safe engine encapsulated in a Swift Actor, decoupled from UI logic, and accessible via TCA dependencies.
+The audio playback system shall be a robust engine on the main actor, decoupled from UI logic, and accessible via TCA dependencies.
 
-### 1. Audio Engine (CoreAudio)
-- **Safe Encapsulation**: The legacy `FreeStreamer` (OC/C) must be wrapped in a `globalActor` or `Actor` to ensure concurrency safety.
-- **State Machine**: The player shall maintain a clear `PlaybackState` (idle, loading, playing, paused, error).
-- **Progress Tracking**: Real-time progress (0.0 - 1.0) and duration shall be published via `AsyncStream` or `Combine`.
+### 1. Audio Engine
+- **Implementation**: `HTZAudio.AudioEngine` wraps a single `AVPlayer` on `@MainActor` (not FreeStreamer).
+- **State Machine**: The player shall maintain a clear `PlayerState` (item, playing, time, duration, rate, finished, error).
+- **Progress Tracking**: Real-time progress and duration shall be published via `AsyncStream`.
 
 ### 2. Queue Management
-- Supports multiple play modes: `sequential`, `shuffle`, `repeatOne`, `repeatAll`.
+- Supports play modes aligned with Android `playModel`: sequential (0), shuffle (1), loop (2), single (3); persisted in `UserDefaults`.
 - Handles dynamic queue updates without interrupting current playback.
-- Efficiently manages local cache vs. remote streaming.
+- Prefers local download files over signed remote URLs when present.
 
 ### 3. Remote Control & Info
 - Full integration with `MPNowPlayingInfoCenter`.
@@ -40,8 +40,14 @@ The player SHALL keep the current album's track list and the index of the track 
 - **AND** request a signed audio URL before playback starts.
 
 #### Scenario: Track finishes
-- **WHEN** the current track plays to the end and a next track exists
-- **THEN** the player SHALL request a signed URL for the next track and start it.
+- **WHEN** the current track plays to the end
+- **THEN** the player SHALL advance according to the current play mode (sequential next, shuffle random, loop wrap, or single replay)
+- **AND** request a signed URL when the next track is not already local.
+
+#### Scenario: Cycle play mode
+- **WHEN** the user taps the play-mode control in the full-screen player
+- **THEN** the mode SHALL cycle sequential → shuffle → loop → single
+- **AND** the choice SHALL persist across launches.
 
 #### Scenario: Paid track blocks advance
 - **WHEN** the next track's signed URL request is denied
@@ -94,3 +100,19 @@ The player SHALL report listen progress without blocking playback.
 - **WHEN** the user pauses or the player changes track
 - **THEN** the app SHALL post the item id and position in seconds to `/post/listen/history`
 - **AND** a failed report SHALL leave playback running.
+
+### Requirement: Favorite Toggle In Player
+The full-screen player SHALL show whether the current item is favorited and allow toggle.
+
+#### Scenario: Toggle favorite
+- **WHEN** the user taps the favorite control
+- **THEN** the app SHALL add or delete the favorite on the server
+- **AND** update the star state for the current item.
+
+### Requirement: Resume Position
+Playback MAY start at a prior listen position.
+
+#### Scenario: Resume seek after start
+- **WHEN** a play request includes a `startPosition` greater than one second
+- **AND** the item duration becomes available
+- **THEN** the player SHALL seek to that position once before continuing.

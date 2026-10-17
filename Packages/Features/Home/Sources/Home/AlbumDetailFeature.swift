@@ -25,6 +25,7 @@ public struct AlbumDetailFeature {
         public var resumeItemId: String?
         public var resumeTitle: String?
         public var resumePosition: Int = 0
+        public var pendingStartPosition: Int = 0
         
         public init(album: Album) {
             self.album = album
@@ -36,6 +37,7 @@ public struct AlbumDetailFeature {
         case itemsResponse(Result<[SutraItem], NetworkError>)
         case coverResolved(String)
         case trackTapped(SutraItem)
+        case resumeTapped
         case toggleSort
         case resumeLoaded(id: String?, title: String?, position: Int)
         case favoriteTapped(SutraItem)
@@ -81,7 +83,7 @@ public struct AlbumDetailFeature {
                 return .none
                 
             case let .itemsResponse(.success(items)):
-                state.items = items
+                state.items = Self.sortedAscending(items)
                 state.isLoading = false
                 let ids = Set(items.map(\.id))
                 return .run { send in
@@ -108,15 +110,30 @@ public struct AlbumDetailFeature {
                 
             case let .trackTapped(item):
                 state.isResolvingAudio = true
+                state.pendingStartPosition = 0
+                return resolve(item: item, sutraId: state.album.id, purpose: .play)
+
+            case .resumeTapped:
+                guard let id = state.resumeItemId,
+                      let item = state.items.first(where: { $0.id == id }) else { return .none }
+                state.isResolvingAudio = true
+                state.pendingStartPosition = state.resumePosition
                 return resolve(item: item, sutraId: state.album.id, purpose: .play)
 
             case let .favoriteTapped(item):
                 return .run { send in
                     do {
-                        try await LibraryAPI.addFavorite(itemId: item.id)
-                        await send(.libraryMessage("已加入收藏"))
+                        let favorites = (try? await LibraryAPI.favorites()) ?? []
+                        if let hit = favorites.first(where: { $0.sutraItemId == item.id || $0.id == item.id }),
+                           !hit.serverId.isEmpty {
+                            try await LibraryAPI.deleteFavorite(serverId: hit.serverId)
+                            await send(.libraryMessage("已取消收藏"))
+                        } else {
+                            try await LibraryAPI.addFavorite(itemId: item.id)
+                            await send(.libraryMessage("已加入收藏"))
+                        }
                     } catch {
-                        await send(.libraryMessage("收藏失败"))
+                        await send(.libraryMessage("收藏操作失败"))
                     }
                 }
 
@@ -155,7 +172,16 @@ public struct AlbumDetailFeature {
                 state.pendingQueue = PendingQueue(tracks: tracks, index: index, token: state.playToken)
                 let queued = tracks
                 let start = index
-                return .run { _ in PlayerRelay.shared.play(tracks: queued, startIndex: start, presentPlayer: true) }
+                let startPosition = Self.seconds(from: state.pendingStartPosition)
+                state.pendingStartPosition = 0
+                return .run { _ in
+                    PlayerRelay.shared.play(
+                        tracks: queued,
+                        startIndex: start,
+                        presentPlayer: true,
+                        startPosition: startPosition
+                    )
+                }
 
             case let .downloadReady(item, url):
                 state.isResolvingAudio = false
@@ -188,7 +214,34 @@ public struct AlbumDetailFeature {
         }
     }
 
+    static func seconds(from position: Int) -> Double {
+        Double(position >= 100_000 ? position / 1000 : position)
+    }
+
+    static func sortedAscending(_ items: [SutraItem]) -> [SutraItem] {
+        let hasLesson = items.contains { $0.lesson != nil }
+        return items.enumerated().sorted { lhs, rhs in
+            let left = hasLesson ? (lhs.element.lesson ?? Int.max) : titleNumber(lhs.element.title)
+            let right = hasLesson ? (rhs.element.lesson ?? Int.max) : titleNumber(rhs.element.title)
+            if left == right { return lhs.offset < rhs.offset }
+            return left < right
+        }.map(\.element)
+    }
+
+    private static func titleNumber(_ title: String?) -> Int {
+        guard let title else { return Int.max }
+        let digits = title.prefix { $0.isNumber }
+        return Int(digits) ?? Int.max
+    }
+
     private enum ResolvePurpose { case play, download }
+
+    private static func lyricURL(_ signed: String?, fileId: String?) -> URL? {
+        if let signed, !signed.isEmpty, let url = URL(string: signed) { return url }
+        guard let fileId, !fileId.isEmpty else { return nil }
+        if fileId.hasPrefix("http"), let url = URL(string: fileId) { return url }
+        return URL(string: "https://htz-sutra.oss-cn-shanghai.aliyuncs.com/\(fileId)")
+    }
 
     private func resolve(item: SutraItem, sutraId: String, purpose: ResolvePurpose) -> Effect<Action> {
         .run { send in
@@ -200,12 +253,12 @@ public struct AlbumDetailFeature {
                 }
                 switch purpose {
                 case .play:
-                    await send(.audioURLResolved(
-                        item: item,
-                        signedAudioURL: audioURL,
-                        originalLyric: file.signedUrls?.originalLyric.flatMap(URL.init(string:)),
-                        explanationLyric: file.signedUrls?.explanationLyric.flatMap(URL.init(string:))
-                    ))
+                await send(.audioURLResolved(
+                    item: item,
+                    signedAudioURL: audioURL,
+                    originalLyric: Self.lyricURL(file.signedUrls?.originalLyric, fileId: item.originalLyricId),
+                    explanationLyric: Self.lyricURL(file.signedUrls?.explanationLyric, fileId: item.explanationLyricId)
+                ))
                 case .download:
                     await send(.downloadReady(item: item, url: audioURL))
                 }

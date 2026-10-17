@@ -14,7 +14,7 @@ This project aims to refactor the "黄庭禅" (HTZ) iOS application from a legac
 - **Architecture**: Transition to TCA for state management and SPM for modularity.
 - **UI Framework**: Complete migration from UIKit/SnapKit to SwiftUI.
 - **Data Layer**: Replace HandyJSON/SwiftyJSON with Swift `Codable`.
-- **Media Core**: Encapsulate legacy C/OC audio engines (FreeStreamer) into safe Swift Actors.
+- **Media Core**: HTZNext plays through `HTZAudio.AudioEngine` (`AVPlayer`, `@MainActor`). Legacy FreeStreamer stays only in the UIKit app until retired.
 - **User Experience**: Implement Dark Mode, Dynamic Type, and high-fidelity animations.
 
 ## 3. Technical Constraints & Targets
@@ -27,7 +27,7 @@ This project aims to refactor the "黄庭禅" (HTZ) iOS application from a legac
 - **Persistence**: Core Data (Wrapped)
 
 ## 4. Non-Negotiable Capabilities (Preservation)
-- **Audio Integrity**: The core playback logic (FreeStreamer) must remain stable and performant.
+- **Audio Integrity**: Background playback, queue advance, seek/rate, and signed-URL streaming must stay reliable; do not regress offline local-file play.
 - **Social Integration**: WeChat/QQ/Weibo login and sharing must remain fully functional.
 - **Push Notifications**: JPush integration must be preserved.
 - **Offline Access**: Download and cache management must not be broken during migration.

@@ -9,18 +9,27 @@ The profile tab SHALL replace the placeholder with the account menu.
 - **AND** it SHALL keep logout.
 
 ### Requirement: Favorites
-The user SHALL view and remove favorites, and add a favorite from album detail.
+The user SHALL view and remove favorites, toggle favorite from album/player, and play from the favorites list.
 
 #### Scenario: Remove a favorite
 - **WHEN** the user deletes a favorite
 - **THEN** it SHALL disappear from the list after the server delete succeeds.
 
+#### Scenario: Play a favorite
+- **WHEN** the user taps a favorite row
+- **THEN** the player SHALL start a queue built from the favorites list at that item.
+
 ### Requirement: Listen History
-The profile SHALL list listen history and allow deleting one item or all items.
+The profile SHALL list listen history, allow deleting one item or all items, and resume playback from a history row.
 
 #### Scenario: Clear history
 - **WHEN** the user confirms clearing history
 - **THEN** the list SHALL become empty after the server delete succeeds.
+
+#### Scenario: Play from history
+- **WHEN** the user taps a history row
+- **THEN** the player SHALL play that chapter
+- **AND** seek to the stored last position (seconds or millisecond values ≥ 100000 treated as ms).
 
 ### Requirement: Notifications
 The profile SHALL list notifications and mark them read.

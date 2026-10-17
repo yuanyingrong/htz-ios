@@ -1,9 +1,19 @@
 import XCTest
+import NetworkKit
 @testable import Home
 
 final class HomeTests: XCTestCase {
     func testPackageLoads() {
         XCTAssertNotNil(HomeFeature.State())
+    }
+
+    func testChaptersDefaultToAscendingLessonOrder() {
+        let items = [
+            SutraItem(id: "c", title: "003.第三", lesson: 3),
+            SutraItem(id: "a", title: "001.第一", lesson: 1),
+            SutraItem(id: "b", title: "002.第二", lesson: 2)
+        ]
+        XCTAssertEqual(AlbumDetailFeature.sortedAscending(items).map(\.id), ["a", "b", "c"])
     }
 
     func testCheckInStreakSkipsTodayWhenNotChecked() {

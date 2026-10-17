@@ -20,8 +20,12 @@ public struct PlayerFeature {
         public var error: String?
         public var alertMessage: String?
         public var showFullPlayer: Bool = false
-        public var lyricKind: LyricKind = .original
+        public var lyricKind: LyricKind = .explanation
         public var lyricLines: [LyricLine] = []
+        public var playMode: PlayMode = PlayModeStore.current
+        public var isFavorite: Bool = false
+        public var favoriteServerId: String?
+        public var resumeSeek: Double?
         public var progress: Double {
             guard duration > 0 else { return 0 }
             return currentTime / duration
@@ -35,11 +39,12 @@ public struct PlayerFeature {
     }
 
     public enum Action: Equatable {
-        case playQueue(tracks: [QueueTrack], startIndex: Int)
+        case playQueue(tracks: [QueueTrack], startIndex: Int, startPosition: Double)
         case playButtonTapped
         case pauseButtonTapped
         case nextTrack
         case previousTrack
+        case trackDidFinish
         case seek(Double)
         case setRate(Double)
         case playerStateUpdated(PlayerState)
@@ -55,6 +60,11 @@ public struct PlayerFeature {
         case clearAlert
         case downloadCurrent
         case selectTrack(Int)
+        case cyclePlayMode
+        case refreshFavoriteStatus
+        case favoriteStatusLoaded(isFavorite: Bool, serverId: String?)
+        case toggleFavorite
+        case favoriteToggled(isFavorite: Bool, serverId: String?)
     }
 
     @Dependency(\.playerClient) var playerClient
@@ -66,12 +76,18 @@ public struct PlayerFeature {
     public var body: some ReducerOf<Self> {
         Reduce { state, action in
             switch action {
-            case let .playQueue(tracks, startIndex):
+            case let .playQueue(tracks, startIndex, startPosition):
                 state.queue = tracks
                 state.index = min(max(0, startIndex), max(tracks.count - 1, 0))
                 state.alertMessage = nil
                 state.lyricLines = []
-                return playCurrent(state: &state, revertTo: nil)
+                state.resumeSeek = startPosition > 1 ? startPosition : nil
+                state.isFavorite = false
+                state.favoriteServerId = nil
+                return .merge(
+                    playCurrent(state: &state, revertTo: nil),
+                    .send(.refreshFavoriteStatus)
+                )
 
             case .playButtonTapped:
                 return .run { _ in await playerClient.resume() }
@@ -85,12 +101,17 @@ public struct PlayerFeature {
                 )
 
             case .nextTrack:
-                guard !state.isResolving, state.index + 1 < state.queue.count else { return .none }
-                return advance(state: &state, to: state.index + 1)
+                return move(state: &state, auto: false, forward: true)
 
             case .previousTrack:
-                guard !state.isResolving, state.index > 0 else { return .none }
-                return advance(state: &state, to: state.index - 1)
+                if state.currentTime > 3 {
+                    state.currentTime = 0
+                    return .run { _ in await playerClient.seek(0) }
+                }
+                return move(state: &state, auto: false, forward: false)
+
+            case .trackDidFinish:
+                return move(state: &state, auto: true, forward: true)
 
             case let .seek(seconds):
                 return .run { _ in await playerClient.seek(seconds) }
@@ -100,6 +121,14 @@ public struct PlayerFeature {
                 return .run { _ in await playerClient.setRate(rate) }
 
             case let .playerStateUpdated(newState):
+                let queuedId = state.queue.indices.contains(state.index) ? state.queue[state.index].id : nil
+                if let queuedId, let incomingId = newState.currentItem?.id, queuedId != incomingId {
+                    return .none
+                }
+                let previousTime = state.currentTime
+                let previousPlaying = state.isPlaying
+                let previousItemId = state.currentItem?.id
+                let previousDuration = state.duration
                 let sameItem = newState.currentItem?.id == state.currentItem?.id
                 let reachedEnd = newState.duration > 1 && newState.currentTime >= newState.duration - 1.5
                 let shouldAdvance = newState.didFinish && !state.didFinish && !state.isResolving && sameItem && reachedEnd
@@ -110,25 +139,30 @@ public struct PlayerFeature {
                 if newState.rate > 0 { state.rate = newState.rate }
                 state.didFinish = newState.didFinish
                 state.error = newState.error
-                let item = newState.currentItem
-                let time = newState.currentTime
-                let duration = newState.duration
-                let rate = state.rate
-                let isPlaying = newState.isPlaying
-                let update = nowPlayingClient.update
-                let nowPlaying = Effect<Action>.run { _ in
-                    await update(item, time, duration, rate, isPlaying)
+
+                var effects: [Effect<Action>] = []
+                if let seek = state.resumeSeek, newState.duration > seek, newState.currentTime < 1.5 {
+                    state.resumeSeek = nil
+                    effects.append(.run { _ in await playerClient.seek(seek) })
                 }
                 if shouldAdvance {
-                    return .merge(nowPlaying, .send(.nextTrack))
+                    effects.append(nowPlayingUpdate(state))
+                    effects.append(.send(.trackDidFinish))
+                    return .merge(effects)
                 }
-                return nowPlaying
+                let clockMoved = abs(state.currentTime - previousTime) >= 1
+                    || abs(state.duration - previousDuration) > 0.5
+                let playbackChanged = previousPlaying != state.isPlaying || previousItemId != state.currentItem?.id
+                if playbackChanged || clockMoved {
+                    effects.append(nowPlayingUpdate(state))
+                }
+                return effects.isEmpty ? .none : .merge(effects)
 
             case .subscribeToPlayerState:
                 return .merge(
                     .run { send in
-                        PlayerRelay.shared.register { tracks, index, present in
-                            await send(.playQueue(tracks: tracks, startIndex: index))
+                        PlayerRelay.shared.register { tracks, index, present, startPosition in
+                            await send(.playQueue(tracks: tracks, startIndex: index, startPosition: startPosition))
                             if present {
                                 await send(.openFullPlayer)
                             }
@@ -160,9 +194,12 @@ public struct PlayerFeature {
                 state.queue[index].originalLyricURL = audio.originalLyricURL
                 state.queue[index].explanationLyricURL = audio.explanationLyricURL
                 let item = playerItem(state.queue[index])
+                state.currentItem = item
+                state.isPlaying = true
                 return .merge(
                     .run { _ in await playerClient.play(item) },
-                    loadLyrics(for: state.queue[index], kind: state.lyricKind)
+                    loadLyrics(for: state.queue[index], kind: state.lyricKind),
+                    .send(.refreshFavoriteStatus)
                 )
 
             case let .playbackDenied(revertTo):
@@ -187,7 +224,7 @@ public struct PlayerFeature {
 
             case .openFullPlayer:
                 state.showFullPlayer = true
-                return .none
+                return .send(.refreshFavoriteStatus)
 
             case .closeFullPlayer:
                 state.showFullPlayer = false
@@ -214,7 +251,116 @@ public struct PlayerFeature {
                     }
                     DownloadCenter.shared.download(itemId: track.id, title: track.title, remoteURL: url)
                 }
+
+            case .cyclePlayMode:
+                let next = state.playMode.cycled()
+                state.playMode = next
+                PlayModeStore.current = next
+                state.alertMessage = next.title
+                return .none
+
+            case .refreshFavoriteStatus:
+                guard let itemId = state.currentItem?.id ?? state.queue[safe: state.index]?.id else { return .none }
+                return .run { send in
+                    let favorites = (try? await LibraryAPI.favorites()) ?? []
+                    if let hit = favorites.first(where: { $0.sutraItemId == itemId || $0.id == itemId }) {
+                        await send(.favoriteStatusLoaded(isFavorite: true, serverId: hit.serverId))
+                    } else {
+                        await send(.favoriteStatusLoaded(isFavorite: false, serverId: nil))
+                    }
+                }
+
+            case let .favoriteStatusLoaded(isFavorite, serverId):
+                state.isFavorite = isFavorite
+                state.favoriteServerId = serverId
+                return .none
+
+            case .toggleFavorite:
+                guard let itemId = state.currentItem?.id ?? state.queue[safe: state.index]?.id else { return .none }
+                let wasFavorite = state.isFavorite
+                let serverId = state.favoriteServerId
+                return .run { send in
+                    do {
+                        if wasFavorite, let serverId, !serverId.isEmpty {
+                            try await LibraryAPI.deleteFavorite(serverId: serverId)
+                            await send(.favoriteToggled(isFavorite: false, serverId: nil))
+                        } else {
+                            try await LibraryAPI.addFavorite(itemId: itemId)
+                            let favorites = (try? await LibraryAPI.favorites()) ?? []
+                            let hit = favorites.first(where: { $0.sutraItemId == itemId || $0.id == itemId })
+                            await send(.favoriteToggled(isFavorite: true, serverId: hit?.serverId))
+                        }
+                    } catch {
+                        await send(.playbackFailed(wasFavorite ? "取消收藏失败" : "收藏失败"))
+                    }
+                }
+
+            case let .favoriteToggled(isFavorite, serverId):
+                state.isFavorite = isFavorite
+                state.favoriteServerId = serverId
+                state.alertMessage = isFavorite ? "已加入收藏" : "已取消收藏"
+                return .none
             }
+        }
+    }
+
+    private func move(state: inout State, auto: Bool, forward: Bool) -> Effect<Action> {
+        guard !state.queue.isEmpty else { return .none }
+        if auto, state.playMode == .single {
+            state.didFinish = false
+            state.currentTime = 0
+            return .run { _ in
+                await playerClient.seek(0)
+                await playerClient.resume()
+            }
+        }
+        guard let target = Self.targetIndex(
+            from: state.index,
+            count: state.queue.count,
+            mode: state.playMode,
+            forward: forward,
+            auto: auto
+        ) else {
+            if auto {
+                state.isPlaying = false
+                return .none
+            }
+            state.alertMessage = forward ? "没有更多内容了" : "已经是第一首"
+            return .none
+        }
+        if target == state.index, auto {
+            state.didFinish = false
+            state.currentTime = 0
+            return .run { _ in
+                await playerClient.seek(0)
+                await playerClient.resume()
+            }
+        }
+        return advance(state: &state, to: target)
+    }
+
+    private static func targetIndex(from index: Int, count: Int, mode: PlayMode, forward: Bool, auto: Bool) -> Int? {
+        guard count > 0 else { return nil }
+        switch mode {
+        case .sequential:
+            let next = forward ? index + 1 : index - 1
+            return (0..<count).contains(next) ? next : nil
+        case .shuffle:
+            if count == 1 { return auto ? 0 : nil }
+            var next = Int.random(in: 0..<count)
+            var guardCount = 0
+            while next == index, guardCount < 8 {
+                next = Int.random(in: 0..<count)
+                guardCount += 1
+            }
+            return next
+        case .loop:
+            if forward { return (index + 1) % count }
+            return (index - 1 + count) % count
+        case .single:
+            if auto { return index }
+            let next = forward ? index + 1 : index - 1
+            return (0..<count).contains(next) ? next : nil
         }
     }
 
@@ -224,9 +370,19 @@ public struct PlayerFeature {
         let revertTo = state.index
         state.index = index
         state.queue[index].audioURL = nil
+        state.currentTime = 0
+        state.duration = 0
+        state.didFinish = false
+        state.isPlaying = true
+        state.lyricLines = []
+        state.resumeSeek = nil
+        state.isFavorite = false
+        state.favoriteServerId = nil
+        state.currentItem = playerItem(state.queue[index])
         return .merge(
             .run { _ in await trackResolver.reportHistory(previousId, position) },
-            playCurrent(state: &state, revertTo: revertTo)
+            playCurrent(state: &state, revertTo: revertTo),
+            .send(.refreshFavoriteStatus)
         )
     }
 
@@ -275,17 +431,51 @@ public struct PlayerFeature {
                 await send(.playbackFailed("获取音频失败"))
             }
         }
+        .cancellable(id: TrackResolveCancellable(), cancelInFlight: true)
+    }
+
+    private func nowPlayingUpdate(_ state: State) -> Effect<Action> {
+        let item = state.currentItem
+        let time = state.currentTime
+        let duration = state.duration
+        let rate = state.rate
+        let isPlaying = state.isPlaying
+        let update = nowPlayingClient.update
+        return .run { _ in
+            await update(item, time, duration, rate, isPlaying)
+        }
     }
 
     private func loadLyrics(for track: QueueTrack, kind: LyricKind) -> Effect<Action> {
-        let url = kind == .original ? track.originalLyricURL : track.explanationLyricURL
-        guard let url else {
-            return .send(.lyricsLoaded([]))
-        }
+        let urls = kind == .original
+            ? [track.originalLyricURL, track.explanationLyricURL]
+            : [track.explanationLyricURL, track.originalLyricURL]
         return .run { send in
-            let text = (try? String(contentsOf: url, encoding: .utf8)) ?? ""
-            await send(.lyricsLoaded(LyricParser.parse(text)))
+            var lines: [LyricLine] = []
+            for url in urls.compactMap({ $0 }) {
+                lines = await Self.fetchLyrics(url)
+                if !lines.isEmpty { break }
+            }
+            await send(.lyricsLoaded(lines))
         }
+    }
+
+    private static func fetchLyrics(_ url: URL) async -> [LyricLine] {
+        var request = URLRequest(url: url)
+        request.timeoutInterval = 20
+        guard let (data, response) = try? await URLSession.shared.data(for: request),
+              let http = response as? HTTPURLResponse,
+              (200..<300).contains(http.statusCode),
+              !data.isEmpty else { return [] }
+        return LyricParser.lines(from: decodeLyric(data))
+    }
+
+    private static func decodeLyric(_ data: Data) -> String {
+        if let text = String(data: data, encoding: .utf8), !text.contains("\u{FFFD}") {
+            return text
+        }
+        let gbk = String.Encoding(rawValue: CFStringConvertEncodingToNSStringEncoding(CFStringEncoding(CFStringEncodings.GB_18030_2000.rawValue)))
+        return String(data: data, encoding: gbk) ?? String(decoding: data, as: UTF8.self)
     }
 
     private func playerItem(_ track: QueueTrack) -> PlayerItem {
@@ -302,26 +492,33 @@ public struct PlayerFeature {
     }
 }
 
+private extension Array {
+    subscript(safe index: Int) -> Element? {
+        indices.contains(index) ? self[index] : nil
+    }
+}
+
 private struct PlayerClientCancellable: Hashable {}
 private struct RemoteCancellable: Hashable {}
+private struct TrackResolveCancellable: Hashable {}
 
 public final class PlayerRelay: @unchecked Sendable {
     public static let shared = PlayerRelay()
     private let lock = NSLock()
-    private var handler: (@Sendable ([QueueTrack], Int, Bool) async -> Void)?
+    private var handler: (@Sendable ([QueueTrack], Int, Bool, Double) async -> Void)?
 
-    public func register(_ handler: @escaping @Sendable ([QueueTrack], Int, Bool) async -> Void) {
+    public func register(_ handler: @escaping @Sendable ([QueueTrack], Int, Bool, Double) async -> Void) {
         lock.lock()
         self.handler = handler
         lock.unlock()
     }
 
-    public func play(tracks: [QueueTrack], startIndex: Int, presentPlayer: Bool = false) {
+    public func play(tracks: [QueueTrack], startIndex: Int, presentPlayer: Bool = false, startPosition: Double = 0) {
         lock.lock()
         let handler = handler
         lock.unlock()
         guard let handler else { return }
-        Task { await handler(tracks, startIndex, presentPlayer) }
+        Task { await handler(tracks, startIndex, presentPlayer, startPosition) }
     }
 }
 

@@ -158,8 +158,7 @@ public struct AlbumDetailView: View {
     }
 
     private func playResume() {
-        guard let id = store.resumeItemId, let item = store.items.first(where: { $0.id == id }) else { return }
-        store.send(.trackTapped(item))
+        store.send(.resumeTapped)
     }
 
     @ViewBuilder

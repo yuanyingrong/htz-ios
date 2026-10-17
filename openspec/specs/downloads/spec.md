@@ -19,6 +19,22 @@ A downloaded chapter SHALL play from the local file.
 - **THEN** the player SHALL use that file URL
 - **AND** SHALL NOT request a new signed audio URL.
 
+#### Scenario: Play from download list
+- **WHEN** the user taps a finished download in the profile download list
+- **THEN** the player SHALL open that local file.
+
+### Requirement: Download Management
+The download list SHALL allow pause, resume/retry, and delete.
+
+#### Scenario: Pause and resume
+- **WHEN** the user pauses an in-progress download
+- **THEN** the item SHALL show paused
+- **AND** resume SHALL continue or restart from the saved remote URL.
+
+#### Scenario: Delete download
+- **WHEN** the user deletes a download
+- **THEN** the local file and list entry SHALL be removed.
+
 ### Requirement: No Local Encryption In This Change
 Downloaded audio SHALL stay as a normal media file in the sandbox.
 

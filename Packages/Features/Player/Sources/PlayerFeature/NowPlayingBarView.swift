@@ -1,9 +1,8 @@
 import SwiftUI
+import UIKit
 import ComposableArchitecture
 import DesignSystem
 import HTZAudio
-import NetworkKit
-
 public struct NowPlayingBarView: View {
     let store: StoreOf<PlayerFeature>
 
@@ -92,7 +91,7 @@ public struct FullPlayerView: View {
     @State private var showList = false
     @State private var showTimer = false
     @State private var sleepMinutes: Int?
-    @State private var favorited = false
+    @State private var previewTime: Double?
 
     public init(store: StoreOf<PlayerFeature>) {
         self.store = store
@@ -103,9 +102,9 @@ public struct FullPlayerView: View {
             NavigationStack {
                 VStack(spacing: 0) {
                     HStack(spacing: 10) {
-                        chip("原文", selected: !showFont) {
+                        chip("原文", selected: store.lyricKind == .original) {
                             showFont = false
-                            store.send(.setLyricKind(.original))
+                            store.send(.setLyricKind(store.lyricKind == .original ? .explanation : .original))
                         }
                         chip("字号", selected: showFont) { showFont.toggle() }
                         Spacer()
@@ -125,33 +124,13 @@ public struct FullPlayerView: View {
                         .padding(.vertical, 8)
                     }
 
-                    ScrollViewReader { proxy in
-                        ScrollView {
-                            if store.lyricLines.isEmpty {
-                                Text("暂无歌词")
-                                    .foregroundColor(PlayerPalette.label)
-                                    .frame(maxWidth: .infinity)
-                                    .padding(.top, 80)
-                            } else {
-                                VStack(spacing: 22) {
-                                    ForEach(Array(store.lyricLines.enumerated()), id: \.offset) { index, line in
-                                        Text(line.text)
-                                            .font(.system(size: lyricSize, weight: index == store.activeLyricIndex ? .bold : .regular))
-                                            .foregroundColor(index == store.activeLyricIndex ? .black : Color(white: 0.62))
-                                            .multilineTextAlignment(.center)
-                                            .frame(maxWidth: .infinity)
-                                            .id(index)
-                                    }
-                                }
-                                .padding(.horizontal, 28)
-                                .padding(.vertical, 24)
-                            }
-                        }
-                        .onChange(of: store.activeLyricIndex) { index in
-                            guard let index else { return }
-                            withAnimation { proxy.scrollTo(index, anchor: .center) }
-                        }
-                    }
+                    LyricPage(
+                        lines: store.lyricLines,
+                        activeIndex: store.activeLyricIndex,
+                        fontSize: lyricSize,
+                        onSelect: { store.send(.seek($0)) }
+                    )
+                    .equatable()
                     .background(Color.white)
 
                     controlPanel
@@ -181,6 +160,14 @@ public struct FullPlayerView: View {
                     }
                     Button("关闭", role: .cancel) {}
                 }
+                .alert("提示", isPresented: Binding(
+                    get: { store.alertMessage != nil },
+                    set: { if !$0 { store.send(.clearAlert) } }
+                )) {
+                    Button("好的", role: .cancel) { store.send(.clearAlert) }
+                } message: {
+                    Text(store.alertMessage ?? "")
+                }
             }
             .task(id: sleepMinutes) {
                 guard let sleepMinutes else { return }
@@ -208,13 +195,13 @@ public struct FullPlayerView: View {
                 }
                 .buttonStyle(.plain)
                 Spacer()
-                panelButton(favorited ? "star.fill" : "star") {
-                    favorited = true
-                    let itemId = store.currentItem?.id ?? ""
-                    Task { try? await LibraryAPI.addFavorite(itemId: itemId) }
+                panelButton(store.isFavorite ? "star.fill" : "star") {
+                    store.send(.toggleFavorite)
                 }
                 Spacer()
-                panelButton("repeat") {}
+                panelButton(store.playMode.systemImage) {
+                    store.send(.cyclePlayMode)
+                }
                 Spacer()
                 ShareLink(item: store.currentItem?.title ?? "") {
                     Image(systemName: "square.and.arrow.up")
@@ -230,14 +217,15 @@ public struct FullPlayerView: View {
                 } label: {
                     skipLabel("15", system: "gobackward.15")
                 }
-                Text(Self.clock(store.currentTime))
+                Text(Self.clock(previewTime ?? store.currentTime))
                     .font(.system(size: 12))
                     .frame(width: 44)
-                Slider(
-                    value: Binding(get: { store.currentTime }, set: { store.send(.seek($0)) }),
-                    in: 0...max(store.duration, 1)
+                PlaybackSlider(
+                    time: store.currentTime,
+                    duration: store.duration,
+                    onPreview: { previewTime = $0 },
+                    onSeek: { store.send(.seek($0)) }
                 )
-                .tint(PlayerPalette.title)
                 Text(Self.clock(store.duration))
                     .font(.system(size: 12))
                     .frame(width: 44)
@@ -255,10 +243,15 @@ public struct FullPlayerView: View {
                     Image(systemName: "list.bullet")
                         .frame(width: 44, height: 44)
                 }
+                .buttonStyle(.plain)
                 Spacer()
                 Button { store.send(.previousTrack) } label: {
-                    Image(systemName: "backward.end.fill").font(.title3)
+                    Image(systemName: "backward.end.fill")
+                        .font(.title3)
+                        .frame(width: 44, height: 44)
+                        .contentShape(Rectangle())
                 }
+                .buttonStyle(.plain)
                 Spacer()
                 Button {
                     store.send(store.isPlaying ? .pauseButtonTapped : .playButtonTapped)
@@ -266,16 +259,23 @@ public struct FullPlayerView: View {
                     Image(systemName: store.isPlaying ? "pause.fill" : "play.fill")
                         .font(.system(size: 28))
                         .frame(width: 56, height: 56)
+                        .contentShape(Rectangle())
                 }
+                .buttonStyle(.plain)
                 Spacer()
                 Button { store.send(.nextTrack) } label: {
-                    Image(systemName: "forward.end.fill").font(.title3)
+                    Image(systemName: "forward.end.fill")
+                        .font(.title3)
+                        .frame(width: 44, height: 44)
+                        .contentShape(Rectangle())
                 }
+                .buttonStyle(.plain)
                 Spacer()
                 Button { showTimer = true } label: {
                     Image(systemName: sleepMinutes == nil ? "timer" : "timer.circle.fill")
                         .frame(width: 44, height: 44)
                 }
+                .buttonStyle(.plain)
             }
             .foregroundColor(PlayerPalette.title)
             .padding(.horizontal, 12)
@@ -316,6 +316,130 @@ public struct FullPlayerView: View {
             return String(format: "%d:%02d:%02d", hours, (total % 3600) / 60, total % 60)
         }
         return String(format: "%02d:%02d", total / 60, total % 60)
+    }
+}
+
+private struct PlaybackSlider: UIViewRepresentable {
+    var time: Double
+    var duration: Double
+    var onPreview: (Double?) -> Void
+    var onSeek: (Double) -> Void
+
+    func makeCoordinator() -> Coordinator {
+        Coordinator(onPreview: onPreview, onSeek: onSeek)
+    }
+
+    func makeUIView(context: Context) -> UISlider {
+        let slider = UISlider()
+        slider.minimumTrackTintColor = UIColor(red: 77 / 255, green: 77 / 255, blue: 77 / 255, alpha: 1)
+        slider.maximumTrackTintColor = UIColor(white: 0.85, alpha: 1)
+        slider.addTarget(context.coordinator, action: #selector(Coordinator.changed(_:)), for: .valueChanged)
+        slider.addTarget(context.coordinator, action: #selector(Coordinator.ended(_:)), for: [.touchUpInside, .touchUpOutside, .touchCancel])
+        return slider
+    }
+
+    func updateUIView(_ slider: UISlider, context: Context) {
+        context.coordinator.onPreview = onPreview
+        context.coordinator.onSeek = onSeek
+        let upper = Float(max(duration, 1))
+        if slider.maximumValue != upper {
+            slider.maximumValue = upper
+        }
+        guard !slider.isTracking else { return }
+        let next = Float(min(max(time, 0), Double(upper)))
+        if abs(slider.value - next) > 0.05 {
+            slider.setValue(next, animated: false)
+        }
+    }
+
+    final class Coordinator: NSObject {
+        var onPreview: (Double?) -> Void
+        var onSeek: (Double) -> Void
+
+        init(onPreview: @escaping (Double?) -> Void, onSeek: @escaping (Double) -> Void) {
+            self.onPreview = onPreview
+            self.onSeek = onSeek
+        }
+
+        @objc func changed(_ slider: UISlider) {
+            onPreview(Double(slider.value))
+        }
+
+        @objc func ended(_ slider: UISlider) {
+            onPreview(nil)
+            onSeek(Double(slider.value))
+        }
+    }
+}
+
+private struct LyricPage: View, Equatable {
+    let lines: [LyricLine]
+    let activeIndex: Int?
+    let fontSize: Double
+    let onSelect: (Double) -> Void
+    @State private var follow = true
+    @State private var followToken = 0
+
+    static func == (lhs: LyricPage, rhs: LyricPage) -> Bool {
+        lhs.activeIndex == rhs.activeIndex
+            && lhs.fontSize == rhs.fontSize
+            && lhs.lines.count == rhs.lines.count
+            && lhs.lines.first?.millisecond == rhs.lines.first?.millisecond
+            && lhs.lines.last?.millisecond == rhs.lines.last?.millisecond
+    }
+
+    var body: some View {
+        GeometryReader { geo in
+            ScrollViewReader { proxy in
+                ScrollView(showsIndicators: false) {
+                    VStack(spacing: 26) {
+                        Color.clear.frame(height: geo.size.height * 0.42)
+                        if lines.isEmpty {
+                            Text("暂无歌词")
+                                .foregroundColor(PlayerPalette.label)
+                                .frame(maxWidth: .infinity)
+                        } else {
+                            ForEach(Array(lines.enumerated()), id: \.offset) { index, line in
+                                Text(line.text)
+                                    .font(.system(size: fontSize, weight: index == activeIndex ? .semibold : .regular))
+                                    .foregroundColor(index == activeIndex ? .black : Color(white: 0.62))
+                                    .multilineTextAlignment(.center)
+                                    .frame(maxWidth: .infinity)
+                                    .contentShape(Rectangle())
+                                    .onTapGesture {
+                                        follow = true
+                                        onSelect(line.time)
+                                    }
+                                    .id(index)
+                            }
+                        }
+                        Color.clear.frame(height: geo.size.height * 0.42)
+                    }
+                    .padding(.horizontal, 28)
+                }
+                .onAppear {
+                    guard let activeIndex else { return }
+                    proxy.scrollTo(activeIndex, anchor: .center)
+                }
+                .onChange(of: activeIndex) { index in
+                    guard follow, let index else { return }
+                    withAnimation(.easeInOut(duration: 0.55)) {
+                        proxy.scrollTo(index, anchor: .center)
+                    }
+                }
+                .simultaneousGesture(
+                    DragGesture(minimumDistance: 12)
+                        .onChanged { _ in follow = false }
+                        .onEnded { _ in
+                            followToken += 1
+                            let token = followToken
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 1.6) {
+                                if token == followToken { follow = true }
+                            }
+                        }
+                )
+            }
+        }
     }
 }
 

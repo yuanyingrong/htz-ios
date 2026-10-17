@@ -126,18 +126,23 @@ public struct HomeFeature {
                             return
                         }
                         let cover = try? await homeClient.getSutraCoverURL(item.sutraId)
-                        PlayerRelay.shared.play(tracks: [
-                            QueueTrack(
-                                id: item.sutraItemId,
-                                sutraId: item.sutraId,
-                                title: item.title,
-                                artist: item.sutraName,
-                                imageUrl: cover.flatMap(URL.init),
-                                audioURL: url,
-                                originalLyricURL: file.originalLyricURL,
-                                explanationLyricURL: file.explanationLyricURL
-                            )
-                        ], startIndex: 0)
+                        PlayerRelay.shared.play(
+                            tracks: [
+                                QueueTrack(
+                                    id: item.sutraItemId,
+                                    sutraId: item.sutraId,
+                                    title: item.title,
+                                    artist: item.sutraName,
+                                    imageUrl: cover.flatMap(URL.init),
+                                    audioURL: url,
+                                    originalLyricURL: file.originalLyricURL,
+                                    explanationLyricURL: file.explanationLyricURL
+                                )
+                            ],
+                            startIndex: 0,
+                            presentPlayer: true,
+                            startPosition: Double(item.lastPosition >= 100_000 ? item.lastPosition / 1000 : item.lastPosition)
+                        )
                     } catch let error as NetworkError where error == .accessDenied {
                         await send(.notice("该内容为付费专栏，请订阅后收听。"))
                     } catch {

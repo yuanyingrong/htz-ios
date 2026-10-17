@@ -40,9 +40,11 @@ public struct ProfileFeature {
         case noticesLoaded([NoticeItem])
         case deleteFavorite(FavoriteItem)
         case favoriteRemoved(String)
+        case playFavorite(FavoriteItem)
         case deleteHistory(ListenHistoryItem)
         case historyRemoved(String)
         case deleteAllHistories
+        case playHistory(ListenHistoryItem)
         case openNotice(NoticeItem)
         case nicknameChanged(String)
         case signatureChanged(String)
@@ -111,6 +113,22 @@ public struct ProfileFeature {
             case let .favoriteRemoved(id):
                 state.favorites.removeAll { $0.id == id }
                 return .none
+            case let .playFavorite(item):
+                let favorites = state.favorites
+                return .run { send in
+                    let tracks: [QueueTrack] = favorites.map {
+                        QueueTrack(
+                            id: $0.sutraItemId.isEmpty ? $0.id : $0.sutraItemId,
+                            sutraId: $0.sutraId,
+                            title: $0.title.isEmpty ? "未命名章节" : $0.title,
+                            artist: $0.sutraName,
+                            imageUrl: URL(string: $0.cover),
+                            audioURL: DownloadCenter.shared.localFile(for: $0.sutraItemId.isEmpty ? $0.id : $0.sutraItemId)
+                        )
+                    }
+                    guard let index = favorites.firstIndex(where: { $0.id == item.id }) else { return }
+                    PlayerRelay.shared.play(tracks: tracks, startIndex: index, presentPlayer: true)
+                }
             case let .deleteHistory(item):
                 return .run { send in
                     do {
@@ -130,6 +148,49 @@ public struct ProfileFeature {
                         await send(.historiesLoaded([]))
                     } catch {
                         await send(.failed("清空记录失败"))
+                    }
+                }
+            case let .playHistory(item):
+                return .run { send in
+                    do {
+                        let itemId = item.sutraItemId.isEmpty ? item.id : item.sutraItemId
+                        let local = DownloadCenter.shared.localFile(for: itemId)
+                        let audioURL: URL?
+                        var original: URL?
+                        var explanation: URL?
+                        if let local {
+                            audioURL = local
+                        } else {
+                            let file = try await LibraryAPI.fileURL(sutraId: item.sutraId, itemId: itemId)
+                            audioURL = file.audioURL
+                            original = file.originalLyricURL
+                            explanation = file.explanationLyricURL
+                        }
+                        guard let audioURL else {
+                            await send(.failed("获取音频失败"))
+                            return
+                        }
+                        PlayerRelay.shared.play(
+                            tracks: [
+                                QueueTrack(
+                                    id: itemId,
+                                    sutraId: item.sutraId,
+                                    title: item.title.isEmpty ? "未命名章节" : item.title,
+                                    artist: item.sutraName,
+                                    imageUrl: URL(string: item.cover),
+                                    audioURL: audioURL,
+                                    originalLyricURL: original,
+                                    explanationLyricURL: explanation
+                                )
+                            ],
+                            startIndex: 0,
+                            presentPlayer: true,
+                            startPosition: Double(item.lastPosition >= 100_000 ? item.lastPosition / 1000 : item.lastPosition)
+                        )
+                    } catch let error as NetworkError where error == .accessDenied {
+                        await send(.failed("该内容为付费专栏，请订阅后收听。"))
+                    } catch {
+                        await send(.failed("获取音频失败"))
                     }
                 }
             case let .openNotice(item):
@@ -314,10 +375,17 @@ private struct FavoriteListView: View {
     var body: some View {
         WithPerceptionTracking {
             List(store.favorites) { item in
-                VStack(alignment: .leading) {
-                    Text(item.title).font(.htzHeadline)
-                    Text(item.sutraName).font(.htzCaption).foregroundColor(.secondary)
+                Button {
+                    store.send(.playFavorite(item))
+                } label: {
+                    VStack(alignment: .leading) {
+                        Text(item.title.isEmpty ? "未命名章节" : item.title).font(.htzHeadline)
+                        Text(item.sutraName).font(.htzCaption).foregroundColor(.secondary)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .contentShape(Rectangle())
                 }
+                .buttonStyle(.plain)
                 .swipeActions {
                     Button("删除", role: .destructive) { store.send(.deleteFavorite(item)) }
                 }
@@ -335,10 +403,17 @@ private struct HistoryListView: View {
     var body: some View {
         WithPerceptionTracking {
             List(store.histories) { item in
-                VStack(alignment: .leading) {
-                    Text(item.title.isEmpty ? "未命名章节" : item.title).font(.htzHeadline)
-                    Text("听到 \(item.lastPosition) 秒").font(.htzCaption).foregroundColor(.secondary)
+                Button {
+                    store.send(.playHistory(item))
+                } label: {
+                    VStack(alignment: .leading) {
+                        Text(item.title.isEmpty ? "未命名章节" : item.title).font(.htzHeadline)
+                        Text("听到 \(AlbumTime.clock(item.lastPosition))").font(.htzCaption).foregroundColor(.secondary)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .contentShape(Rectangle())
                 }
+                .buttonStyle(.plain)
                 .swipeActions {
                     Button("删除", role: .destructive) { store.send(.deleteHistory(item)) }
                 }
@@ -393,9 +468,22 @@ private struct DownloadListView: View {
     @State private var records: [DownloadRecord] = DownloadCenter.shared.recordsSnapshot()
     var body: some View {
         List(records) { record in
-            VStack(alignment: .leading) {
-                Text(record.title).font(.htzHeadline)
-                Text(label(record.state)).font(.htzCaption).foregroundColor(.secondary)
+            HStack {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(record.title).font(.htzHeadline)
+                    Text(label(record.state)).font(.htzCaption).foregroundColor(.secondary)
+                }
+                Spacer()
+                trailingActions(record)
+            }
+            .contentShape(Rectangle())
+            .onTapGesture {
+                playOffline(record)
+            }
+            .swipeActions {
+                Button("删除", role: .destructive) {
+                    DownloadCenter.shared.delete(itemId: record.id)
+                }
             }
         }
         .navigationTitle("下载")
@@ -407,11 +495,47 @@ private struct DownloadListView: View {
         .overlay { if records.isEmpty { Text("还没有下载") } }
     }
 
+    @ViewBuilder
+    private func trailingActions(_ record: DownloadRecord) -> some View {
+        switch record.state {
+        case .queued, .downloading:
+            Button("暂停") { DownloadCenter.shared.pause(itemId: record.id) }
+                .font(.htzCaption)
+        case .paused:
+            Button("继续") { DownloadCenter.shared.resume(itemId: record.id) }
+                .font(.htzCaption)
+        case .failed:
+            Button("重试") { DownloadCenter.shared.resume(itemId: record.id) }
+                .font(.htzCaption)
+        case .finished:
+            Image(systemName: "play.circle")
+                .foregroundColor(.htzAccent)
+        }
+    }
+
+    private func playOffline(_ record: DownloadRecord) {
+        guard case .finished = record.state,
+              let url = DownloadCenter.shared.localFile(for: record.id) else { return }
+        PlayerRelay.shared.play(
+            tracks: [
+                QueueTrack(
+                    id: record.id,
+                    sutraId: record.sutraId ?? "",
+                    title: record.title,
+                    audioURL: url
+                )
+            ],
+            startIndex: 0,
+            presentPlayer: true
+        )
+    }
+
     private func label(_ state: DownloadRecord.State) -> String {
         switch state {
         case .queued: return "等待中"
         case let .downloading(progress): return "下载中 \(Int(progress * 100))%"
-        case .finished: return "已完成"
+        case .paused: return "已暂停"
+        case .finished: return "已完成 · 点按播放"
         case let .failed(message): return message
         }
     }
