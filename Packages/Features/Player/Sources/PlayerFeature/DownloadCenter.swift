@@ -18,6 +18,8 @@ public struct DownloadRecord: Equatable, Identifiable, Sendable {
     public var lesson: Int
     public var remoteURL: URL?
     public var state: State
+    /// Last known fraction (0...1); kept while paused or queued so the list can still show it.
+    public var progress: Double = 0
 
     public init(
         id: String,
@@ -52,8 +54,22 @@ public struct DownloadRequest: Equatable, Sendable {
     public var imageURL: String?
     public var lesson: Int
     public var remoteURL: URL
+    public var originalLyricURL: URL?
+    public var explanationLyricURL: URL?
 
-    public init(itemId: String, title: String, sutraId: String, albumName: String, imageURL: String?, lesson: Int, remoteURL: URL) {
+    public init(
+        itemId: String,
+        title: String,
+        sutraId: String,
+        albumName: String,
+        imageURL: String?,
+        lesson: Int,
+        remoteURL: URL,
+        originalLyricURL: URL? = nil,
+        explanationLyricURL: URL? = nil
+    ) {
+        self.originalLyricURL = originalLyricURL
+        self.explanationLyricURL = explanationLyricURL
         self.itemId = itemId
         self.title = title
         self.sutraId = sutraId
@@ -129,7 +145,37 @@ public final class DownloadCenter: NSObject, URLSessionDownloadDelegate, @unchec
         return FileManager.default.fileExists(atPath: url.path) ? url : nil
     }
 
+    /// Lyrics saved next to the audio so a downloaded episode still has subtitles offline.
+    public func localLyric(for itemId: String, kind: LyricKind) -> URL? {
+        let url = lyricFileURL(itemId, kind)
+        return FileManager.default.fileExists(atPath: url.path) ? url : nil
+    }
+
+    public func saveLyric(_ data: Data, for itemId: String, kind: LyricKind) {
+        try? data.write(to: lyricFileURL(itemId, kind), options: .atomic)
+    }
+
+    private func lyricFileURL(_ itemId: String, _ kind: LyricKind) -> URL {
+        folder.appendingPathComponent("\(itemId).\(kind.rawValue).lrc")
+    }
+
+    private func fetchLyrics(for request: DownloadRequest) {
+        let pairs: [(LyricKind, URL?)] = [
+            (.original, request.originalLyricURL),
+            (.explanation, request.explanationLyricURL)
+        ]
+        let itemId = request.itemId
+        Task {
+            for case let (kind, url?) in pairs where self.localLyric(for: itemId, kind: kind) == nil {
+                if let data = await LyricFetcher.data(from: url) {
+                    self.saveLyric(data, for: itemId, kind: kind)
+                }
+            }
+        }
+    }
+
     public func download(_ request: DownloadRequest) {
+        fetchLyrics(for: request)
         let record = DownloadRecord(
             id: request.itemId,
             title: request.title,
@@ -220,7 +266,11 @@ public final class DownloadCenter: NSObject, URLSessionDownloadDelegate, @unchec
         let continuations = continuations.values
         lock.unlock()
         removed.forEach { $0.cancel() }
-        itemIds.forEach { try? FileManager.default.removeItem(at: fileURL($0)) }
+        itemIds.forEach {
+            try? FileManager.default.removeItem(at: fileURL($0))
+            try? FileManager.default.removeItem(at: lyricFileURL($0, .original))
+            try? FileManager.default.removeItem(at: lyricFileURL($0, .explanation))
+        }
         continuations.forEach { $0.yield(snapshot) }
         persist()
     }
@@ -308,7 +358,13 @@ public final class DownloadCenter: NSObject, URLSessionDownloadDelegate, @unchec
 
     private func mutate(_ itemId: String, _ change: (DownloadRecord?) -> DownloadRecord) {
         lock.lock()
-        records[itemId] = change(records[itemId])
+        var updated = change(records[itemId])
+        switch updated.state {
+        case let .downloading(fraction) where fraction > 0: updated.progress = fraction
+        case .finished: updated.progress = 1
+        default: break
+        }
+        records[itemId] = updated
         let snapshot = sortedRecords()
         let continuations = continuations.values
         lock.unlock()
@@ -362,5 +418,25 @@ public final class DownloadCenter: NSObject, URLSessionDownloadDelegate, @unchec
         lock.unlock()
         guard let data = try? JSONSerialization.data(withJSONObject: rows, options: [.prettyPrinted]) else { return }
         try? data.write(to: metaURL, options: .atomic)
+    }
+}
+
+enum LyricFetcher {
+    static func data(from url: URL) async -> Data? {
+        var request = URLRequest(url: url)
+        request.timeoutInterval = 20
+        guard let (data, response) = try? await URLSession.shared.data(for: request),
+              let http = response as? HTTPURLResponse,
+              (200..<300).contains(http.statusCode),
+              !data.isEmpty else { return nil }
+        return data
+    }
+
+    static func decode(_ data: Data) -> String {
+        if let text = String(data: data, encoding: .utf8), !text.contains("\u{FFFD}") {
+            return text
+        }
+        let gbk = String.Encoding(rawValue: CFStringConvertEncodingToNSStringEncoding(CFStringEncoding(CFStringEncodings.GB_18030_2000.rawValue)))
+        return String(data: data, encoding: gbk) ?? String(decoding: data, as: UTF8.self)
     }
 }

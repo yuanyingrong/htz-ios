@@ -1,6 +1,19 @@
 import Foundation
 import Moya
 
+/// A feedback attachment: JPEG image bytes, or a video file on disk.
+public enum FeedbackAttachment: Equatable, Sendable {
+    case image(Data)
+    case video(URL)
+
+    var typeName: String {
+        switch self {
+        case .image: return "image"
+        case .video: return "video"
+        }
+    }
+}
+
 public enum HTZAPI {
     case albums
     case album(id: String)
@@ -27,12 +40,15 @@ public enum HTZAPI {
     case userInfoByPhone(telephone: String)
     case updateUserInfo(parameters: [String: Any])
     case sendSms(telephone: String, unionid: String)
+    case secureKey(appName: String)
     case bindTelephone(telephone: String, code: String, unionid: String)
     case putUserMobile(mobile: String)
     case feedbackAdd(parameters: [String: Any])
-    case feedbackUpload(data: Data, filename: String)
+    case feedbackUpload(attachment: FeedbackAttachment, filename: String)
     case studyDuration(userId: String)
     case studyCompleted(userId: String)
+    case reportUsage(records: [[String: Any]])
+    case reportStudyCompleted(userId: String, itemIds: [String])
     case checkInUser(id: String)
     case checkInMonth(userId: String, monthDate: String)
 }
@@ -57,12 +73,11 @@ public enum WebPage {
 extension HTZAPI: TargetType {
     public var baseURL: URL {
         switch self {
-        case .addUserInfo:
-            return APIHost.legacyJSON
         case .search:
             return APIHost.search
-        case .userInfo, .userInfoByPhone, .updateUserInfo, .sendSms, .bindTelephone, .notifications,
-             .markNotificationsRead, .feedbackAdd, .feedbackUpload, .studyDuration, .studyCompleted:
+        case .addUserInfo, .userInfo, .userInfoByPhone, .updateUserInfo, .sendSms, .secureKey, .bindTelephone, .notifications,
+             .markNotificationsRead, .feedbackAdd, .feedbackUpload, .studyDuration, .studyCompleted,
+             .reportUsage, .reportStudyCompleted:
             return APIHost.personal
         case .checkInUser, .checkInMonth:
             return APIHost.checkIn
@@ -80,7 +95,7 @@ extension HTZAPI: TargetType {
         case .playedCountInc: return "put/sutra/item/playedcount/inc"
         case .login: return "post/login"
         case .loginWithUnionid: return "post/login/unionid"
-        case .addUserInfo: return "userinfo/add.json"
+        case .addUserInfo: return "userinfo/add"
         case .sutraCoverURL: return "get/sutra/cover_url"
         case .sutraItemFileURL: return "get/sutra/item/file_url"
         case .search: return "search"
@@ -98,12 +113,15 @@ extension HTZAPI: TargetType {
         case .userInfoByPhone: return "userinfo/getbyphone"
         case .updateUserInfo: return "userinfo/update"
         case .sendSms: return "api/telephone/getSmsCode"
+        case .secureKey: return "getaksk"
         case .bindTelephone: return "api/telephone/bindTelephone"
         case .putUserMobile: return "put/user/mobile"
         case .feedbackAdd: return "feedback/add"
         case .feedbackUpload: return "feedback/upload"
         case .studyDuration: return "study/duration"
         case .studyCompleted: return "study/completed"
+        case .reportUsage: return "usage/report/batch"
+        case .reportStudyCompleted: return "study/completed/report"
         case .checkInUser: return "getById"
         case .checkInMonth: return "getReportInfoListByIdAndMonth"
         }
@@ -111,7 +129,7 @@ extension HTZAPI: TargetType {
 
     public var method: Moya.Method {
         switch self {
-        case .addUserInfo, .userInfo, .userInfoByPhone, .sendSms, .bindTelephone,
+        case .userInfo, .userInfoByPhone, .sendSms, .secureKey, .bindTelephone,
              .studyDuration, .studyCompleted, .checkInUser, .checkInMonth:
             return .get
         case .playedCountInc:
@@ -133,10 +151,9 @@ extension HTZAPI: TargetType {
             return json(["id": itemId])
         case let .login(code):
             return json(["code": code])
-        case let .loginWithUnionid(parameters), let .updateUserInfo(parameters), let .feedbackAdd(parameters):
+        case let .loginWithUnionid(parameters), let .updateUserInfo(parameters), let .feedbackAdd(parameters),
+             let .addUserInfo(parameters):
             return json(parameters)
-        case let .addUserInfo(parameters):
-            return .requestParameters(parameters: parameters, encoding: URLEncoding.queryString)
         case let .sutraCoverURL(sutraId, expireSeconds):
             var params: [String: Any] = ["sutra_id": sutraId]
             if let expireSeconds { params["expire_seconds"] = expireSeconds }
@@ -165,18 +182,32 @@ extension HTZAPI: TargetType {
             return query(["unionid": unionid])
         case let .userInfoByPhone(telephone):
             return query(["telephone": telephone])
+        case let .secureKey(appName):
+            return query(["appName": appName])
         case let .sendSms(telephone, unionid):
             return query(["telephone": telephone, "unionid": unionid])
         case let .bindTelephone(telephone, code, unionid):
             return query(["telephone": telephone, "code": code, "unionid": unionid])
         case let .putUserMobile(mobile):
             return json(["mobile": mobile])
-        case let .feedbackUpload(data, filename):
-            let file = MultipartFormData(provider: .data(data), name: "file", fileName: filename, mimeType: "image/jpeg")
-            let type = MultipartFormData(provider: .data(Data("image".utf8)), name: "type")
+        case let .feedbackUpload(attachment, filename):
+            let file: MultipartFormData
+            switch attachment {
+            case let .image(data):
+                file = MultipartFormData(provider: .data(data), name: "file", fileName: filename, mimeType: "image/jpeg")
+            case let .video(url):
+                let mime = url.pathExtension.lowercased() == "mov" ? "video/quicktime" : "video/mp4"
+                file = MultipartFormData(provider: .file(url), name: "file", fileName: filename, mimeType: mime)
+            }
+            let type = MultipartFormData(provider: .data(Data(attachment.typeName.utf8)), name: "type")
             return .uploadMultipart([file, type])
         case let .studyDuration(userId), let .studyCompleted(userId):
             return query(["user_id": userId])
+        case let .reportUsage(records):
+            let body = (try? JSONSerialization.data(withJSONObject: records)) ?? Data("[]".utf8)
+            return .requestData(body)
+        case let .reportStudyCompleted(userId, itemIds):
+            return json(["user_id": userId, "item_ids": itemIds])
         case let .checkInUser(id):
             return query(["id": id])
         case let .checkInMonth(userId, monthDate):

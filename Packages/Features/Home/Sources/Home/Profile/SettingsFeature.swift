@@ -127,12 +127,15 @@ struct SettingsView: View {
                     HTZWebPage(title: "功能帮助", content: .html(html, baseURL: WebPage.help))
                 }
             }
-            .confirmationDialog("恢复默认设置？播放模式、歌词字号和打卡开关将重置。", isPresented: $store.isRestoreConfirmPresented, titleVisibility: .visible) {
-                Button("恢复", role: .destructive) { store.send(.restoreConfirmed) }
-            }
-            .confirmationDialog("确定退出登录？", isPresented: $store.isLogoutConfirmPresented, titleVisibility: .visible) {
-                Button("退出登录", role: .destructive) { store.send(.logoutConfirmed) }
-            }
+            .htzConfirmSheet(
+                isPresented: $store.isRestoreConfirmPresented,
+                title: "提示",
+                message: "恢复默认设置将重置播放模式、歌词字号和打卡开关，不会影响登录状态和已下载内容。确定要恢复吗？"
+            ) { store.send(.restoreConfirmed) }
+            .htzConfirmSheet(
+                isPresented: $store.isLogoutConfirmPresented,
+                message: "确定要退出登录吗？登录后功能使用更精彩"
+            ) { store.send(.logoutConfirmed) }
         }
     }
 

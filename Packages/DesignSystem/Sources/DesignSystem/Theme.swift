@@ -37,6 +37,75 @@ public extension Color {
     }
 }
 
+/// Bitmap icons copied from the Android app (`res/drawable-hdpi`).
+public enum HTZImage {
+    /// `albums_title.png` — the bar-wave mark in front of 「推荐专辑」.
+    public static var waveTitle: Image { Image("htzWaveTitle", bundle: .module) }
+    /// `home_listview_bg_0/1/2.png` — the painted banners Android falls back to when a recommendation has no background URL.
+    public static func homeBanner(_ index: Int) -> Image { Image("htzHomeBanner\(index % 3)", bundle: .module) }
+    public static func sort(ascending: Bool) -> Image { Image(ascending ? "htzSortAscending" : "htzSortDescending", bundle: .module) }
+    public static var menu: Image { Image("htzMenu", bundle: .module) }
+    public static var download: Image { Image("htzDownload", bundle: .module) }
+    public static var downloaded: Image { Image("htzDownloaded", bundle: .module) }
+    public static var playCount: Image { Image("htzPlayCount", bundle: .module) }
+    public static var time: Image { Image("htzTime", bundle: .module) }
+    public static var shareWeChat: Image { Image("htzShareWeChat", bundle: .module) }
+    public static var shareMoments: Image { Image("htzShareMoments", bundle: .module) }
+    public static var shareFavorite: Image { Image("htzShareFavorite", bundle: .module) }
+    /// `history_item.png` — the calendar button at the right of the search bar.
+    public static var historyButton: Image { Image("htzHistoryButton", bundle: .module) }
+}
+
+/// Port of Android's `AnimatedBarsView`: four #666 bars, left aligned, bouncing between 15 % and 55 % of the height.
+public struct HTZAnimatedBars: View {
+    private let isAnimating: Bool
+
+    public init(isAnimating: Bool) {
+        self.isAnimating = isAnimating
+    }
+
+    public var body: some View {
+        GeometryReader { geo in
+            let unit = geo.size.width / 12
+            ZStack(alignment: .topLeading) {
+                ForEach(0..<4, id: \.self) { index in
+                    Bar(index: index, isAnimating: isAnimating, height: geo.size.height)
+                        .frame(width: unit, height: geo.size.height)
+                        .offset(x: CGFloat(index) * 2 * unit)
+                }
+            }
+        }
+    }
+
+    private struct Bar: View {
+        let index: Int
+        let isAnimating: Bool
+        let height: CGFloat
+        @State private var high = false
+
+        private static let resting: [CGFloat] = [0.35, 0.5, 0.25, 0.45]
+
+        var body: some View {
+            let fraction: CGFloat = isAnimating ? (high ? 0.55 : 0.15) : Self.resting[index]
+            Rectangle()
+                .fill(Color(hex: 0x666666))
+                .frame(height: height * fraction)
+                .frame(maxHeight: .infinity)
+                .onAppear { update() }
+                .onChange(of: isAnimating) { _ in update() }
+        }
+
+        private func update() {
+            if isAnimating {
+                high = false
+                withAnimation(.easeInOut(duration: 0.5 + 0.1 * Double(index)).repeatForever(autoreverses: true)) { high = true }
+            } else {
+                withAnimation(.easeInOut(duration: 0.2)) { high = false }
+            }
+        }
+    }
+}
+
 // MARK: - Containers
 
 public struct HTZCard<Content: View>: View {
@@ -353,5 +422,41 @@ public extension View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbarBackground(Color.white, for: .navigationBar)
             .toolbarBackground(.visible, for: .navigationBar)
+            .modifier(HTZSubpageMarker())
+    }
+}
+
+/// Tracks which pushed pages are on screen so the app shell can hide its custom tab bar
+/// whenever the user is inside a sub-feature (like a pushed `UIViewController` hiding the bottom bar).
+public final class HTZChrome: ObservableObject {
+    public static let shared = HTZChrome()
+
+    @Published public private(set) var subpageCount = 0
+    private var visible = Set<UUID>()
+
+    public var isInSubpage: Bool { subpageCount > 0 }
+
+    fileprivate func appear(_ id: UUID) {
+        visible.insert(id)
+        subpageCount = visible.count
+    }
+
+    /// Removal is deferred one run-loop turn: when popping from page B to page A, A's `onAppear` and
+    /// B's `onDisappear` arrive in either order, and removing eagerly would flash the tab bar.
+    fileprivate func disappear(_ id: UUID) {
+        DispatchQueue.main.async { [self] in
+            visible.remove(id)
+            subpageCount = visible.count
+        }
+    }
+}
+
+private struct HTZSubpageMarker: ViewModifier {
+    @State private var id = UUID()
+
+    func body(content: Content) -> some View {
+        content
+            .onAppear { HTZChrome.shared.appear(id) }
+            .onDisappear { HTZChrome.shared.disappear(id) }
     }
 }

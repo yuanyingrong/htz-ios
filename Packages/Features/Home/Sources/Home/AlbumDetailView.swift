@@ -8,6 +8,7 @@ public struct AlbumDetailView: View {
     @Perception.Bindable var store: StoreOf<AlbumDetailFeature>
     @Environment(\.playerStore) private var playerStore
     @State private var showPicker = false
+    @Shared(.hidesBottomChrome) private var hidesChrome
 
     public init(store: StoreOf<AlbumDetailFeature>) {
         self.store = store
@@ -43,15 +44,17 @@ public struct AlbumDetailView: View {
             .htzPage(store.album.name)
             .toolbar { toolbar }
             .htzToast($store.toast)
-            .confirmationDialog(
-                "购买专辑",
-                isPresented: $store.isPurchasePromptPresented,
-                titleVisibility: .visible
-            ) {
-                Button("立即购买 ¥\(String(format: "%.2f", store.price))") { store.send(.openPurchasePage) }
-                Button("取消", role: .cancel) {}
-            } message: {
-                Text("《\(store.album.name)》为付费专辑，购买后即可收听全部内容。")
+            .htzCenterDialog(isPresented: $store.isPurchasePromptPresented) { [name = store.album.name, price = store.price, showTip = showsThirdPartyTip] in
+                PurchasePromptDialog(
+                    albumName: name,
+                    price: price,
+                    showsThirdPartyTip: showTip,
+                    onPurchase: { store.send(.openPurchasePage) },
+                    onCancel: { store.send(.binding(.set(\.isPurchasePromptPresented, false))) }
+                )
+            }
+            .onChange(of: store.purchaseURL) { url in
+                if let host = url?.host { UserDefaults.standard.set(true, forKey: Self.visitedKey(host)) }
             }
             .sheet(
                 isPresented: Binding(
@@ -71,8 +74,23 @@ public struct AlbumDetailView: View {
                 }
             }
             .onAppear { store.send(.onAppear) }
+            // 多选时底部有「下载」操作栏，收起迷你播放条避免盖住它。
+            .onChange(of: store.isSelecting) { selecting in
+                $hidesChrome.withLock { $0 = selecting }
+            }
+            .onDisappear { $hidesChrome.withLock { $0 = false } }
         }
     }
+
+    /// The purchase page is a third-party site with its own login. Only the first visit per host needs
+    /// the hint (same rule as Android's `ThirdPartyPurchaseTip`, minus the cookie check).
+    private var showsThirdPartyTip: Bool {
+        let link = store.purchase?.paidUrl ?? store.album.paidUrl
+        guard let link, let host = URL(string: link)?.host else { return true }
+        return !UserDefaults.standard.bool(forKey: Self.visitedKey(host))
+    }
+
+    private static func visitedKey(_ host: String) -> String { "third_party_purchase_visited_\(host)" }
 
     @ToolbarContentBuilder
     private var toolbar: some ToolbarContent {
@@ -83,7 +101,7 @@ public struct AlbumDetailView: View {
             } else {
                 HStack(spacing: 16) {
                     NavigationLink {
-                        SearchView()
+                        SearchView(albumName: store.album.name)
                     } label: {
                         Image(systemName: "magnifyingglass")
                     }
@@ -140,13 +158,13 @@ public struct AlbumDetailView: View {
 
     private var actionBar: some View {
         HStack(spacing: 0) {
-            actionButton(store.isAscending ? "arrow.up.arrow.down" : "arrow.down.arrow.up", store.isAscending ? "正序" : "倒序") {
+            actionButton(HTZImage.sort(ascending: store.isAscending), "排序") {
                 store.send(.toggleSort)
             }
             separator
-            actionButton("list.bullet", "选集") { showPicker = true }
+            actionButton(HTZImage.menu, "选集") { showPicker = true }
             separator
-            actionButton("arrow.down.circle", "下载") { store.send(.startSelecting) }
+            actionButton(HTZImage.download, "下载") { store.send(.startSelecting) }
         }
         .frame(height: 48)
         .background(HTZColor.card)
@@ -156,10 +174,10 @@ public struct AlbumDetailView: View {
         Rectangle().fill(HTZColor.divider).frame(width: 1, height: 20)
     }
 
-    private func actionButton(_ icon: String, _ title: String, action: @escaping () -> Void) -> some View {
+    private func actionButton(_ icon: Image, _ title: String, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             HStack(spacing: 6) {
-                Image(systemName: icon)
+                icon.resizable().scaledToFit().frame(width: 18, height: 18)
                 Text(title)
             }
             .font(.system(size: 14))
@@ -185,6 +203,8 @@ public struct AlbumDetailView: View {
         .padding(.horizontal, 16)
         .frame(height: 48)
         .background(HTZColor.card)
+        .contentShape(Rectangle())
+        .onTapGesture { store.send(.resumeTapped) }
     }
 
     private func resumeText(_ resume: ListenHistoryItem) -> String {
@@ -206,12 +226,12 @@ public struct AlbumDetailView: View {
                     EpisodeRow(
                         item: item,
                         cover: store.album.imageUrl,
-                        progress: item.id == store.resume?.itemId ? store.resume?.lastPositionSeconds : nil,
-                        isPlaying: playerStore.currentItem?.id == item.id,
+                        progress: store.progress[item.id],
+                        isCurrent: playerStore.currentItem?.id == item.id,
+                        isPlaying: playerStore.currentItem?.id == item.id && playerStore.isPlaying,
                         isLocked: store.needsPurchase && !item.isTrialItem,
                         showsTrial: store.needsPurchase && item.isTrialItem,
                         download: store.downloads[item.id],
-                        isFavorite: store.favorites[item.id] != nil,
                         selection: store.isSelecting ? store.selection.contains(item.id) : nil
                     )
                     .onTapGesture { store.send(.trackTapped(item)) }
@@ -256,11 +276,13 @@ private struct EpisodeRow: View {
     let item: SutraItem
     let cover: String?
     let progress: Int?
+    /// This episode is the one loaded in the player (playing or paused).
+    let isCurrent: Bool
+    /// …and it is actually producing sound right now (drives the bar animation).
     let isPlaying: Bool
     let isLocked: Bool
     let showsTrial: Bool
     let download: DownloadRecord.State?
-    let isFavorite: Bool
     let selection: Bool?
 
     var body: some View {
@@ -276,19 +298,15 @@ private struct EpisodeRow: View {
             VStack(alignment: .leading, spacing: 6) {
                 HStack(spacing: 6) {
                     Text(item.title ?? "未命名")
-                        .font(.system(size: 14))
-                        .foregroundColor(isPlaying ? HTZColor.ctaStart : HTZColor.title)
+                        .font(.system(size: 14, weight: isCurrent ? .bold : .regular))
+                        .foregroundColor(isCurrent ? HTZColor.secondary : Color(hex: 0x6B6B6B))
                         .lineLimit(1)
-                    if showsTrial { HTZBadge(.trial) }
                 }
                 HStack(spacing: 10) {
-                    Label("\(item.playedCount ?? 0)", systemImage: "play.fill")
-                    Label(MediaTime.clock(item.durationSeconds), systemImage: "clock")
+                    Label { Text("\(item.playedCount ?? 0)") } icon: { HTZImage.playCount.resizable().scaledToFit().frame(width: 10, height: 10) }
+                    Label { Text(MediaTime.clock(item.durationSeconds)) } icon: { HTZImage.time.resizable().scaledToFit().frame(width: 10, height: 10) }
                     if let remain = Self.remaining(duration: item.durationSeconds, progress: progress) {
                         Text(remain).foregroundColor(HTZColor.secondary)
-                    }
-                    if isFavorite {
-                        Image(systemName: "heart.fill").foregroundColor(HTZColor.ctaStart)
                     }
                 }
                 .labelStyle(CompactLabelStyle())
@@ -304,35 +322,36 @@ private struct EpisodeRow: View {
         .opacity(selection != nil && (isLocked || download == .finished) ? 0.45 : 1)
     }
 
-    @ViewBuilder
+    /// Right-hand cluster, same order as Android: animated bars, download state, trial badge.
     private var trailing: some View {
-        if isLocked {
-            Image(systemName: "lock.fill")
-                .font(.system(size: 14))
-                .foregroundColor(HTZColor.hint)
-        } else if case let .downloading(fraction) = download {
-            Text("\(Int(fraction * 100))%")
-                .font(.system(size: 10))
-                .foregroundColor(HTZColor.hint)
-        } else if download == .finished {
-            Image(systemName: "arrow.down.circle.fill")
-                .font(.system(size: 16))
-                .foregroundColor(HTZColor.statsAccent)
-        } else if isPlaying {
-            Image(systemName: "waveform")
-                .font(.system(size: 16))
-                .foregroundColor(HTZColor.ctaStart)
-        } else {
-            Image(systemName: "play.circle")
-                .font(.system(size: 20))
-                .foregroundColor(HTZColor.hint)
+        HStack(spacing: 10) {
+            if isCurrent {
+                HTZAnimatedBars(isAnimating: isPlaying)
+                    .frame(width: 30, height: 30)
+                    .padding(.bottom, 5)
+            }
+            if isLocked {
+                Image(systemName: "lock.fill")
+                    .font(.system(size: 14))
+                    .foregroundColor(HTZColor.hint)
+            } else if case let .downloading(fraction) = download {
+                ProgressView().scaleEffect(0.7).frame(width: 18, height: 18)
+                Text("\(Int(fraction * 100))%")
+                    .font(.system(size: 10))
+                    .foregroundColor(HTZColor.hint)
+            } else if download == .finished {
+                HTZImage.downloaded.resizable().scaledToFit().frame(width: 18, height: 18)
+            }
+            if showsTrial { HTZBadge(.trial) }
         }
+        .padding(.trailing, 10)
     }
 
     static func remaining(duration: Int, progress: Int?) -> String? {
+        // Same as Android: only for a started, unfinished episode (within 5s of the end counts as done).
         guard let progress, progress > 0, duration > 0 else { return nil }
         let left = duration - progress
-        guard left > 5 else { return "已播完" }
+        guard left > 5 else { return nil }
         return "剩余\((left + 59) / 60)分钟"
     }
 }
@@ -381,5 +400,74 @@ private struct EpisodePicker: View {
         stride(from: 0, to: items.count, by: 50).map { start in
             (start, min(start + 50, items.count))
         }
+    }
+}
+
+// MARK: - 付费内容弹窗
+
+/// Android `dialog_purchase`: title, divider, album name, price, hint, optional third-party login tip.
+private struct PurchasePromptDialog: View {
+    let albumName: String
+    let price: Double
+    let showsThirdPartyTip: Bool
+    let onPurchase: () -> Void
+    let onCancel: () -> Void
+
+    var body: some View {
+        VStack(spacing: 0) {
+            Text("付费内容")
+                .font(.system(size: 18, weight: .bold))
+                .foregroundColor(Color(hex: 0x333333))
+            Rectangle()
+                .fill(Color(hex: 0xEEEEEE))
+                .frame(height: 1)
+                .padding(.vertical, 15)
+            Text(albumName)
+                .font(.system(size: 16))
+                .foregroundColor(Color(hex: 0x666666))
+                .multilineTextAlignment(.center)
+            Text(verbatim: String(format: "¥%.2f", price))
+                .font(.system(size: 24, weight: .bold))
+                .foregroundColor(HTZColor.price)
+                .padding(.top, 10)
+            Text("此专辑为付费内容，购买后即可收听全部音频")
+                .font(.system(size: 13))
+                .foregroundColor(HTZColor.hint)
+                .multilineTextAlignment(.center)
+                .padding(.top, 15)
+            if showsThirdPartyTip {
+                Text("购买页面由第三方平台提供，首次购买需在该页面单独登录一次（与本应用账号相互独立），之后再来无需重复登录。购买完成后请返回本页面。")
+                    .font(.system(size: 12))
+                    .foregroundColor(Color(hex: 0xB06B00))
+                    .lineSpacing(3)
+                    .padding(10)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(Color(hex: 0xFFF7E6), in: RoundedRectangle(cornerRadius: 6))
+                    .overlay(RoundedRectangle(cornerRadius: 6).stroke(Color(hex: 0xFFE0A3), lineWidth: 1))
+                    .padding(.top, 15)
+            }
+            HStack(spacing: 12) {
+                Button(action: onPurchase) {
+                    Text("立即购买")
+                        .font(.system(size: 15))
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 44)
+                        .background(HTZColor.cta, in: Capsule())
+                }
+                Button(action: onCancel) {
+                    Text("取消")
+                        .font(.system(size: 15))
+                        .foregroundColor(HTZColor.title)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 44)
+                        .background(Color(hex: 0xEDEDED), in: Capsule())
+                }
+            }
+            .buttonStyle(.plain)
+            .padding(.top, 20)
+        }
+        .padding(20)
+        .background(HTZColor.page, in: RoundedRectangle(cornerRadius: 12))
     }
 }

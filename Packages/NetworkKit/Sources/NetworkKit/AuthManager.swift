@@ -60,5 +60,8 @@ public class AuthManager {
         self.token = nil
         self.unionid = nil
         self.appleUserId = nil
+        WeChatProfileCache.clear()
+        // The on-device history belongs to the account that just signed out.
+        LocalHistory.shared.removeAll()
     }
 }

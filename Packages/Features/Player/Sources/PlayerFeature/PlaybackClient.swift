@@ -35,7 +35,8 @@ public extension QueueTrack {
             artist: albumName,
             imageUrl: cover.flatMap(URL.init(string:)),
             originalLyricURL: item.originalLyricFileURL,
-            explanationLyricURL: item.explanationLyricFileURL
+            explanationLyricURL: item.explanationLyricFileURL,
+            duration: item.durationSeconds > 0 ? item.durationSeconds : nil
         )
     }
 

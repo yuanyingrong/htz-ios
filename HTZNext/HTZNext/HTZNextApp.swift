@@ -5,6 +5,48 @@ import NetworkKit
 import AuthFeature
 import PlayerFeature
 
+#if !targetEnvironment(simulator)
+/// Sends an episode link card through the WeChat SDK (chat / moments / favourites), like Android's `WXShareUtil`.
+enum WeChatSharing {
+    static func share(_ content: ShareContent, scene: WeChatScene) async -> Bool {
+        let thumbnail = await thumbnailData(from: content.imageURL)
+        return await withCheckedContinuation { continuation in
+            DispatchQueue.main.async {
+                let page = WXWebpageObject()
+                page.webpageUrl = content.url.absoluteString
+                let message = WXMediaMessage()
+                message.title = content.title
+                message.description = content.description
+                message.thumbData = thumbnail
+                message.mediaObject = page
+                let request = SendMessageToWXReq()
+                request.bText = false
+                request.message = message
+                switch scene {
+                case .session: request.scene = Int32(WXSceneSession.rawValue)
+                case .timeline: request.scene = Int32(WXSceneTimeline.rawValue)
+                case .favorite: request.scene = Int32(WXSceneFavorite.rawValue)
+                }
+                WXApi.send(request) { continuation.resume(returning: $0) }
+            }
+        }
+    }
+
+    /// WeChat rejects thumbnails over 32 KB.
+    private static func thumbnailData(from url: URL?) async -> Data? {
+        guard let url, let (data, _) = try? await URLSession.shared.data(from: url), let image = UIImage(data: data) else { return nil }
+        let side: CGFloat = 150
+        let scale = min(1, side / max(image.size.width, image.size.height))
+        let size = CGSize(width: image.size.width * scale, height: image.size.height * scale)
+        let resized = UIGraphicsImageRenderer(size: size).image { _ in image.draw(in: CGRect(origin: .zero, size: size)) }
+        for quality in stride(from: 0.8, through: 0.2, by: -0.2) {
+            if let jpeg = resized.jpegData(compressionQuality: quality), jpeg.count <= 32 * 1024 { return jpeg }
+        }
+        return nil
+    }
+}
+#endif
+
 class AppDelegate: NSObject, UIApplicationDelegate {
     func application(
         _ application: UIApplication,
@@ -37,6 +79,10 @@ class AppDelegate: NSObject, UIApplicationDelegate {
             $0.weChatClient = WeChatClient(
                 isInstalled: { WXApi.isWXAppInstalled() },
                 sendAuthRequest: sendAuthRequestClosure
+            )
+            $0.shareClient = ShareClient(
+                isWeChatInstalled: { WXApi.isWXAppInstalled() },
+                shareToWeChat: { content, scene in await WeChatSharing.share(content, scene: scene) }
             )
             #else
             // In simulator, we fall back to a mock that simulates successful auth code returning after 1s

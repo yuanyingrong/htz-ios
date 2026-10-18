@@ -440,6 +440,7 @@
 					"$(SRCROOT)/../htz/Pods/WechatOpenSDK/OpenSDK2.0.4",
 				);
 				INFOPLIST_FILE = HTZNext/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "黄庭书院";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -503,6 +504,7 @@
 					"$(SRCROOT)/../htz/Pods/WechatOpenSDK/OpenSDK2.0.4",
 				);
 				INFOPLIST_FILE = HTZNext/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "黄庭书院";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

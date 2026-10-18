@@ -61,8 +61,10 @@ public struct BindPhoneFeature {
                         do {
                             try await library.sendSms(phone)
                             await send(.codeSent)
+                        } catch let NetworkError.apiError(message) {
+                            await send(.failed("验证码发送失败：\(message)"))
                         } catch {
-                            await send(.failed("验证码发送失败"))
+                            await send(.failed("验证码发送失败，请检查网络"))
                         }
                     },
                     .run { send in
@@ -101,7 +103,7 @@ public struct BindPhoneFeature {
             case let .failed(message):
                 state.isSubmitting = false
                 state.toast = message
-                if message == "验证码发送失败" {
+                if message.hasPrefix("验证码发送失败") {
                     state.countdown = 0
                     return .cancel(id: CountdownID.timer)
                 }

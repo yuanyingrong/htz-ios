@@ -1,4 +1,5 @@
 import Foundation
+import PlayerFeature
 import NetworkKit
 
 public enum HomeStats {
@@ -30,6 +31,8 @@ public enum HomeStats {
         var weekText = "0秒"
         var monthText = "0秒"
         var bars: [Bar] = []
+        /// Merged per-day totals (`yyyy-MM-dd` → ms) these numbers were computed from.
+        var durations: [String: Int] = [:]
 
         var totalParts: (String, String) {
             HomeStats.splitDuration(totalMilliseconds)
@@ -71,6 +74,7 @@ public enum HomeStats {
     public static func study(durations: [String: Int], completed: Int, now: Date = Date(), calendar: Calendar = .current) -> Study {
         var stats = Study()
         stats.completedLessons = completed
+        stats.durations = durations
         stats.totalMilliseconds = durations.values.reduce(0, +)
         let today = dayKey(now, calendar: calendar)
         stats.todayText = formatDuration(durations[today] ?? 0)
@@ -133,9 +137,18 @@ public enum HomeStats {
             return (checkIn(dates: []), study(durations: [:], completed: 0))
         }
         async let dates = checkInDates(userId: unionid, library: library)
-        async let record = (try? await library.studyRecord(unionid)) ?? StudyRecord()
-        let study = await record
-        return await (checkIn(dates: dates), Self.study(durations: study.durations, completed: study.completedLessons))
+        async let studyStats = loadStudy(unionid: unionid, library: library)
+        return await (checkIn(dates: dates), studyStats)
+    }
+
+    /// Study time/lessons only: cheap enough to re-run whenever the Home tab is shown or playback pauses.
+    static func loadStudy(unionid: String, library: LibraryClient) async -> Study {
+        guard !unionid.isEmpty else { return study(durations: [:], completed: 0) }
+        let record = (try? await library.studyRecord(unionid)) ?? StudyRecord()
+        // Same rule as Android: per day, trust the larger of this device's tally and the server's,
+        // so time just listened shows up before (or without) a successful upload.
+        let durations = record.durations.merging(StudyTimeTracker.shared.totals()) { max($0, $1) }
+        return study(durations: durations, completed: record.completedLessons)
     }
 
     private static func checkInDates(userId: String, library: LibraryClient) async -> Set<String> {

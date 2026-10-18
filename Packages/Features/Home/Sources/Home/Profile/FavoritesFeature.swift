@@ -79,7 +79,10 @@ public struct FavoritesFeature {
                     return track
                 }
                 let index = state.items.firstIndex(of: item) ?? 0
-                return .run { _ in await playback.play(tracks, index, true, 0) }
+                return .run { [library] _ in
+                    let position = await ResumePosition.seconds(for: item.itemId, library: library)
+                    await playback.play(tracks, index, true, position)
+                }
 
             case let .delete(item):
                 return .run { send in
@@ -163,9 +166,10 @@ struct FavoritesView: View {
                     }
                 }
             }
-            .confirmationDialog("确定清空全部收藏？", isPresented: $store.isClearConfirmPresented, titleVisibility: .visible) {
-                Button("清空", role: .destructive) { store.send(.clearAllConfirmed) }
-            }
+            .htzConfirmSheet(
+                isPresented: $store.isClearConfirmPresented,
+                message: "要清空所有收藏记录吗？"
+            ) { store.send(.clearAllConfirmed) }
             .htzToast($store.toast)
             .onAppear { store.send(.onAppear) }
         }

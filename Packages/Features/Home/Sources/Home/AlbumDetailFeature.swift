@@ -14,6 +14,8 @@ public struct AlbumDetailFeature {
         public var errorMessage: String?
         public var toast: String?
         public var resume: ListenHistoryItem?
+        /// Last listened position (seconds) per episode, from the listen history (newest entry wins).
+        public var progress: [String: Int] = [:]
         public var favorites: [String: String] = [:]
         public var downloads: [String: DownloadRecord.State] = [:]
         public var purchase: AlbumPurchase?
@@ -39,6 +41,17 @@ public struct AlbumDetailFeature {
         }
 
         public var price: Double { album.priceInYuan }
+
+        /// Seconds to start from: the saved position, unless there is none or the episode is
+        /// (almost) finished — a position within the last 15s is a leftover from a cut-off stream.
+        public func resumePosition(of item: SutraItem) -> Int {
+            guard let saved = progress[item.id], saved > 1 else { return 0 }
+            let duration = item.durationSeconds
+            if duration > 0, duration - saved <= Self.finishedTolerance { return 0 }
+            return saved
+        }
+
+        static let finishedTolerance = 15
     }
 
     public enum Action: BindableAction, Equatable {
@@ -48,6 +61,8 @@ public struct AlbumDetailFeature {
         case itemsFailed
         case coverResolved(String)
         case resumeLoaded(ListenHistoryItem?)
+        case progressLoaded([String: Int])
+        case historyChanged
         case favoritesLoaded([FavoriteItem])
         case downloadsUpdated([DownloadRecord])
         case purchaseLoaded(AlbumPurchase, announce: Bool)
@@ -108,18 +123,24 @@ public struct AlbumDetailFeature {
                             await send(.downloadsUpdated(records))
                         }
                     }
-                    .cancellable(id: DownloadsObservation.id(sutraId), cancelInFlight: true)
+                    .cancellable(id: DownloadsObservation.id(sutraId), cancelInFlight: true),
+                    // Listening to an episode here (or elsewhere) rewrites its history: keep "剩余xx分钟" fresh.
+                    .run { send in
+                        for await _ in NotificationCenter.default.notifications(named: .htzHistoryDidChange) {
+                            await send(.historyChanged)
+                        }
+                    }
+                    .cancellable(id: AlbumHistoryWatch.id(sutraId), cancelInFlight: true)
                 )
+
+            case .historyChanged:
+                return loadProgress(state: state)
 
             case let .itemsLoaded(items):
                 state.isLoading = false
                 let sorted = Self.sortedAscending(items)
                 state.items = state.isAscending ? sorted : sorted.reversed()
-                let ids = Set(items.map(\.id))
-                return .run { send in
-                    let histories = (try? await library.histories()) ?? []
-                    await send(.resumeLoaded(histories.first { ids.contains($0.itemId) }))
-                }
+                return loadProgress(state: state)
 
             case .itemsFailed:
                 state.isLoading = false
@@ -132,6 +153,10 @@ public struct AlbumDetailFeature {
 
             case let .resumeLoaded(history):
                 state.resume = history
+                return .none
+
+            case let .progressLoaded(progress):
+                state.progress = progress
                 return .none
 
             case let .favoritesLoaded(favorites):
@@ -169,7 +194,8 @@ public struct AlbumDetailFeature {
                     state.isPurchasePromptPresented = true
                     return .none
                 }
-                return play(state: state, itemId: item.id, position: 0)
+                // Like Android: an episode that was left midway continues from there.
+                return play(state: state, itemId: item.id, position: Double(state.resumePosition(of: item)))
 
             case .resumeTapped:
                 guard let resume = state.resume else { return .none }
@@ -273,6 +299,20 @@ public struct AlbumDetailFeature {
         }
     }
 
+    private func loadProgress(state: State) -> Effect<Action> {
+        let ids = Set(state.items.map(\.id))
+        guard !ids.isEmpty else { return .none }
+        return .run { send in
+            let histories = ((try? await library.histories()) ?? []).filter { ids.contains($0.itemId) }
+            var progress: [String: Int] = [:]
+            for history in histories where progress[history.itemId] == nil {
+                progress[history.itemId] = history.lastPositionSeconds
+            }
+            await send(.progressLoaded(progress))
+            await send(.resumeLoaded(histories.first))
+        }
+    }
+
     private func play(state: State, itemId: String, position: Double) -> Effect<Action> {
         let album = state.album
         let tracks = state.items.map { QueueTrack(item: $0, sutraId: album.id, albumName: album.name, cover: album.imageUrl) }
@@ -290,7 +330,7 @@ public struct AlbumDetailFeature {
             await send(.toast(pending.count == 1 ? "已加入下载列表" : "已加入下载列表（\(pending.count)集）"))
             var failed = 0
             for item in pending {
-                guard let url = try? await library.fileURL(album.id, item.id).audioURL else {
+                guard let urls = try? await library.fileURL(album.id, item.id), let url = urls.audioURL else {
                     failed += 1
                     continue
                 }
@@ -301,7 +341,9 @@ public struct AlbumDetailFeature {
                     albumName: album.name,
                     imageURL: album.imageUrl,
                     lesson: item.lesson ?? 0,
-                    remoteURL: url
+                    remoteURL: url,
+                    originalLyricURL: urls.originalLyricURL,
+                    explanationLyricURL: urls.explanationLyricURL
                 ))
             }
             if failed > 0 {
@@ -336,5 +378,9 @@ public struct AlbumDetailFeature {
 }
 
 private enum DownloadsObservation: Hashable {
+    case id(String)
+}
+
+private enum AlbumHistoryWatch: Hashable {
     case id(String)
 }

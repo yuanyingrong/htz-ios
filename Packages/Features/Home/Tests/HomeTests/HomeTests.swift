@@ -81,6 +81,68 @@ final class HomeTests: XCTestCase {
     }
 
     @MainActor
+    func testTappingEpisodeResumesFromSavedPosition() async {
+        let started = LockIsolated<[(String, Double)]>([])
+        var state = AlbumDetailFeature.State(album: Album(id: "s", name: "专辑", imageUrl: nil))
+        let items = [
+            SutraItem(id: "mid", lesson: 1, duration: 600_000),
+            SutraItem(id: "almost", lesson: 2, duration: 600_000),
+            SutraItem(id: "fresh", lesson: 3, duration: 600_000)
+        ]
+        state.items = items
+        state.progress = ["mid": 120, "almost": 595]
+        let store = TestStore(initialState: state) {
+            AlbumDetailFeature()
+        } withDependencies: {
+            $0.playback.play = { tracks, index, _, position in
+                started.withValue { $0.append((tracks[index].id, position)) }
+            }
+        }
+        await store.send(.trackTapped(items[0]))
+        await store.send(.trackTapped(items[1]))
+        await store.send(.trackTapped(items[2]))
+        XCTAssertEqual(started.value.map(\.0), ["mid", "almost", "fresh"])
+        XCTAssertEqual(started.value.map(\.1), [120, 0, 0])
+    }
+
+    @MainActor
+    func testFavoriteAndDownloadPlayContinueFromHistory() async {
+        let started = LockIsolated<[(String, Double)]>([])
+        let history = ListenHistoryItem(id: "h", sutraItemId: "a", sutraId: "s", title: "甲", sutraName: "专辑", cover: "", lastPosition: 120_000)
+
+        var favorites = FavoritesFeature.State()
+        let favorite = FavoriteItem(id: "f", serverId: "x", sutraItemId: "a", sutraId: "s", title: "甲", sutraName: "专辑", cover: "")
+        favorites.items = [favorite]
+        let favoritesStore = TestStore(initialState: favorites) {
+            FavoritesFeature()
+        } withDependencies: {
+            $0.library.histories = { [history] }
+            $0.playback.play = { tracks, index, _, position in
+                started.withValue { $0.append((tracks[index].id, position)) }
+            }
+        }
+        await favoritesStore.send(.play(favorite))
+        await favoritesStore.finish()
+
+        var downloads = DownloadsFeature.State()
+        let record = DownloadRecord(id: "a", title: "甲", sutraId: "s", albumName: "专辑", state: .finished)
+        downloads.records = [record]
+        let downloadsStore = TestStore(initialState: downloads) {
+            DownloadsFeature()
+        } withDependencies: {
+            $0.library.histories = { [history] }
+            $0.playback.play = { tracks, index, _, position in
+                started.withValue { $0.append((tracks[index].id, position)) }
+            }
+        }
+        await downloadsStore.send(.play(record))
+        await downloadsStore.finish()
+
+        XCTAssertEqual(started.value.map(\.0), ["a", "a"])
+        XCTAssertEqual(started.value.map(\.1), [120, 120])
+    }
+
+    @MainActor
     func testPurchaseRefreshAnnouncesSuccess() async {
         var state = AlbumDetailFeature.State(album: Album(id: "s", name: "专辑", imageUrl: nil))
         state.purchase = AlbumPurchase(isPaid: true, isPurchased: false, paidUrl: nil)

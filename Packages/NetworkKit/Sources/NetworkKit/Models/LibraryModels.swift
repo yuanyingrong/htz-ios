@@ -95,8 +95,10 @@ public struct ListenHistoryItem: Equatable, Identifiable, Sendable {
     public var sutraName: String
     public var cover: String
     public var lastPosition: Int
+    /// When the entry was last written (server `created_at`, epoch seconds); 0 if unknown.
+    public var createdAt: Int
 
-    public init(id: String, sutraItemId: String, sutraId: String, title: String, sutraName: String, cover: String, lastPosition: Int) {
+    public init(id: String, sutraItemId: String, sutraId: String, title: String, sutraName: String, cover: String, lastPosition: Int, createdAt: Int = 0) {
         self.id = id
         self.sutraItemId = sutraItemId
         self.sutraId = sutraId
@@ -104,6 +106,7 @@ public struct ListenHistoryItem: Equatable, Identifiable, Sendable {
         self.sutraName = sutraName
         self.cover = cover
         self.lastPosition = lastPosition
+        self.createdAt = createdAt
     }
 
     public var itemId: String { sutraItemId.isEmpty ? id : sutraItemId }

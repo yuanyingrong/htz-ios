@@ -68,8 +68,10 @@ public struct PhoneLoginFeature {
                     do {
                         try await library.sendSms(phone)
                         await send(.codeSent)
+                    } catch let NetworkError.apiError(message) {
+                        await send(.failed("验证码发送失败：\(message)"))
                     } catch {
-                        await send(.failed("验证码发送失败，请稍后重试"))
+                        await send(.failed("验证码发送失败，请检查网络"))
                     }
                 }
 

@@ -23,6 +23,7 @@ struct CustomTabView<Content: View>: View {
     let tabs: [TabConfig]
     var tabBarHeight: CGFloat
     var selectedColor: Color
+    var showsTabBar: Bool
     @ViewBuilder let content: (Int) -> Content
 
     init(
@@ -30,12 +31,14 @@ struct CustomTabView<Content: View>: View {
         tabs: [TabConfig],
         tabBarHeight: CGFloat = 58,
         selectedColor: Color = .accentColor,
+        showsTabBar: Bool = true,
         @ViewBuilder content: @escaping (Int) -> Content
     ) {
         self._selection = selection
         self.tabs = tabs
         self.tabBarHeight = tabBarHeight
         self.selectedColor = selectedColor
+        self.showsTabBar = showsTabBar
         self.content = content
     }
 
@@ -69,6 +72,11 @@ struct CustomTabView<Content: View>: View {
                 .frame(height: tabBarHeight)
             }
             .background(Color.white.ignoresSafeArea(edges: .bottom))
+            .opacity(showsTabBar ? 1 : 0)
+            .allowsHitTesting(showsTabBar)
+            .offset(y: showsTabBar ? 0 : tabBarHeight + 40)
+            // 收起/展现不要动画，瞬间切换（也屏蔽导航转场带下来的动画）。
+            .transaction { $0.animation = nil }
         }
     }
 }

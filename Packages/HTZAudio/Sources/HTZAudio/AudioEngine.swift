@@ -66,6 +66,15 @@ public final class AudioEngine {
         currentPlayerState.isPlaying = false
     }
 
+    /// Stops playback and drops the current item (used when the mini bar is dismissed).
+    public func stop() async {
+        player.pause()
+        removeObservers()
+        player.replaceCurrentItem(with: nil)
+        playerItem = nil
+        currentPlayerState = PlayerState(rate: currentPlayerState.rate)
+    }
+
     public func seek(to seconds: Double) async {
         let clamped = max(0, seconds)
         let time = CMTime(seconds: clamped, preferredTimescale: 600)

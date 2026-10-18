@@ -9,6 +9,8 @@ public struct QueueTrack: Equatable, Sendable, Identifiable {
     public var audioURL: URL?
     public var originalLyricURL: URL?
     public var explanationLyricURL: URL?
+    /// Length in seconds when the list that queued it knew it (shown in the playlist).
+    public var duration: Int?
 
     public init(
         id: String,
@@ -18,8 +20,10 @@ public struct QueueTrack: Equatable, Sendable, Identifiable {
         imageUrl: URL? = nil,
         audioURL: URL? = nil,
         originalLyricURL: URL? = nil,
-        explanationLyricURL: URL? = nil
+        explanationLyricURL: URL? = nil,
+        duration: Int? = nil
     ) {
+        self.duration = duration
         self.id = id
         self.sutraId = sutraId
         self.title = title

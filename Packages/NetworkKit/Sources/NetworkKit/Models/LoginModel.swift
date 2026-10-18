@@ -39,6 +39,40 @@ public struct LoginModel: Codable, Equatable {
         self.appleUserId = appleUserId
     }
     
+    /// `NetworkManager` decodes with `.convertFromSnakeCase`, which rewrites `union_id` to `unionId`
+    /// *before* matching `CodingKeys` — so the explicit snake_case raw values below never match there
+    /// and `unionId` / `wxLoginResp` silently came back nil. Accept both spellings.
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: FlexibleKey.self)
+        func value<T: Decodable>(_ type: T.Type, _ names: String...) -> T? {
+            for name in names {
+                if let key = FlexibleKey(stringValue: name),
+                   let decoded = try? container.decodeIfPresent(T.self, forKey: key) {
+                    return decoded
+                }
+            }
+            return nil
+        }
+        token = value(String.self, "token")
+        name = value(String.self, "name")
+        id = value(String.self, "id")
+        unionId = value(String.self, "union_id", "unionId")
+        mobile = value(String.self, "mobile")
+        gender = value(String.self, "gender")
+        createdAt = value(String.self, "created_at", "createdAt")
+        avatar = value(String.self, "avatar")
+        birthdayYear = value(String.self, "birthday_year", "birthdayYear")
+        wxLoginResp = value(WeChatLoginResponse.self, "wx_login_resp", "wxLoginResp")
+        appleUserId = value(String.self, "apple_user_id", "appleUserId")
+    }
+
+    private struct FlexibleKey: CodingKey {
+        var stringValue: String
+        var intValue: Int? { nil }
+        init?(stringValue: String) { self.stringValue = stringValue }
+        init?(intValue: Int) { nil }
+    }
+
     public enum CodingKeys: String, CodingKey {
         case token
         case name

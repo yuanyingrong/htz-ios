@@ -64,6 +64,10 @@ private final class NowPlayingBridge: @unchecked Sendable {
     }
 
     func update(item: PlayerItem?, time: Double, duration: Double, rate: Double, isPlaying: Bool) async {
+        guard item != nil else {
+            MPNowPlayingInfoCenter.default().nowPlayingInfo = nil
+            return
+        }
         var info: [String: Any] = [
             MPNowPlayingInfoPropertyElapsedPlaybackTime: time,
             MPMediaItemPropertyPlaybackDuration: duration,

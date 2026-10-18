@@ -4,11 +4,72 @@ import NetworkKit
 import PlayerFeature
 import SwiftUI
 
+extension Array where Element == ListenHistoryItem {
+    /// One entry per lesson, keeping the first (newest) record and the original order.
+    var aggregatedByLesson: [ListenHistoryItem] {
+        var seen = Set<String>()
+        return filter { seen.insert($0.itemId).inserted }
+    }
+}
+
+/// Playing a history entry queues the whole album it belongs to (starting at that lesson), so
+/// next/previous and auto-advance work like they do from the album page.
+enum HistoryPlayback {
+    static func queue(for item: ListenHistoryItem, cover: String?, library: LibraryClient) async -> (tracks: [QueueTrack], index: Int) {
+        let coverString = cover ?? MediaTime.ossURL(item.cover)?.absoluteString
+        var single = QueueTrack(history: item)
+        if let cover { single.imageUrl = URL(string: cover) }
+
+        guard !item.sutraId.isEmpty,
+              let fetched = try? await library.items(item.sutraId), !fetched.isEmpty else {
+            return ([single], 0)
+        }
+        let items = AlbumDetailFeature.sortedAscending(fetched)
+        guard let index = items.firstIndex(where: { $0.id == item.itemId })
+                ?? items.firstIndex(where: { !item.title.isEmpty && $0.title == item.title }) else {
+            return ([single], 0)
+        }
+        let tracks = items.map {
+            QueueTrack(item: $0, sutraId: item.sutraId, albumName: item.sutraName, cover: coverString)
+        }
+        return (tracks, index)
+    }
+}
+
+/// Where to continue an episode picked from a list that carries no progress of its own
+/// (favorites, downloads): the newest listen-history entry for it, or 0.
+enum ResumePosition {
+    static func seconds(for itemId: String, library: LibraryClient, timeout: Duration = .seconds(2)) async -> Double {
+        // Offline (the usual case for downloads) must not delay starting playback.
+        await withTaskGroup(of: Double?.self) { group in
+            group.addTask {
+                let histories = (try? await library.histories()) ?? []
+                let saved = histories.first { $0.itemId == itemId }?.lastPositionSeconds ?? 0
+                return Double(max(0, saved))
+            }
+            group.addTask {
+                try? await _Concurrency.Task.sleep(for: timeout)
+                return nil
+            }
+            let first = await group.next() ?? nil
+            group.cancelAll()
+            return first ?? 0
+        }
+    }
+}
+
+enum HistoryWatchID: Hashable { case id }
+
 @Reducer
 public struct HistoryFeature {
     @ObservableState
     public struct State: Equatable {
-        public var items: [ListenHistoryItem] = []
+        /// Raw server records; the same lesson can appear several times.
+        public var records: [ListenHistoryItem] = []
+        /// One row per lesson (the most recent record wins; the server returns newest first).
+        public var items: [ListenHistoryItem] {
+            records.aggregatedByLesson
+        }
         public var covers: [String: String] = [:]
         public var isLoading = false
         public var toast: String?
@@ -20,6 +81,7 @@ public struct HistoryFeature {
     public enum Action: BindableAction, Equatable {
         case binding(BindingAction<State>)
         case onAppear
+        case historyChanged
         case loaded([ListenHistoryItem])
         case coversLoaded([String: String])
         case failed
@@ -37,6 +99,16 @@ public struct HistoryFeature {
 
     public init() {}
 
+    private func reload() -> Effect<Action> {
+        .run { send in
+            do {
+                await send(.loaded(try await library.histories()))
+            } catch {
+                await send(.failed)
+            }
+        }
+    }
+
     public var body: some ReducerOf<Self> {
         BindingReducer()
         Reduce { state, action in
@@ -45,18 +117,24 @@ public struct HistoryFeature {
                 return .none
 
             case .onAppear:
-                state.isLoading = state.items.isEmpty
-                return .run { send in
-                    do {
-                        await send(.loaded(try await library.histories()))
-                    } catch {
-                        await send(.failed)
+                state.isLoading = state.records.isEmpty
+                return .merge(
+                    reload(),
+                    // Playing something while this page is open adds/moves entries: refresh on every write.
+                    .run { send in
+                        for await _ in NotificationCenter.default.notifications(named: .htzHistoryDidChange) {
+                            await send(.historyChanged)
+                        }
                     }
-                }
+                    .cancellable(id: HistoryWatchID.id, cancelInFlight: true)
+                )
+
+            case .historyChanged:
+                return reload()
 
             case let .loaded(items):
                 state.isLoading = false
-                state.items = items
+                state.records = items
                 let missing = Set(items.map(\.sutraId)).subtracting(state.covers.keys)
                 return .run { send in
                     await send(.coversLoaded(await CoverLookup.signed(for: missing, library: library)))
@@ -72,29 +150,26 @@ public struct HistoryFeature {
                 return .none
 
             case let .play(item):
-                let covers = state.covers
-                let tracks = state.items.map { item in
-                    var track = QueueTrack(history: item)
-                    if let cover = covers[item.sutraId] { track.imageUrl = URL(string: cover) }
-                    return track
-                }
-                let index = state.items.firstIndex(of: item) ?? 0
-                return .run { _ in
-                    await playback.play(tracks, index, true, Double(item.lastPositionSeconds))
+                let cover = state.covers[item.sutraId]
+                return .run { [library] _ in
+                    let queue = await HistoryPlayback.queue(for: item, cover: cover, library: library)
+                    await playback.play(queue.tracks, queue.index, true, Double(item.lastPositionSeconds))
                 }
 
             case let .delete(item):
+                // Remove every record of this lesson, otherwise an older duplicate would resurface.
+                let ids = state.records.filter { $0.itemId == item.itemId }.map(\.id)
                 return .run { send in
                     do {
-                        try await library.deleteHistory(item.id)
-                        await send(.deleted(item.id))
+                        for id in ids { try await library.deleteHistory(id) }
+                        await send(.deleted(item.itemId))
                     } catch {
                         await send(.toast("删除失败"))
                     }
                 }
 
-            case let .deleted(id):
-                state.items.removeAll { $0.id == id }
+            case let .deleted(itemId):
+                state.records.removeAll { $0.itemId == itemId }
                 return .none
 
             case .clearAllTapped:
@@ -112,7 +187,7 @@ public struct HistoryFeature {
                 }
 
             case .cleared:
-                state.items = []
+                state.records = []
                 state.toast = "已清空"
                 return .none
 
@@ -169,9 +244,10 @@ public struct HistoryView: View {
                     }
                 }
             }
-            .confirmationDialog("确定清空全部播放历史？", isPresented: $store.isClearConfirmPresented, titleVisibility: .visible) {
-                Button("清空", role: .destructive) { store.send(.clearAllConfirmed) }
-            }
+            .htzConfirmSheet(
+                isPresented: $store.isClearConfirmPresented,
+                message: "要清空所有历史记录吗？"
+            ) { store.send(.clearAllConfirmed) }
             .htzToast($store.toast)
             .onAppear { store.send(.onAppear) }
         }

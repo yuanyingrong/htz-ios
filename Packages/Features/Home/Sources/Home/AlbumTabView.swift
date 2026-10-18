@@ -16,7 +16,7 @@ public struct AlbumTabView: View {
         WithPerceptionTracking {
             NavigationStack(path: $store.scope(state: \.path, action: \.path)) {
                 VStack(spacing: 0) {
-                    LibrarySearchBar()
+                    LibrarySearchBar { store.send(.historyTapped) }
                     ScrollView {
                         VStack(alignment: .leading, spacing: 12) {
                             HTZSectionHeader("所有专辑", actionTitle: "播放历史") { store.send(.historyTapped) }

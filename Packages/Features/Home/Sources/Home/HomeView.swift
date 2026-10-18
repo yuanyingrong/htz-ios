@@ -16,9 +16,9 @@ public struct HomeView: View {
         WithPerceptionTracking {
             NavigationStack(path: $store.scope(state: \.path, action: \.path)) {
                 VStack(spacing: 0) {
-                    LibrarySearchBar()
+                    LibrarySearchBar { store.send(.historyMoreTapped) }
                     ScrollView {
-                        VStack(alignment: .leading, spacing: 12) {
+                        VStack(alignment: .leading, spacing: 10) {
                             recommendations
                             if !store.recentHistories.isEmpty {
                                 historyCard
@@ -28,7 +28,7 @@ public struct HomeView: View {
                             }
                             studyCard
                         }
-                        .padding(.horizontal, 12)
+                        .padding(.horizontal, 20)
                         .padding(.top, 4)
                         .padding(.bottom, 140)
                     }
@@ -46,8 +46,13 @@ public struct HomeView: View {
 
     private var recommendations: some View {
         VStack(alignment: .leading, spacing: 10) {
-            HTZSectionHeader("推荐专辑", actionTitle: "更多", action: onShowAlbums)
-                .padding(.horizontal, 4)
+            HomeModuleHeader(
+                title: "推荐专辑",
+                icon: HTZImage.waveTitle.resizable().frame(width: 25, height: 20),
+                actionTitle: "更多",
+                actionColor: HTZColor.title,
+                action: onShowAlbums
+            )
 
             if store.isLoading && store.albums.isEmpty && store.recommendations.isEmpty {
                 Text("正在加载推荐内容…")
@@ -66,20 +71,20 @@ public struct HomeView: View {
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 24)
             } else if !store.recommendations.isEmpty {
-                ForEach(store.recommendations) { item in
+                ForEach(Array(store.recommendations.enumerated()), id: \.element.id) { index, item in
                     Button {
                         store.send(.recommendationTapped(item))
                     } label: {
-                        RecommendationBanner(title: item.name, imageUrl: item.imageUrl)
+                        RecommendationBanner(title: item.name, imageUrl: item.imageUrl, index: index)
                     }
                     .buttonStyle(.plain)
                 }
             } else if !store.albums.isEmpty {
-                ForEach(store.albums.prefix(3)) { album in
+                ForEach(Array(store.albums.prefix(3).enumerated()), id: \.element.id) { index, album in
                     Button {
                         store.send(.albumTapped(album))
                     } label: {
-                        RecommendationBanner(title: album.name, imageUrl: album.imageUrl)
+                        RecommendationBanner(title: album.name, imageUrl: nil, index: index)
                     }
                     .buttonStyle(.plain)
                 }
@@ -96,8 +101,12 @@ public struct HomeView: View {
     private var historyCard: some View {
         HTZCard {
             VStack(alignment: .leading, spacing: 4) {
-                HTZSectionHeader("收听历史", actionTitle: "更多") { store.send(.historyMoreTapped) }
-                    .padding(.bottom, 4)
+                HomeModuleHeader(
+                    title: "收听历史",
+                    icon: Image(systemName: "clock").font(.system(size: 16)).foregroundColor(HTZColor.secondary),
+                    actionTitle: "更多",
+                    actionColor: HTZColor.title
+                ) { store.send(.historyMoreTapped) }
                 ForEach(Array(store.recentHistories.enumerated()), id: \.element.id) { index, item in
                     Button {
                         store.send(.playHistory(item))
@@ -115,7 +124,7 @@ public struct HomeView: View {
                 }
             }
             .padding(.horizontal, 16)
-            .padding(.vertical, 14)
+            .padding(.vertical, 7)
         }
     }
 
@@ -125,17 +134,13 @@ public struct HomeView: View {
         } label: {
             HTZCard {
                 VStack(spacing: 12) {
-                    HStack {
-                        Text("打卡统计")
-                            .font(.system(size: 17, weight: .semibold))
-                            .foregroundColor(HTZColor.title)
-                        Spacer()
-                        HStack(spacing: 2) {
-                            Text("去打卡").font(.system(size: 13))
-                            Image(systemName: "chevron.right").font(.system(size: 10, weight: .semibold))
-                        }
-                        .foregroundColor(HTZColor.statsAccent)
-                    }
+                    HomeModuleHeader(
+                        title: "打卡统计",
+                        icon: Image(systemName: "calendar").font(.system(size: 16)).foregroundColor(HTZColor.secondary),
+                        actionTitle: "去打卡",
+                        actionColor: HTZColor.statsAccent,
+                        actionSize: 13
+                    )
                     HStack {
                         StatNumber(value: "\(store.checkIn.continuousDays)", unit: "天", caption: "连续打卡", tint: HTZColor.statsAccent)
                         StatNumber(value: "\(store.checkIn.monthDays)", unit: "天", caption: "本月打卡", tint: HTZColor.title)
@@ -169,9 +174,10 @@ public struct HomeView: View {
     private var studyCard: some View {
         HTZCard {
             VStack(alignment: .leading, spacing: 12) {
-                Text("学习统计")
-                    .font(.system(size: 17, weight: .semibold))
-                    .foregroundColor(HTZColor.title)
+                HomeModuleHeader(
+                    title: "学习统计",
+                    icon: Image(systemName: "chart.bar.xaxis").font(.system(size: 16)).foregroundColor(HTZColor.secondary)
+                )
                 HStack {
                     let parts = store.study.totalParts
                     StatNumber(value: parts.0, unit: parts.1, caption: "累计学习时长", tint: HTZColor.statsAccent)
@@ -226,28 +232,83 @@ public struct HomeView: View {
     }
 }
 
-/// Search entry shared by the Home and Album tabs.
+/// Search entry shared by the Home and Album tabs: grey search field + the calendar button that opens the listening history.
 struct LibrarySearchBar: View {
+    var onHistory: () -> Void
+
     var body: some View {
-        NavigationLink {
-            SearchView()
-        } label: {
-            HStack(spacing: 8) {
-                Image(systemName: "magnifyingglass")
-                    .font(.system(size: 14, weight: .medium))
-                Text("搜索专辑、原文、讲解")
-                    .font(.system(size: 14))
-                Spacer()
+        HStack(spacing: 20) {
+            NavigationLink {
+                SearchView()
+            } label: {
+                HStack(spacing: 15) {
+                    Image(systemName: "magnifyingglass")
+                        .font(.system(size: 14, weight: .semibold))
+                        .frame(width: 16)
+                    Text("搜索专辑、原文、讲解")
+                        .font(.system(size: 14))
+                    Spacer()
+                }
+                .foregroundColor(HTZColor.secondary)
+                .padding(.leading, 20)
+                .frame(height: 33)
+                .background(HTZColor.field, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+                .contentShape(Rectangle())
             }
-            .foregroundColor(HTZColor.hint)
-            .padding(.horizontal, 14)
-            .frame(height: 36)
-            .background(HTZColor.field, in: Capsule())
+            .buttonStyle(.plain)
+
+            Button(action: onHistory) {
+                HTZImage.historyButton
+                    .resizable()
+                    .frame(width: 25, height: 25)
+                    .frame(width: 33, height: 33)
+                    .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel("收听历史")
         }
-        .buttonStyle(.plain)
-        .padding(.horizontal, 16)
+        .padding(.leading, 16)
+        .padding(.trailing, 14)
         .padding(.top, 8)
         .padding(.bottom, 8)
+    }
+}
+
+/// Module title row used on the Home cards: 18 pt icon, 16 pt bold title, optional trailing action with a small chevron.
+private struct HomeModuleHeader<Icon: View>: View {
+    let title: String
+    let icon: Icon
+    var actionTitle: String?
+    var actionColor: Color = HTZColor.title
+    var actionSize: CGFloat = 14
+    var action: (() -> Void)?
+
+    var body: some View {
+        HStack(spacing: 6) {
+            icon
+            Text(title)
+                .font(.system(size: 16, weight: .bold))
+                .foregroundColor(HTZColor.title)
+            Spacer(minLength: 0)
+            if let actionTitle {
+                if let action {
+                    Button(action: action) { trailing(actionTitle) }
+                        .buttonStyle(.plain)
+                } else {
+                    trailing(actionTitle)
+                }
+            }
+        }
+        .frame(minHeight: 28)
+    }
+
+    private func trailing(_ text: String) -> some View {
+        HStack(spacing: 4) {
+            Text(text).font(.system(size: actionSize))
+            Image(systemName: "chevron.right").font(.system(size: 10, weight: .semibold))
+        }
+        .foregroundColor(actionColor)
+        .contentShape(Rectangle())
     }
 }
 
@@ -267,10 +328,29 @@ struct LibraryDestination: View {
 private struct RecommendationBanner: View {
     let title: String
     let imageUrl: String?
+    let index: Int
+
+    /// Android loads `recommendation_background_url` and falls back to the bundled painting `home_listview_bg_<n>`.
+    private var background: some View {
+        let fallback = HTZImage.homeBanner(index).resizable().scaledToFill()
+        return Group {
+            if let url = imageUrl.flatMap(URL.init(string:)), url.host != nil {
+                AsyncImage(url: url) { phase in
+                    if case let .success(image) = phase {
+                        image.resizable().scaledToFill()
+                    } else {
+                        fallback
+                    }
+                }
+            } else {
+                fallback
+            }
+        }
+    }
 
     var body: some View {
         ZStack(alignment: .leading) {
-            HTZRemoteImage(imageUrl, radius: 0)
+            background
                 .frame(height: 70)
                 .frame(maxWidth: .infinity)
                 .clipped()
@@ -290,7 +370,7 @@ private struct RecommendationBanner: View {
                 .padding(.trailing, 48)
         }
         .frame(height: 70)
-        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: 15, style: .continuous))
         .contentShape(Rectangle())
     }
 }
@@ -306,7 +386,7 @@ private struct HomeHistoryRow: View {
                 .frame(width: 44, height: 44)
             VStack(alignment: .leading, spacing: 4) {
                 Text(title)
-                    .font(.system(size: 14, weight: .medium))
+                    .font(.system(size: 14, weight: .bold))
                     .foregroundColor(HTZColor.title)
                     .lineLimit(1)
                 Text(album)
@@ -315,11 +395,12 @@ private struct HomeHistoryRow: View {
                     .lineLimit(1)
             }
             Spacer()
-            Image(systemName: "play.circle")
-                .font(.system(size: 20))
-                .foregroundColor(HTZColor.hint)
+            Image(systemName: "play.circle.fill")
+                .symbolRenderingMode(.palette)
+                .foregroundStyle(Color.white, Color(hex: 0x43C56A))
+                .font(.system(size: 18))
         }
-        .padding(.vertical, 6)
+        .frame(minHeight: 60)
         .contentShape(Rectangle())
     }
 }

@@ -37,6 +37,10 @@ public struct HomeFeature {
         case albumsFailed
         case historiesLoaded([ListenHistoryItem], covers: [String: String])
         case statsLoaded(HomeStats.CheckIn, HomeStats.Study)
+        case historyChanged
+        case refreshStudy
+        case refreshStudyLocal
+        case studyLoaded(HomeStats.Study)
         case albumTapped(Album)
         case recommendationTapped(Recommendation)
         case playHistory(ListenHistoryItem)
@@ -57,10 +61,15 @@ public struct HomeFeature {
                 return .none
 
             case .onAppear:
+                state.study = Self.withLocalTotals(state.study)
                 return .merge(
                     state.albums.isEmpty ? loadLibrary(state: &state) : .none,
-                    loadDashboard()
+                    loadDashboard(),
+                    watchHistory()
                 )
+
+            case .historyChanged:
+                return loadRecentHistories()
 
             case .refresh:
                 return .merge(loadLibrary(state: &state), loadDashboard())
@@ -84,6 +93,21 @@ public struct HomeFeature {
                 state.historyCovers.merge(covers) { _, new in new }
                 return .none
 
+            case .refreshStudyLocal:
+                state.study = Self.withLocalTotals(state.study)
+                return .none
+
+            case .refreshStudy:
+                // Show what this device has tallied right away; the server numbers follow when (if) they arrive.
+                state.study = Self.withLocalTotals(state.study)
+                return .run { send in
+                    await send(.studyLoaded(await HomeStats.loadStudy(unionid: AuthManager.shared.unionid ?? "", library: library)))
+                }
+
+            case let .studyLoaded(study):
+                state.study = study
+                return .none
+
             case let .statsLoaded(checkIn, study):
                 state.checkIn = checkIn
                 state.study = study
@@ -100,10 +124,10 @@ public struct HomeFeature {
                 return .none
 
             case let .playHistory(item):
-                var track = QueueTrack(history: item)
-                if let cover = state.historyCovers[item.sutraId] { track.imageUrl = URL(string: cover) }
-                return .run { [track] _ in
-                    await playback.play([track], 0, true, Double(item.lastPositionSeconds))
+                let cover = state.historyCovers[item.sutraId]
+                return .run { [library] _ in
+                    let queue = await HistoryPlayback.queue(for: item, cover: cover, library: library)
+                    await playback.play(queue.tracks, queue.index, true, Double(item.lastPositionSeconds))
                 }
 
             case .historyMoreTapped:
@@ -115,6 +139,12 @@ public struct HomeFeature {
             }
         }
         .forEach(\.path, action: \.path)
+    }
+
+    /// Re-derives the study numbers with this device's latest play-time tally (cheap, no network).
+    static func withLocalTotals(_ study: HomeStats.Study) -> HomeStats.Study {
+        let durations = study.durations.merging(StudyTimeTracker.shared.totals()) { max($0, $1) }
+        return HomeStats.study(durations: durations, completed: study.completedLessons)
     }
 
     private func loadLibrary(state: inout State) -> Effect<Action> {
@@ -136,13 +166,27 @@ public struct HomeFeature {
         )
     }
 
+    private func loadRecentHistories() -> Effect<Action> {
+        .run { send in
+            let recent = Array(((try? await library.histories()) ?? []).aggregatedByLesson.prefix(3))
+            let covers = await CoverLookup.signed(for: Set(recent.map(\.sutraId)), library: library)
+            await send(.historiesLoaded(recent, covers: covers))
+        }
+    }
+
+    /// Refresh the history card whenever a listen-history entry is written (playback started/paused/switched).
+    private func watchHistory() -> Effect<Action> {
+        .run { send in
+            for await _ in NotificationCenter.default.notifications(named: .htzHistoryDidChange) {
+                await send(.historyChanged)
+            }
+        }
+        .cancellable(id: HomeHistoryWatchID.id, cancelInFlight: true)
+    }
+
     private func loadDashboard() -> Effect<Action> {
         .merge(
-            .run { send in
-                let recent = Array(((try? await library.histories()) ?? []).prefix(3))
-                let covers = await CoverLookup.signed(for: Set(recent.map(\.sutraId)), library: library)
-                await send(.historiesLoaded(recent, covers: covers))
-            },
+            loadRecentHistories(),
             .run { send in
                 let stats = await HomeStats.load(unionid: AuthManager.shared.unionid ?? "", library: library)
                 await send(.statsLoaded(stats.0, stats.1))
@@ -150,6 +194,9 @@ public struct HomeFeature {
         )
     }
 }
+
+enum HomeHistoryWatchID: Hashable { case id }
+enum AlbumsHistoryWatchID: Hashable { case id }
 
 @Reducer
 public struct AlbumsFeature {
@@ -171,6 +218,7 @@ public struct AlbumsFeature {
 
     public enum Action: Equatable {
         case onAppear
+        case historyChanged
         case refresh
         case albumsLoaded([Album])
         case albumsFailed
@@ -190,7 +238,18 @@ public struct AlbumsFeature {
         Reduce { state, action in
             switch action {
             case .onAppear:
-                return state.albums.isEmpty ? .send(.refresh) : loadRecent()
+                return .merge(
+                    state.albums.isEmpty ? .send(.refresh) : loadRecent(),
+                    .run { send in
+                        for await _ in NotificationCenter.default.notifications(named: .htzHistoryDidChange) {
+                            await send(.historyChanged)
+                        }
+                    }
+                    .cancellable(id: AlbumsHistoryWatchID.id, cancelInFlight: true)
+                )
+
+            case .historyChanged:
+                return loadRecent()
 
             case .refresh:
                 state.isLoading = state.albums.isEmpty
@@ -226,10 +285,10 @@ public struct AlbumsFeature {
 
             case .resumeRecent:
                 guard let recent = state.recent else { return .none }
-                var track = QueueTrack(history: recent)
-                if let cover = state.recentAlbum?.imageUrl { track.imageUrl = URL(string: cover) }
-                return .run { [track] _ in
-                    await playback.play([track], 0, true, Double(recent.lastPositionSeconds))
+                let cover = state.recentAlbum?.imageUrl
+                return .run { [library] _ in
+                    let queue = await HistoryPlayback.queue(for: recent, cover: cover, library: library)
+                    await playback.play(queue.tracks, queue.index, true, Double(recent.lastPositionSeconds))
                 }
 
             case .historyTapped:

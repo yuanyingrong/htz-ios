@@ -19,35 +19,24 @@ public class AuthClient: AuthClientProtocol {
     }
     
     public func syncUserInfo(loginModel: LoginModel) -> AnyPublisher<APIResponse<String>, NetworkError> {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
-        let createTimeStr: String
-        if let createdAtStr = loginModel.createdAt, let interval = Double(createdAtStr) {
-            let date = Date(timeIntervalSince1970: interval)
-            createTimeStr = formatter.string(from: date)
-        } else {
-            createTimeStr = formatter.string(from: Date())
+        // Prefer the WeChat payload; fall back to the profile fields of the login response itself.
+        let wx = loginModel.wxLoginResp ?? WeChatLoginResponse(
+            country: nil,
+            unionid: loginModel.unionId,
+            city: nil,
+            privilege: nil,
+            sex: nil,
+            province: nil,
+            nickname: loginModel.name,
+            openid: nil,
+            headimgurl: loginModel.avatar
+        )
+        return Future<APIResponse<String>, NetworkError> { promise in
+            _Concurrency.Task {
+                await LibraryAPI.syncWeChatProfile(wx)
+                promise(.success(APIResponse(code: 200, data: "", msg: nil)))
+            }
         }
-        
-        let parameters: [String: Any] = [
-            "city": loginModel.wxLoginResp?.city ?? "",
-            "country": loginModel.wxLoginResp?.country ?? "",
-            "createTime": createTimeStr,
-            "group_id": "0",
-            "headimgurl": loginModel.wxLoginResp?.headimgurl ?? "",
-            "language": "",
-            "lastUpdateTime": "",
-            "nickname": loginModel.wxLoginResp?.nickname ?? "",
-            "note": "",
-            "openid": loginModel.wxLoginResp?.openid ?? "",
-            "province": loginModel.wxLoginResp?.province ?? "",
-            "pwd": "",
-            "sex": String(loginModel.wxLoginResp?.sex ?? 0),
-            "sign": "",
-            "telephone": "",
-            "unionid": loginModel.wxLoginResp?.unionid ?? ""
-        ]
-        
-        return networkManager.request(.addUserInfo(parameters: parameters))
+        .eraseToAnyPublisher()
     }
 }

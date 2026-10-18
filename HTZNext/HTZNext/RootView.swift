@@ -1,3 +1,4 @@
+import Combine
 import SwiftUI
 import ComposableArchitecture
 import Home
@@ -23,6 +24,8 @@ struct RootView: View {
     }
 
     @State private var selectedTab = 0
+    @Shared(.hidesBottomChrome) private var hidesChrome
+    @ObservedObject private var chrome = HTZChrome.shared
 
     private let tabs = [
         TabConfig(id: 0, title: "首页", icon: "house.fill"),
@@ -35,12 +38,18 @@ struct RootView: View {
             @ComposableArchitecture.Bindable var authStore = authStore
             @ComposableArchitecture.Bindable var playerStore = playerStore
 
+            // 进入任何子功能（压栈页面）时收起底部 Tab 栏，和安卓一致；
+            // 页面自己要独占底部（批量编辑栏等）时再额外收起迷你播放条。
+            let inSubpage = chrome.isInSubpage || !homeStore.path.isEmpty || !albumStore.path.isEmpty || !profileStore.path.isEmpty
+            let showsTabBar = !inSubpage && !hidesChrome
+
             if authStore.isLoggedIn {
                 CustomTabView(
                     selection: $selectedTab,
                     tabs: tabs,
                     tabBarHeight: 58,
-                    selectedColor: HTZColor.title
+                    selectedColor: HTZColor.title,
+                    showsTabBar: showsTabBar
                 ) { id in
                     WithPerceptionTracking {
                         switch id {
@@ -58,12 +67,15 @@ struct RootView: View {
                     }
                 }
                 .overlay(alignment: .bottom) {
-                    if playerStore.currentItem != nil {
+                    // 悬浮播放条只在首页、专辑两个 Tab 的根页面显示，其余（我的、任何子页面）都不显示。
+                    if playerStore.currentItem != nil, showsTabBar, selectedTab == 0 || selectedTab == 1 {
                         NowPlayingBarView(store: playerStore)
                             .padding(.horizontal, 10)
                             .padding(.bottom, 64)
+                            .transaction { $0.animation = nil }
                     }
                 }
+                .modifier(StudyStatsRefresh(selectedTab: selectedTab, isPlaying: playerStore.isPlaying, homeStore: homeStore))
                 .fullScreenCover(isPresented: $playerStore.showFullPlayer.sending(\.showFullPlayer)) {
                     FullPlayerView(store: playerStore)
                 }
@@ -88,6 +100,28 @@ struct RootView: View {
                 LoginView(store: authStore)
             }
         }
+    }
+}
+
+/// 所有 Tab 常驻内存，HomeView 的 onAppear 只触发一次；切回首页 / 暂停播放时刷新学习统计（含服务端），
+/// 播放中每几秒按本机累计时长刷新（纯本地读取），否则回到首页看到的仍是启动时的旧数据。
+private struct StudyStatsRefresh: ViewModifier {
+    let selectedTab: Int
+    let isPlaying: Bool
+    let homeStore: StoreOf<HomeFeature>
+    private let timer = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
+
+    func body(content: Content) -> some View {
+        content
+            .onChange(of: selectedTab) { tab in
+                if tab == 0 { homeStore.send(.refreshStudy) }
+            }
+            .onChange(of: isPlaying) { playing in
+                if !playing, selectedTab == 0 { homeStore.send(.refreshStudy) }
+            }
+            .onReceive(timer) { _ in
+                if selectedTab == 0, isPlaying { homeStore.send(.refreshStudyLocal) }
+            }
     }
 }
 

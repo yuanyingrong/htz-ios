@@ -30,11 +30,23 @@ public struct LibraryClient: Sendable {
     public var sendSms: @Sendable (_ telephone: String) async throws -> Void
     public var bindTelephone: @Sendable (_ telephone: String, _ code: String) async throws -> Void
     public var loginWithPhone: @Sendable (_ telephone: String, _ code: String) async throws -> Void
-    public var submitFeedback: @Sendable (_ content: String, _ contact: String, _ images: [Data]) async throws -> Void
+    public var submitFeedback: @Sendable (
+        _ content: String,
+        _ contact: String,
+        _ category: String,
+        _ imageURLs: [String],
+        _ videoURL: String
+    ) async throws -> Void
+    public var uploadFeedbackAttachment: @Sendable (
+        _ attachment: FeedbackAttachment,
+        _ filename: String
+    ) async throws -> String
 
     public var checkInStartMonth: @Sendable (_ userId: String) async -> String? = { _ in nil }
     public var checkInDates: @Sendable (_ userId: String, _ month: String) async -> [String] = { _, _ in [] }
     public var studyRecord: @Sendable (_ userId: String) async throws -> StudyRecord
+    public var reportStudyDuration: @Sendable (_ durations: [String: Int]) async -> Bool = { _ in false }
+    public var reportStudyCompleted: @Sendable (_ itemIds: [String]) async -> Bool = { _ in false }
     public var helpDocument: @Sendable () async throws -> String
 }
 
@@ -63,10 +75,15 @@ extension LibraryClient: DependencyKey {
         sendSms: { try await LibraryAPI.sendSms(telephone: $0) },
         bindTelephone: { try await LibraryAPI.bindTelephone(telephone: $0, code: $1) },
         loginWithPhone: { try await LibraryAPI.loginWithPhone(telephone: $0, code: $1) },
-        submitFeedback: { try await LibraryAPI.submitFeedback(content: $0, contact: $1, imageData: $2) },
+        submitFeedback: {
+            try await LibraryAPI.submitFeedback(content: $0, contact: $1, category: $2, imageURLs: $3, videoURL: $4)
+        },
+        uploadFeedbackAttachment: { try await LibraryAPI.uploadFeedbackAttachment($0, filename: $1) },
         checkInStartMonth: { await LibraryAPI.checkInStartMonth(userId: $0) },
         checkInDates: { await LibraryAPI.checkInDates(userId: $0, month: $1) },
         studyRecord: { try await LibraryAPI.studyRecord(userId: $0) },
+        reportStudyDuration: { await LibraryAPI.reportStudyDuration($0) },
+        reportStudyCompleted: { await LibraryAPI.reportStudyCompleted(itemIds: $0) },
         helpDocument: { try await LibraryAPI.helpDocument() }
     )
 
