@@ -51,14 +51,15 @@ final class AlbumTests: XCTestCase {
             "cover": "cover.jpg",
             "description": "简介",
             "isPaid": true,
-            "price": 99,
+            "price": 9900,
             "isPurchased": false,
             "paidUrl": "https://example.com/pay"
         }
         """.data(using: .utf8)!
         let album = try JSONDecoder().decode(Album.self, from: json)
         XCTAssertTrue(album.isPaid)
-        XCTAssertEqual(album.price, 99)
+        XCTAssertEqual(album.price, 9900)
+        XCTAssertEqual(album.priceInYuan, 99)
         XCTAssertFalse(album.isPurchased)
         XCTAssertEqual(album.paidUrl, "https://example.com/pay")
         XCTAssertEqual(album.description, "简介")

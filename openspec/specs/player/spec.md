@@ -9,8 +9,9 @@ The audio playback system shall be a robust engine on the main actor, decoupled 
 - **Progress Tracking**: Real-time progress and duration shall be published via `AsyncStream`.
 
 ### 2. Queue Management
-- Supports play modes aligned with Android `playModel`: sequential (0), shuffle (1), loop (2), single (3); persisted in `UserDefaults`.
-- Handles dynamic queue updates without interrupting current playback.
+- Supports play modes aligned with Android `playModel`: sequential (0), shuffle (1), loop (2), single (3); persisted in `UserDefaults` (`htz.playMode`).
+- **Manual** previous/next always follow list order (下一集 = index ± 1, or loop wrap / single adjacent). Shuffle does **not** apply to the next/prev buttons.
+- **Auto-advance** when a track finishes uses the selected mode (including shuffle random).
 - Prefers local download files over signed remote URLs when present.
 
 ### 3. Remote Control & Info
@@ -19,9 +20,9 @@ The audio playback system shall be a robust engine on the main actor, decoupled 
 - Audio session management for background playback and interruptions (calls, other apps).
 
 ### 4. Integration
-- Exposed to TCA via `AudioPlayerClient`.
-- Features (Home, Album, Player) interact with the engine only through the injected client.
-- Supports "Now Playing Bar" as a persistent global component.
+- Engine bridge: `@Dependency(\.playerClient)`. Cross-feature start: `@Dependency(\.playback)` / `PlayerRelay`.
+- Features interact with the engine only through those clients (not by holding `AudioEngine` directly).
+- Supports "Now Playing Bar" as a persistent global component; full player presentation uses Perception-safe `$store.showFullPlayer.sending(...)`.
 
 ### 5. Signed URL Playback Support
 The `PlayerFeature` SHALL support playback of media items using signed streaming URLs.
@@ -39,9 +40,14 @@ The player SHALL keep the current album's track list and the index of the track 
 - **THEN** the player SHALL store that album's track list and select the tapped track
 - **AND** request a signed audio URL before playback starts.
 
+#### Scenario: Manual next / previous
+- **WHEN** the user taps next or previous
+- **THEN** the player SHALL move to the adjacent queue index (list order)
+- **AND** SHALL NOT pick a random index even if play mode is shuffle.
+
 #### Scenario: Track finishes
 - **WHEN** the current track plays to the end
-- **THEN** the player SHALL advance according to the current play mode (sequential next, shuffle random, loop wrap, or single replay)
+- **THEN** the player SHALL auto-advance according to the current play mode (sequential next, shuffle random, loop wrap, or single replay)
 - **AND** request a signed URL when the next track is not already local.
 
 #### Scenario: Cycle play mode
@@ -49,10 +55,10 @@ The player SHALL keep the current album's track list and the index of the track 
 - **THEN** the mode SHALL cycle sequential → shuffle → loop → single
 - **AND** the choice SHALL persist across launches.
 
-#### Scenario: Paid track blocks advance
-- **WHEN** the next track's signed URL request is denied
-- **THEN** playback SHALL stay on the current track
-- **AND** the user SHALL see the existing paid-content message.
+#### Scenario: Advance fails
+- **WHEN** the next track's signed URL request is denied or fails after the user (or auto-advance) left the previous track
+- **THEN** the player SHALL restore the previous queue index and resume that item when possible
+- **AND** the user SHALL see a paid-content or failure message.
 
 ### Requirement: Seek And Rate
 The player SHALL seek within the current item and change playback rate.

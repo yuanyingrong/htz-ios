@@ -18,7 +18,7 @@ public enum PlayMode: Int, Equatable, CaseIterable, Sendable {
     public var title: String {
         switch self {
         case .sequential: return "顺序播放"
-        case .shuffle: return "随机播放"
+        case .shuffle: return "随机播放：仅播完后随机"
         case .loop: return "列表循环"
         case .single: return "单曲循环"
         }

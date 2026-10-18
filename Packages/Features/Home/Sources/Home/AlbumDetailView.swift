@@ -3,10 +3,10 @@ import ComposableArchitecture
 import DesignSystem
 import NetworkKit
 import PlayerFeature
-import HTZAudio
 
 public struct AlbumDetailView: View {
-    let store: StoreOf<AlbumDetailFeature>
+    @Perception.Bindable var store: StoreOf<AlbumDetailFeature>
+    @Environment(\.playerStore) private var playerStore
     @State private var showPicker = false
 
     public init(store: StoreOf<AlbumDetailFeature>) {
@@ -19,98 +19,141 @@ public struct AlbumDetailView: View {
                 ScrollView {
                     VStack(spacing: 8) {
                         header
-                        actionBar
-                        if let title = store.resumeTitle, !title.isEmpty {
-                            resumeBar(title)
+                        if !store.isSelecting {
+                            actionBar
+                            if let resume = store.resume {
+                                resumeBar(resume)
+                            }
                         }
                         episodeList
                     }
-                    .padding(.bottom, 120)
+                    .padding(.bottom, store.isSelecting ? 80 : 120)
                 }
-                .background(AlbumPalette.page)
                 .sheet(isPresented: $showPicker) {
                     EpisodePicker(items: store.items) { id in
                         showPicker = false
-                        proxy.scrollTo(id, anchor: .top)
+                        withAnimation { proxy.scrollTo(id, anchor: .top) }
                     }
                     .presentationDetents([.medium])
                 }
             }
-            .navigationTitle(store.album.name)
-            .navigationBarTitleDisplayMode(.inline)
-            .navigationBarHidden(false)
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    HStack(spacing: 16) {
-                        NavigationLink {
-                            SearchView()
-                        } label: {
-                            Image(systemName: "magnifyingglass")
-                        }
-                        ShareLink(item: store.album.name) {
-                            Image(systemName: "square.and.arrow.up")
-                        }
+            .safeAreaInset(edge: .bottom) {
+                if store.isSelecting { selectionBar }
+            }
+            .htzPage(store.album.name)
+            .toolbar { toolbar }
+            .htzToast($store.toast)
+            .confirmationDialog(
+                "购买专辑",
+                isPresented: $store.isPurchasePromptPresented,
+                titleVisibility: .visible
+            ) {
+                Button("立即购买 ¥\(String(format: "%.2f", store.price))") { store.send(.openPurchasePage) }
+                Button("取消", role: .cancel) {}
+            } message: {
+                Text("《\(store.album.name)》为付费专辑，购买后即可收听全部内容。")
+            }
+            .sheet(
+                isPresented: Binding(
+                    get: { store.purchaseURL != nil },
+                    set: { if !$0 { store.send(.purchasePageClosed) } }
+                )
+            ) {
+                if let url = store.purchaseURL {
+                    NavigationStack {
+                        HTZWebPage(title: "购买 - \(store.album.name)", url: url)
+                            .toolbar {
+                                ToolbarItem(placement: .topBarTrailing) {
+                                    Button("完成") { store.send(.purchasePageClosed) }
+                                }
+                            }
                     }
                 }
             }
-            .alert("提示", isPresented: Binding(
-                get: { store.alertMessage != nil },
-                set: { if !$0 { store.send(.clearAlert) } }
-            )) {
-                Button("好的", role: .cancel) { store.send(.clearAlert) }
-            } message: {
-                Text(store.alertMessage ?? "")
-            }
             .onAppear { store.send(.onAppear) }
-            .overlay {
-                if store.isResolvingAudio {
-                    ProgressView()
-                        .padding(20)
-                        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 12))
+        }
+    }
+
+    @ToolbarContentBuilder
+    private var toolbar: some ToolbarContent {
+        ToolbarItem(placement: .topBarTrailing) {
+            if store.isSelecting {
+                Button("取消") { store.send(.cancelSelecting) }
+                    .foregroundColor(HTZColor.title)
+            } else {
+                HStack(spacing: 16) {
+                    NavigationLink {
+                        SearchView()
+                    } label: {
+                        Image(systemName: "magnifyingglass")
+                    }
+                    ShareLink(item: shareText) {
+                        Image(systemName: "square.and.arrow.up")
+                    }
                 }
+                .foregroundColor(HTZColor.title)
             }
         }
     }
 
+    private var shareText: String {
+        "黄庭禅《\(store.album.name)》\n\(store.album.description ?? "")"
+    }
+
     private var header: some View {
-        HStack(alignment: .top, spacing: 16) {
-            AsyncImage(url: store.album.imageUrl.flatMap(URL.init)) { phase in
-                switch phase {
-                case let .success(image):
-                    image.resizable().scaledToFill()
-                default:
-                    AlbumPalette.banner
+        HStack(alignment: .top, spacing: 14) {
+            HTZRemoteImage(store.album.imageUrl, radius: 4)
+                .frame(width: 90, height: 90)
+                .overlay(alignment: .topLeading) {
+                    if store.purchase?.isPaid == true {
+                        HTZBadge(store.needsPurchase ? .paid : .purchased).padding(4)
+                    }
+                }
+
+            VStack(alignment: .leading, spacing: 6) {
+                Text(store.album.name)
+                    .font(.system(size: 18, weight: .medium))
+                    .foregroundColor(HTZColor.title)
+                    .lineLimit(1)
+                Text(store.album.description ?? "")
+                    .font(.system(size: 13))
+                    .foregroundColor(HTZColor.hint)
+                    .lineSpacing(3)
+                    .lineLimit(3)
+                if store.needsPurchase {
+                    HStack {
+                        Text("¥\(String(format: "%.2f", store.price))")
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundColor(HTZColor.price)
+                        Spacer()
+                        Button("立即购买") { store.send(.purchaseTapped) }
+                            .buttonStyle(HTZPillButtonStyle())
+                    }
+                    .padding(.top, 2)
                 }
             }
-            .frame(width: 90, height: 90)
-            .clipShape(RoundedRectangle(cornerRadius: 4))
-
-            Text(store.album.description ?? "")
-                .font(.system(size: 13))
-                .foregroundColor(AlbumPalette.label)
-                .lineSpacing(4)
-                .lineLimit(4)
-                .frame(maxWidth: .infinity, alignment: .leading)
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
         .padding(16)
-        .frame(maxWidth: .infinity)
-        .background(Color.white)
+        .background(HTZColor.card)
     }
 
     private var actionBar: some View {
         HStack(spacing: 0) {
-            actionButton("arrow.up.arrow.down", "排序") { store.send(.toggleSort) }
-            divider
+            actionButton(store.isAscending ? "arrow.up.arrow.down" : "arrow.down.arrow.up", store.isAscending ? "正序" : "倒序") {
+                store.send(.toggleSort)
+            }
+            separator
             actionButton("list.bullet", "选集") { showPicker = true }
-            divider
-            actionButton("arrow.down", "下载") { store.send(.downloadAlbum) }
+            separator
+            actionButton("arrow.down.circle", "下载") { store.send(.startSelecting) }
         }
         .frame(height: 48)
-        .background(Color.white)
+        .background(HTZColor.card)
     }
 
-    private var divider: some View {
-        Rectangle().fill(Color(white: 0.9)).frame(width: 1, height: 20)
+    private var separator: some View {
+        Rectangle().fill(HTZColor.divider).frame(width: 1, height: 20)
     }
 
     private func actionButton(_ icon: String, _ title: String, action: @escaping () -> Void) -> some View {
@@ -120,45 +163,33 @@ public struct AlbumDetailView: View {
                 Text(title)
             }
             .font(.system(size: 14))
-            .foregroundColor(AlbumPalette.title)
+            .foregroundColor(HTZColor.title)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
     }
 
-    private func resumeBar(_ title: String) -> some View {
+    private func resumeBar(_ resume: ListenHistoryItem) -> some View {
         HStack(spacing: 8) {
             Image(systemName: "play.circle")
-                .foregroundColor(AlbumPalette.title)
-            Text(resumeText(title))
-                .font(.system(size: 14))
-                .foregroundColor(AlbumPalette.title)
+                .foregroundColor(HTZColor.title)
+            Text(resumeText(resume))
+                .font(.system(size: 15))
+                .foregroundColor(HTZColor.title)
                 .lineLimit(1)
             Spacer()
-            Button {
-                playResume()
-            } label: {
-                Text("续播")
-                    .font(.system(size: 14, weight: .semibold))
-                    .foregroundColor(.white)
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 6)
-                    .background(AlbumPalette.orange, in: Capsule())
-            }
-            .buttonStyle(.plain)
+            Button("续播") { store.send(.resumeTapped) }
+                .buttonStyle(HTZPillButtonStyle())
         }
         .padding(.horizontal, 16)
         .frame(height: 48)
-        .background(Color.white)
+        .background(HTZColor.card)
     }
 
-    private func resumeText(_ title: String) -> String {
-        let clock = AlbumTime.clock(store.resumePosition)
-        return clock == "00:00" ? "续播 \(title)" : "续播 \(title) · \(clock)"
-    }
-
-    private func playResume() {
-        store.send(.resumeTapped)
+    private func resumeText(_ resume: ListenHistoryItem) -> String {
+        let seconds = resume.lastPositionSeconds
+        return seconds > 0 ? "续播 \(resume.title) · \(MediaTime.clock(seconds))" : "续播 \(resume.title)"
     }
 
     @ViewBuilder
@@ -166,22 +197,58 @@ public struct AlbumDetailView: View {
         if store.isLoading && store.items.isEmpty {
             ProgressView().frame(maxWidth: .infinity).padding(.vertical, 40)
         } else if let error = store.errorMessage, store.items.isEmpty {
-            Text(error).foregroundColor(.red).padding()
+            HTZEmptyView(error, icon: "exclamationmark.triangle")
+        } else if store.items.isEmpty {
+            HTZEmptyView()
         } else {
             LazyVStack(spacing: 0) {
                 ForEach(store.items) { item in
-                    Button {
-                        store.send(.trackTapped(item))
-                    } label: {
-                        EpisodeRow(item: item, cover: store.album.imageUrl, progress: item.id == store.resumeItemId ? store.resumePosition : nil)
+                    EpisodeRow(
+                        item: item,
+                        cover: store.album.imageUrl,
+                        progress: item.id == store.resume?.itemId ? store.resume?.lastPositionSeconds : nil,
+                        isPlaying: playerStore.currentItem?.id == item.id,
+                        isLocked: store.needsPurchase && !item.isTrialItem,
+                        showsTrial: store.needsPurchase && item.isTrialItem,
+                        download: store.downloads[item.id],
+                        isFavorite: store.favorites[item.id] != nil,
+                        selection: store.isSelecting ? store.selection.contains(item.id) : nil
+                    )
+                    .onTapGesture { store.send(.trackTapped(item)) }
+                    .contextMenu {
+                        Button {
+                            store.send(.favoriteTapped(item))
+                        } label: {
+                            Label(store.favorites[item.id] != nil ? "取消收藏" : "收藏", systemImage: "heart")
+                        }
+                        Button {
+                            store.send(.downloadTapped(item))
+                        } label: {
+                            Label("下载", systemImage: "arrow.down.circle")
+                        }
                     }
-                    .buttonStyle(.plain)
                     .id(item.id)
-                    Divider().padding(.leading, 76)
+                    HTZDivider(leading: 72)
                 }
             }
-            .background(Color.white)
+            .background(HTZColor.card)
         }
+    }
+
+    private var selectionBar: some View {
+        HStack(spacing: 16) {
+            Button(store.selection.isEmpty ? "全选" : "全选/取消") { store.send(.selectAll) }
+                .font(.system(size: 15))
+                .foregroundColor(HTZColor.title)
+            Spacer()
+            Button("下载（\(store.selection.count)）") { store.send(.downloadSelected) }
+                .buttonStyle(HTZPillButtonStyle())
+                .disabled(store.selection.isEmpty)
+                .opacity(store.selection.isEmpty ? 0.5 : 1)
+        }
+        .padding(.horizontal, 16)
+        .frame(height: 56)
+        .background(HTZColor.card.shadow(.drop(color: .black.opacity(0.08), radius: 4, y: -2)))
     }
 }
 
@@ -189,57 +256,121 @@ private struct EpisodeRow: View {
     let item: SutraItem
     let cover: String?
     let progress: Int?
+    let isPlaying: Bool
+    let isLocked: Bool
+    let showsTrial: Bool
+    let download: DownloadRecord.State?
+    let isFavorite: Bool
+    let selection: Bool?
 
     var body: some View {
-        HStack(alignment: .center, spacing: 12) {
-            AsyncImage(url: cover.flatMap(URL.init)) { phase in
-                switch phase {
-                case let .success(image):
-                    image.resizable().scaledToFill()
-                default:
-                    AlbumPalette.banner
-                }
+        HStack(spacing: 12) {
+            if let selection {
+                Image(systemName: selection ? "checkmark.circle.fill" : "circle")
+                    .font(.system(size: 20))
+                    .foregroundColor(selection ? HTZColor.ctaStart : HTZColor.hint)
             }
-            .frame(width: 48, height: 48)
-            .clipShape(RoundedRectangle(cornerRadius: 4))
+            HTZRemoteImage(cover, radius: 4)
+                .frame(width: 45, height: 45)
 
             VStack(alignment: .leading, spacing: 6) {
-                Text(item.title ?? "未命名")
-                    .font(.system(size: 15))
-                    .foregroundColor(AlbumPalette.title)
-                    .lineLimit(1)
+                HStack(spacing: 6) {
+                    Text(item.title ?? "未命名")
+                        .font(.system(size: 14))
+                        .foregroundColor(isPlaying ? HTZColor.ctaStart : HTZColor.title)
+                        .lineLimit(1)
+                    if showsTrial { HTZBadge(.trial) }
+                }
                 HStack(spacing: 10) {
                     Label("\(item.playedCount ?? 0)", systemImage: "play.fill")
-                    Label(AlbumTime.clock(item.duration ?? 0), systemImage: "clock")
-                    if let remain = AlbumTime.remaining(duration: item.duration ?? 0, progress: progress) {
-                        Text(remain)
+                    Label(MediaTime.clock(item.durationSeconds), systemImage: "clock")
+                    if let remain = Self.remaining(duration: item.durationSeconds, progress: progress) {
+                        Text(remain).foregroundColor(HTZColor.secondary)
+                    }
+                    if isFavorite {
+                        Image(systemName: "heart.fill").foregroundColor(HTZColor.ctaStart)
                     }
                 }
-                .font(.system(size: 12))
-                .foregroundColor(AlbumPalette.label)
+                .labelStyle(CompactLabelStyle())
+                .font(.system(size: 10))
+                .foregroundColor(HTZColor.hint)
             }
             Spacer(minLength: 0)
+            trailing
         }
         .padding(.horizontal, 16)
-        .padding(.vertical, 10)
+        .frame(height: 64)
         .contentShape(Rectangle())
+        .opacity(selection != nil && (isLocked || download == .finished) ? 0.45 : 1)
+    }
+
+    @ViewBuilder
+    private var trailing: some View {
+        if isLocked {
+            Image(systemName: "lock.fill")
+                .font(.system(size: 14))
+                .foregroundColor(HTZColor.hint)
+        } else if case let .downloading(fraction) = download {
+            Text("\(Int(fraction * 100))%")
+                .font(.system(size: 10))
+                .foregroundColor(HTZColor.hint)
+        } else if download == .finished {
+            Image(systemName: "arrow.down.circle.fill")
+                .font(.system(size: 16))
+                .foregroundColor(HTZColor.statsAccent)
+        } else if isPlaying {
+            Image(systemName: "waveform")
+                .font(.system(size: 16))
+                .foregroundColor(HTZColor.ctaStart)
+        } else {
+            Image(systemName: "play.circle")
+                .font(.system(size: 20))
+                .foregroundColor(HTZColor.hint)
+        }
+    }
+
+    static func remaining(duration: Int, progress: Int?) -> String? {
+        guard let progress, progress > 0, duration > 0 else { return nil }
+        let left = duration - progress
+        guard left > 5 else { return "已播完" }
+        return "剩余\((left + 59) / 60)分钟"
+    }
+}
+
+private struct CompactLabelStyle: LabelStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        HStack(spacing: 3) {
+            configuration.icon
+            configuration.title
+        }
     }
 }
 
 private struct EpisodePicker: View {
     let items: [SutraItem]
     let onPick: (String) -> Void
-    @Environment(\.dismiss) private var dismiss
 
     var body: some View {
         NavigationStack {
-            List(groups, id: \.start) { group in
-                Button("\(group.start + 1)-\(group.end)") {
-                    if items.indices.contains(group.start) {
-                        onPick(items[group.start].id)
+            ScrollView {
+                LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 10), count: 3), spacing: 10) {
+                    ForEach(groups, id: \.start) { group in
+                        Button {
+                            if items.indices.contains(group.start) {
+                                onPick(items[group.start].id)
+                            }
+                        } label: {
+                            Text("\(group.start + 1)-\(group.end)")
+                                .font(.system(size: 14))
+                                .foregroundColor(HTZColor.title)
+                                .frame(maxWidth: .infinity)
+                                .frame(height: 38)
+                                .background(HTZColor.page, in: RoundedRectangle(cornerRadius: 8))
+                        }
+                        .buttonStyle(.plain)
                     }
-                    dismiss()
                 }
+                .padding(16)
             }
             .navigationTitle("选集")
             .navigationBarTitleDisplayMode(.inline)
@@ -250,29 +381,5 @@ private struct EpisodePicker: View {
         stride(from: 0, to: items.count, by: 50).map { start in
             (start, min(start + 50, items.count))
         }
-    }
-}
-
-enum AlbumTime {
-    static func clock(_ value: Int) -> String {
-        let seconds = value >= 100_000 ? value / 1000 : value
-        guard seconds > 0 else { return "00:00" }
-        let hours = seconds / 3600
-        let minutes = (seconds % 3600) / 60
-        let remain = seconds % 60
-        if hours > 0 {
-            return String(format: "%02d:%02d:%02d", hours, minutes, remain)
-        }
-        return String(format: "%02d:%02d", minutes, remain)
-    }
-
-    static func remaining(duration: Int, progress: Int?) -> String? {
-        guard let progress, progress > 0, duration > 0 else { return nil }
-        let durationMs = duration >= 100_000 ? duration : duration * 1000
-        let progressMs = progress >= 100_000 ? progress : progress * 1000
-        let left = durationMs - progressMs
-        guard left > 5000 else { return nil }
-        let minutes = (left + 59_999) / 60_000
-        return "剩余\(minutes)分钟"
     }
 }

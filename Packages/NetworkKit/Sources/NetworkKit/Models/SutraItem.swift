@@ -64,4 +64,9 @@ public struct SutraItem: Codable, Identifiable, Equatable {
         self.isTrial = isTrial
         self.audio = audio
     }
+
+    public var originalLyricFileURL: URL? { MediaTime.ossURL(originalLyricId) }
+    public var explanationLyricFileURL: URL? { MediaTime.ossURL(explanationLyricId) }
+    public var durationSeconds: Int { MediaTime.seconds(duration ?? 0) }
+    public var isTrialItem: Bool { (isTrial ?? 0) != 0 }
 }

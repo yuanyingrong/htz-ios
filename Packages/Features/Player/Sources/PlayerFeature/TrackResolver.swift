@@ -6,15 +6,18 @@ public struct TrackResolver: Sendable {
     public var resolve: @Sendable (_ sutraId: String, _ itemId: String) async throws -> ResolvedAudio
     public var localFile: @Sendable (_ itemId: String) -> URL?
     public var reportHistory: @Sendable (_ itemId: String, _ position: Int) async -> Void
+    public var markPlayed: @Sendable (_ itemId: String) async -> Void
 
     public init(
         resolve: @escaping @Sendable (String, String) async throws -> ResolvedAudio,
         localFile: @escaping @Sendable (String) -> URL?,
-        reportHistory: @escaping @Sendable (String, Int) async -> Void
+        reportHistory: @escaping @Sendable (String, Int) async -> Void,
+        markPlayed: @escaping @Sendable (String) async -> Void = { _ in }
     ) {
         self.resolve = resolve
         self.localFile = localFile
         self.reportHistory = reportHistory
+        self.markPlayed = markPlayed
     }
 }
 
@@ -26,20 +29,21 @@ public enum TrackResolveError: Error, Equatable {
 extension TrackResolver: DependencyKey {
     public static let liveValue = TrackResolver(
         resolve: { sutraId, itemId in
-            let response = try await LibraryAPI.fileURL(sutraId: sutraId, itemId: itemId)
-            guard let audio = response.audioURL else {
+            let urls = try await LibraryAPI.fileURL(sutraId: sutraId, itemId: itemId)
+            guard let audio = urls.audioURL else {
                 throw TrackResolveError.accessDenied
             }
             return ResolvedAudio(
                 audioURL: audio,
-                originalLyricURL: response.originalLyricURL,
-                explanationLyricURL: response.explanationLyricURL
+                originalLyricURL: urls.originalLyricURL,
+                explanationLyricURL: urls.explanationLyricURL
             )
         },
         localFile: { DownloadCenter.shared.localFile(for: $0) },
         reportHistory: { itemId, position in
             await LibraryAPI.reportHistory(itemId: itemId, position: position)
-        }
+        },
+        markPlayed: { await LibraryAPI.incrementPlayedCount(itemId: $0) }
     )
 
     public static let testValue = TrackResolver(

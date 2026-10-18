@@ -45,6 +45,7 @@ let package = Package(
             dependencies: [
                 .product(name: "Moya", package: "Moya"),
                 .product(name: "CombineMoya", package: "Moya"),
+                .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
             ],
             path: "NetworkKit/Sources/NetworkKit"
         ),
@@ -61,7 +62,7 @@ let package = Package(
         ),
         .testTarget(
             name: "NetworkKitTests",
-            dependencies: ["NetworkKit"],
+            dependencies: ["NetworkKit", .product(name: "Moya", package: "Moya")],
             path: "NetworkKit/Tests/NetworkKitTests"
         ),
         .testTarget(

@@ -1,4 +1,5 @@
 import Foundation
+import NetworkKit
 
 public enum HomeStats {
     public struct Day: Equatable, Identifiable {
@@ -127,19 +128,19 @@ public enum HomeStats {
         return "\(seconds)秒"
     }
 
-    static func load(unionid: String) async -> (CheckIn, Study) {
+    static func load(unionid: String, library: LibraryClient) async -> (CheckIn, Study) {
         guard !unionid.isEmpty else {
             return (checkIn(dates: []), study(durations: [:], completed: 0))
         }
-        async let dates = checkInDates(userId: unionid)
-        async let durations = studyDurations(userId: unionid)
-        async let completed = completedCount(userId: unionid)
-        return await (checkIn(dates: dates), study(durations: durations, completed: completed))
+        async let dates = checkInDates(userId: unionid, library: library)
+        async let record = (try? await library.studyRecord(unionid)) ?? StudyRecord()
+        let study = await record
+        return await (checkIn(dates: dates), Self.study(durations: study.durations, completed: study.completedLessons))
     }
 
-    private static func checkInDates(userId: String) async -> Set<String> {
+    private static func checkInDates(userId: String, library: LibraryClient) async -> Set<String> {
         let calendar = Calendar.current
-        let start = await registerMonth(userId: userId, calendar: calendar)
+        let start = await registerMonth(userId: userId, library: library)
             ?? calendar.date(byAdding: .month, value: -11, to: Date())
             ?? Date()
         let months = monthKeys(from: start, calendar: calendar)
@@ -151,7 +152,7 @@ public enum HomeStats {
             index += chunk
             await withTaskGroup(of: [String].self) { group in
                 for month in slice {
-                    group.addTask { await fetchMonth(userId: userId, month: month) }
+                    group.addTask { await library.checkInDates(userId, month).compactMap(normalize) }
                 }
                 for await monthDates in group {
                     dates.formUnion(monthDates)
@@ -173,66 +174,15 @@ public enum HomeStats {
         return keys
     }
 
-    private static func registerMonth(userId: String, calendar: Calendar) async -> Date? {
-        guard let data = await get(url(base: checkInHost, path: "getById", query: ["id": userId])),
-              let json = try? JSONSerialization.jsonObject(with: data) else { return nil }
-        let object = (json as? [String: Any])?["data"] as? [String: Any] ?? json as? [String: Any]
-        guard let raw = object?["createDate"] as? String, raw.count >= 7 else { return nil }
+    private static func registerMonth(userId: String, library: LibraryClient) async -> Date? {
+        guard let month = await library.checkInStartMonth(userId) else { return nil }
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "en_US_POSIX")
         formatter.dateFormat = "yyyy-MM"
-        return formatter.date(from: String(raw.prefix(7)))
+        return formatter.date(from: month)
     }
 
-    private static func fetchMonth(userId: String, month: String) async -> [String] {
-        guard let data = await get(url(base: checkInHost, path: "getReportInfoListByIdAndMonth", query: [
-            "userId": userId,
-            "monthDate": month + "-"
-        ])) else { return [] }
-        let rows = arrayPayload(data)
-        return rows.compactMap { row in
-            normalize(row["date"] as? String)
-        }
-    }
-
-    private static func studyDurations(userId: String) async -> [String: Int] {
-        guard let data = await get(url(base: personalHost, path: "study/duration", query: ["user_id": userId])),
-              let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
-              let rows = json["data"] as? [[String: Any]] else { return [:] }
-        var durations: [String: Int] = [:]
-        for row in rows {
-            guard let date = row["date"] as? String, !date.isEmpty else { continue }
-            let value = row["play_duration_ms"]
-            let milliseconds: Int
-            if let number = value as? Int {
-                milliseconds = number
-            } else if let number = value as? Double {
-                milliseconds = Int(number)
-            } else if let number = value as? NSNumber {
-                milliseconds = number.intValue
-            } else {
-                milliseconds = 0
-            }
-            durations[String(date.prefix(10))] = milliseconds
-        }
-        return durations
-    }
-
-    private static func completedCount(userId: String) async -> Int {
-        guard let data = await get(url(base: personalHost, path: "study/completed", query: ["user_id": userId])),
-              let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
-              let rows = json["data"] as? [Any] else { return 0 }
-        return rows.count
-    }
-
-    private static func arrayPayload(_ data: Data) -> [[String: Any]] {
-        guard let json = try? JSONSerialization.jsonObject(with: data) else { return [] }
-        if let rows = json as? [[String: Any]] { return rows }
-        if let object = json as? [String: Any], let rows = object["data"] as? [[String: Any]] { return rows }
-        return []
-    }
-
-    private static func normalize(_ date: String?) -> String? {
+    static func normalize(_ date: String?) -> String? {
         guard let date else { return nil }
         let parts = date.trimmingCharacters(in: .whitespaces).split(separator: "-")
         guard parts.count == 3,
@@ -242,25 +192,6 @@ public enum HomeStats {
         guard let day = Int(dayText) else { return nil }
         return String(format: "%04d-%02d-%02d", year, month, day)
     }
-
-    private static func get(_ url: URL) async -> Data? {
-        var request = URLRequest(url: url)
-        request.timeoutInterval = 15
-        guard let (data, response) = try? await URLSession.shared.data(for: request),
-              let http = response as? HTTPURLResponse,
-              (200..<300).contains(http.statusCode),
-              !data.isEmpty else { return nil }
-        return data
-    }
-
-    private static func url(base: String, path: String, query: [String: String]) -> URL {
-        var components = URLComponents(string: base + path)!
-        components.queryItems = query.map { URLQueryItem(name: $0.key, value: $0.value) }
-        return components.url!
-    }
-
-    private static let checkInHost = "http://app.htzchina.org:8081/"
-    private static let personalHost = "http://app.htzchina.org:8082/htz-api-pyservice/api/v1/"
 
     private static func dayKey(_ date: Date, calendar: Calendar) -> String {
         let formatter = DateFormatter()

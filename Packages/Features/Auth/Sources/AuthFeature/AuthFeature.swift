@@ -58,6 +58,7 @@ public struct AuthFeature {
         public var isLoading: Bool = false
         public var errorMessage: String?
         public var isLoggedIn: Bool = false
+        @Presents public var phoneLogin: PhoneLoginFeature.State?
         
         public init() {
             self.isLoggedIn = AuthManager.shared.isLoggedIn
@@ -67,6 +68,8 @@ public struct AuthFeature {
     public enum Action: Equatable {
         case wechatLoginTapped
         case appleLoginTapped
+        case phoneLoginTapped
+        case phoneLogin(PresentationAction<PhoneLoginFeature.Action>)
         case receiveAuthCode(String)
         case tokenResponse(Swift.Result<LoginModel, NetworkError>)
         case syncResponse(Swift.Result<Bool, NetworkError>)
@@ -84,6 +87,18 @@ public struct AuthFeature {
             switch action {
             case .wechatLoginTapped:
                 return handleWechatLoginTapped(state: &state)
+
+            case .phoneLoginTapped:
+                state.phoneLogin = PhoneLoginFeature.State()
+                return .none
+
+            case .phoneLogin(.presented(.delegate(.loggedIn))):
+                state.phoneLogin = nil
+                state.isLoggedIn = true
+                return .none
+
+            case .phoneLogin:
+                return .none
 
             case .appleLoginTapped:
                 state.errorMessage = "通过 Apple 登录即将开放，请先使用微信登录。"
@@ -104,6 +119,9 @@ public struct AuthFeature {
             case .clearError:
                 return handleClearError(state: &state)
             }
+        }
+        .ifLet(\.$phoneLogin, action: \.phoneLogin) {
+            PhoneLoginFeature()
         }
     }
     

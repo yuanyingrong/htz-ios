@@ -6,7 +6,9 @@ public struct Album: Codable, Identifiable, Equatable {
     public let imageUrl: String?
     public let description: String?
     public let isPaid: Bool
+    /// Server value in fen (分), e.g. 9900 = ¥99.00.
     public let price: Double
+    public var priceInYuan: Double { price / 100 }
     public let isPurchased: Bool
     public let paidUrl: String?
 

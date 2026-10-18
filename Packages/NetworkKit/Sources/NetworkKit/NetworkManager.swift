@@ -39,8 +39,17 @@ public class NetworkManager<Target: TargetType> {
         self.decoder.keyDecodingStrategy = .convertFromSnakeCase
     }
     
+    /// Moya's publisher captures the provider weakly, so a temporary `NetworkManager()`
+    /// would otherwise drop the request silently and never complete.
+    private func responsePublisher(_ target: Target) -> AnyPublisher<Response, MoyaError> {
+        let provider = provider
+        return provider.requestPublisher(target)
+            .handleEvents(receiveCompletion: { _ in withExtendedLifetime(provider) {} })
+            .eraseToAnyPublisher()
+    }
+
     public func requestData(_ target: Target) -> AnyPublisher<Data, NetworkError> {
-        provider.requestPublisher(target)
+        responsePublisher(target)
             .tryMap { (response: Response) -> Data in
                 if response.statusCode == 403 {
                     throw NetworkError.accessDenied
@@ -64,7 +73,7 @@ public class NetworkManager<Target: TargetType> {
     }
 
     public func request<T: Codable>(_ target: Target) -> AnyPublisher<T, NetworkError> {
-        return provider.requestPublisher(target)
+        return responsePublisher(target)
             .tryMap { (response: Response) -> Data in
                 if response.statusCode == 403 {
                     throw NetworkError.accessDenied
@@ -103,17 +112,23 @@ public extension AnyPublisher {
     func async() async throws -> Output {
         try await withCheckedThrowingContinuation { continuation in
             var cancellable: AnyCancellable?
-            cancellable = self.sink(
+            var resumed = false
+            cancellable = self.first().sink(
                 receiveCompletion: { completion in
-                    switch completion {
-                    case .finished:
-                        break
-                    case let .failure(error):
-                        continuation.resume(throwing: error)
+                    if !resumed {
+                        resumed = true
+                        switch completion {
+                        case .finished:
+                            continuation.resume(throwing: NetworkError.unknown)
+                        case let .failure(error):
+                            continuation.resume(throwing: error)
+                        }
                     }
                     cancellable?.cancel()
                 },
                 receiveValue: { value in
+                    guard !resumed else { return }
+                    resumed = true
                     continuation.resume(returning: value)
                 }
             )

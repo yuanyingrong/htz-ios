@@ -12,8 +12,8 @@ struct RootView: View {
     private let homeStore = Store(initialState: HomeFeature.State()) {
         HomeFeature()
     }
-    private let albumStore = Store(initialState: HomeFeature.State()) {
-        HomeFeature()
+    private let albumStore = Store(initialState: AlbumsFeature.State()) {
+        AlbumsFeature()
     }
     private let profileStore = Store(initialState: ProfileFeature.State()) {
         ProfileFeature()
@@ -32,15 +32,17 @@ struct RootView: View {
 
     var body: some View {
         WithPerceptionTracking {
+            @ComposableArchitecture.Bindable var authStore = authStore
+            @ComposableArchitecture.Bindable var playerStore = playerStore
+
             if authStore.isLoggedIn {
                 CustomTabView(
                     selection: $selectedTab,
                     tabs: tabs,
-                    fadeHeight: 60,
-                    tabBarHeight: 52,
-                    selectedColor: .htzAccent
+                    tabBarHeight: 58,
+                    selectedColor: HTZColor.title
                 ) { id in
-                    Group {
+                    WithPerceptionTracking {
                         switch id {
                         case 0:
                             HomeView(store: homeStore, onShowAlbums: { selectedTab = 1 })
@@ -58,24 +60,17 @@ struct RootView: View {
                 .overlay(alignment: .bottom) {
                     if playerStore.currentItem != nil {
                         NowPlayingBarView(store: playerStore)
-                            .padding(.horizontal, HTZSpacing.sm)
-                            .padding(.bottom, 60)
+                            .padding(.horizontal, 10)
+                            .padding(.bottom, 64)
                     }
                 }
-                .fullScreenCover(isPresented: Binding(
-                    get: { playerStore.showFullPlayer },
-                    set: { if !$0 { playerStore.send(.closeFullPlayer) } }
-                )) {
+                .fullScreenCover(isPresented: $playerStore.showFullPlayer.sending(\.showFullPlayer)) {
                     FullPlayerView(store: playerStore)
                 }
-                .alert("提示", isPresented: Binding(
-                    get: { playerStore.alertMessage != nil },
-                    set: { if !$0 { playerStore.send(.clearAlert) } }
-                )) {
-                    Button("好的", role: .cancel) { playerStore.send(.clearAlert) }
-                } message: {
-                    Text(playerStore.alertMessage ?? "")
-                }
+                .htzToast(Binding(
+                    get: { playerStore.showFullPlayer ? nil : playerStore.toast },
+                    set: { playerStore.send(.toastChanged($0)) }
+                ))
                 .ignoresSafeArea(.keyboard)
                 .environment(\.playerStore, playerStore)
                 .onAppear {

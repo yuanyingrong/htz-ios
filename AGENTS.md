@@ -10,18 +10,20 @@
 - **Legacy**：`cd htz && pod install`，再 `open htz/htz.xcworkspace`，scheme `htz`。
 
 ## Stack
-- HTZNext：Swift 5.9+ / iOS 16+ / SwiftUI / TCA / SPM（`Packages/`：NetworkKit、HTZAudio、PlayerFeature、Home、DesignSystem）
-- Playback：`HTZAudio.AudioEngine`（`@MainActor` + `AVPlayer`），经 `PlayerClient` / `PlayerRelay` 接入 TCA
+- HTZNext：Swift 5.9+ / iOS 16+ / SwiftUI / TCA / SPM（`Packages/`：NetworkKit、HTZAudio、PlayerFeature、Home、Auth、DesignSystem）
+- Playback：`HTZAudio.AudioEngine`（`@MainActor` + `AVPlayer`）；TCA 经 `\.playerClient`、`\.playback`（`PlayerRelay`）
+- Downloads：`\.downloads` / `DownloadCenter`；网络：`\.library` → `LibraryAPI`
 - Legacy：UIKit + CocoaPods + SnapKit；类型前缀 `HTZ`
 
 ## Layout & conventions
-- App shell：`HTZNext/HTZNext/`（`RootView`、Tab、登录桥）
-- Features：`Packages/Features/{Home,Player,Auth}/`
+- App shell：`HTZNext/HTZNext/`（`RootView` 用 `@ComposableArchitecture.Bindable` + `.sending` 绑 `showFullPlayer`）
+- Features：`Packages/Features/{Home,Player,Auth}/`；「我的」在 `Home/Profile/`
 - Shared：`Packages/{NetworkKit,HTZAudio,DesignSystem}/`
-- OpenSpec：`openspec/`（提案/规格）；归档用 openspec archive 流程
-- 提交：`<Type>: <imperative>`（如 `Feat: add play modes`）。密钥走 xcconfig / build settings，勿入库；模拟器样例凭据包在 `#if targetEnvironment(simulator)`。
+- OpenSpec：`openspec/`；提交：`<Type>: <imperative>`。密钥走 xcconfig，模拟器样例凭据包在 `#if targetEnvironment(simulator)`。
+- 播放：点上一集/下一集**始终按列表顺序**；随机模式只在**播完自动切歌**时生效；切歌失败须恢复上一集。
 
-## Current status (2026-10-17)
-- 分支 `feature/rf-zhihao`：首页/专辑/播放器/歌词/播放模式/收藏开关/下载管理/续播 seek 已在工作区落地；部分改动未提交。
-- 活动变更：`openspec/changes/audio-engine-v2`（MVP 已完成；剩余 UI 测试 / 手动验证 / 过时 rollback 检查点）。
-- 下一步：提交播放能力补齐 → 归档或收口 `audio-engine-v2` → 需要时对照 Android 补缺口。
+## Current status (2026-10-18)
+- 分支 `feature/rf-zhihao`：相对 `origin` 有大量**未提交**改动（Android 对照重构 + 播放器切歌/Perception 修复），待 review / 提交。
+- 主机：`http://app.htzchina.org:9100`。本机若开 fake-IP 代理导致 9100 超时，需直连该域名。
+- 已知：模拟器 Keychain 相关测试在 HEAD 上即失败；手机号登录未对真实服务端验收。
+- 活动变更：`openspec/changes/audio-engine-v2`（MVP 完成；残留 UI/手动验证任务）。

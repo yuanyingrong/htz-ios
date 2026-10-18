@@ -1,14 +1,7 @@
 import Foundation
 import ComposableArchitecture
 import NetworkKit
-import HTZAudio
 import PlayerFeature
-
-public struct PendingQueue: Equatable {
-    public var tracks: [QueueTrack]
-    public var index: Int
-    public var token: Int
-}
 
 @Reducer
 public struct AlbumDetailFeature {
@@ -16,206 +9,313 @@ public struct AlbumDetailFeature {
     public struct State: Equatable {
         public var album: Album
         public var items: [SutraItem] = []
-        public var isLoading: Bool = false
+        public var isAscending = true
+        public var isLoading = false
         public var errorMessage: String?
-        public var alertMessage: String?
-        public var isResolvingAudio: Bool = false
-        public var pendingQueue: PendingQueue?
-        public var playToken: Int = 0
-        public var resumeItemId: String?
-        public var resumeTitle: String?
-        public var resumePosition: Int = 0
-        public var pendingStartPosition: Int = 0
-        
+        public var toast: String?
+        public var resume: ListenHistoryItem?
+        public var favorites: [String: String] = [:]
+        public var downloads: [String: DownloadRecord.State] = [:]
+        public var purchase: AlbumPurchase?
+        public var isPurchasePromptPresented = false
+        public var purchaseURL: URL?
+        public var isSelecting = false
+        public var selection: Set<String> = []
+
         public init(album: Album) {
             self.album = album
+            if album.isPaid {
+                purchase = AlbumPurchase(isPaid: true, isPurchased: album.isPurchased, paidUrl: album.paidUrl)
+            }
         }
+
+        public var needsPurchase: Bool {
+            guard let purchase else { return false }
+            return purchase.isPaid && !purchase.isPurchased
+        }
+
+        public func isLocked(_ item: SutraItem) -> Bool {
+            needsPurchase && !item.isTrialItem
+        }
+
+        public var price: Double { album.priceInYuan }
     }
-    
-    public enum Action {
+
+    public enum Action: BindableAction, Equatable {
+        case binding(BindingAction<State>)
         case onAppear
-        case itemsResponse(Result<[SutraItem], NetworkError>)
+        case itemsLoaded([SutraItem])
+        case itemsFailed
         case coverResolved(String)
+        case resumeLoaded(ListenHistoryItem?)
+        case favoritesLoaded([FavoriteItem])
+        case downloadsUpdated([DownloadRecord])
+        case purchaseLoaded(AlbumPurchase, announce: Bool)
         case trackTapped(SutraItem)
         case resumeTapped
         case toggleSort
-        case resumeLoaded(id: String?, title: String?, position: Int)
         case favoriteTapped(SutraItem)
+        case favoriteChanged(itemId: String, serverId: String?)
         case downloadTapped(SutraItem)
-        case downloadAlbum
-        case audioURLResolved(item: SutraItem, signedAudioURL: URL, originalLyric: URL?, explanationLyric: URL?)
-        case downloadReady(item: SutraItem, url: URL)
-        case playbackPermissionDenied
-        case playbackFailed(String)
-        case clearAlert
-        case clearPendingQueue
-        case libraryMessage(String)
+        case startSelecting
+        case cancelSelecting
+        case toggleSelection(String)
+        case selectAll
+        case downloadSelected
+        case purchaseTapped
+        case openPurchasePage
+        case purchasePageClosed
+        case toast(String?)
     }
-    
-    @Dependency(\.homeClient) var homeClient
-    
+
+    @Dependency(\.library) var library
+    @Dependency(\.playback) var playback
+    @Dependency(\.downloads) var downloads
+
     public init() {}
-    
+
     public var body: some ReducerOf<Self> {
+        BindingReducer()
         Reduce { state, action in
             switch action {
+            case .binding:
+                return .none
+
             case .onAppear:
-                state.isLoading = true
+                let sutraId = state.album.id
                 state.errorMessage = nil
+                state.isLoading = state.items.isEmpty
                 return .merge(
-                    .run { [sutraId = state.album.id] send in
+                    .run { send in
                         do {
-                            let items = try await homeClient.getSutraItems(sutraId)
-                            await send(.itemsResponse(.success(items)))
+                            await send(.itemsLoaded(try await library.items(sutraId)))
                         } catch {
-                            await send(.itemsResponse(.failure(error as? NetworkError ?? .unknown)))
+                            await send(.itemsFailed)
                         }
                     },
-                    .run { [sutraId = state.album.id] send in
-                        if let signedCover = try? await homeClient.getSutraCoverURL(sutraId) {
-                            await send(.coverResolved(signedCover))
+                    .run { send in
+                        if let cover = await library.coverURL(sutraId) {
+                            await send(.coverResolved(cover))
+                        }
+                    },
+                    .run { send in
+                        let favorites = (try? await library.favorites()) ?? []
+                        await send(.favoritesLoaded(favorites))
+                    },
+                    refreshPurchase(sutraId: sutraId, announce: false),
+                    .run { send in
+                        for await records in downloads.updates() {
+                            await send(.downloadsUpdated(records))
                         }
                     }
+                    .cancellable(id: DownloadsObservation.id(sutraId), cancelInFlight: true)
                 )
-                
-            case let .coverResolved(url):
-                state.album = state.album.replacingImageUrl(url)
-                return .none
-                
-            case let .itemsResponse(.success(items)):
-                state.items = Self.sortedAscending(items)
+
+            case let .itemsLoaded(items):
                 state.isLoading = false
+                let sorted = Self.sortedAscending(items)
+                state.items = state.isAscending ? sorted : sorted.reversed()
                 let ids = Set(items.map(\.id))
                 return .run { send in
-                    let histories = (try? await LibraryAPI.histories()) ?? []
-                    if let hit = histories.first(where: { ids.contains($0.sutraItemId) }) {
-                        await send(.resumeLoaded(id: hit.sutraItemId, title: hit.title, position: hit.lastPosition))
-                    }
+                    let histories = (try? await library.histories()) ?? []
+                    await send(.resumeLoaded(histories.first { ids.contains($0.itemId) }))
                 }
 
-            case .itemsResponse(.failure):
+            case .itemsFailed:
                 state.isLoading = false
                 state.errorMessage = "章节加载失败"
                 return .none
 
+            case let .coverResolved(url):
+                state.album = state.album.replacingImageUrl(url)
+                return .none
+
+            case let .resumeLoaded(history):
+                state.resume = history
+                return .none
+
+            case let .favoritesLoaded(favorites):
+                state.favorites = Dictionary(
+                    favorites.map { ($0.itemId, $0.serverId) },
+                    uniquingKeysWith: { first, _ in first }
+                )
+                return .none
+
+            case let .downloadsUpdated(records):
+                let ids = Set(state.items.map(\.id))
+                let albumId = state.album.id
+                state.downloads = Dictionary(
+                    records.filter { $0.sutraId == albumId || ids.contains($0.id) }.map { ($0.id, $0.state) },
+                    uniquingKeysWith: { _, last in last }
+                )
+                return .none
+
+            case let .purchaseLoaded(purchase, announce):
+                let wasPurchased = state.purchase?.isPurchased == true
+                state.purchase = purchase
+                guard announce else { return .none }
+                if !wasPurchased && purchase.isPurchased {
+                    state.toast = "购买成功，感谢您的支持！"
+                } else if !purchase.isPurchased {
+                    state.toast = "未检测到购买，如已付款请稍候刷新"
+                }
+                return .none
+
+            case let .trackTapped(item):
+                if state.isSelecting {
+                    return .send(.toggleSelection(item.id))
+                }
+                if state.isLocked(item) {
+                    state.isPurchasePromptPresented = true
+                    return .none
+                }
+                return play(state: state, itemId: item.id, position: 0)
+
+            case .resumeTapped:
+                guard let resume = state.resume else { return .none }
+                if let item = state.items.first(where: { $0.id == resume.itemId }), state.isLocked(item) {
+                    state.isPurchasePromptPresented = true
+                    return .none
+                }
+                return play(state: state, itemId: resume.itemId, position: Double(resume.lastPositionSeconds))
+
             case .toggleSort:
+                state.isAscending.toggle()
                 state.items.reverse()
                 return .none
 
-            case let .resumeLoaded(id, title, position):
-                state.resumeItemId = id
-                state.resumeTitle = title
-                state.resumePosition = position
-                return .none
-                
-            case let .trackTapped(item):
-                state.isResolvingAudio = true
-                state.pendingStartPosition = 0
-                return resolve(item: item, sutraId: state.album.id, purpose: .play)
-
-            case .resumeTapped:
-                guard let id = state.resumeItemId,
-                      let item = state.items.first(where: { $0.id == id }) else { return .none }
-                state.isResolvingAudio = true
-                state.pendingStartPosition = state.resumePosition
-                return resolve(item: item, sutraId: state.album.id, purpose: .play)
-
             case let .favoriteTapped(item):
+                let serverId = state.favorites[item.id]
                 return .run { send in
                     do {
-                        let favorites = (try? await LibraryAPI.favorites()) ?? []
-                        if let hit = favorites.first(where: { $0.sutraItemId == item.id || $0.id == item.id }),
-                           !hit.serverId.isEmpty {
-                            try await LibraryAPI.deleteFavorite(serverId: hit.serverId)
-                            await send(.libraryMessage("已取消收藏"))
+                        if let serverId, !serverId.isEmpty {
+                            try await library.deleteFavorite(serverId)
+                            await send(.favoriteChanged(itemId: item.id, serverId: nil))
                         } else {
-                            try await LibraryAPI.addFavorite(itemId: item.id)
-                            await send(.libraryMessage("已加入收藏"))
+                            try await library.addFavorite(item.id)
+                            let favorites = (try? await library.favorites()) ?? []
+                            let hit = favorites.first { $0.itemId == item.id }
+                            await send(.favoriteChanged(itemId: item.id, serverId: hit?.serverId ?? ""))
                         }
                     } catch {
-                        await send(.libraryMessage("收藏操作失败"))
+                        await send(.toast("收藏操作失败"))
                     }
                 }
+
+            case let .favoriteChanged(itemId, serverId):
+                state.favorites[itemId] = serverId
+                state.toast = serverId == nil ? "已取消收藏" : "已加入收藏"
+                return .none
 
             case let .downloadTapped(item):
-                state.isResolvingAudio = true
-                return resolve(item: item, sutraId: state.album.id, purpose: .download)
+                if state.isLocked(item) {
+                    state.isPurchasePromptPresented = true
+                    return .none
+                }
+                return download(state: state, items: [item])
 
-            case .downloadAlbum:
-                let album = state.album
-                let items = state.items
-                return .run { _ in
-                    for item in items {
-                        if DownloadCenter.shared.localFile(for: item.id) != nil { continue }
-                        guard let file = try? await LibraryAPI.fileURL(sutraId: album.id, itemId: item.id),
-                              let url = file.audioURL else { continue }
-                        DownloadCenter.shared.download(itemId: item.id, title: item.title ?? album.name, remoteURL: url)
-                    }
-                }
-                
-            case let .audioURLResolved(item, audioURL, originalLyric, explanationLyric):
-                state.isResolvingAudio = false
-                let tracks = state.items.map { row in
-                    QueueTrack(
-                        id: row.id,
-                        sutraId: state.album.id,
-                        title: row.title ?? "未命名",
-                        artist: state.album.name,
-                        imageUrl: state.album.imageUrl.flatMap(URL.init),
-                        audioURL: row.id == item.id ? audioURL : nil,
-                        originalLyricURL: row.id == item.id ? originalLyric : nil,
-                        explanationLyricURL: row.id == item.id ? explanationLyric : nil
-                    )
-                }
-                let index = state.items.firstIndex(where: { $0.id == item.id }) ?? 0
-                state.playToken += 1
-                state.pendingQueue = PendingQueue(tracks: tracks, index: index, token: state.playToken)
-                let queued = tracks
-                let start = index
-                let startPosition = Self.seconds(from: state.pendingStartPosition)
-                state.pendingStartPosition = 0
-                return .run { _ in
-                    PlayerRelay.shared.play(
-                        tracks: queued,
-                        startIndex: start,
-                        presentPlayer: true,
-                        startPosition: startPosition
-                    )
-                }
-
-            case let .downloadReady(item, url):
-                state.isResolvingAudio = false
-                DownloadCenter.shared.download(itemId: item.id, title: item.title ?? state.album.name, remoteURL: url)
-                state.alertMessage = "已开始下载"
-                return .none
-                
-            case .playbackPermissionDenied:
-                state.isResolvingAudio = false
-                state.alertMessage = "该内容为付费专栏，请订阅后收听。"
-                return .none
-                
-            case let .playbackFailed(message):
-                state.isResolvingAudio = false
-                state.alertMessage = message
-                return .none
-                
-            case .clearAlert:
-                state.alertMessage = nil
-                return .none
-                
-            case .clearPendingQueue:
-                state.pendingQueue = nil
+            case .startSelecting:
+                state.isSelecting = true
+                state.selection = []
                 return .none
 
-            case let .libraryMessage(message):
-                state.alertMessage = message.isEmpty ? nil : message
+            case .cancelSelecting:
+                state.isSelecting = false
+                state.selection = []
+                return .none
+
+            case let .toggleSelection(id):
+                guard let item = state.items.first(where: { $0.id == id }),
+                      !state.isLocked(item),
+                      state.downloads[id] != .finished else { return .none }
+                if state.selection.contains(id) {
+                    state.selection.remove(id)
+                } else {
+                    state.selection.insert(id)
+                }
+                return .none
+
+            case .selectAll:
+                let selectable = state.items
+                    .filter { !state.isLocked($0) && state.downloads[$0.id] != .finished }
+                    .map(\.id)
+                state.selection = state.selection.count == selectable.count ? [] : Set(selectable)
+                return .none
+
+            case .downloadSelected:
+                let items = state.items.filter { state.selection.contains($0.id) }
+                state.isSelecting = false
+                state.selection = []
+                guard !items.isEmpty else { return .none }
+                return download(state: state, items: items)
+
+            case .purchaseTapped:
+                state.isPurchasePromptPresented = true
+                return .none
+
+            case .openPurchasePage:
+                state.isPurchasePromptPresented = false
+                guard let link = state.purchase?.paidUrl ?? state.album.paidUrl, let url = URL(string: link) else {
+                    state.toast = "购买链接不可用"
+                    return .none
+                }
+                state.purchaseURL = url
+                return .none
+
+            case .purchasePageClosed:
+                state.purchaseURL = nil
+                return refreshPurchase(sutraId: state.album.id, announce: true)
+
+            case let .toast(message):
+                state.toast = message
                 return .none
             }
         }
     }
 
-    static func seconds(from position: Int) -> Double {
-        Double(position >= 100_000 ? position / 1000 : position)
+    private func play(state: State, itemId: String, position: Double) -> Effect<Action> {
+        let album = state.album
+        let tracks = state.items.map { QueueTrack(item: $0, sutraId: album.id, albumName: album.name, cover: album.imageUrl) }
+        let index = tracks.firstIndex { $0.id == itemId } ?? 0
+        return .run { _ in
+            await playback.play(tracks, index, true, position)
+        }
+    }
+
+    private func download(state: State, items: [SutraItem]) -> Effect<Action> {
+        let album = state.album
+        let pending = items.filter { state.downloads[$0.id] != .finished }
+        guard !pending.isEmpty else { return .send(.toast("已下载")) }
+        return .run { send in
+            await send(.toast(pending.count == 1 ? "已加入下载列表" : "已加入下载列表（\(pending.count)集）"))
+            var failed = 0
+            for item in pending {
+                guard let url = try? await library.fileURL(album.id, item.id).audioURL else {
+                    failed += 1
+                    continue
+                }
+                downloads.download(DownloadRequest(
+                    itemId: item.id,
+                    title: item.title ?? album.name,
+                    sutraId: album.id,
+                    albumName: album.name,
+                    imageURL: album.imageUrl,
+                    lesson: item.lesson ?? 0,
+                    remoteURL: url
+                ))
+            }
+            if failed > 0 {
+                await send(.toast("\(failed)集获取下载地址失败"))
+            }
+        }
+    }
+
+    private func refreshPurchase(sutraId: String, announce: Bool) -> Effect<Action> {
+        .run { send in
+            if let purchase = try? await library.purchase(sutraId) {
+                await send(.purchaseLoaded(purchase, announce: announce))
+            }
+        }
     }
 
     static func sortedAscending(_ items: [SutraItem]) -> [SutraItem] {
@@ -233,40 +333,8 @@ public struct AlbumDetailFeature {
         let digits = title.prefix { $0.isNumber }
         return Int(digits) ?? Int.max
     }
+}
 
-    private enum ResolvePurpose { case play, download }
-
-    private static func lyricURL(_ signed: String?, fileId: String?) -> URL? {
-        if let signed, !signed.isEmpty, let url = URL(string: signed) { return url }
-        guard let fileId, !fileId.isEmpty else { return nil }
-        if fileId.hasPrefix("http"), let url = URL(string: fileId) { return url }
-        return URL(string: "https://htz-sutra.oss-cn-shanghai.aliyuncs.com/\(fileId)")
-    }
-
-    private func resolve(item: SutraItem, sutraId: String, purpose: ResolvePurpose) -> Effect<Action> {
-        .run { send in
-            do {
-                let file = try await homeClient.getSutraItemFileURL(sutraId, item.id)
-                guard let audioString = file.signedUrls?.audio, let audioURL = URL(string: audioString) else {
-                    await send(.playbackPermissionDenied)
-                    return
-                }
-                switch purpose {
-                case .play:
-                await send(.audioURLResolved(
-                    item: item,
-                    signedAudioURL: audioURL,
-                    originalLyric: Self.lyricURL(file.signedUrls?.originalLyric, fileId: item.originalLyricId),
-                    explanationLyric: Self.lyricURL(file.signedUrls?.explanationLyric, fileId: item.explanationLyricId)
-                ))
-                case .download:
-                    await send(.downloadReady(item: item, url: audioURL))
-                }
-            } catch let error as NetworkError where error == .accessDenied {
-                await send(.playbackPermissionDenied)
-            } catch {
-                await send(.playbackFailed("获取音频失败"))
-            }
-        }
-    }
+private enum DownloadsObservation: Hashable {
+    case id(String)
 }

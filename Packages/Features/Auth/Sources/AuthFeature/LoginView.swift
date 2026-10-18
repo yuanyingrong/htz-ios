@@ -1,6 +1,7 @@
 import SwiftUI
 import ComposableArchitecture
 import DesignSystem
+import NetworkKit
 
 public struct LoginView: View {
     @ComposableArchitecture.Bindable var store: StoreOf<AuthFeature>
@@ -8,6 +9,7 @@ public struct LoginView: View {
     // Animation States
     @State private var isAnimated = false
     @State private var showButton = false
+    @State private var legalPage: LegalPage?
     
     public init(store: StoreOf<AuthFeature>) {
         self.store = store
@@ -98,8 +100,8 @@ public struct LoginView: View {
                         .disabled(store.isLoading)
                         .padding(.horizontal, 40)
 
-                        Button("通过 Apple 登录") {
-                            store.send(.appleLoginTapped)
+                        Button("手机号登录") {
+                            store.send(.phoneLoginTapped)
                         }
                         .font(.htzSubheadline)
                         .foregroundStyle(Color.secondary)
@@ -113,17 +115,18 @@ public struct LoginView: View {
                         .frame(height: 100)
                     
                     // Element 5: Terms & Policies Flow
-                    (Text("登录即代表阅读并同意")
-                        .foregroundColor(.secondary) +
-                     Text("《用户协议》")
-                        .foregroundColor(.htzAccent) +
-                     Text("与")
-                        .foregroundColor(.secondary) +
-                     Text("《隐私政策》")
-                        .foregroundColor(.htzAccent))
+                    HStack(spacing: 0) {
+                        Text("登录即代表阅读并同意")
+                            .foregroundColor(.secondary)
+                        Button("《用户协议》") { legalPage = .agreement }
+                            .foregroundColor(HTZColor.orange)
+                        Text("与")
+                            .foregroundColor(.secondary)
+                        Button("《隐私政策》") { legalPage = .privacy }
+                            .foregroundColor(HTZColor.orange)
+                    }
                     .font(.htzCaption)
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal, 40)
+                    .padding(.horizontal, 24)
                     .padding(.bottom, HTZSpacing.lg)
                 }
             }
@@ -146,6 +149,19 @@ public struct LoginView: View {
                     Text(store.errorMessage ?? "")
                 }
             )
+            .sheet(item: $store.scope(state: \.phoneLogin, action: \.phoneLogin)) { store in
+                PhoneLoginView(store: store)
+            }
+            .sheet(item: $legalPage) { page in
+                NavigationStack {
+                    HTZWebPage(title: page.title, url: page.url)
+                        .toolbar {
+                            ToolbarItem(placement: .cancellationAction) {
+                                Button("关闭") { legalPage = nil }
+                            }
+                        }
+                }
+            }
             .onAppear {
                 // Entry Animations with easeOut transitions
                 withAnimation(.easeOut(duration: 0.5)) {
@@ -170,5 +186,20 @@ struct PremiumButtonStyle: ButtonStyle {
             .scaleEffect(configuration.isPressed ? 0.97 : 1.0)
             .opacity(configuration.isPressed ? 0.9 : 1.0)
             .animation(.spring(response: 0.3, dampingFraction: 0.6), value: configuration.isPressed)
+    }
+}
+
+private enum LegalPage: String, Identifiable {
+    case agreement
+    case privacy
+
+    var id: String { rawValue }
+
+    var title: String {
+        self == .agreement ? "用户协议" : "隐私政策"
+    }
+
+    var url: URL {
+        self == .agreement ? WebPage.agreement : WebPage.privacy
     }
 }

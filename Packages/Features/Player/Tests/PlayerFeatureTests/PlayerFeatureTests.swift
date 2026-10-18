@@ -5,6 +5,18 @@ import HTZAudio
 
 @MainActor
 final class PlayerFeatureTests: XCTestCase {
+    override func setUp() async throws {
+        PlayModeStore.current = .sequential
+    }
+
+    override func invokeTest() {
+        withDependencies {
+            $0.library.favorites = { [] }
+        } operation: {
+            super.invokeTest()
+        }
+    }
+
     func testQueueAdvancesAndReports() async {
         let audioA = URL(string: "https://example.com/a.mp3")!
         let audioB = URL(string: "https://example.com/b.mp3")!
@@ -71,6 +83,7 @@ final class PlayerFeatureTests: XCTestCase {
             PlayerFeature()
         } withDependencies: {
             $0.playerClient.play = { _ in }
+            $0.playerClient.pause = {}
             $0.playerClient.playerStateStream = { AsyncStream { $0.finish() } }
             $0.trackResolver.resolve = { _, _ in throw TrackResolveError.accessDenied }
             $0.trackResolver.localFile = { _ in nil }
@@ -84,8 +97,107 @@ final class PlayerFeatureTests: XCTestCase {
         await store.skipReceivedActions()
         await store.send(.nextTrack)
         await store.receive(\.playbackDenied)
+        await store.skipReceivedActions()
         XCTAssertEqual(store.state.index, 0)
-        XCTAssertEqual(store.state.alertMessage, "该内容为付费专栏，请订阅后收听。")
+        XCTAssertEqual(store.state.currentItem?.id, "a")
+        XCTAssertEqual(store.state.toast, "该内容为付费专栏，请订阅后收听。")
+    }
+
+    func testManualNextInShuffleStaysSequential() async {
+        var state = PlayerFeature.State()
+        state.playMode = .shuffle
+        state.queue = [
+            QueueTrack(id: "a", sutraId: "s", title: "1"),
+            QueueTrack(id: "b", sutraId: "s", title: "2"),
+            QueueTrack(id: "c", sutraId: "s", title: "3")
+        ]
+        state.index = 0
+        let store = TestStore(initialState: state) {
+            PlayerFeature()
+        } withDependencies: {
+            $0.playerClient.play = { _ in }
+            $0.playerClient.pause = {}
+            $0.playerClient.playerStateStream = { AsyncStream { $0.finish() } }
+            $0.trackResolver.localFile = { _ in nil }
+            $0.trackResolver.resolve = { _, itemId in
+                ResolvedAudio(audioURL: URL(string: "https://example.com/\(itemId).mp3")!)
+            }
+            $0.nowPlayingClient.commands = { AsyncStream { $0.finish() } }
+        }
+        store.exhaustivity = .off
+        await store.send(.nextTrack)
+        await store.skipReceivedActions()
+        XCTAssertEqual(store.state.index, 1)
+        XCTAssertEqual(store.state.currentItem?.id, "b")
+    }
+
+    func testNextIgnoresStaleEngineTicks() async {
+        let audioA = URL(string: "https://example.com/a.mp3")!
+        let audioB = URL(string: "https://example.com/b.mp3")!
+        let played = PlayedBox()
+        let store = TestStore(initialState: PlayerFeature.State()) {
+            PlayerFeature()
+        } withDependencies: {
+            $0.playerClient.play = { played.items.append($0) }
+            $0.playerClient.pause = {}
+            $0.playerClient.playerStateStream = { AsyncStream { $0.finish() } }
+            $0.trackResolver.resolve = { _, itemId in
+                ResolvedAudio(audioURL: itemId == "b" ? audioB : audioA)
+            }
+            $0.trackResolver.localFile = { _ in nil }
+            $0.nowPlayingClient.commands = { AsyncStream { $0.finish() } }
+        }
+        store.exhaustivity = .off
+        await store.send(.playQueue(tracks: [
+            QueueTrack(id: "a", sutraId: "s", title: "甲", audioURL: audioA),
+            QueueTrack(id: "b", sutraId: "s", title: "乙", audioURL: audioB)
+        ], startIndex: 0, startPosition: 0))
+        await store.skipReceivedActions()
+        await store.send(.nextTrack)
+        await store.skipReceivedActions()
+        // Stale tick for the previous item must not pull the queue back.
+        await store.send(.playerStateUpdated(PlayerState(
+            currentItem: PlayerItem(id: "a", url: audioA, title: "甲", artist: nil, imageUrl: nil),
+            isPlaying: true,
+            currentTime: 12,
+            duration: 100
+        )))
+        XCTAssertEqual(store.state.index, 1)
+        XCTAssertEqual(store.state.currentItem?.id, "b")
+        XCTAssertEqual(played.items.map(\.id).last, "b")
+    }
+
+    func testNextPlaysResolvedTrackAndKeepsFallbackLyrics() async {
+        let audioA = URL(string: "https://example.com/a.mp3")!
+        let audioB = URL(string: "https://example.com/b.mp3")!
+        let lyricB = URL(string: "https://example.com/b.lrc")!
+        let calls = CallLog()
+        let store = TestStore(initialState: PlayerFeature.State()) {
+            PlayerFeature()
+        } withDependencies: {
+            $0.playerClient.play = { calls.entries.append("play:\($0.id)") }
+            $0.playerClient.pause = { calls.entries.append("pause") }
+            $0.playerClient.playerStateStream = { AsyncStream { $0.finish() } }
+            $0.trackResolver.resolve = { _, _ in ResolvedAudio(audioURL: audioB) }
+            $0.trackResolver.localFile = { _ in nil }
+            $0.trackResolver.reportHistory = { _, _ in }
+            $0.nowPlayingClient.commands = { AsyncStream { $0.finish() } }
+        }
+        store.exhaustivity = .off
+        await store.send(.playQueue(tracks: [
+            QueueTrack(id: "a", sutraId: "s", title: "甲", audioURL: audioA),
+            QueueTrack(id: "b", sutraId: "s", title: "乙", explanationLyricURL: lyricB)
+        ], startIndex: 0, startPosition: 0))
+        await store.finish()
+        calls.entries.removeAll()
+
+        await store.send(.nextTrack)
+        await store.receive(\.trackResolved)
+        await store.finish()
+        XCTAssertEqual(calls.entries, ["pause", "play:b"])
+        XCTAssertEqual(store.state.currentItem?.url, audioB)
+        XCTAssertEqual(store.state.queue[1].explanationLyricURL, lyricB)
+        XCTAssertFalse(store.state.isResolving)
     }
 
     func testSingleModeReplaysOnFinish() async {
@@ -111,9 +223,81 @@ final class PlayerFeatureTests: XCTestCase {
         await store.send(.cyclePlayMode)
         XCTAssertEqual(store.state.playMode, .single)
         await store.send(.trackDidFinish)
-        await store.skipReceivedActions()
+        await store.finish()
         XCTAssertEqual(store.state.index, 0)
         XCTAssertEqual(seekSeconds.last, 0)
+    }
+
+    func testEpisodeSleepTimerPausesInsteadOfAdvancing() async {
+        var paused = false
+        var state = PlayerFeature.State()
+        state.queue = [
+            QueueTrack(id: "a", sutraId: "s", title: "1"),
+            QueueTrack(id: "b", sutraId: "s", title: "2")
+        ]
+        let store = TestStore(initialState: state) {
+            PlayerFeature()
+        } withDependencies: {
+            $0.playerClient.pause = { paused = true }
+        }
+        await store.send(.setSleepTimer(.episodes(1))) {
+            $0.sleepTimer = .episodes(1)
+        }
+        await store.send(.trackDidFinish) {
+            $0.sleepTimer = nil
+        }
+        XCTAssertTrue(paused)
+        XCTAssertEqual(store.state.index, 0)
+    }
+
+    func testMinuteSleepTimerCountsDownAndPauses() async {
+        let clock = TestClock()
+        let store = TestStore(initialState: PlayerFeature.State()) {
+            PlayerFeature()
+        } withDependencies: {
+            $0.continuousClock = clock
+            $0.playerClient.pause = {}
+            $0.trackResolver.reportHistory = { _, _ in }
+        }
+        store.exhaustivity = .off
+        await store.send(.setSleepTimer(.minutes(1))) {
+            $0.sleepTimer = .minutes(1)
+            $0.sleepSecondsLeft = 60
+        }
+        await clock.advance(by: .seconds(60))
+        await store.receive(\.pauseButtonTapped)
+        XCTAssertNil(store.state.sleepTimer)
+        XCTAssertNil(store.state.sleepSecondsLeft)
+    }
+
+    func testPlayerFeedbackUsesToastAndKeepsFullPlayerOpen() async {
+        var state = PlayerFeature.State()
+        state.showFullPlayer = true
+        state.queue = [QueueTrack(id: "a", sutraId: "s", title: "1")]
+        let store = TestStore(initialState: state) {
+            PlayerFeature()
+        } withDependencies: {
+            $0.downloads.isDownloaded = { _ in true }
+        }
+        await store.send(.cyclePlayMode) {
+            $0.playMode = .shuffle
+            $0.toast = PlayMode.shuffle.title
+        }
+        await store.send(.downloadCurrent) {
+            $0.toast = "已下载"
+        }
+        XCTAssertTrue(store.state.showFullPlayer)
+    }
+
+    func testReverseQueueKeepsCurrentTrack() async {
+        var state = PlayerFeature.State()
+        state.queue = ["a", "b", "c"].map { QueueTrack(id: $0, sutraId: "s", title: $0) }
+        state.index = 0
+        let store = TestStore(initialState: state) { PlayerFeature() }
+        await store.send(.reverseQueue) {
+            $0.queue = ["c", "b", "a"].map { QueueTrack(id: $0, sutraId: "s", title: $0) }
+            $0.index = 2
+        }
     }
 
     func testLyricParser() {
@@ -138,4 +322,8 @@ final class PlayerFeatureTests: XCTestCase {
 
 private final class PlayedBox: @unchecked Sendable {
     var items: [PlayerItem] = []
+}
+
+private final class CallLog: @unchecked Sendable {
+    var entries: [String] = []
 }
