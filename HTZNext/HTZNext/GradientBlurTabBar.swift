@@ -44,15 +44,10 @@ struct CustomTabView<Content: View>: View {
 
     var body: some View {
         ZStack(alignment: .bottom) {
-            ZStack {
-                ForEach(tabs) { tab in
-                    content(tab.id)
-                        .opacity(selection == tab.id ? 1 : 0)
-                        .allowsHitTesting(selection == tab.id)
-                        .zIndex(selection == tab.id ? 1 : 0)
-                }
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            // Keep tab pages out of the `showsTabBar` dependency so hiding the bar during a
+            // push does not rebuild the active NavigationStack (nav title/buttons were jittering).
+            TabPages(selection: selection, tabs: tabs, content: content)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
 
             VStack(spacing: 0) {
                 Rectangle()
@@ -77,6 +72,24 @@ struct CustomTabView<Content: View>: View {
             .offset(y: showsTabBar ? 0 : tabBarHeight + 40)
             // 收起/展现不要动画，瞬间切换（也屏蔽导航转场带下来的动画）。
             .transaction { $0.animation = nil }
+        }
+    }
+}
+
+/// Tab page host with no knowledge of tab-bar visibility — identity stays stable across chrome changes.
+private struct TabPages<Content: View>: View {
+    let selection: Int
+    let tabs: [TabConfig]
+    @ViewBuilder let content: (Int) -> Content
+
+    var body: some View {
+        ZStack {
+            ForEach(tabs) { tab in
+                content(tab.id)
+                    .opacity(selection == tab.id ? 1 : 0)
+                    .allowsHitTesting(selection == tab.id)
+                    .zIndex(selection == tab.id ? 1 : 0)
+            }
         }
     }
 }

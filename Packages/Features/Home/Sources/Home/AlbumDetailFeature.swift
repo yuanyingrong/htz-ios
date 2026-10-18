@@ -29,6 +29,12 @@ public struct AlbumDetailFeature {
             if album.isPaid {
                 purchase = AlbumPurchase(isPaid: true, isPurchased: album.isPurchased, paidUrl: album.paidUrl)
             }
+            // Paint chapters on the first frame when we already have a cache hit (no spinner flash).
+            if let cached = LibraryAPI.cachedItems(sutraId: album.id), !cached.isEmpty {
+                let sorted = AlbumDetailFeature.sortedAscending(cached)
+                items = sorted
+                isLoading = false
+            }
         }
 
         public var needsPurchase: Bool {
@@ -58,7 +64,7 @@ public struct AlbumDetailFeature {
         case binding(BindingAction<State>)
         case onAppear
         case itemsLoaded([SutraItem])
-        case itemsFailed
+        case itemsFailed(keepExisting: Bool = false)
         case coverResolved(String)
         case resumeLoaded(ListenHistoryItem?)
         case progressLoaded([String: Int])
@@ -99,13 +105,19 @@ public struct AlbumDetailFeature {
             case .onAppear:
                 let sutraId = state.album.id
                 state.errorMessage = nil
+                // Cache-first: show stored chapters immediately, then refresh over the network.
+                if state.items.isEmpty, let cached = library.cachedItems(sutraId), !cached.isEmpty {
+                    let sorted = Self.sortedAscending(cached)
+                    state.items = state.isAscending ? sorted : sorted.reversed()
+                }
                 state.isLoading = state.items.isEmpty
+                let hadCachedItems = !state.items.isEmpty
                 return .merge(
                     .run { send in
                         do {
                             await send(.itemsLoaded(try await library.items(sutraId)))
                         } catch {
-                            await send(.itemsFailed)
+                            await send(.itemsFailed(keepExisting: hadCachedItems))
                         }
                     },
                     .run { send in
@@ -139,45 +151,70 @@ public struct AlbumDetailFeature {
             case let .itemsLoaded(items):
                 state.isLoading = false
                 let sorted = Self.sortedAscending(items)
-                state.items = state.isAscending ? sorted : sorted.reversed()
+                let next = state.isAscending ? sorted : sorted.reversed()
+                // Skip no-op writes so the nav chrome does not rebuild when cache == network.
+                if state.items != next {
+                    state.items = next
+                }
                 return loadProgress(state: state)
 
-            case .itemsFailed:
+            case let .itemsFailed(keepExisting):
                 state.isLoading = false
-                state.errorMessage = "章节加载失败"
+                if keepExisting || !state.items.isEmpty {
+                    state.toast = "章节刷新失败，仍显示缓存"
+                } else {
+                    state.errorMessage = "章节加载失败"
+                }
                 return .none
 
             case let .coverResolved(url):
-                state.album = state.album.replacingImageUrl(url)
+                // Same cover bytes under a new signed query still force every row's image view to
+                // reload if we swap the string; only replace when the album had no usable URL yet
+                // or the path actually changed.
+                if shouldReplaceCover(state.album.imageUrl, with: url) {
+                    state.album = state.album.replacingImageUrl(url)
+                }
                 return .none
 
             case let .resumeLoaded(history):
-                state.resume = history
+                if state.resume != history {
+                    state.resume = history
+                }
                 return .none
 
             case let .progressLoaded(progress):
-                state.progress = progress
+                if state.progress != progress {
+                    state.progress = progress
+                }
                 return .none
 
             case let .favoritesLoaded(favorites):
-                state.favorites = Dictionary(
+                let next = Dictionary(
                     favorites.map { ($0.itemId, $0.serverId) },
                     uniquingKeysWith: { first, _ in first }
                 )
+                if state.favorites != next {
+                    state.favorites = next
+                }
                 return .none
 
             case let .downloadsUpdated(records):
                 let ids = Set(state.items.map(\.id))
                 let albumId = state.album.id
-                state.downloads = Dictionary(
+                let next = Dictionary(
                     records.filter { $0.sutraId == albumId || ids.contains($0.id) }.map { ($0.id, $0.state) },
                     uniquingKeysWith: { _, last in last }
                 )
+                if state.downloads != next {
+                    state.downloads = next
+                }
                 return .none
 
             case let .purchaseLoaded(purchase, announce):
                 let wasPurchased = state.purchase?.isPurchased == true
-                state.purchase = purchase
+                if state.purchase != purchase {
+                    state.purchase = purchase
+                }
                 guard announce else { return .none }
                 if !wasPurchased && purchase.isPurchased {
                     state.toast = "购买成功，感谢您的支持！"
@@ -375,6 +412,15 @@ public struct AlbumDetailFeature {
         let digits = title.prefix { $0.isNumber }
         return Int(digits) ?? Int.max
     }
+}
+
+/// Prefer keeping the already-displayed cover when the new signed URL only differs by query.
+private func shouldReplaceCover(_ current: String?, with next: String) -> Bool {
+    guard let current, !current.isEmpty, let currentURL = URL(string: current), let nextURL = URL(string: next) else {
+        return true
+    }
+    if current == next { return false }
+    return currentURL.host != nextURL.host || currentURL.path != nextURL.path
 }
 
 private enum DownloadsObservation: Hashable {

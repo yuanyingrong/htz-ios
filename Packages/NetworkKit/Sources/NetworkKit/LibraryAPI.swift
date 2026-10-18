@@ -34,7 +34,26 @@ public enum LibraryAPI {
             .request(.items(sutraId: sutraId, pageIndex: 0, pageSize: 500))
             .eraseToAnyPublisher()
             .async()
-        return response.data ?? []
+        let items = response.data ?? []
+        ItemsCache.shared.set(items, for: sutraId)
+        return items
+    }
+
+    /// Cached chapter list for instant album open; `nil` when never fetched or expired.
+    public static func cachedItems(sutraId: String) -> [SutraItem]? {
+        ItemsCache.shared.get(sutraId)
+    }
+
+    /// Warms the items cache for albums the user is likely to open next (home / album tab).
+    public static func prefetchItems(sutraIds: [String], limit: Int = 8) async {
+        let targets = sutraIds.filter { !$0.isEmpty && ItemsCache.shared.get($0) == nil }.prefix(limit)
+        await withTaskGroup(of: Void.self) { group in
+            for id in targets {
+                group.addTask {
+                    _ = try? await items(sutraId: id)
+                }
+            }
+        }
     }
 
     public static func coverURL(sutraId: String) async -> String? {

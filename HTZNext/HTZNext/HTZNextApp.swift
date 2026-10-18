@@ -1,5 +1,6 @@
 import SwiftUI
 import ComposableArchitecture
+import DesignSystem
 import Home
 import NetworkKit
 import AuthFeature
@@ -163,6 +164,7 @@ struct HTZApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     
     init() {
+        HTZNavigationChrome.apply()
         #if targetEnvironment(simulator)
         if ProcessInfo.processInfo.arguments.contains("-HTZTestAccount") {
             AuthManager.shared.setupTestAccount()

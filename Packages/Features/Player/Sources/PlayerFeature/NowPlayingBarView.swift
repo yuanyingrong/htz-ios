@@ -140,6 +140,8 @@ public struct FullPlayerView: View {
                 .background(Color(white: 0.96))
                 .navigationTitle(store.currentItem?.title ?? "正在播放")
                 .navigationBarTitleDisplayMode(.inline)
+                .toolbarBackground(Color.white, for: .navigationBar)
+                .toolbarBackground(.visible, for: .navigationBar)
                 .toolbar {
                     ToolbarItem(placement: .cancellationAction) {
                         Button {

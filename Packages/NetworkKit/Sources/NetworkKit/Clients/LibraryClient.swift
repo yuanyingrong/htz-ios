@@ -6,6 +6,8 @@ public struct LibraryClient: Sendable {
     public var albums: @Sendable () async throws -> [Album]
     public var recommendations: @Sendable () async throws -> [Recommendation]
     public var items: @Sendable (_ sutraId: String) async throws -> [SutraItem]
+    public var cachedItems: @Sendable (_ sutraId: String) -> [SutraItem]? = { _ in nil }
+    public var prefetchItems: @Sendable (_ sutraIds: [String]) async -> Void = { _ in }
     public var coverURL: @Sendable (_ sutraId: String) async -> String? = { _ in nil }
     public var purchase: @Sendable (_ sutraId: String) async throws -> AlbumPurchase
     public var fileURL: @Sendable (_ sutraId: String, _ itemId: String) async throws -> MediaFileURLs
@@ -55,6 +57,8 @@ extension LibraryClient: DependencyKey {
         albums: { try await LibraryAPI.albumsWithCovers() },
         recommendations: { try await LibraryAPI.recommendations() },
         items: { try await LibraryAPI.items(sutraId: $0) },
+        cachedItems: { LibraryAPI.cachedItems(sutraId: $0) },
+        prefetchItems: { await LibraryAPI.prefetchItems(sutraIds: $0) },
         coverURL: { await LibraryAPI.coverURL(sutraId: $0) },
         purchase: { try await LibraryAPI.purchase(sutraId: $0) },
         fileURL: { try await LibraryAPI.fileURL(sutraId: $0, itemId: $1) },

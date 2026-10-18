@@ -81,7 +81,10 @@ public struct HomeFeature {
             case let .albumsLoaded(albums):
                 state.isLoading = false
                 state.albums = albums
-                return .none
+                let ids = albums.map(\.id)
+                return .run { [library] _ in
+                    await library.prefetchItems(ids)
+                }
 
             case .albumsFailed:
                 state.isLoading = false
@@ -268,7 +271,10 @@ public struct AlbumsFeature {
             case let .albumsLoaded(albums):
                 state.isLoading = false
                 state.albums = albums
-                return .none
+                let ids = albums.map(\.id)
+                return .run { [library] _ in
+                    await library.prefetchItems(ids)
+                }
 
             case .albumsFailed:
                 state.isLoading = false

@@ -37,6 +37,9 @@
 	<array>
 		<string>audio</string>
 	</array>
+	<!-- App is light-only (matches Android). Prevents nav back-button flashing white under system Dark Mode. -->
+	<key>UIUserInterfaceStyle</key>
+	<string>Light</string>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>

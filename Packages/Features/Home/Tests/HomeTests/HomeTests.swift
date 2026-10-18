@@ -60,6 +60,18 @@ final class HomeTests: XCTestCase {
     }
 
     @MainActor
+    func testAlbumDetailStatePaintsCachedItemsWithoutWaiting() {
+        let sutraId = "cache-\(UUID().uuidString)"
+        ItemsCache.shared.set(
+            [SutraItem(id: "1", title: "一", lesson: 1), SutraItem(id: "2", title: "二", lesson: 2)],
+            for: sutraId
+        )
+        let state = AlbumDetailFeature.State(album: Album(id: sutraId, name: "缓存专辑", imageUrl: nil))
+        XCTAssertEqual(state.items.map(\.id), ["1", "2"])
+        XCTAssertFalse(state.isLoading)
+    }
+
+    @MainActor
     func testLockedEpisodeShowsPurchasePromptAndTrialPlays() async {
         let played = LockIsolated<[String]>([])
         var state = AlbumDetailFeature.State(album: Album(id: "s", name: "专辑", imageUrl: nil))

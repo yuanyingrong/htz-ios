@@ -1,10 +1,13 @@
 import SwiftUI
+import UIKit
 
 /// Palette shared with the Android app (`res/values/colors.xml`). The app has no dark theme.
 public enum HTZColor {
     public static let page = Color(hex: 0xF4F4F4)
     public static let card = Color.white
     public static let title = Color(hex: 0x4D4D4D)
+    /// Inline navigation-bar title — darker than `title` so page names stay readable.
+    public static let navTitle = Color(hex: 0x222222)
     public static let secondary = Color(hex: 0x666666)
     public static let hint = Color(hex: 0x999999)
     public static let tabNormal = Color(hex: 0x8A8A8A)
@@ -328,10 +331,13 @@ public struct HTZBadge: View {
 public struct HTZRemoteImage: View {
     private let url: URL?
     private let radius: CGFloat
+    @State private var image: UIImage?
 
     public init(_ url: URL?, radius: CGFloat = 4) {
         self.url = url
         self.radius = radius
+        // Seed from memory so recycled list cells paint instantly without a placeholder flash.
+        _image = State(initialValue: url.flatMap(HTZImageCache.cachedImage(for:)))
     }
 
     public init(_ string: String?, radius: CGFloat = 4) {
@@ -339,11 +345,12 @@ public struct HTZRemoteImage: View {
     }
 
     public var body: some View {
-        AsyncImage(url: url) { phase in
-            switch phase {
-            case let .success(image):
-                image.resizable().scaledToFill()
-            default:
+        Group {
+            if let image {
+                Image(uiImage: image)
+                    .resizable()
+                    .scaledToFill()
+            } else {
                 ZStack {
                     HTZColor.warm
                     Image(systemName: "music.note")
@@ -352,6 +359,17 @@ public struct HTZRemoteImage: View {
             }
         }
         .clipShape(RoundedRectangle(cornerRadius: radius, style: .continuous))
+        .task(id: url) {
+            guard let url else {
+                image = nil
+                return
+            }
+            if let cached = HTZImageCache.cachedImage(for: url) {
+                image = cached
+                return
+            }
+            image = await HTZImageCache.image(for: url)
+        }
     }
 }
 
@@ -415,6 +433,8 @@ public extension View {
     }
 
     /// Android-style page chrome: grey background and a light inline navigation bar.
+    /// Title weight/color come from `HTZNavigationChrome.apply()` — a principal `ToolbarItem`
+    /// remounts during push and was making the title and bar buttons jitter/flash gray.
     func htzPage(_ title: String? = nil) -> some View {
         self
             .background(HTZColor.page.ignoresSafeArea())
@@ -423,6 +443,47 @@ public extension View {
             .toolbarBackground(Color.white, for: .navigationBar)
             .toolbarBackground(.visible, for: .navigationBar)
             .modifier(HTZSubpageMarker())
+    }
+
+    /// Stronger inline nav title for pages that set `navigationTitle` without `htzPage` (e.g. full player).
+    func htzNavTitle(_ title: String) -> some View {
+        navigationTitle(title)
+            .navigationBarTitleDisplayMode(.inline)
+    }
+}
+
+/// Shared UIKit nav-bar look so SwiftUI does not need a principal toolbar title view.
+public enum HTZNavigationChrome {
+    @MainActor
+    public static func apply() {
+        let ink = UIColor(red: 77 / 255, green: 77 / 255, blue: 77 / 255, alpha: 1)
+        let title = UIColor(red: 34 / 255, green: 34 / 255, blue: 34 / 255, alpha: 1)
+
+        let button = UIBarButtonItemAppearance()
+        button.normal.titleTextAttributes = [.foregroundColor: ink]
+
+        let appearance = UINavigationBarAppearance()
+        appearance.configureWithOpaqueBackground()
+        appearance.backgroundColor = .white
+        appearance.shadowColor = UIColor(white: 0.93, alpha: 1)
+        appearance.titleTextAttributes = [
+            .foregroundColor: title,
+            .font: UIFont.systemFont(ofSize: 17, weight: .semibold)
+        ]
+        appearance.buttonAppearance = button
+        appearance.backButtonAppearance = button
+        // Keep the chevron the same ink in case a trait flash still reaches the bar.
+        appearance.setBackIndicatorImage(
+            appearance.backIndicatorImage,
+            transitionMaskImage: appearance.backIndicatorTransitionMaskImage
+        )
+
+        let bar = UINavigationBar.appearance()
+        bar.standardAppearance = appearance
+        bar.compactAppearance = appearance
+        bar.scrollEdgeAppearance = appearance
+        bar.tintColor = ink
+        bar.isTranslucent = false
     }
 }
 
@@ -456,7 +517,14 @@ private struct HTZSubpageMarker: ViewModifier {
 
     func body(content: Content) -> some View {
         content
-            .onAppear { HTZChrome.shared.appear(id) }
+            .onAppear {
+                // Defer past the push transition so RootView/tab chrome does not refresh mid-animation
+                // (that refresh was flashing the nav title and trailing buttons gray).
+                let marker = id
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
+                    HTZChrome.shared.appear(marker)
+                }
+            }
             .onDisappear { HTZChrome.shared.disappear(id) }
     }
 }

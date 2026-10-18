@@ -172,45 +172,49 @@ public struct HomeView: View {
     }
 
     private var studyCard: some View {
-        HTZCard {
-            VStack(alignment: .leading, spacing: 12) {
-                HomeModuleHeader(
-                    title: "学习统计",
-                    icon: Image(systemName: "chart.bar.xaxis").font(.system(size: 16)).foregroundColor(HTZColor.secondary)
-                )
-                HStack {
-                    let parts = store.study.totalParts
-                    StatNumber(value: parts.0, unit: parts.1, caption: "累计学习时长", tint: HTZColor.statsAccent)
-                    Rectangle().fill(HTZColor.divider).frame(width: 1, height: 36)
-                    StatNumber(value: "\(store.study.completedLessons)", unit: "课", caption: "累计完成课程", tint: HTZColor.statsAccent)
-                }
-                HTZDivider(leading: 0)
-                HStack {
-                    period("今日", store.study.todayText)
-                    period("本周", store.study.weekText)
-                    period("本月", store.study.monthText)
-                }
-                Text("近七日学习时长")
-                    .font(.system(size: 12))
-                    .foregroundColor(HTZColor.hint)
-                HStack(alignment: .bottom) {
-                    let peak = max(store.study.bars.map(\.milliseconds).max() ?? 0, 3_600_000)
-                    ForEach(Array(store.study.bars.enumerated()), id: \.element.id) { index, bar in
-                        VStack(spacing: 6) {
-                            RoundedRectangle(cornerRadius: 3)
-                                .fill(index == store.study.bars.count - 1 ? HTZColor.statsAccent : HTZColor.statsTrack)
-                                .frame(width: 14, height: barHeight(bar.milliseconds, peak: peak))
-                            Text(bar.label)
-                                .font(.system(size: 12))
-                                .foregroundColor(HTZColor.hint)
-                        }
-                        .frame(maxWidth: .infinity)
+        // ScrollView's escaping content closure loses the outer tracking scope; re-wrap
+        // so accesses to `store.study` stay observable.
+        WithPerceptionTracking {
+            HTZCard {
+                VStack(alignment: .leading, spacing: 12) {
+                    HomeModuleHeader(
+                        title: "学习统计",
+                        icon: Image(systemName: "chart.bar.xaxis").font(.system(size: 16)).foregroundColor(HTZColor.secondary)
+                    )
+                    HStack {
+                        let parts = store.study.totalParts
+                        StatNumber(value: parts.0, unit: parts.1, caption: "累计学习时长", tint: HTZColor.statsAccent)
+                        Rectangle().fill(HTZColor.divider).frame(width: 1, height: 36)
+                        StatNumber(value: "\(store.study.completedLessons)", unit: "课", caption: "累计完成课程", tint: HTZColor.statsAccent)
                     }
+                    HTZDivider(leading: 0)
+                    HStack {
+                        period("今日", store.study.todayText)
+                        period("本周", store.study.weekText)
+                        period("本月", store.study.monthText)
+                    }
+                    Text("近七日学习时长")
+                        .font(.system(size: 12))
+                        .foregroundColor(HTZColor.hint)
+                    HStack(alignment: .bottom) {
+                        let peak = max(store.study.bars.map(\.milliseconds).max() ?? 0, 3_600_000)
+                        ForEach(Array(store.study.bars.enumerated()), id: \.element.id) { index, bar in
+                            VStack(spacing: 6) {
+                                RoundedRectangle(cornerRadius: 3)
+                                    .fill(index == store.study.bars.count - 1 ? HTZColor.statsAccent : HTZColor.statsTrack)
+                                    .frame(width: 14, height: barHeight(bar.milliseconds, peak: peak))
+                                Text(bar.label)
+                                    .font(.system(size: 12))
+                                    .foregroundColor(HTZColor.hint)
+                            }
+                            .frame(maxWidth: .infinity)
+                        }
+                    }
+                    .frame(height: 78, alignment: .bottom)
                 }
-                .frame(height: 78, alignment: .bottom)
+                .padding(.horizontal, 16)
+                .padding(.vertical, 14)
             }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 14)
         }
     }
 

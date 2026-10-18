@@ -74,5 +74,5 @@ struct DesignSystemPreview: View {
 
 #Preview {
     DesignSystemPreview()
-        .preferredColorScheme(.dark)
+        .preferredColorScheme(.light)
 }

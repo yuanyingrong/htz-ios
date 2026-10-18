@@ -43,62 +43,66 @@ struct RootView: View {
             let inSubpage = chrome.isInSubpage || !homeStore.path.isEmpty || !albumStore.path.isEmpty || !profileStore.path.isEmpty
             let showsTabBar = !inSubpage && !hidesChrome
 
-            if authStore.isLoggedIn {
-                CustomTabView(
-                    selection: $selectedTab,
-                    tabs: tabs,
-                    tabBarHeight: 58,
-                    selectedColor: HTZColor.title,
-                    showsTabBar: showsTabBar
-                ) { id in
-                    WithPerceptionTracking {
-                        switch id {
-                        case 0:
-                            HomeView(store: homeStore, onShowAlbums: { selectedTab = 1 })
-                        case 1:
-                            AlbumTabView(store: albumStore)
-                        case 2:
-                            ProfileView(store: profileStore) {
-                                authStore.send(.logout)
+            Group {
+                if authStore.isLoggedIn {
+                    CustomTabView(
+                        selection: $selectedTab,
+                        tabs: tabs,
+                        tabBarHeight: 58,
+                        selectedColor: HTZColor.title,
+                        showsTabBar: showsTabBar
+                    ) { id in
+                        WithPerceptionTracking {
+                            switch id {
+                            case 0:
+                                HomeView(store: homeStore, onShowAlbums: { selectedTab = 1 })
+                            case 1:
+                                AlbumTabView(store: albumStore)
+                            case 2:
+                                ProfileView(store: profileStore) {
+                                    authStore.send(.logout)
+                                }
+                            default:
+                                Color.clear
                             }
-                        default:
-                            Color.clear
                         }
                     }
-                }
-                .overlay(alignment: .bottom) {
-                    // 悬浮播放条只在首页、专辑两个 Tab 的根页面显示，其余（我的、任何子页面）都不显示。
-                    if playerStore.currentItem != nil, showsTabBar, selectedTab == 0 || selectedTab == 1 {
-                        NowPlayingBarView(store: playerStore)
-                            .padding(.horizontal, 10)
-                            .padding(.bottom, 64)
-                            .transaction { $0.animation = nil }
+                    .overlay(alignment: .bottom) {
+                        // 悬浮播放条只在首页、专辑两个 Tab 的根页面显示，其余（我的、任何子页面）都不显示。
+                        if playerStore.currentItem != nil, showsTabBar, selectedTab == 0 || selectedTab == 1 {
+                            NowPlayingBarView(store: playerStore)
+                                .padding(.horizontal, 10)
+                                .padding(.bottom, 64)
+                                .transaction { $0.animation = nil }
+                        }
                     }
-                }
-                .modifier(StudyStatsRefresh(selectedTab: selectedTab, isPlaying: playerStore.isPlaying, homeStore: homeStore))
-                .fullScreenCover(isPresented: $playerStore.showFullPlayer.sending(\.showFullPlayer)) {
-                    FullPlayerView(store: playerStore)
-                }
-                .htzToast(Binding(
-                    get: { playerStore.showFullPlayer ? nil : playerStore.toast },
-                    set: { playerStore.send(.toastChanged($0)) }
-                ))
-                .ignoresSafeArea(.keyboard)
-                .environment(\.playerStore, playerStore)
-                .onAppear {
-                    playerStore.send(.subscribeToPlayerState)
-                    #if targetEnvironment(simulator)
-                    if ProcessInfo.processInfo.arguments.contains("-HTZPlaySample") {
-                        let url = SampleTone.write()
-                        playerStore.send(.playQueue(tracks: [
-                            QueueTrack(id: "sample", sutraId: "sample", title: "测试音", audioURL: url)
-                        ], startIndex: 0, startPosition: 0))
+                    .modifier(StudyStatsRefresh(selectedTab: selectedTab, isPlaying: playerStore.isPlaying, homeStore: homeStore))
+                    .fullScreenCover(isPresented: $playerStore.showFullPlayer.sending(\.showFullPlayer)) {
+                        FullPlayerView(store: playerStore)
                     }
-                    #endif
+                    .htzToast(Binding(
+                        get: { playerStore.showFullPlayer ? nil : playerStore.toast },
+                        set: { playerStore.send(.toastChanged($0)) }
+                    ))
+                    .ignoresSafeArea(.keyboard)
+                    .environment(\.playerStore, playerStore)
+                    .onAppear {
+                        playerStore.send(.subscribeToPlayerState)
+                        #if targetEnvironment(simulator)
+                        if ProcessInfo.processInfo.arguments.contains("-HTZPlaySample") {
+                            let url = SampleTone.write()
+                            playerStore.send(.playQueue(tracks: [
+                                QueueTrack(id: "sample", sutraId: "sample", title: "测试音", audioURL: url)
+                            ], startIndex: 0, startPosition: 0))
+                        }
+                        #endif
+                    }
+                } else {
+                    LoginView(store: authStore)
                 }
-            } else {
-                LoginView(store: authStore)
             }
+            // Light-only app; blocks system Dark Mode from flashing white back chevrons.
+            .preferredColorScheme(.light)
         }
     }
 }

@@ -8,6 +8,7 @@ public struct AlbumDetailView: View {
     @Perception.Bindable var store: StoreOf<AlbumDetailFeature>
     @Environment(\.playerStore) private var playerStore
     @State private var showPicker = false
+    @State private var showSearch = false
     @Shared(.hidesBottomChrome) private var hidesChrome
 
     public init(store: StoreOf<AlbumDetailFeature>) {
@@ -42,7 +43,13 @@ public struct AlbumDetailView: View {
                 if store.isSelecting { selectionBar }
             }
             .htzPage(store.album.name)
+            // Keep chrome tint stable; system default flashes toolbar icons gray while
+            // onAppear fans out items/purchase/favorites/downloads updates.
+            .tint(HTZColor.title)
             .toolbar { toolbar }
+            .navigationDestination(isPresented: $showSearch) {
+                SearchView(albumName: store.album.name)
+            }
             .htzToast($store.toast)
             .htzCenterDialog(isPresented: $store.isPurchasePromptPresented) { [name = store.album.name, price = store.price, showTip = showsThirdPartyTip] in
                 PurchasePromptDialog(
@@ -73,7 +80,11 @@ public struct AlbumDetailView: View {
                     }
                 }
             }
-            .onAppear { store.send(.onAppear) }
+            .task(id: store.album.id) {
+                // `.task` cancels if the user pops quickly; start loads immediately so cache-miss
+                // albums are not delayed. Nav jitter is addressed by stable tab pages + UIKit title.
+                store.send(.onAppear)
+            }
             // 多选时底部有「下载」操作栏，收起迷你播放条避免盖住它。
             .onChange(of: store.isSelecting) { selecting in
                 $hidesChrome.withLock { $0 = selecting }
@@ -94,22 +105,22 @@ public struct AlbumDetailView: View {
 
     @ToolbarContentBuilder
     private var toolbar: some ToolbarContent {
-        ToolbarItem(placement: .topBarTrailing) {
-            if store.isSelecting {
+        // Separate ToolbarItems — a single HStack of NavigationLink/ShareLink re-lays out
+        // the principal title on every store update and briefly paints the icons gray.
+        if store.isSelecting {
+            ToolbarItem(placement: .topBarTrailing) {
                 Button("取消") { store.send(.cancelSelecting) }
-                    .foregroundColor(HTZColor.title)
-            } else {
-                HStack(spacing: 16) {
-                    NavigationLink {
-                        SearchView(albumName: store.album.name)
-                    } label: {
-                        Image(systemName: "magnifyingglass")
-                    }
-                    ShareLink(item: shareText) {
-                        Image(systemName: "square.and.arrow.up")
-                    }
+            }
+        } else {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button { showSearch = true } label: {
+                    Image(systemName: "magnifyingglass")
                 }
-                .foregroundColor(HTZColor.title)
+            }
+            ToolbarItem(placement: .topBarTrailing) {
+                ShareLink(item: shareText) {
+                    Image(systemName: "square.and.arrow.up")
+                }
             }
         }
     }
@@ -123,7 +134,8 @@ public struct AlbumDetailView: View {
             HTZRemoteImage(store.album.imageUrl, radius: 4)
                 .frame(width: 90, height: 90)
                 .overlay(alignment: .topLeading) {
-                    if store.purchase?.isPaid == true {
+                    // Prefer album flags so the badge does not pop in after purchase API returns.
+                    if store.album.isPaid || store.purchase?.isPaid == true {
                         HTZBadge(store.needsPurchase ? .paid : .purchased).padding(4)
                     }
                 }
@@ -154,6 +166,7 @@ public struct AlbumDetailView: View {
         }
         .padding(16)
         .background(HTZColor.card)
+        .transaction { $0.animation = nil }
     }
 
     private var actionBar: some View {
@@ -168,6 +181,7 @@ public struct AlbumDetailView: View {
         }
         .frame(height: 48)
         .background(HTZColor.card)
+        .transaction { $0.animation = nil }
     }
 
     private var separator: some View {
