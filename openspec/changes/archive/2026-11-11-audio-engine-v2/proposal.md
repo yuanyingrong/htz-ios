@@ -1,3 +1,7 @@
+## Resolution (2026-11-11)
+
+Shipped as `HTZAudio.AudioEngine`: one `AVPlayer` isolated on `@MainActor`, not a Swift `Actor`, and not a FreeStreamer wrapper. Phase 2 queue, lock screen, seek/rate, and full-screen player landed later in `htznext-completion`. Current behavior is `openspec/specs/player/spec.md` and `openspec/specs/app-shell/spec.md`. Tasks 4.5–4.7 (UI test, manual background check, rollback drill) are deferred and are not the next task.
+
 ## Why
 
 The legacy audio player (`FreeStreamer`) is outdated and not integrated with the modern `HTZNext` target. This change introduces a new, modern audio engine (`audio-engine-v2`) as a minimum viable product (MVP) to enable core playback functionality within the new SwiftUI architecture.
@@ -5,7 +9,7 @@ The legacy audio player (`FreeStreamer`) is outdated and not integrated with the
 ## What Changes
 
 ### MVP Scope (Phase 1):
-- **New Audio Engine**: Create an `Actor`-based `AudioEngine` in the `HTZAudio` module using a single native `AVPlayer`.
+- **New Audio Engine**: `AudioEngine` in `HTZAudio` is a `@MainActor` type wrapping a single native `AVPlayer`. The earlier Swift `Actor` plan was not what shipped.
 - **Core Controls**: Implement basic playback control: Play, Pause for a single URL.
 - **State & Progress**: Publish the current playback state and progress (in seconds) via a robust `AsyncStream`.
 - **Background Audio**: Configure the `AVAudioSession` on first playback and project capabilities to enable background playback.
@@ -29,7 +33,7 @@ The legacy audio player (`FreeStreamer`) is outdated and not integrated with the
 
 ## Impact
 
-- **Packages/HTZAudio**: Will contain the new `AudioEngine` Actor.
+- **Packages/HTZAudio**: Contains `AudioEngine` on `@MainActor`.
 - **HTZNext/RootView**: Will be updated to host the `NowPlayingView` in a `ZStack`.
 - **Project Configuration**: The `HTZNext` target will have the "Background Modes (Audio)" capability enabled.
 - **`htz` Legacy Project**: Unaffected.

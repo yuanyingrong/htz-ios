@@ -2,10 +2,12 @@
 
 This design outlines a strictly MVP audio engine, focusing on core functionality and robust architecture. All queue-related complexity is deferred to Phase 2.
 
+**Resolution (2026-11-11):** The engine shipped on `@MainActor` with one `AVPlayer`. Decision 2's Swift `Actor` was not implemented. Queue, lock screen, seek/rate, and the full-screen player later landed in `PlayerFeature` (see `openspec/specs/player/spec.md`), not via `AVQueuePlayer`.
+
 ## Goals / Non-Goals
 
 **Goals (MVP):**
-- A thread-safe `AudioEngine` using Swift Actors and a single `AVPlayer`.
+- A thread-safe `AudioEngine` on `@MainActor` with a single `AVPlayer`.
 - A reliable `AsyncStream`-based interface for state updates with clear lifecycle.
 - Basic play/pause, current item tracking, and progress reporting (in seconds).
 - Correct and lazy `AVAudioSession` configuration for background audio.
@@ -23,11 +25,11 @@ This design outlines a strictly MVP audio engine, focusing on core functionality
 The MVP will use a single `AVPlayer` instance.
 - **Rationale**: Simplifies initial implementation, avoids queue complexities. Migration to `AVQueuePlayer` will occur in Phase 2 when queueing is required.
 
-### 2. Concurrency & State: `Actor` with Managed `AsyncStream`
-The `AudioEngine` `Actor` will:
-- Manage a single `AVPlayer` and `AVPlayerItem`.
-- Expose its state (`PlayerState`) via a `PassthroughSubject` (or similar) bridged to a **single `AsyncStream`** for external subscription. The `AsyncStream` will be created using `AsyncStream.makeStream(bufferingPolicy: .unbounded)`.
-- **Rationale**: `Actor` ensures thread safety. `AsyncStream` is modern, but needs careful management for broadcast. Using `makeStream` with a `Continuation` owned by the `Actor` allows for controlled emission and ensures all subscribers receive updates from a single source. `PlayerClient` will be the sole subscriber to this `AsyncStream` to manage its lifecycle.
+### 2. Concurrency & State: `@MainActor` with Managed `AsyncStream`
+`AudioEngine` is `@MainActor` and:
+- Manages a single `AVPlayer` and `AVPlayerItem`.
+- Exposes its state (`PlayerState`) via a **single `AsyncStream`** for external subscription. The `AsyncStream` is created using `AsyncStream.makeStream(bufferingPolicy: .unbounded)`.
+- **Rationale**: `@MainActor` matches `AVPlayer` and UI updates. A separate Swift `Actor` was the original plan and was not shipped. `PlayerClient` is the subscriber that bridges the stream into TCA.
 
 ### 3. State Observation: Direct Emission & `Combine` KVO
 - **`isPlaying` State**: Will be emitted directly by the `AudioEngine` when `play()` or `pause()` methods are called. We will NOT observe `player.publisher(for: \.rate)`.

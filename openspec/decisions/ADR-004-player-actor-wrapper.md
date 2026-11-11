@@ -1,7 +1,9 @@
 # ADR-004: Player Actor Wrapper
 
 ## Status
-Accepted
+Superseded (2026-11-11)
+
+HTZNext does not wrap FreeStreamer in a Swift Actor. Playback is `HTZAudio.AudioEngine`: one `AVPlayer` on `@MainActor`. FreeStreamer remains only in the legacy `htz/` app. Do not implement this ADR.
 
 ## Context
 The core audio engine uses `FreeStreamer` (Objective-C/C), which is not thread-safe and is accessed via global singletons. This causes race conditions and UI freezing.

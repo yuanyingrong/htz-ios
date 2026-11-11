@@ -5,7 +5,7 @@
 ## 2. Audio Engine Core (MVP)
 
 - [x] 2.1 Create `PlayerState.swift` to define the published player state (including `currentTime`, `duration`, `isPlaying`, `error`, `currentItem`).
-- [x] 2.2 Create `AudioEngine.swift` in `HTZAudio` module as a Swift `Actor` wrapping a single `AVPlayer`.
+- [x] 2.2 Create `AudioEngine.swift` in `HTZAudio` module as a `@MainActor` type wrapping a single `AVPlayer`.
 - [x] 2.3 Implement `play(url: URL)` and `pause()` methods.
 - [x] 2.4 Manage the `AVAudioSession` configuration lazily within `play(url:)`.
 - [x] 2.5 Expose a single, managed `AsyncStream<PlayerState>` for publishing state, using `AsyncStream.makeStream(bufferingPolicy: .unbounded)`.
@@ -26,11 +26,12 @@
 - [x] 4.1 In `RootView`, instantiate the `PlayerFeature` store.
 - [x] 4.2 Use a `ZStack` to overlay the `NowPlayingBarView` above the `TabView`.
 - [x] 4.3 In `AlbumDetailView`, modify the `onTapGesture` of a `SutraItemRowView` to send a "play" action to the root `PlayerFeature` (passing the item's audio URL).
-- [x] 4.4 Write unit tests for the `AudioEngine` actor to verify play/pause, progress, and error state changes.
-- [ ] 4.5 Write UI tests to confirm `NowPlayingBarView` visibility and correct state display.
-- [ ] 4.6 Manually verify background playback and interruption handling.
-- [ ] 4.7 **Rollback Checkpoint**: Verify a clean rollback by:
-    - [ ] 4.7.1 Removing the `PlayerFeature` SPM module and its dependency from `HTZNext`.
-    - [ ] 4.7.2 Removing `NowPlayingBarView` from `RootView.swift`.
-    - [ ] 4.7.3 Disabling the "Background Audio" capability in `HTZNext`.
-    - [ ] 4.7.4 Confirming the app still compiles and runs without the player.
+- [x] 4.4 Write unit tests for `AudioEngine` on `@MainActor` to verify play/pause, progress, and error state changes.
+
+## Deferred (2026-11-11)
+
+Not done, and not the next task. The player has since shipped in HTZNext.
+
+- 4.5 UI tests for `NowPlayingBarView` visibility and state. Not written.
+- 4.6 Manual check of background playback and interruption handling. Not recorded here.
+- 4.7 Rollback drill (remove `PlayerFeature`, the bar, and background audio, then confirm the app still builds). Obsolete once the player became the shipping path.

@@ -1,0 +1,80 @@
+name: Package tests
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: package-tests-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  home-and-player:
+    name: HomeTests and PlayerFeatureTests
+    runs-on: macos-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Select iPhone simulator
+        id: sim
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json, re, subprocess, os
+
+          raw = subprocess.check_output(
+              ["xcrun", "simctl", "list", "devices", "available", "-j"],
+              text=True,
+          )
+          data = json.loads(raw)
+
+          def runtime_key(runtime):
+              return tuple(int(n) for n in re.findall(r"\d+", runtime))
+
+          candidates = []
+          for runtime, devices in data.get("devices", {}).items():
+              if "iOS" not in runtime:
+                  continue
+              for device in devices:
+                  if not device.get("isAvailable", True):
+                      continue
+                  name = device.get("name", "")
+                  if not name.startswith("iPhone"):
+                      continue
+                  candidates.append((runtime_key(runtime), runtime, name, device["udid"]))
+
+          if not candidates:
+              raise SystemExit("No available iPhone simulator")
+
+          newest = max(c[0] for c in candidates)
+          same = [c for c in candidates if c[0] == newest]
+          plain = [
+              c for c in same
+              if not any(token in c[2] for token in ("SE", "Pro", "Plus", "mini", "Air"))
+          ]
+          _, runtime, name, udid = (plain or same)[0]
+          print(f"Using {name} ({runtime}) {udid}")
+          with open(os.environ["GITHUB_OUTPUT"], "a") as fh:
+              fh.write(f"udid={udid}\n")
+              fh.write(f"name={name}\n")
+          PY
+
+      - name: Run HomeTests and PlayerFeatureTests
+        working-directory: Packages
+        run: |
+          set -euo pipefail
+          xcodebuild -version
+          xcodebuild test \
+            -scheme HTZPackages-Package \
+            -destination "platform=iOS Simulator,id=${{ steps.sim.outputs.udid }}" \
+            -only-testing:HomeTests \
+            -only-testing:PlayerFeatureTests \
+            -skipPackagePluginValidation \
+            -skipMacroValidation \
+            CODE_SIGNING_ALLOWED=NO
