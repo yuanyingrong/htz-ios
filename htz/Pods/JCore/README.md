@@ -1,1 +1,0 @@
-# jcore-sdk

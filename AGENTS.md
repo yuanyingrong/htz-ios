@@ -9,13 +9,13 @@
   - Package tests：`cd Packages && xcodebuild test -scheme HTZPackages-Package -destination 'platform=iOS Simulator,name=iPhone 17,OS=26.5' -only-testing:HomeTests -only-testing:PlayerFeatureTests`
   - CI：`.github/workflows/package-tests.yml` 在 `master` 推送和 pull request 上只跑 `HomeTests`、`PlayerFeatureTests`。
   - 模拟器名以本机 `xcodebuild -showdestinations` 为准（常见 iPhone 17 / OS 26.x）。
-- **Legacy**：`cd htz && pod install`，再 `open htz/htz.xcworkspace`，scheme `htz`。
+- **Legacy**：`cd htz && pod install`，再 `open htz/htz.xcworkspace`，scheme `htz`。`htz/Pods` 不入库。
 
 ## Stack
 - HTZNext：Swift 5.9+ / iOS 16+ / SwiftUI / TCA / SPM（`Packages/`：NetworkKit、HTZAudio、PlayerFeature、Home、Auth、DesignSystem）
 - Playback：`HTZAudio.AudioEngine`（`@MainActor` + `AVPlayer`）；TCA 经 `\.playerClient`、`\.playback`（`PlayerRelay`）
 - Downloads：`\.downloads` / `DownloadCenter`；网络：`\.library` → `LibraryAPI`
-- Share：`\.shareClient`（`ShareClient`）；微信 SDK 只在 app target、真机分支注入（`#if !targetEnvironment(simulator)`）
+- Share：`\.shareClient`（`ShareClient`）；微信 SDK 只在 app target、真机分支注入（`#if !targetEnvironment(simulator)`），并链接 `htz/Pods/WechatOpenSDK`。真机编译前先在 `htz/` 执行 `pod install`。
 - Dialogs：清空/退出等用 `htzConfirmSheet`；居中付费弹窗用 `htzCenterDialog`（勿再加系统 `confirmationDialog`/`alert` 做同类确认）
 - Legacy：UIKit + CocoaPods + SnapKit；类型前缀 `HTZ`
 
